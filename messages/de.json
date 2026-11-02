@@ -1,16 +1,23 @@
 {
   "common": {
     "appName": "Videotraining",
-    "languages": { "de": "Deutsch", "en": "Englisch", "ru": "Russisch" },
+    "languages": {
+      "de": "Deutsch",
+      "en": "Englisch",
+      "ru": "Russisch"
+    },
     "privacy": "Datenschutzerklärung",
-    "imprint": "Impressum"
+    "imprint": "Impressum",
+    "languageNav": "Sprache",
+    "timezone": "Alle Zeiten sind Frankfurter Zeit (MEZ)."
   },
   "home": {
     "noTraining": "Die Anmeldung ist noch nicht geöffnet.",
     "register": "Anmelden",
     "schedule": "Zeitplan",
     "message": "Botschaft {number}",
-    "fee": "Beitrag pro Platz: {fee}. Gliederung: je {outline}."
+    "fee": "Beitrag pro Platz: {fee}. Gliederung: je {outline}.",
+    "scheduleCount": "{count} Botschaften"
   },
   "register": {
     "title": "Anmeldung: {training}",
@@ -46,7 +53,28 @@
     "duplicateWarning": "Es gibt bereits eine Anmeldung mit diesem Namen und dieser E-Mail. Trotzdem anmelden?",
     "registerAnyway": "Ja, trotzdem anmelden",
     "done": "Danke! Wir haben dir eine Bestätigung mit einem Link zum Ändern oder Stornieren geschickt.",
-    "error": "Etwas ist schiefgelaufen. Bitte prüfe das Formular und versuche es erneut."
+    "error": "Etwas ist schiefgelaufen. Bitte prüfe das Formular und versuche es erneut.",
+    "sectionAboutYou": "Angaben zur Person",
+    "sectionLanguages": "Sprachen und Gliederungen",
+    "sectionFreeSeat": "Kostenloser Platz",
+    "freeSeatHelp": "Bitte ankreuzen, wenn zutreffend. Die Trainingsgebühr entfällt dann; Gliederungen werden trotzdem bezahlt.",
+    "sectionConfirm": "Regeln und Bestätigung",
+    "sectionPayment": "Zahlung",
+    "optional": "optional",
+    "sessionsRequired": "Bitte wähle mindestens eine Einheit aus.",
+    "sending": "Wird gesendet…",
+    "total": "Gesamt",
+    "payee": "Empfänger",
+    "iban": "IBAN",
+    "reference": "Verwendungszweck",
+    "waived": "entfällt",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "payHint": "Bitte überweise den Gesamtbetrag mit diesem Verwendungszweck.",
+    "receiptTitle": "Du bist angemeldet",
+    "receiptBody": "Wir haben dir eine Bestätigung mit einem Link zum Ändern oder Stornieren geschickt. Falls du sie nicht findest, schau bitte im Spam-Ordner nach.",
+    "receiptPay": "Bitte überweise jetzt {total}:",
+    "registerAnother": "Weitere Person anmelden"
   },
   "edit": {
     "title": "Deine Anmeldung",
@@ -85,6 +113,19 @@
     "outlineCounts": "Benötigte Gliederungen",
     "ordered": "Bestellt",
     "extra": "Zusätzlich",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "emailLabel": "E-Mail",
+    "save": "Speichern",
+    "waived": "Entfällt",
+    "shortBy": "{count} fehlen",
+    "seatShort": {
+      "full_time": "Vollzeit",
+      "part_time": "Teilzeit",
+      "shared": "Geteilter Platz"
+    },
+    "language": "Sprache",
+    "orderedFor": "Bestellt, {language}",
+    "saveFailed": "Nicht gespeichert. Bitte erneut versuchen.",
+    "needed": "Benötigt"
   }
 }

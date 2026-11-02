@@ -1,16 +1,23 @@
 {
   "common": {
     "appName": "Video Training",
-    "languages": { "de": "German", "en": "English", "ru": "Russian" },
+    "languages": {
+      "de": "German",
+      "en": "English",
+      "ru": "Russian"
+    },
     "privacy": "Privacy notice",
-    "imprint": "Imprint"
+    "imprint": "Imprint",
+    "languageNav": "Language",
+    "timezone": "All times are Frankfurt time (CET)."
   },
   "home": {
     "noTraining": "Registration is not open yet.",
     "register": "Register",
     "schedule": "Schedule",
     "message": "Message {number}",
-    "fee": "Fee per seat: {fee}. Outline: {outline} each."
+    "fee": "Fee per seat: {fee}. Outline: {outline} each.",
+    "scheduleCount": "{count} messages"
   },
   "register": {
     "title": "Register for {training}",
@@ -46,7 +53,28 @@
     "duplicateWarning": "A registration with this name and email already exists. Register anyway?",
     "registerAnyway": "Yes, register anyway",
     "done": "Thank you! We have sent a confirmation email with a link to change or cancel your registration.",
-    "error": "Something went wrong. Please check the form and try again."
+    "error": "Something went wrong. Please check the form and try again.",
+    "sectionAboutYou": "About you",
+    "sectionLanguages": "Languages and outlines",
+    "sectionFreeSeat": "Free seat",
+    "freeSeatHelp": "Tick one if it applies. The training fee is then waived; outlines are still paid.",
+    "sectionConfirm": "Rules and confirmation",
+    "sectionPayment": "Payment",
+    "optional": "optional",
+    "sessionsRequired": "Please choose at least one session.",
+    "sending": "Sending…",
+    "total": "Total",
+    "payee": "Payee",
+    "iban": "IBAN",
+    "reference": "Reference",
+    "waived": "waived",
+    "copy": "Copy",
+    "copied": "Copied",
+    "payHint": "Please transfer the total with this reference.",
+    "receiptTitle": "You are registered",
+    "receiptBody": "We have sent a confirmation email with a link to change or cancel your registration. If you cannot find it, please check your spam folder.",
+    "receiptPay": "Please transfer {total} now:",
+    "registerAnother": "Register another person"
   },
   "edit": {
     "title": "Your registration",
@@ -85,6 +113,19 @@
     "outlineCounts": "Outlines needed",
     "ordered": "Ordered",
     "extra": "Extra",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "emailLabel": "Email",
+    "save": "Save",
+    "waived": "Waived",
+    "shortBy": "{count} missing",
+    "seatShort": {
+      "full_time": "Full-time",
+      "part_time": "Part-time",
+      "shared": "Shared seat"
+    },
+    "language": "Language",
+    "orderedFor": "Ordered, {language}",
+    "saveFailed": "Not saved. Try again.",
+    "needed": "Needed"
   }
 }

@@ -26,11 +26,11 @@ export default async function EditPage({ params }: PageProps<"/[locale]/r/[token
   const seatLocked = !canChangeSeatOrSessions(training.sessions);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">
+    <div className="space-y-8">
+      <h1 className="text-3xl font-semibold tracking-tight text-balance">
         {t("title")}: {training.title[locale]}
       </h1>
-      {seatLocked && <p className="rounded bg-amber-50 p-3 text-amber-900">{t("locked")}</p>}
+      {seatLocked && <p className="rounded-lg bg-warning-bg p-4 text-warning-ink">{t("locked")}</p>}
       <RegistrationForm
         sessions={training.sessions.map((s) => ({
           id: s.id,
