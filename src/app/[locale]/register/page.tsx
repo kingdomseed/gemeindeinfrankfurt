@@ -1,18 +1,19 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { RegistrationForm } from "@/components/RegistrationForm";
+import { PageMessage } from "@/components/ui/page-message";
+import { trainingFormProps } from "@/features/registration/form-props";
+import { RegistrationForm } from "@/features/registration/RegistrationForm";
+import { RegistrationPage } from "@/features/registration/RegistrationPage";
 import { requireLocale } from "@/i18n/locale";
 import { getPublishedTraining } from "@/lib/data";
 import { canRegister } from "@/lib/domain/cutoffs";
-import { sessionLabel } from "@/lib/format";
 
 import { register } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function RegisterPage({ params }: PageProps<"/[locale]/register">) {
-  const { locale: raw } = await params;
-  const locale = requireLocale(raw);
+  const locale = requireLocale((await params).locale);
   setRequestLocale(locale);
   const [t, th, training] = await Promise.all([
     getTranslations("register"),
@@ -20,30 +21,15 @@ export default async function RegisterPage({ params }: PageProps<"/[locale]/regi
     getPublishedTraining(),
   ]);
 
-  if (!training || !canRegister(training.sessions)) return <p className="mt-10">{t("closed")}</p>;
+  if (!training || !canRegister(training.sessions)) return <PageMessage>{t("closed")}</PageMessage>;
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-semibold tracking-tight text-balance">
-          {t("title", { training: training.title[locale] })}
-        </h1>
-        {training.venue && (
-          <p className="text-lg text-muted">{t("locality", { locality: training.venue })}</p>
-        )}
-      </div>
+    <RegistrationPage
+      title={t("title", { training: training.title[locale] })}
+      subtitle={training.venue ? t("locality", { locality: training.venue }) : undefined}
+    >
       <RegistrationForm
-        sessions={training.sessions.map((s) => ({
-          id: s.id,
-          label: sessionLabel(s, locale, th("message", { number: s.message_number })),
-        }))}
-        prices={{ feeCents: training.fee_cents, outlinePriceCents: training.outline_price_cents }}
-        payment={{
-          payee: training.payee_name,
-          iban: training.payee_iban,
-          reference: training.payment_reference,
-        }}
-        rules={training.rules[locale] ?? ""}
+        {...trainingFormProps(training, locale, (number) => th("message", { number }))}
         submitLabel={t("submit")}
         action={register.bind(null, locale)}
         messages={{
@@ -53,6 +39,6 @@ export default async function RegisterPage({ params }: PageProps<"/[locale]/regi
           duplicate: t("duplicateWarning"),
         }}
       />
-    </div>
+    </RegistrationPage>
   );
 }

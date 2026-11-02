@@ -1,11 +1,13 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { CancelButton } from "@/components/CancelButton";
-import { RegistrationForm } from "@/components/RegistrationForm";
+import { PageMessage } from "@/components/ui/page-message";
+import { CancelRegistration } from "@/features/registration/CancelRegistration";
+import { trainingFormProps } from "@/features/registration/form-props";
+import { RegistrationForm } from "@/features/registration/RegistrationForm";
+import { RegistrationPage } from "@/features/registration/RegistrationPage";
 import { requireLocale } from "@/i18n/locale";
 import { getTrainingById } from "@/lib/data";
 import { canChangeSeatOrSessions } from "@/lib/domain/cutoffs";
-import { sessionLabel } from "@/lib/format";
 import { findByToken } from "@/lib/registrations";
 
 import { cancelRegistration, updateRegistration } from "./actions";
@@ -16,35 +18,26 @@ export default async function EditPage({ params }: PageProps<"/[locale]/r/[token
   const { locale: raw, token } = await params;
   const locale = requireLocale(raw);
   setRequestLocale(locale);
-  const t = await getTranslations("edit");
-  const tr = await getTranslations("register");
-  const th = await getTranslations("home");
+  const [t, tr, th, reg] = await Promise.all([
+    getTranslations("edit"),
+    getTranslations("register"),
+    getTranslations("home"),
+    findByToken(token),
+  ]);
 
-  const reg = await findByToken(token);
-  if (!reg) return <p className="mt-10">{t("notFound")}</p>;
-  if (reg.status === "cancelled") return <p className="mt-10">{t("cancelled")}</p>;
+  if (!reg) return <PageMessage>{t("notFound")}</PageMessage>;
+  if (reg.status === "cancelled") return <PageMessage>{t("cancelled")}</PageMessage>;
 
   const training = await getTrainingById(reg.training_id);
   const seatLocked = !canChangeSeatOrSessions(training.sessions);
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-semibold tracking-tight text-balance">
-        {t("title")}: {training.title[locale]}
-      </h1>
-      {seatLocked && <p className="rounded-lg bg-warning-bg p-4 text-warning-ink">{t("locked")}</p>}
+    <RegistrationPage
+      title={`${t("title")}: ${training.title[locale]}`}
+      lockedNotice={seatLocked ? t("locked") : undefined}
+    >
       <RegistrationForm
-        sessions={training.sessions.map((s) => ({
-          id: s.id,
-          label: sessionLabel(s, locale, th("message", { number: s.message_number })),
-        }))}
-        prices={{ feeCents: training.fee_cents, outlinePriceCents: training.outline_price_cents }}
-        payment={{
-          payee: training.payee_name,
-          iban: training.payee_iban,
-          reference: training.payment_reference,
-        }}
-        rules={training.rules[locale] ?? ""}
+        {...trainingFormProps(training, locale, (number) => th("message", { number }))}
         seatLocked={seatLocked}
         defaults={{
           seat_type: reg.seat_type,
@@ -68,13 +61,13 @@ export default async function EditPage({ params }: PageProps<"/[locale]/r/[token
         messages={{ saved: t("saved"), error: tr("error") }}
       />
       {!seatLocked && (
-        <CancelButton
+        <CancelRegistration
           action={cancelRegistration.bind(null, token, locale)}
           label={t("cancel")}
           confirm={t("cancelConfirm")}
           messages={{ cancelled: t("cancelled"), locked: t("locked"), error: tr("error") }}
         />
       )}
-    </div>
+    </RegistrationPage>
   );
 }

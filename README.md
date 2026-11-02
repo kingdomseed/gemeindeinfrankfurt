@@ -40,6 +40,8 @@ Before stage 1 goes live, still to do:
   `middleware.ts` to `proxy.ts`; see `src/proxy.ts`.
 - [Supabase](https://supabase.com) for Postgres, coordinator auth (email links)
   and Realtime. Host the project in the EU (Frankfurt) region.
+- [Chakra UI v3](https://chakra-ui.com) for every UI component, themed in
+  `src/theme/` (light and dark mode follow the device through `next-themes`).
 - [next-intl](https://next-intl.dev) for translations (`messages/*.json`).
 - [Resend](https://resend.com) for email.
 - [Vitest](https://vitest.dev) for unit tests.
@@ -53,9 +55,13 @@ Before stage 1 goes live, still to do:
 ```
 messages/{de,en,ru}.json     all UI and email text
 src/proxy.ts                 locale routing + coordinator session refresh
-src/app/[locale]/            public pages: home, /register, /r/[token] (edit link)
-src/app/[locale]/coordinator coordinator dashboard and sign-in
-src/lib/domain/              pure rules: fees, cutoffs, outline counts, tokens (tested)
+src/app/[locale]/            thin routes: home, /register, /r/[token] (edit link), /privacy
+src/app/[locale]/coordinator coordinator dashboard, sign-in and their server actions
+src/features/<feature>/      screens built from UI pieces: shell, home, registration, coordinator, privacy
+src/components/ui/           generic Chakra building blocks (field, choice, notice, provider)
+src/theme/                   Chakra system: colour tokens, dark mode, recipe defaults
+src/lib/coordinator.ts       coordinator page queries
+src/lib/domain/              pure rules: fees, cutoffs, outline counts, payments, session labels, tokens (tested)
 src/lib/registrations.ts     form validation and registration storage
 src/lib/email/send.ts        confirmation and cancellation emails
 supabase/migrations/         schema, row-level security, copy_training, purge_personal_data
