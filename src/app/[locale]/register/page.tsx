@@ -12,6 +12,12 @@ import { register } from "./actions";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }: PageProps<"/[locale]/register">) {
+  const locale = requireLocale((await params).locale);
+  const t = await getTranslations({ locale, namespace: "register" });
+  return { title: t("submit") };
+}
+
 export default async function RegisterPage({ params }: PageProps<"/[locale]/register">) {
   const locale = requireLocale((await params).locale);
   setRequestLocale(locale);
@@ -21,7 +27,9 @@ export default async function RegisterPage({ params }: PageProps<"/[locale]/regi
     getPublishedTraining(),
   ]);
 
-  if (!training || !canRegister(training.sessions)) return <PageMessage>{t("closed")}</PageMessage>;
+  if (!training || !canRegister(training.sessions)) {
+    return <PageMessage title={t("closedTitle")} body={t("closedBody")} />;
+  }
 
   return (
     <RegistrationPage

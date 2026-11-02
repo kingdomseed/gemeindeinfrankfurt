@@ -13,12 +13,38 @@
     "questions": "Questions?"
   },
   "home": {
-    "noTraining": "Registration is not open yet.",
+    "noTraining": "Registration is not open yet",
     "register": "Register",
     "schedule": "Schedule",
     "message": "Message {number}",
     "fee": "Fee per seat: {fee}. Outline: {outline} each.",
-    "scheduleCount": "{count} messages"
+    "scheduleCount": "{count} messages",
+    "noTrainingBody": "Please check again later, or ask the coordinators.",
+    "openUntil": "Open until the end of the first day: {day}",
+    "freeSeatsTitle": "Free seats.",
+    "freeSeats": "There is no training fee if you attended the live training in Anaheim, or if you are from Ukraine and not gainfully employed. Outlines are still paid. You tick this on the form.",
+    "seatsTitle": "Seats",
+    "seatInfo": {
+      "full_time": {
+        "title": "Full-time",
+        "body": "You attend every message."
+      },
+      "part_time": {
+        "title": "Part-time",
+        "body": "You choose the messages you will attend. You can change them until the first message starts."
+      },
+      "shared": {
+        "title": "Shared seat",
+        "body": "Two people share one full-time seat and pay one fee, for example a couple with a child at home. One of you attends each message."
+      }
+    },
+    "changesTitle": "Changing your registration",
+    "changesIntro": "Your confirmation email has a personal link to change or cancel your registration. You do not need an account.",
+    "changeWhat": "You can change",
+    "changeUntil": "Until",
+    "changeSeat": "Seat type and messages, or cancel",
+    "changeDetails": "Name, contact details, languages and comments",
+    "anyTime": "Any time during the training"
   },
   "register": {
     "title": "Register for {training}",
@@ -79,17 +105,30 @@
     "locality": "Locality: {locality}",
     "payerName": "Who sends the bank transfer?",
     "payerNameHelp": "Only if it is not you, for example a spouse or one transfer for the whole family. It helps the coordinators match the payment.",
-    "payer": "Paid by {name}"
+    "payer": "Paid by {name}",
+    "closedTitle": "Registration is closed",
+    "closedBody": "New registrations ended with the first day of the training. Already registered? Use the link in your confirmation email to change your details. Otherwise please contact the coordinators.",
+    "receiptThanks": "Thank you!",
+    "nextTitle": "What happens next",
+    "nextPaid": "We tick your payment when it arrives. You do not need to send proof.",
+    "nextBefore": "A few days before the training we email you the place, the rules and how to join the private WhatsApp group.",
+    "nextChange": "To change or cancel, use the link in your confirmation email."
   },
   "edit": {
     "title": "Your registration",
-    "notFound": "This link is not valid.",
+    "notFound": "This link is not valid",
     "save": "Save changes",
     "saved": "Saved. We have sent you an updated confirmation.",
     "cancel": "Cancel registration",
     "cancelConfirm": "Do you really want to cancel this registration?",
     "cancelled": "This registration is cancelled.",
-    "locked": "Seat type, sessions and cancellation can no longer be changed online. Please contact the coordinators."
+    "locked": "Seat type, sessions and cancellation can no longer be changed online. Please contact the coordinators.",
+    "notFoundBody": "It may be incomplete. Please open the link from your newest confirmation email, or write to the coordinators.",
+    "cancelledTitle": "This registration is cancelled",
+    "cancelledBody": "If this was a mistake, you can register again while registration is open.",
+    "cancelExplain": "Your seat is given up. You cannot undo this online.",
+    "cancelYes": "Yes, cancel registration",
+    "cancelKeep": "Keep my registration"
   },
   "email": {
     "confirmationSubject": "Registration confirmed: {training}",

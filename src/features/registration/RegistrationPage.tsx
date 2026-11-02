@@ -14,7 +14,7 @@ export function RegistrationPage(props: {
   return (
     <Stack gap="8">
       <PageHeading title={props.title} subtitle={props.subtitle} />
-      {props.lockedNotice && <Notice tone="warning">{props.lockedNotice}</Notice>}
+      {props.lockedNotice && <Notice tone="neutral">{props.lockedNotice}</Notice>}
       {props.children}
     </Stack>
   );
