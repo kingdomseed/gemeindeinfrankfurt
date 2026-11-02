@@ -1,48 +1,35 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+
+import { requireLocale } from "@/i18n/locale";
 import { redirect } from "@/i18n/navigation";
 import { getCoordinatorClient } from "@/lib/auth";
+import { localizedText } from "@/lib/data";
 import { computeFees, formatEuro } from "@/lib/domain/fees";
 import { countOutlines } from "@/lib/domain/outlines";
-import { languages, type Language, type SeatType } from "@/lib/domain/types";
+import { languages } from "@/lib/domain/types";
+
+import { setOutlineOrder, signOut } from "./actions";
 import { LiveRefresh } from "./LiveRefresh";
 import { PaymentToggle } from "./PaymentToggle";
-import { setOutlineOrder, signOut } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-type Row = {
-  id: string;
-  seat_type: SeatType;
-  first_name: string;
-  last_name: string;
-  partner_first_name: string | null;
-  partner_last_name: string | null;
-  group_language: Language;
-  outline_language: Language;
-  second_outline_language: Language | null;
-  attended_anaheim: boolean;
-  ukraine_not_employed: boolean;
-  waiver: string | null;
-  payer_name: string;
-  fee_paid: boolean;
-  outline_paid: boolean;
-};
-
 export default async function CoordinatorPage({ params }: PageProps<"/[locale]/coordinator">) {
-  const { locale } = await params;
+  const locale = requireLocale((await params).locale);
   setRequestLocale(locale);
   const supabase = await getCoordinatorClient();
   if (!supabase) return redirect({ href: "/coordinator/login", locale });
 
-  const t = await getTranslations("coordinator");
-  const tl = await getTranslations("common.languages");
-
-  const { data: training } = await supabase
-    .from("trainings")
-    .select("id, title, fee_cents, outline_price_cents")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const [t, tl, { data: training }] = await Promise.all([
+    getTranslations("coordinator"),
+    getTranslations("common.languages"),
+    supabase
+      .from("trainings")
+      .select("id, title, fee_cents, outline_price_cents")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
   if (!training) return <p className="mt-10">—</p>;
 
   const [{ data: rows }, { data: orders }] = await Promise.all([
@@ -56,7 +43,7 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
       .order("last_name"),
     supabase.from("outline_orders").select("language, quantity").eq("training_id", training.id),
   ]);
-  const regs = (rows ?? []) as Row[];
+  const regs = rows ?? [];
   const prices = { feeCents: training.fee_cents, outlinePriceCents: training.outline_price_cents };
 
   const list = regs.map((r) => {
@@ -80,7 +67,8 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
     return { r, fees, name, langs };
   });
 
-  const sum = (pick: (row: (typeof list)[number]) => number) => list.reduce((n, row) => n + pick(row), 0);
+  const sum = (pick: (row: (typeof list)[number]) => number) =>
+    list.reduce((n, row) => n + pick(row), 0);
   const feesReceived = sum((x) => (x.r.fee_paid ? x.fees.trainingCents : 0));
   const outlinesReceived = sum((x) => (x.r.outline_paid ? x.fees.outlineCents : 0));
   const unpaid = sum(
@@ -121,10 +109,12 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
       <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">{t("title")}</h1>
-          <p className="text-muted">{(training.title as Record<string, string>)[locale]}</p>
+          <p className="text-muted">{localizedText.parse(training.title)[locale]}</p>
         </div>
         <form action={signOut}>
-          <button className="min-h-11 text-sm underline">{t("signOut")}</button>
+          <button type="submit" className="min-h-11 text-sm underline">
+            {t("signOut")}
+          </button>
         </form>
       </div>
 
@@ -143,10 +133,18 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
           <table className="w-full max-w-md text-left tabular-nums">
             <thead className="text-sm text-muted">
               <tr className="border-b border-line">
-                <th scope="col" className="py-2 pr-3 font-normal">{t("language")}</th>
-                <th scope="col" className="py-2 pr-3 text-right font-normal">{t("needed")}</th>
-                <th scope="col" className="py-2 pr-3 font-normal">{t("ordered")}</th>
-                <th scope="col" className="py-2 text-right font-normal">{t("extra")}</th>
+                <th scope="col" className="py-2 pr-3 font-normal">
+                  {t("language")}
+                </th>
+                <th scope="col" className="py-2 pr-3 text-right font-normal">
+                  {t("needed")}
+                </th>
+                <th scope="col" className="py-2 pr-3 font-normal">
+                  {t("ordered")}
+                </th>
+                <th scope="col" className="py-2 text-right font-normal">
+                  {t("extra")}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -154,7 +152,9 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
                 const extra = (ordered[l] ?? 0) - needed[l];
                 return (
                   <tr key={l} className="border-b border-line">
-                    <th scope="row" className="py-2 pr-3 font-normal">{tl(l)}</th>
+                    <th scope="row" className="py-2 pr-3 font-normal">
+                      {tl(l)}
+                    </th>
                     <td className="py-2 pr-3 text-right">{needed[l]}</td>
                     <td className="py-2 pr-3">
                       <form action={setOutlineOrder} className="flex items-center gap-2">
@@ -169,6 +169,7 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
                           className="w-16 rounded-md border border-line-strong bg-background px-2 py-1.5"
                         />
                         <button
+                          type="submit"
                           aria-label={`${t("save")}: ${t("orderedFor", { language: tl(l) })}`}
                           className="min-h-9 rounded-md border border-line-strong px-2 text-sm hover:bg-surface"
                         >
@@ -176,7 +177,9 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
                         </button>
                       </form>
                     </td>
-                    <td className={`py-2 text-right ${extra < 0 ? "font-semibold text-danger" : ""}`}>
+                    <td
+                      className={`py-2 text-right ${extra < 0 ? "font-semibold text-danger" : ""}`}
+                    >
                       {extra < 0 ? t("shortBy", { count: -extra }) : extra}
                     </td>
                   </tr>
@@ -197,7 +200,9 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
           {list.map((row) => (
             <li key={row.r.id} className="py-3">
               <p className="font-semibold">{row.name}</p>
-              {row.r.payer_name && <p className="text-sm">{t("payer", { name: row.r.payer_name })}</p>}
+              {row.r.payer_name && (
+                <p className="text-sm">{t("payer", { name: row.r.payer_name })}</p>
+              )}
               <p className="text-sm text-muted">
                 {t(`seatShort.${row.r.seat_type}`)} · {row.langs}
               </p>
@@ -213,11 +218,21 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
           <table className="w-full text-left text-sm">
             <thead className="text-muted">
               <tr className="border-b border-line-strong">
-                <th scope="col" className="py-2 pr-3 font-normal">{t("name")}</th>
-                <th scope="col" className="pr-3 font-normal">{t("seat")}</th>
-                <th scope="col" className="pr-3 font-normal">{t("languages")}</th>
-                <th scope="col" className="pr-3 font-normal">{t("feePaid")}</th>
-                <th scope="col" className="font-normal">{t("outlinePaid")}</th>
+                <th scope="col" className="py-2 pr-3 font-normal">
+                  {t("name")}
+                </th>
+                <th scope="col" className="pr-3 font-normal">
+                  {t("seat")}
+                </th>
+                <th scope="col" className="pr-3 font-normal">
+                  {t("languages")}
+                </th>
+                <th scope="col" className="pr-3 font-normal">
+                  {t("feePaid")}
+                </th>
+                <th scope="col" className="font-normal">
+                  {t("outlinePaid")}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -226,7 +241,9 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
                   <th scope="row" className="py-1 pr-3 font-normal">
                     {row.name}
                     {row.r.payer_name && (
-                      <span className="block text-xs text-muted">{t("payer", { name: row.r.payer_name })}</span>
+                      <span className="block text-xs text-muted">
+                        {t("payer", { name: row.r.payer_name })}
+                      </span>
                     )}
                   </th>
                   <td className="pr-3">{t(`seatShort.${row.r.seat_type}`)}</td>

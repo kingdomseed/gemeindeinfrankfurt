@@ -1,18 +1,20 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { RegistrationForm } from "@/components/RegistrationForm";
+
 import { CancelButton } from "@/components/CancelButton";
+import { RegistrationForm } from "@/components/RegistrationForm";
+import { requireLocale } from "@/i18n/locale";
 import { getTrainingById } from "@/lib/data";
 import { canChangeSeatOrSessions } from "@/lib/domain/cutoffs";
-import type { Language } from "@/lib/domain/types";
 import { sessionLabel } from "@/lib/format";
 import { findByToken } from "@/lib/registrations";
+
 import { cancelRegistration, updateRegistration } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function EditPage({ params }: PageProps<"/[locale]/r/[token]">) {
   const { locale: raw, token } = await params;
-  const locale = raw as Language;
+  const locale = requireLocale(raw);
   setRequestLocale(locale);
   const t = await getTranslations("edit");
   const tr = await getTranslations("register");

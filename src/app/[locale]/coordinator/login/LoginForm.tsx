@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
+
 import { fieldClass } from "@/components/styles";
 import { createClient } from "@/lib/supabase/browser";
 
@@ -11,7 +12,8 @@ export function LoginForm() {
   const [sent, setSent] = useState(false);
 
   async function onSubmit(form: FormData) {
-    const email = String(form.get("email") ?? "");
+    const email = form.get("email");
+    if (typeof email !== "string") return;
     const next = `/${locale}/coordinator`;
     await createClient().auth.signInWithOtp({
       email,
@@ -23,19 +25,23 @@ export function LoginForm() {
     setSent(true); // Same message either way, so the form doesn't reveal who is a coordinator.
   }
 
-  if (sent)
+  if (sent) {
     return (
-      <p role="status" className="rounded-lg bg-success-bg p-4 text-success-ink">
+      <output className="block rounded-lg bg-success-bg p-4 text-success-ink">
         {t("linkSent")}
-      </p>
+      </output>
     );
+  }
   return (
     <form action={onSubmit} className="space-y-4">
       <label className="block">
         {t("emailLabel")}
         <input name="email" type="email" autoComplete="email" required className={fieldClass} />
       </label>
-      <button className="min-h-11 rounded-md bg-brand px-6 font-semibold text-brand-ink hover:bg-brand-hover">
+      <button
+        type="submit"
+        className="min-h-11 rounded-md bg-brand px-6 font-semibold text-brand-ink hover:bg-brand-hover"
+      >
         {t("sendLink")}
       </button>
     </form>

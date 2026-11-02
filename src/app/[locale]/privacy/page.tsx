@@ -1,16 +1,26 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+
+import { requireLocale } from "@/i18n/locale";
 import { siteContacts } from "@/lib/site";
 
-const sections = ["data", "purpose", "basis", "recipients", "retention", "rights", "complaint"] as const;
+const sections = [
+  "data",
+  "purpose",
+  "basis",
+  "recipients",
+  "retention",
+  "rights",
+  "complaint",
+] as const;
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/privacy">) {
-  const { locale } = await params;
+  const locale = requireLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "privacy" });
   return { title: t("title") };
 }
 
 export default async function PrivacyPage({ params }: PageProps<"/[locale]/privacy">) {
-  const { locale } = await params;
+  const locale = requireLocale((await params).locale);
   setRequestLocale(locale);
   const t = await getTranslations("privacy");
   const contacts = siteContacts();

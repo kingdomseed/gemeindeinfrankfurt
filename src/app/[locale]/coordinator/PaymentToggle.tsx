@@ -1,6 +1,7 @@
 "use client";
 
 import { useOptimistic, useState, useTransition } from "react";
+
 import { setPaymentFlag } from "./actions";
 
 export function PaymentToggle(props: {
@@ -8,7 +9,7 @@ export function PaymentToggle(props: {
   field: "fee_paid" | "outline_paid";
   value: boolean;
   label: string; // accessible name, including whose payment this is
-  visibleLabel?: string;
+  visibleLabel?: string | undefined;
   failedLabel: string;
 }) {
   const [optimistic, setOptimistic] = useOptimistic(props.value);

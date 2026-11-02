@@ -6,10 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "oxlint --deny-warnings",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "db:reset": "supabase db reset"
+    "check": "npm run format:check && npm run typecheck && npm run lint && npm test && npm run doctor",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts && oxfmt src/lib/supabase/database.types.ts",
+    "prepare": "lefthook install || true",
+    "doctor": "react-doctor --no-telemetry --yes --blocking warning ."
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -27,11 +34,17 @@
     "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.4",
+    "lefthook": "^2.2.2",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
+    "oxlint-tsgolint": "^7.0.2005",
+    "react-doctor": "^0.9.22",
     "supabase": "^3.0.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=22.18"
   }
 }

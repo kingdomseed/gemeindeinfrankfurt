@@ -10,3 +10,11 @@ export async function getCoordinatorClient() {
   const { data } = await supabase.rpc("is_coordinator");
   return data === true ? supabase : null;
 }
+
+// For server actions: they can be called directly by anyone, so each one that
+// touches coordinator data starts with this check.
+export async function requireAuth() {
+  const supabase = await getCoordinatorClient();
+  if (!supabase) throw new Error("Not a coordinator");
+  return supabase;
+}

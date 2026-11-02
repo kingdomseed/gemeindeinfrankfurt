@@ -2,13 +2,16 @@ import "server-only";
 
 export type Contact = { name: string; email: string };
 
+const entryPattern = /^\s*(.+?)\s*<\s*([^<>\s]+@[^<>\s]+)\s*>\s*$/;
+
 // People participants contact with questions, shown in the footer and on the
 // privacy page. Each hosting church sets its own, as
 // CONTACTS="Name <email>; Name <email>".
 export function siteContacts(): Contact[] {
-  return (process.env.CONTACTS ?? "")
-    .split(";")
-    .map((entry) => /^\s*(.+?)\s*<\s*([^<>\s]+@[^<>\s]+)\s*>\s*$/.exec(entry))
-    .filter((m): m is RegExpExecArray => m !== null)
-    .map((m) => ({ name: m[1], email: m[2] }));
+  const contacts: Contact[] = [];
+  for (const entry of (process.env.CONTACTS ?? "").split(";")) {
+    const [, name, email] = entryPattern.exec(entry) ?? [];
+    if (name && email) contacts.push({ name, email });
+  }
+  return contacts;
 }

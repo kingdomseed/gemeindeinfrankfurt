@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
+
 import { Link, usePathname } from "@/i18n/navigation";
 import { locales, type Locale } from "@/i18n/routing";
 
@@ -22,7 +23,9 @@ export function LanguageSwitcher({ label }: { label: string }) {
           hrefLang={l}
           aria-current={l === current ? "page" : undefined}
           className={`inline-flex min-h-11 items-center px-2 ${
-            l === current ? "font-semibold underline decoration-2" : "text-muted hover:text-foreground hover:underline"
+            l === current
+              ? "font-semibold underline decoration-2"
+              : "text-muted hover:text-foreground hover:underline"
           }`}
         >
           {nativeNames[l]}

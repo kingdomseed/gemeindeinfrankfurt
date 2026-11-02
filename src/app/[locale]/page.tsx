@@ -1,25 +1,30 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+
+import { requireLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getPublishedTraining } from "@/lib/data";
 import { formatEuro } from "@/lib/domain/fees";
-import type { Language } from "@/lib/domain/types";
 import { sessionLabel } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home({ params }: PageProps<"/[locale]">) {
-  const { locale } = await params;
+  const locale = requireLocale((await params).locale);
   setRequestLocale(locale);
-  const t = await getTranslations("home");
-  const tc = await getTranslations("common");
-  const training = await getPublishedTraining();
+  const [t, tc, training] = await Promise.all([
+    getTranslations("home"),
+    getTranslations("common"),
+    getPublishedTraining(),
+  ]);
 
   if (!training) return <p className="mt-10">{t("noTraining")}</p>;
 
   return (
     <div className="space-y-10">
       <div className="space-y-4">
-        <h1 className="text-3xl font-semibold tracking-tight text-balance">{training.title[locale as Language]}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-balance">
+          {training.title[locale]}
+        </h1>
         <p className="text-lg">
           {t("fee", {
             fee: formatEuro(training.fee_cents, locale),
@@ -35,7 +40,10 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       </div>
       <section aria-labelledby="schedule-heading">
         <h2 id="schedule-heading" className="text-xl font-semibold">
-          {t("schedule")} <span className="text-base font-normal text-muted">· {t("scheduleCount", { count: training.sessions.length })}</span>
+          {t("schedule")}{" "}
+          <span className="text-base font-normal text-muted">
+            · {t("scheduleCount", { count: training.sessions.length })}
+          </span>
         </h2>
         <p className="mt-1 text-sm text-muted">{tc("timezone")}</p>
         <ol className="mt-4 divide-y divide-line border-y border-line tabular-nums">

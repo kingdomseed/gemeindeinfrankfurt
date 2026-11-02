@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { getCoordinatorClient } from "@/lib/auth";
+
+import { getCoordinatorClient, requireAuth } from "@/lib/auth";
 
 const flag = z.object({
   id: z.uuid(),
@@ -11,10 +12,10 @@ const flag = z.object({
 });
 
 export async function setPaymentFlag(input: z.infer<typeof flag>) {
-  const supabase = await getCoordinatorClient();
-  if (!supabase) throw new Error("Not a coordinator");
+  const supabase = await requireAuth();
   const { id, field, value } = flag.parse(input);
-  const { error } = await supabase.from("registrations").update({ [field]: value }).eq("id", id);
+  const change = field === "fee_paid" ? { fee_paid: value } : { outline_paid: value };
+  const { error } = await supabase.from("registrations").update(change).eq("id", id);
   if (error) throw error;
   revalidatePath("/[locale]/coordinator", "page");
 }
@@ -26,8 +27,7 @@ const order = z.object({
 });
 
 export async function setOutlineOrder(form: FormData) {
-  const supabase = await getCoordinatorClient();
-  if (!supabase) throw new Error("Not a coordinator");
+  const supabase = await requireAuth();
   const row = order.parse(Object.fromEntries(form));
   const { error } = await supabase.from("outline_orders").upsert(row);
   if (error) throw error;
