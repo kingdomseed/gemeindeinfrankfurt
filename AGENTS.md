@@ -10,6 +10,16 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Registration and coordination site for a church's local video training: Next.js App Router, Supabase, Chakra UI v3, next-intl (de, en, ru). Requirements are in `docs/business-requirements.md`.
 
+## Design lives on the canvas
+
+Screens are designed on the Video Training Screens canvas (https://claude.ai/artifact/GuEZjnT8Ct6D2NrNVxZQSt), one artboard per screen, built with the Video Training design system. Design changes start there; this repo implements them.
+
+- Read the artboard for a screen before changing that screen (Artifact tool, `read` with the board's path, such as `project/Register.dc.html`).
+- The canvas file `project/vt-theme.css` uses the same names as the semantic tokens in `src/theme/` (`--brand-solid` is `brand.solid`). A change there is a change to `src/theme/`.
+- The canvas is HTML and English only. Rebuild a board with Chakra, the layers below and `messages/{de,en,ru}.json`; don't copy its markup.
+- Where a board and `docs/business-requirements.md` disagree, the requirements win. Say so, so the board gets fixed.
+- In a PR, name the boards it implements.
+
 ## Skills: read before you write
 
 Skills live in `.agents/skills/` (Claude Code also sees them through `.claude/skills`). Don't wait for a skill to trigger on its own. First look at the code you are changing, then open the matching `SKILL.md` below and follow it. Prefer what the skill and the docs in `node_modules` say over what you remember.

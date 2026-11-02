@@ -16,7 +16,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
   const locale = requireLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "common" });
-  return { title: t("appName") };
+  return { title: { default: t("appName"), template: `%s · ${t("appName")}` } };
 }
 
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {

@@ -14,6 +14,12 @@ import { cancelRegistration, updateRegistration } from "./actions";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }: PageProps<"/[locale]/r/[token]">) {
+  const locale = requireLocale((await params).locale);
+  const t = await getTranslations({ locale, namespace: "edit" });
+  return { title: t("title") };
+}
+
 export default async function EditPage({ params }: PageProps<"/[locale]/r/[token]">) {
   const { locale: raw, token } = await params;
   const locale = requireLocale(raw);
@@ -25,8 +31,10 @@ export default async function EditPage({ params }: PageProps<"/[locale]/r/[token
     findByToken(token),
   ]);
 
-  if (!reg) return <PageMessage>{t("notFound")}</PageMessage>;
-  if (reg.status === "cancelled") return <PageMessage>{t("cancelled")}</PageMessage>;
+  if (!reg) return <PageMessage title={t("notFound")} body={t("notFoundBody")} />;
+  if (reg.status === "cancelled") {
+    return <PageMessage title={t("cancelledTitle")} body={t("cancelledBody")} />;
+  }
 
   const training = await getTrainingById(reg.training_id);
   const seatLocked = !canChangeSeatOrSessions(training.sessions);
@@ -63,8 +71,13 @@ export default async function EditPage({ params }: PageProps<"/[locale]/r/[token
       {!seatLocked && (
         <CancelRegistration
           action={cancelRegistration.bind(null, token, locale)}
-          label={t("cancel")}
-          confirm={t("cancelConfirm")}
+          labels={{
+            cancel: t("cancel"),
+            confirm: t("cancelConfirm"),
+            explain: t("cancelExplain"),
+            yes: t("cancelYes"),
+            keep: t("cancelKeep"),
+          }}
           messages={{ cancelled: t("cancelled"), locked: t("locked"), error: tr("error") }}
         />
       )}

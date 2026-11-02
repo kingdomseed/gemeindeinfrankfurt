@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { PageMessage } from "@/components/ui/page-message";
 import { CoordinatorDashboard } from "@/features/coordinator/CoordinatorDashboard";
@@ -12,6 +12,12 @@ import { setOutlineOrder, setPaymentFlag, signOut } from "./actions";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }: PageProps<"/[locale]/coordinator">) {
+  const locale = requireLocale((await params).locale);
+  const t = await getTranslations({ locale, namespace: "coordinator" });
+  return { title: t("title") };
+}
+
 export default async function CoordinatorPage({ params }: PageProps<"/[locale]/coordinator">) {
   const locale = requireLocale((await params).locale);
   setRequestLocale(locale);
@@ -19,7 +25,10 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
   if (!supabase) return redirect({ href: "/coordinator/login", locale });
 
   const data = await loadCoordinatorDashboard(supabase);
-  if (!data) return <PageMessage>—</PageMessage>;
+  if (!data) {
+    const t = await getTranslations("home");
+    return <PageMessage title={t("noTraining")} />;
+  }
 
   return (
     <>

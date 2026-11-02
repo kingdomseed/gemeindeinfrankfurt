@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
 import { computeFees } from "./fees";
 import { countOutlines } from "./outlines";
-import { sessionLabel } from "./sessions";
+import { berlinDay, berlinDayTime, scheduleDays, sessionLabel } from "./sessions";
 import { hashToken, newEditToken } from "./token";
 
 const prices = { feeCents: 7000, outlinePriceCents: 500 };
@@ -101,5 +101,45 @@ describe("sessionLabel", () => {
   it("shows Berlin time in the page's language", () => {
     const session = { id: "s1", message_number: 1, starts_at: "2026-12-26T08:00:00Z", ends_at: "" };
     expect(sessionLabel(session, "en", "Message 1")).toBe("Message 1: Sat, Dec 26, 09:00 AM");
+  });
+});
+
+const sessionAt = (id: string, n: number, startsAt: string) => ({
+  id,
+  message_number: n,
+  starts_at: startsAt,
+  ends_at: "",
+});
+
+describe("scheduleDays", () => {
+  it("groups messages by the Frankfurt calendar day, in time order", () => {
+    const days = scheduleDays(
+      [
+        sessionAt("b", 2, "2027-01-09T10:15:00Z"),
+        sessionAt("a", 1, "2027-01-09T08:30:00Z"),
+        // 00:30 on 10 January in Frankfurt, although still 9 January in UTC.
+        sessionAt("c", 3, "2027-01-09T23:30:00Z"),
+      ],
+      "en-GB",
+    );
+    expect(days.map((d) => d.key)).toEqual(["2027-01-09", "2027-01-10"]);
+    expect(days[0]?.label).toBe("Saturday 9 January");
+    expect(days[0]?.sessions).toEqual([
+      { id: "a", number: 1, time: "09:30" },
+      { id: "b", number: 2, time: "11:15" },
+    ]);
+    expect(days[1]?.sessions.map((s) => s.number)).toEqual([3]);
+  });
+
+  it("returns no days for an empty schedule", () => {
+    expect(scheduleDays([], "en")).toEqual([]);
+  });
+});
+
+describe("berlinDay and berlinDayTime", () => {
+  it("names the day and time in Frankfurt in the reader's language", () => {
+    const instant = new Date("2027-01-09T08:30:00Z");
+    expect(berlinDay(instant, "de")).toBe("Samstag, 9. Januar");
+    expect(berlinDayTime(instant, "en-GB")).toBe("Saturday 9 January at 09:30");
   });
 });

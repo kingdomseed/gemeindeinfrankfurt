@@ -42,5 +42,18 @@ export const semanticTokens = defineSemanticTokens({
       focusRing: mode("teal.light", "teal.dark"),
       border: mode("teal.light", "teal.dark"),
     },
+    // For the one final, destructive step of a flow ("Yes, cancel
+    // registration"). Text on the solid fill is the page colour: 6.3:1 light,
+    // 7.3:1 dark.
+    danger: {
+      solid: mode("status.dangerFgLight", "status.dangerFgDark"),
+      emphasized: mode("status.dangerFgLight", "status.dangerFgDark"),
+      contrast: mode("paper.light", "paper.dark"),
+      fg: mode("status.dangerFgLight", "status.dangerFgDark"),
+      muted: mode("status.dangerBgLight", "status.dangerBgDark"),
+      subtle: mode("status.dangerBgLight", "status.dangerBgDark"),
+      focusRing: mode("status.dangerFgLight", "status.dangerFgDark"),
+      border: mode("status.dangerFgLight", "status.dangerFgDark"),
+    },
   },
 });
