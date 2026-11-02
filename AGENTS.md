@@ -7,3 +7,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Agent skills
+
+Vendored agent skills live in `.agents/skills/` (Claude Code reads them through the `.claude/skills` symlink). See `.agents/README.md` for each skill's source, commit and license. Use `vercel-react-best-practices` and `vercel-composition-patterns` when writing React/Next.js code, `supabase` and `supabase-postgres-best-practices` for anything touching Supabase or SQL migrations.
