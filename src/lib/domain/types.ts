@@ -1,4 +1,5 @@
 export type SeatType = "full_time" | "part_time" | "shared";
+export const seatTypes: readonly SeatType[] = ["full_time", "part_time", "shared"];
 export type Language = "de" | "en" | "ru";
 export const languages: readonly Language[] = ["de", "en", "ru"];
 

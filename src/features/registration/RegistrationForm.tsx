@@ -1,40 +1,22 @@
 "use client";
 
+import { chakra } from "@chakra-ui/react";
 import { useLocale } from "next-intl";
 import { useActionState, useState, useTransition, type SyntheticEvent } from "react";
 
 import { computeFees } from "@/lib/domain/fees";
 import type { Language, SeatType } from "@/lib/domain/types";
 
-import { PaymentSummary, type PaymentDetails } from "./registration/payment";
-import { Receipt } from "./registration/Receipt";
-import {
-  AboutYouSection,
-  ConfirmSection,
-  FreeSeatSection,
-  LanguagesSection,
-  SeatSection,
-  SessionsSection,
-  SubmitArea,
-  type PersonDefaults,
-  type SessionOption,
-} from "./registration/sections";
-
-export type { SessionOption };
-
-export type RegistrationDefaults = PersonDefaults & {
-  seat_type: SeatType;
-  session_ids: string[];
-  group_language: Language;
-  outline_language: Language;
-  second_outline_language: Language | null;
-  comments: string;
-  payer_name: string;
-  attended_anaheim: boolean;
-  ukraine_not_employed: boolean;
-};
-
-type State = { status: string };
+import { AboutYouSection } from "./AboutYouSection";
+import { ConfirmSection } from "./ConfirmSection";
+import { FreeSeatSection } from "./FreeSeatSection";
+import { LanguagesSection } from "./LanguagesSection";
+import { PaymentSummary } from "./PaymentSummary";
+import { Receipt } from "./Receipt";
+import { SeatSection } from "./SeatSection";
+import { SessionsSection } from "./SessionsSection";
+import { SubmitArea } from "./SubmitArea";
+import type { ActionState, PaymentDetails, RegistrationDefaults, SessionOption } from "./types";
 
 type Props = {
   sessions: SessionOption[];
@@ -44,13 +26,15 @@ type Props = {
   defaults?: RegistrationDefaults;
   seatLocked?: boolean;
   submitLabel: string;
-  action: (prev: State, form: FormData) => Promise<State>;
+  action: (prev: ActionState, form: FormData) => Promise<ActionState>;
   messages: Record<string, string>; // status -> text shown after submit
 };
 
 // Statuses that mean the action worked; everything else is shown as a problem.
 const successStatuses = new Set(["done", "saved"]);
 
+// The registration form on both the register and the edit page. It owns the
+// form state; each section only renders its fields.
 export function RegistrationForm(props: Props) {
   const locale = useLocale();
   const d = props.defaults;
@@ -70,7 +54,7 @@ export function RegistrationForm(props: Props) {
   // The result whose receipt was closed with "Register another person". A new
   // submission yields a new state object, so its receipt shows again only once
   // that submission has actually succeeded.
-  const [dismissedResult, setDismissedResult] = useState<State | null>(null);
+  const [dismissedResult, setDismissedResult] = useState<ActionState | null>(null);
 
   const fees = computeFees(
     {
@@ -121,7 +105,7 @@ export function RegistrationForm(props: Props) {
   }
 
   return (
-    <form key={formKey} onSubmit={onSubmit} className="space-y-10">
+    <chakra.form key={formKey} onSubmit={onSubmit} display="flex" flexDirection="column" gap="10">
       <SeatSection value={seatType} onChange={setSeatType} locked={props.seatLocked} />
       {seatType === "part_time" && (
         <SessionsSection
@@ -161,6 +145,6 @@ export function RegistrationForm(props: Props) {
         pending={pending}
         label={props.submitLabel}
       />
-    </form>
+    </chakra.form>
   );
 }

@@ -1,12 +1,15 @@
 "use client";
 
+import { Button, chakra, Input } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { fieldClass } from "@/components/styles";
+import { FormField } from "@/components/ui/form-field";
+import { Notice } from "@/components/ui/notice";
 import { createClient } from "@/lib/supabase/browser";
 
-export function LoginForm() {
+// Sends a coordinator a sign-in link by email.
+export function SignInForm() {
   const t = useTranslations("coordinator");
   const locale = useLocale();
   const [sent, setSent] = useState(false);
@@ -27,23 +30,25 @@ export function LoginForm() {
 
   if (sent) {
     return (
-      <output className="block rounded-lg bg-success-bg p-4 text-success-ink">
+      <Notice tone="success" announce="status">
         {t("linkSent")}
-      </output>
+      </Notice>
     );
   }
   return (
-    <form action={onSubmit} className="space-y-4">
-      <label className="block">
-        {t("emailLabel")}
-        <input name="email" type="email" autoComplete="email" required className={fieldClass} />
-      </label>
-      <button
-        type="submit"
-        className="min-h-11 rounded-md bg-brand px-6 font-semibold text-brand-ink hover:bg-brand-hover"
-      >
+    <chakra.form
+      action={onSubmit}
+      display="flex"
+      flexDirection="column"
+      alignItems="flex-start"
+      gap="4"
+    >
+      <FormField label={t("emailLabel")} required>
+        <Input name="email" type="email" autoComplete="email" bg="bg" />
+      </FormField>
+      <Button type="submit" px="6">
         {t("sendLink")}
-      </button>
-    </form>
+      </Button>
+    </chakra.form>
   );
 }
