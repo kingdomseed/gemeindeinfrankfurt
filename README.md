@@ -12,6 +12,9 @@ video training. It replaces the Google Forms and spreadsheets we used before:
 
 The site and its emails are in **German, English and Russian**.
 
+The full scope, rules and decisions are in
+[docs/business-requirements.md](docs/business-requirements.md).
+
 ## Status
 
 This is the initial scaffold. Work is staged around the January 2027 training:
