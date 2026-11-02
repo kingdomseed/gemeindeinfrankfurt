@@ -34,8 +34,19 @@
     ".claude/skills/**"
   ],
   "rules": {
-    "eqeqeq": ["error", "always", { "null": "ignore" }],
-    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
     "no-eval": "error",
     "no-implied-eval": "error",
     "no-new-func": "error",
@@ -57,10 +68,12 @@
     "no-lonely-if": "error",
     "no-nested-ternary": "error",
     "curly": ["error", "multi-line"],
-
     "typescript/ban-ts-comment": [
       "error",
-      { "ts-expect-error": "allow-with-description", "minimumDescriptionLength": 10 }
+      {
+        "ts-expect-error": "allow-with-description",
+        "minimumDescriptionLength": 10
+      }
     ],
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "error",
@@ -73,7 +86,6 @@
     "typescript/no-unsafe-function-type": "error",
     "typescript/no-wrapper-object-types": "error",
     "typescript/triple-slash-reference": "error",
-
     "typescript/await-thenable": "error",
     "typescript/no-floating-promises": "error",
     "typescript/no-misused-promises": "error",
@@ -88,27 +100,50 @@
     "typescript/no-unsafe-return": "error",
     "typescript/no-unnecessary-type-assertion": "error",
     "typescript/no-unnecessary-condition": "error",
-    "typescript/restrict-template-expressions": ["error", { "allowNumber": true }],
+    "typescript/restrict-template-expressions": [
+      "error",
+      {
+        "allowNumber": true
+      }
+    ],
     "typescript/restrict-plus-operands": "error",
     "typescript/no-base-to-string": "error",
     "typescript/switch-exhaustiveness-check": "error",
-    "typescript/prefer-nullish-coalescing": ["error", { "ignorePrimitives": { "string": true } }],
+    "typescript/prefer-nullish-coalescing": [
+      "error",
+      {
+        "ignorePrimitives": {
+          "string": true
+        }
+      }
+    ],
     "typescript/prefer-optional-chain": "error",
     "typescript/no-deprecated": [
       "error",
       {
         "allow": [
-          { "from": "package", "package": "next-intl", "name": ["setRequestLocale"] },
-          { "from": "package", "package": "next-intl/server", "name": ["setRequestLocale"] }
+          {
+            "from": "package",
+            "package": "next-intl",
+            "name": ["setRequestLocale"]
+          },
+          {
+            "from": "package",
+            "package": "next-intl/server",
+            "name": ["setRequestLocale"]
+          }
         ]
       }
     ],
-
     "import/no-cycle": "error",
-    "import/no-unassigned-import": ["error", { "allow": ["server-only", "**/*.css"] }],
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["server-only", "**/*.css"]
+      }
+    ],
     "import/no-duplicates": "error",
     "import/no-self-import": "error",
-
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "error",
     "react/jsx-key": "error",
@@ -129,7 +164,6 @@
     "react/error-boundaries": "error",
     "react/purity": "error",
     "react/unsupported-syntax": "error",
-
     "nextjs/no-html-link-for-pages": "error",
     "nextjs/no-img-element": "error",
     "nextjs/no-async-client-component": "error",
@@ -138,7 +172,6 @@
     "nextjs/no-typos": "error",
     "nextjs/inline-script-id": "error",
     "nextjs/no-assign-module-variable": "error",
-
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/aria-props": "error",
     "jsx-a11y/aria-proptypes": "error",
@@ -149,12 +182,10 @@
     "jsx-a11y/no-autofocus": "error",
     "jsx-a11y/click-events-have-key-events": "error",
     "jsx-a11y/no-static-element-interactions": "error",
-
     "unicorn/no-null": "off",
     "unicorn/prefer-node-protocol": "error",
     "unicorn/throw-new-error": "error",
     "unicorn/no-useless-spread": "error",
-
     "promise/no-return-wrap": "error",
     "promise/param-names": "error"
   },
@@ -170,6 +201,155 @@
       "rules": {
         "typescript/no-non-null-assertion": "off",
         "typescript/no-unsafe-member-access": "off"
+      }
+    },
+    {
+      "files": ["src/lib/domain/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react",
+                "message": "src/lib/domain is pure business rules: no React, Next.js or i18n. Pass data in as arguments."
+              },
+              {
+                "name": "react-dom",
+                "message": "src/lib/domain is pure business rules: no React, Next.js or i18n. Pass data in as arguments."
+              },
+              {
+                "name": "next",
+                "message": "src/lib/domain is pure business rules: no React, Next.js or i18n. Pass data in as arguments."
+              },
+              {
+                "name": "next-intl",
+                "message": "src/lib/domain is pure business rules: no React, Next.js or i18n. Pass data in as arguments."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["next/*", "next-intl/*", "@supabase/*"],
+                "message": "src/lib/domain is pure business rules: no framework or database imports."
+              },
+              {
+                "group": [
+                  "@/app/**",
+                  "@/features/**",
+                  "@/components/**",
+                  "@/theme/**",
+                  "@/i18n/**",
+                  "@/lib/*",
+                  "@/lib/*/**",
+                  "!@/lib/domain/**"
+                ],
+                "message": "src/lib/domain imports nothing from other layers. Other layers import from it."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/theme/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/**", "@/features/**", "@/components/**", "@/lib/**", "@/i18n/**"],
+                "message": "src/theme holds Chakra tokens and recipes only; it imports nothing from the app."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/components/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/**", "@/features/**"],
+                "message": "Shared components sit below features and routes. Pass server actions and data in as props."
+              },
+              {
+                "group": [
+                  "@/lib/supabase/**",
+                  "@/lib/auth",
+                  "@/lib/data",
+                  "@/lib/registrations",
+                  "@/lib/email/**"
+                ],
+                "allowTypeImports": true,
+                "message": "Components never touch data access. Load data in the route or server action and pass it in as props."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/components/ui/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "next-intl",
+                "message": "src/components/ui is generic: take translated text as props instead of calling next-intl."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/app/**", "@/features/**", "@/i18n/**", "@/lib/**"],
+                "message": "src/components/ui is generic Chakra building blocks: no app, feature, i18n or domain imports. Take everything as props."
+              },
+              {
+                "group": ["next-intl/*", "@supabase/*"],
+                "message": "src/components/ui is generic: no i18n or data access."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/**"],
+                "message": "Features never import from routes. The route passes server actions in as props."
+              },
+              {
+                "group": [
+                  "@/lib/supabase/**",
+                  "!@/lib/supabase/browser",
+                  "@/lib/auth",
+                  "@/lib/data",
+                  "@/lib/registrations",
+                  "@/lib/email/**"
+                ],
+                "allowTypeImports": true,
+                "message": "Features never touch server data access. The route or server action loads data and passes it in. Only @/lib/supabase/browser (login, realtime) is allowed."
+              },
+              {
+                "group": ["@supabase/*"],
+                "allowTypeImports": true,
+                "message": "Features never talk to Supabase directly."
+              }
+            ]
+          }
+        ]
       }
     }
   ]

@@ -22,6 +22,8 @@ commit here. Do not edit vendored files in place; add project rules to
 | `supabase` | Supabase Auth, RLS, SSR, CLI, migrations and security checklist | [supabase/agent-skills](https://github.com/supabase/agent-skills/tree/main/skills/supabase) | `c9be0e9` | MIT, `supabase/LICENSE` |
 | `react-doctor` | Run React Doctor after React changes and triage its findings | [react-doctor](https://www.npmjs.com/package/react-doctor) npm package, `dist/skills/react-doctor`, installed with `npx react-doctor install` | `0.9.22` (skill v1.2.0) | Modified MIT, `react-doctor/LICENSE`: free to use and redistribute, but using it as AI training data or selling it as a hosted service needs Million's permission |
 | `supabase-postgres-best-practices` | Postgres schema, index, RLS and query rules | [supabase/agent-skills](https://github.com/supabase/agent-skills/tree/main/skills/supabase-postgres-best-practices) | `c9be0e9` | MIT, `supabase-postgres-best-practices/LICENSE` |
+| `chakra-ui-builder` | Build Chakra UI v3 components and pages, set up the provider, theme tokens, semantic tokens and recipes | [chakra-ui/chakra-ui](https://github.com/chakra-ui/chakra-ui/tree/main/skills/chakra-ui-builder) | `731ecac` | MIT, `chakra-ui-builder/LICENSE` (copied from the repo root) |
+| `chakra-ui-refactor` | Review Chakra UI code and convert Tailwind or plain HTML to Chakra UI v3 | [chakra-ui/chakra-ui](https://github.com/chakra-ui/chakra-ui/tree/main/skills/chakra-ui-refactor) | `731ecac` | MIT, `chakra-ui-refactor/LICENSE` (copied from the repo root) |
 | `impeccable` | Frontend design vocabulary: `critique`, `audit`, `polish`, `harden`, `layout`, `typeset` and more, plus a deterministic anti-pattern detector (`scripts/impeccable detect`) | [pbakaus/impeccable](https://github.com/pbakaus/impeccable/tree/main/.agents/skills/impeccable) | `9c3808b` (v4.8.0) | Apache-2.0, `impeccable/LICENSE` |
 
 ## Notes for this repo
@@ -37,7 +39,10 @@ commit here. Do not edit vendored files in place; add project rules to
   shows `bun` typecheck commands and a sample CI workflow in `references/`; here,
   use `npx tsc --noEmit` and `npm run lint` instead. `visual-pr` saves drafts under
   `.humanlayer/tasks/`, which is fine to leave uncommitted.
-- Skills considered and left out: `typescript-project-setup` from
+- Skills considered and left out: `chakra-ui-migrate` from
+  [chakra-ui/chakra-ui](https://github.com/chakra-ui/chakra-ui/tree/main/skills/chakra-ui-migrate)
+  only covers upgrading from Chakra v2, and this repo starts on v3.
+  Also left out: `typescript-project-setup` from
   [microsoft/typescript-skills](https://github.com/microsoft/typescript-skills)
   (the TypeScript team's only published skill so far) covers creating a new
   TypeScript project, and its `rootDir`/`outDir` advice conflicts with a Next.js
