@@ -27,7 +27,7 @@ export function TrainingOverview({ training }: { training: TrainingWithSessions 
         </Button>
       </Stack>
       <Box as="section" aria-labelledby="schedule-heading">
-        <Heading as="h2" id="schedule-heading" size="xl" fontWeight="semibold">
+        <Heading as="h2" id="schedule-heading" size="xl">
           {t("schedule")}{" "}
           <Span fontSize="md" fontWeight="normal" color="fg.muted">
             · {t("scheduleCount", { count: training.sessions.length })}

@@ -59,7 +59,7 @@ export function LanguagesSection(props: {
         </SelectField>
       </SimpleGrid>
       <FormField label={t("comments")} optionalLabel={t("optional")}>
-        <Textarea name="comments" defaultValue={props.comments} rows={3} bg="bg" />
+        <Textarea name="comments" defaultValue={props.comments} rows={3} />
       </FormField>
     </FormSection>
   );

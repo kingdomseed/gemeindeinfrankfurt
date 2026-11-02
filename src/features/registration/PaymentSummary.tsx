@@ -20,7 +20,7 @@ export function PaymentSummary(props: {
   const { fees } = props;
   return (
     <Box as="section" aria-labelledby="payment-heading" bg="brand.subtle" rounded="xl" p="5">
-      <Heading as="h2" id="payment-heading" size="lg" fontWeight="semibold">
+      <Heading as="h2" id="payment-heading" size="lg">
         {t("sectionPayment")}
       </Heading>
       <Box as="dl" mt="3">
@@ -45,7 +45,7 @@ export function PaymentSummary(props: {
       <TransferDetails payment={props.payment} />
       <Box mt="4">
         <FormField label={t("payerName")} optionalLabel={t("optional")} help={t("payerNameHelp")}>
-          <Input name="payer_name" defaultValue={props.payerName} autoComplete="off" bg="bg" />
+          <Input name="payer_name" defaultValue={props.payerName} autoComplete="off" />
         </FormField>
       </Box>
     </Box>

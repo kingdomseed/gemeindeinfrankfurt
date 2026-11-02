@@ -10,7 +10,7 @@ export function ConfirmSection(props: { rules: string; confirmed: boolean }) {
     <FormSection legend={t("sectionConfirm")}>
       {props.rules && (
         <Box borderWidth="1px" rounded="lg" p="4">
-          <Heading as="h3" size="md" fontWeight="semibold">
+          <Heading as="h3" size="md">
             {t("rules")}
           </Heading>
           <Text mt="1" fontSize="sm" whiteSpace="pre-line">

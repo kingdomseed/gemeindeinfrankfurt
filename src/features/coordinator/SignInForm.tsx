@@ -44,7 +44,7 @@ export function SignInForm() {
       gap="4"
     >
       <FormField label={t("emailLabel")} required>
-        <Input name="email" type="email" autoComplete="email" bg="bg" />
+        <Input name="email" type="email" autoComplete="email" />
       </FormField>
       <Button type="submit" px="6">
         {t("sendLink")}

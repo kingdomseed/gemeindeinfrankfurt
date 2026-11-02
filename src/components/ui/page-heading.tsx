@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 export function PageHeading(props: { title: ReactNode; subtitle?: ReactNode }) {
   return (
     <Stack gap="1">
-      <Heading as="h1" size="3xl" fontWeight="semibold" letterSpacing="tight" textWrap="balance">
+      <Heading as="h1" size="3xl" letterSpacing="tight" textWrap="balance">
         {props.title}
       </Heading>
       {props.subtitle && (

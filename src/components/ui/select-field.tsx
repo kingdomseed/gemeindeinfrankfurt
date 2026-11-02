@@ -13,9 +13,7 @@ export function SelectField(props: {
   return (
     <FormField label={props.label}>
       <NativeSelect.Root>
-        <NativeSelect.Field bg="bg" {...props.field}>
-          {props.children}
-        </NativeSelect.Field>
+        <NativeSelect.Field {...props.field}>{props.children}</NativeSelect.Field>
         <NativeSelect.Indicator />
       </NativeSelect.Root>
     </FormField>
