@@ -332,13 +332,14 @@
               {
                 "group": [
                   "@/lib/supabase/**",
+                  "!@/lib/supabase/browser",
                   "@/lib/auth",
                   "@/lib/data",
                   "@/lib/registrations",
                   "@/lib/email/**"
                 ],
                 "allowTypeImports": true,
-                "message": "Features never touch data access. The route or server action loads data and passes it in."
+                "message": "Features never touch server data access. The route or server action loads data and passes it in. Only @/lib/supabase/browser (login, realtime) is allowed."
               },
               {
                 "group": ["@supabase/*"],
