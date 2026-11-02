@@ -1,9 +1,10 @@
 import "server-only";
-import { Resend } from "resend";
 import { getTranslations } from "next-intl/server";
+import { Resend } from "resend";
+
+import type { Training } from "@/lib/data";
 import { computeFees, formatEuro } from "@/lib/domain/fees";
 import type { Language } from "@/lib/domain/types";
-import type { Training } from "@/lib/data";
 import type { RegistrationInput } from "@/lib/registrations";
 
 function client() {
@@ -15,12 +16,15 @@ async function send(to: string, subject: string, text: string) {
   const resend = client();
   if (!resend) {
     // Local development without an email provider.
-    console.info(`[email skipped: RESEND_API_KEY not set] ${subject}`);
+    console.warn(`[email skipped: RESEND_API_KEY not set] ${subject}`);
     return;
   }
+  const from = process.env.EMAIL_FROM;
+  if (!from) throw new Error("Missing environment variable EMAIL_FROM");
+  const replyTo = process.env.EMAIL_REPLY_TO;
   const { error } = await resend.emails.send({
-    from: process.env.EMAIL_FROM!,
-    replyTo: process.env.EMAIL_REPLY_TO || undefined,
+    from,
+    ...(replyTo ? { replyTo } : {}),
     to,
     subject,
     text,

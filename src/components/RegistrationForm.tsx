@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useActionState, useState } from "react";
+
 import { computeFees, formatEuro } from "@/lib/domain/fees";
-import { languages, type Language, type SeatType } from "@/lib/domain/types";
+import { isLanguage, languages, type Language, type SeatType } from "@/lib/domain/types";
 
 export type SessionOption = { id: string; label: string };
 
@@ -38,14 +39,16 @@ type Props = {
   messages: Record<string, string>; // status -> text shown after submit
 };
 
-const field = "mt-1 w-full rounded border border-neutral-300 px-3 py-2 dark:border-neutral-700 dark:bg-neutral-900";
+const field =
+  "mt-1 w-full rounded border border-neutral-300 px-3 py-2 dark:border-neutral-700 dark:bg-neutral-900";
 
 export function RegistrationForm(props: Props) {
   const t = useTranslations("register");
   const tl = useTranslations("common.languages");
-  const locale = useLocale() as Language;
+  const locale = useLocale();
   const d = props.defaults;
   const isEdit = Boolean(d);
+  const chosenSessions = new Set(d?.session_ids);
 
   const [state, formAction, pending] = useActionState(props.action, { status: "idle" });
   const [seatType, setSeatType] = useState<SeatType>(d?.seat_type ?? "full_time");
@@ -78,9 +81,9 @@ export function RegistrationForm(props: Props) {
   return (
     <form action={formAction} className="space-y-6">
       {props.messages[state.status] && (
-        <p role="status" className="rounded bg-amber-50 p-3 text-amber-900">
+        <output className="block rounded bg-amber-50 p-3 text-amber-900">
           {props.messages[state.status]}
-        </p>
+        </output>
       )}
 
       <fieldset disabled={props.seatLocked}>
@@ -108,7 +111,7 @@ export function RegistrationForm(props: Props) {
                 type="checkbox"
                 name="session_ids"
                 value={s.id}
-                defaultChecked={d?.session_ids.includes(s.id)}
+                defaultChecked={chosenSessions.has(s.id)}
               />
               {s.label}
             </label>
@@ -121,8 +124,20 @@ export function RegistrationForm(props: Props) {
         <Text name="last_name" label={t("lastName")} value={d?.last_name} required />
         {seatType === "shared" && (
           <>
-            <Text name="partner_first_name" label={t("partnerFirstName")} value={d?.partner_first_name} required disabled={props.seatLocked} />
-            <Text name="partner_last_name" label={t("partnerLastName")} value={d?.partner_last_name} required disabled={props.seatLocked} />
+            <Text
+              name="partner_first_name"
+              label={t("partnerFirstName")}
+              value={d?.partner_first_name}
+              required
+              disabled={props.seatLocked}
+            />
+            <Text
+              name="partner_last_name"
+              label={t("partnerLastName")}
+              value={d?.partner_last_name}
+              required
+              disabled={props.seatLocked}
+            />
           </>
         )}
         <Text name="email" type="email" label={t("email")} value={d?.email} required />
@@ -132,7 +147,11 @@ export function RegistrationForm(props: Props) {
       <div className="grid gap-4 sm:grid-cols-3">
         <label>
           {t("groupLanguage")}
-          <select name="group_language" defaultValue={d?.group_language ?? locale} className={field}>
+          <select
+            name="group_language"
+            defaultValue={d?.group_language ?? locale}
+            className={field}
+          >
             {languageOptions}
           </select>
         </label>
@@ -141,7 +160,9 @@ export function RegistrationForm(props: Props) {
           <select
             name="outline_language"
             value={outline}
-            onChange={(e) => setOutline(e.target.value as Language)}
+            onChange={(e) => {
+              if (isLanguage(e.target.value)) setOutline(e.target.value);
+            }}
             className={field}
           >
             {languageOptions}
@@ -152,7 +173,10 @@ export function RegistrationForm(props: Props) {
           <select
             name="second_outline_language"
             value={second}
-            onChange={(e) => setSecond(e.target.value as Language | "")}
+            onChange={(e) => {
+              const v = e.target.value;
+              setSecond(isLanguage(v) ? v : "");
+            }}
             className={field}
           >
             <option value="">{t("none")}</option>
@@ -173,13 +197,23 @@ export function RegistrationForm(props: Props) {
       </label>
 
       <div className="space-y-2">
-        <Check name="attended_anaheim" label={t("attendedAnaheim")} checked={anaheim} onChange={setAnaheim} />
-        <Check name="ukraine_not_employed" label={t("ukraineNotEmployed")} checked={ukraine} onChange={setUkraine} />
+        <Check
+          name="attended_anaheim"
+          label={t("attendedAnaheim")}
+          checked={anaheim}
+          onChange={setAnaheim}
+        />
+        <Check
+          name="ukraine_not_employed"
+          label={t("ukraineNotEmployed")}
+          checked={ukraine}
+          onChange={setUkraine}
+        />
       </div>
 
       <details className="rounded border border-neutral-300 p-3 dark:border-neutral-700">
         <summary className="cursor-pointer font-semibold">{t("rules")}</summary>
-        <div className="mt-2 whitespace-pre-line text-sm">{props.rules}</div>
+        <div className="mt-2 text-sm whitespace-pre-line">{props.rules}</div>
       </details>
 
       <div className="space-y-2">
@@ -222,10 +256,10 @@ export function RegistrationForm(props: Props) {
 function Text(props: {
   name: string;
   label: string;
-  value?: string;
+  value?: string | undefined;
   type?: string;
   required?: boolean;
-  disabled?: boolean;
+  disabled?: boolean | undefined;
 }) {
   return (
     <label>
@@ -250,6 +284,7 @@ function Check(props: {
   defaultChecked?: boolean;
   onChange?: (v: boolean) => void;
 }) {
+  const { onChange } = props;
   return (
     <label className="flex items-start gap-2">
       <input
@@ -258,7 +293,7 @@ function Check(props: {
         required={props.required}
         checked={props.checked}
         defaultChecked={props.defaultChecked}
-        onChange={props.onChange ? (e) => props.onChange!(e.target.checked) : undefined}
+        onChange={onChange ? (e) => onChange(e.target.checked) : undefined}
         className="mt-1"
       />
       <span>{props.label}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
+
 import { setPaymentFlag } from "./actions";
 
 export function PaymentToggle(props: {

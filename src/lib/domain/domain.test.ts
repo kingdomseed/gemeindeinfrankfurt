@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { computeFees } from "./fees";
+
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
+import { computeFees } from "./fees";
 import { countOutlines } from "./outlines";
 import { hashToken, newEditToken } from "./token";
 
@@ -40,8 +41,18 @@ describe("computeFees", () => {
 describe("cutoffs", () => {
   // First message on a January evening in Frankfurt (CET, UTC+1).
   const sessions = [
-    { id: "2", message_number: 2, starts_at: "2027-01-08T18:00:00Z", ends_at: "2027-01-08T20:30:00Z" },
-    { id: "1", message_number: 1, starts_at: "2027-01-05T18:00:00Z", ends_at: "2027-01-05T20:30:00Z" },
+    {
+      id: "2",
+      message_number: 2,
+      starts_at: "2027-01-08T18:00:00Z",
+      ends_at: "2027-01-08T20:30:00Z",
+    },
+    {
+      id: "1",
+      message_number: 1,
+      starts_at: "2027-01-05T18:00:00Z",
+      ends_at: "2027-01-05T20:30:00Z",
+    },
   ];
 
   it("locks changes at the first session", () => {

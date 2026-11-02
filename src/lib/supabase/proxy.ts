@@ -1,11 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import type { NextRequest, NextResponse } from "next/server";
+
+import type { Database } from "./database.types";
 import { supabaseAnonKey, supabaseUrl } from "./env";
 
 // Keeps the coordinator's auth cookie fresh. Authorization itself happens in
-// pages and server actions (see requireCoordinator), never here.
+// pages and server actions (see src/lib/auth.ts), never here.
 export async function refreshSession(request: NextRequest, response: NextResponse) {
-  const supabase = createServerClient(supabaseUrl(), supabaseAnonKey(), {
+  const supabase = createServerClient<Database>(supabaseUrl(), supabaseAnonKey(), {
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll: (cookies) => {

@@ -1,6 +1,6 @@
 # Frankfurt Video Training Platform: Business Requirements
 
-*Written by Jason Holt. Source: the shared "Frankfurt Video Training Platform: Business Requirements" doc, as of 2 Nov 2026. Update this file when that doc changes.*
+_Written by Jason Holt. Source: the shared "Frankfurt Video Training Platform: Business Requirements" doc, as of 2 Nov 2026. Update this file when that doc changes._
 
 ## Summary
 
@@ -15,14 +15,14 @@ The system has two sides:
 
 ## Scope
 
-| In the first version | Not included |
-| --- | --- |
-| Registration with self-service edit and cancel | **Online payment.** Saints pay by bank transfer to the church's IBAN. |
-| Shared coordination site for several serving ones, updating live | Tracking test failures. In practice they don't happen. |
-| Study groups, attendance, payment tracking by hand, outlines | Streaming the messages. They stay on the Lebensstrom/LSM webcast. |
-| Hymns, verses, rules, services, testing schedule | Sending the report to Lebensstrom automatically. We sign and email it ourselves. |
-| Email to registrants |  |
-| Collecting the Lebensstrom report data as we go |  |
+| In the first version                                             | Not included                                                                     |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Registration with self-service edit and cancel                   | **Online payment.** Saints pay by bank transfer to the church's IBAN.            |
+| Shared coordination site for several serving ones, updating live | Tracking test failures. In practice they don't happen.                           |
+| Study groups, attendance, payment tracking by hand, outlines     | Streaming the messages. They stay on the Lebensstrom/LSM webcast.                |
+| Hymns, verses, rules, services, testing schedule                 | Sending the report to Lebensstrom automatically. We sign and email it ourselves. |
+| Email to registrants                                             |                                                                                  |
+| Collecting the Lebensstrom report data as we go                  |                                                                                  |
 
 Languages: the site and messages to registrants in **German, English and Russian**. Registrants choose a training language of **English, German or Russian**, and adding more languages later must be easy.
 
@@ -50,12 +50,12 @@ A saint can go through the whole process on their own, from reading the schedule
 10. With that link the registrant can **edit** or **cancel** their registration.
 11. What can change, and until when:
 
-| Change | Allowed until |
-| --- | --- |
-| New registration | The end of the first day of the local training |
-| Seat type and chosen sessions | The start of the first session |
-| Cancel | The start of the first session |
-| Name, contact details, languages, comments | Any time during the training |
+| Change                                     | Allowed until                                  |
+| ------------------------------------------ | ---------------------------------------------- |
+| New registration                           | The end of the first day of the local training |
+| Seat type and chosen sessions              | The start of the first session                 |
+| Cancel                                     | The start of the first session                 |
+| Name, contact details, languages, comments | Any time during the training                   |
 
 After a cutoff, the registrant sees a note to contact the coordinators instead. Coordinators can still make any change from the coordination side.
 
@@ -120,14 +120,14 @@ Several serving ones log in to the same coordination site. Everyone can edit, an
 
 Email is a big part of the system. Every email goes out in German, English and Russian.
 
-| Email | When | Contents |
-| --- | --- | --- |
-| Pre-registration announcement | When registration opens | Dates, how to register, the deadline |
-| Confirmation | Right after each registration and each change | What they registered for, the amount to pay and the IBAN, their personal edit link |
-| Cancellation | When a registration is cancelled | Confirmation that it is cancelled |
-| Payment reminder | Sent by a coordinator, to everyone still unpaid | Amounts still open and the IBAN |
-| Before the training | A few days before the first session | Schedule, place or Zoom details, rules, what to bring |
-| Message to all or to a group | Any time, sent by a coordinator | Free text, for example a schedule change |
+| Email                         | When                                            | Contents                                                                           |
+| ----------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Pre-registration announcement | When registration opens                         | Dates, how to register, the deadline                                               |
+| Confirmation                  | Right after each registration and each change   | What they registered for, the amount to pay and the IBAN, their personal edit link |
+| Cancellation                  | When a registration is cancelled                | Confirmation that it is cancelled                                                  |
+| Payment reminder              | Sent by a coordinator, to everyone still unpaid | Amounts still open and the IBAN                                                    |
+| Before the training           | A few days before the first session             | Schedule, place or Zoom details, rules, what to bring                              |
+| Message to all or to a group  | Any time, sent by a coordinator                 | Free text, for example a schedule change                                           |
 
 The Zoom link only goes to registered people, never to a public page.
 
@@ -152,47 +152,47 @@ Within **7 days** of the last session, the contact brother pays the fees to Lebe
 
 These come from the [Lebensstrom video training page](https://lebensstrom.de/video-training-en/) for December 2026 (updated 9 Oct 2026). Where the page and the questionnaire PDF differ, the page wins.
 
-| Rule | How the system applies it |
-| --- | --- |
-| Registrants must be 18 or older | A required checkbox on the form |
-| Seats are full-time, part-time, or shared; a shared seat is full-time and pays once | Seat types on the form; a shared seat forces full-time |
-| €70 per seat; €0 for Anaheim attendees and for Ukrainian saints who are not gainfully employed | Fee set per training; waivers as checkboxes |
-| Outlines are €5 each, printed only, in German, English or Russian, and invoiced separately | Outline payment tracked apart from the fee |
-| Church registration with Lebensstrom by 29 Oct 2026, 13:00 | Deadline shown on the coordination dashboard |
-| Outline order by 1 Dec 2026, 16:00; order extras for late sign-ups | Outline counts and extras ready before this date |
-| Numbers can change free of charge until the start; no new registrations after the first day | Registration closes automatically after day one |
-| No unexcused absences; at most two excused | Counted and shown for the report |
-| Part-timers count as absent only for sessions they chose before the start | Session choices lock at the first session |
-| Name tag required; one per seat, both names on a shared seat | Name tag export |
-| Study groups of 8–10 | Group suggestions |
-| Tests for messages 1–10; attendance for all 12 | Testing schedule and attendance |
-| Webcast login and Zoom ID are not shared with individual registrants | Visible only to coordinators |
-| Fees, questionnaire and reimbursements are due within 7 days of the end | Report page and reminder on the dashboard |
+| Rule                                                                                           | How the system applies it                              |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Registrants must be 18 or older                                                                | A required checkbox on the form                        |
+| Seats are full-time, part-time, or shared; a shared seat is full-time and pays once            | Seat types on the form; a shared seat forces full-time |
+| €70 per seat; €0 for Anaheim attendees and for Ukrainian saints who are not gainfully employed | Fee set per training; waivers as checkboxes            |
+| Outlines are €5 each, printed only, in German, English or Russian, and invoiced separately     | Outline payment tracked apart from the fee             |
+| Church registration with Lebensstrom by 29 Oct 2026, 13:00                                     | Deadline shown on the coordination dashboard           |
+| Outline order by 1 Dec 2026, 16:00; order extras for late sign-ups                             | Outline counts and extras ready before this date       |
+| Numbers can change free of charge until the start; no new registrations after the first day    | Registration closes automatically after day one        |
+| No unexcused absences; at most two excused                                                     | Counted and shown for the report                       |
+| Part-timers count as absent only for sessions they chose before the start                      | Session choices lock at the first session              |
+| Name tag required; one per seat, both names on a shared seat                                   | Name tag export                                        |
+| Study groups of 8–10                                                                           | Group suggestions                                      |
+| Tests for messages 1–10; attendance for all 12                                                 | Testing schedule and attendance                        |
+| Webcast login and Zoom ID are not shared with individual registrants                           | Visible only to coordinators                           |
+| Fees, questionnaire and reimbursements are due within 7 days of the end                        | Report page and reminder on the dashboard              |
 
 ## Decisions made
 
 No questions are open. Every question raised while preparing this document is answered below, either by the Lebensstrom page, by the coordinators, or as a working decision that follows from the rules.
 
-| Question | Decision | Basis |
-| --- | --- | --- |
-| How many absences are allowed? | None unexcused, at most two excused | Lebensstrom page; confirmed by the coordinators |
-| What happens when someone goes over? | Nothing. It is recorded for the report only. | Coordinators |
-| Do we track test failures? | No. In practice they don't happen. | Coordinators |
-| Do we take payments online? | No. Bank transfer to the church's IBAN, ticked by hand. | Coordinators |
-| What fee do we charge? | The fee per seat is set for each training. For December 2026 it is €70, the amount we owe Lebensstrom per seat. | Lebensstrom page |
-| Who pays nothing? | Anaheim attendees, Ukrainian saints who are not gainfully employed, and anyone the coordinators grant a hardship waiver (with a reason) | Lebensstrom page; past practice |
-| When must the questionnaire go in: one week or two? | Within one week (7 days). The PDF's "two weeks" is outdated. | Lebensstrom page |
-| Tests cover messages 1–10 but attendance covers 12. Is that a conflict? | No. Test 1–10, take attendance for all 12. | Lebensstrom page |
-| Until when can people register? | Through the first day of the local training | Lebensstrom page |
-| Until when can part-timers change sessions? | Until the first session starts. After that their choices are fixed, so absences are counted correctly. | Follows from the Lebensstrom absence rule |
-| Until when can people cancel? | Until the first session starts. After that, coordinators handle it. | Working decision, in line with the free changes until the start |
-| Can a shared seat be part-time? | No. Shared seats are always full-time. | Lebensstrom page |
-| Can one email address be used for several registrations? | Yes. Each registration gets its own edit link. | Coordinators |
-| How do registrants edit without an account? | A personal edit link in the confirmation email | Coordinators (as with today's plugin) |
-| Who can see contact details? | Coordinators only | Working decision |
-| What happens to personal data afterwards? | Names and contact details are deleted once the report is filed and accepted. Only counts are kept. | Working decision |
-| Which questionnaire form do we use? | The December 2026 version from the Lebensstrom page | Lebensstrom page |
-| Which account do fees go to? | Saints pay the church. The church transfers to Lebensstrom e.V. with the reference "Spende 2026 WT". | Lebensstrom page |
+| Question                                                                | Decision                                                                                                                                | Basis                                                           |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| How many absences are allowed?                                          | None unexcused, at most two excused                                                                                                     | Lebensstrom page; confirmed by the coordinators                 |
+| What happens when someone goes over?                                    | Nothing. It is recorded for the report only.                                                                                            | Coordinators                                                    |
+| Do we track test failures?                                              | No. In practice they don't happen.                                                                                                      | Coordinators                                                    |
+| Do we take payments online?                                             | No. Bank transfer to the church's IBAN, ticked by hand.                                                                                 | Coordinators                                                    |
+| What fee do we charge?                                                  | The fee per seat is set for each training. For December 2026 it is €70, the amount we owe Lebensstrom per seat.                         | Lebensstrom page                                                |
+| Who pays nothing?                                                       | Anaheim attendees, Ukrainian saints who are not gainfully employed, and anyone the coordinators grant a hardship waiver (with a reason) | Lebensstrom page; past practice                                 |
+| When must the questionnaire go in: one week or two?                     | Within one week (7 days). The PDF's "two weeks" is outdated.                                                                            | Lebensstrom page                                                |
+| Tests cover messages 1–10 but attendance covers 12. Is that a conflict? | No. Test 1–10, take attendance for all 12.                                                                                              | Lebensstrom page                                                |
+| Until when can people register?                                         | Through the first day of the local training                                                                                             | Lebensstrom page                                                |
+| Until when can part-timers change sessions?                             | Until the first session starts. After that their choices are fixed, so absences are counted correctly.                                  | Follows from the Lebensstrom absence rule                       |
+| Until when can people cancel?                                           | Until the first session starts. After that, coordinators handle it.                                                                     | Working decision, in line with the free changes until the start |
+| Can a shared seat be part-time?                                         | No. Shared seats are always full-time.                                                                                                  | Lebensstrom page                                                |
+| Can one email address be used for several registrations?                | Yes. Each registration gets its own edit link.                                                                                          | Coordinators                                                    |
+| How do registrants edit without an account?                             | A personal edit link in the confirmation email                                                                                          | Coordinators (as with today's plugin)                           |
+| Who can see contact details?                                            | Coordinators only                                                                                                                       | Working decision                                                |
+| What happens to personal data afterwards?                               | Names and contact details are deleted once the report is filed and accepted. Only counts are kept.                                      | Working decision                                                |
+| Which questionnaire form do we use?                                     | The December 2026 version from the Lebensstrom page                                                                                     | Lebensstrom page                                                |
+| Which account do fees go to?                                            | Saints pay the church. The church transfers to Lebensstrom e.V. with the reference "Spende 2026 WT".                                    | Lebensstrom page                                                |
 
 ## Technical approach
 
@@ -200,27 +200,27 @@ The system is built with **Next.js** for the website and **Supabase** (Postgres)
 
 **How the stack covers the requirements**
 
-| Requirement | With Next.js and Supabase |
-| --- | --- |
-| Public registration form, schedule and fee from the backend | Next.js pages read the training, sessions and fee from Supabase |
-| Edit and cancel without an account | A long random token per registration, stored hashed, in the email link. Server-side Next.js code checks it; registrants never get database access. |
-| Several coordinators editing live | Supabase Auth for coordinator logins; Supabase Realtime pushes changes to every open screen |
-| Who sees what | Postgres row-level security: registrants see nothing directly; coordinators see their training's data |
-| Attendance on a phone | A mobile-first Next.js page, installable on the home screen |
-| German, English and Russian | A translation library (such as next-intl) with all text in three languages; per-language hymn data in the database |
-| Copy last training | A database function that copies a training's sessions, rules, services and prices |
-| Printable questionnaire and name tags | Print-ready pages, or PDFs generated on the server |
+| Requirement                                                 | With Next.js and Supabase                                                                                                                          |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public registration form, schedule and fee from the backend | Next.js pages read the training, sessions and fee from Supabase                                                                                    |
+| Edit and cancel without an account                          | A long random token per registration, stored hashed, in the email link. Server-side Next.js code checks it; registrants never get database access. |
+| Several coordinators editing live                           | Supabase Auth for coordinator logins; Supabase Realtime pushes changes to every open screen                                                        |
+| Who sees what                                               | Postgres row-level security: registrants see nothing directly; coordinators see their training's data                                              |
+| Attendance on a phone                                       | A mobile-first Next.js page, installable on the home screen                                                                                        |
+| German, English and Russian                                 | A translation library (such as next-intl) with all text in three languages; per-language hymn data in the database                                 |
+| Copy last training                                          | A database function that copies a training's sessions, rules, services and prices                                                                  |
+| Printable questionnaire and name tags                       | Print-ready pages, or PDFs generated on the server                                                                                                 |
 
 **What the stack does not give us**
 
-| Need | Why it matters | Recommended |
-| --- | --- | --- |
-| An email service | Supabase only sends its own login emails, with a low limit. Confirmations, edit links and reminders need a real sender. | Resend: its free plan covers 3,000 emails a month and 100 a day, which is enough for about 30 registrants. Send from our own domain. |
-| A domain | Emails from a free address land in spam; registrants need an address they trust | A church domain or subdomain, with SPF and DKIM set up for email |
-| Hosting for Next.js | Supabase hosts the database, not the website | Vercel or Railway, in an EU region |
-| A paid Supabase plan | Free projects **pause after a week without use**. Data is kept, and a paused project can be resumed from the dashboard for up to 1 year ([Supabase docs](https://supabase.com/docs/guides/platform/free-project-pausing)), but the site is offline until someone resumes it. Our system sits idle for months between trainings, and the free plan has no daily backups. | Supabase Pro (about $25 a month), or a scheduled job that keeps a free project awake and our own backups |
-| Spam protection | A public form gets bot sign-ups | Cloudflare Turnstile on the form and rate limits |
-| Unreliable Wi-Fi in the meeting room | Attendance taken during the message must not be lost | Attendance saves on the phone first and syncs when the connection returns |
+| Need                                 | Why it matters                                                                                                                                                                                                                                                                                                                                                          | Recommended                                                                                                                          |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| An email service                     | Supabase only sends its own login emails, with a low limit. Confirmations, edit links and reminders need a real sender.                                                                                                                                                                                                                                                 | Resend: its free plan covers 3,000 emails a month and 100 a day, which is enough for about 30 registrants. Send from our own domain. |
+| A domain                             | Emails from a free address land in spam; registrants need an address they trust                                                                                                                                                                                                                                                                                         | A church domain or subdomain, with SPF and DKIM set up for email                                                                     |
+| Hosting for Next.js                  | Supabase hosts the database, not the website                                                                                                                                                                                                                                                                                                                            | Vercel or Railway, in an EU region                                                                                                   |
+| A paid Supabase plan                 | Free projects **pause after a week without use**. Data is kept, and a paused project can be resumed from the dashboard for up to 1 year ([Supabase docs](https://supabase.com/docs/guides/platform/free-project-pausing)), but the site is offline until someone resumes it. Our system sits idle for months between trainings, and the free plan has no daily backups. | Supabase Pro (about $25 a month), or a scheduled job that keeps a free project awake and our own backups                             |
+| Spam protection                      | A public form gets bot sign-ups                                                                                                                                                                                                                                                                                                                                         | Cloudflare Turnstile on the form and rate limits                                                                                     |
+| Unreliable Wi-Fi in the meeting room | Attendance taken during the message must not be lost                                                                                                                                                                                                                                                                                                                    | Attendance saves on the phone first and syncs when the connection returns                                                            |
 
 **Data protection (GDPR)**
 
@@ -228,7 +228,7 @@ The system stores names, emails and phone numbers of people in Germany, so Germa
 
 - Host the Supabase database and the website in the **EU** (Supabase has a Frankfurt region).
 - Sign the **data processing agreements** offered by Supabase, the host and the email service.
-- Publish a **privacy notice** (*Datenschutzerklärung*) and, for a public German site, an **Impressum**. The form links to both.
+- Publish a **privacy notice** (_Datenschutzerklärung_) and, for a public German site, an **Impressum**. The form links to both.
 - Keep only what is needed, limit contact details to coordinators, and delete personal data after the report is accepted (see Decisions).
 
 **Ownership and running costs**
@@ -241,11 +241,11 @@ The system stores names, emails and phone numbers of people in Germany, so Germa
 
 The outline order is due on **1 Dec 2026**, and registration for the January 2027 local training normally opens before then. Building, testing and translating the whole system in time is not realistic. **Decided: the new system is used for the January 2027 training. To make that possible, it is built in three stages, each ready before the moment it is needed**.
 
-| Stage | Ready by | Includes |
-| --- | --- | --- |
-| 1. Registration | About 20 Nov 2026 | Registration form in three languages, confirmation email with edit link, edit and cancel, coordinator list of registrations, payment checkboxes, outline counts per language |
-| 2. During the training | One week before the first session | Study groups, attendance on a phone, hymns, verses and rules for the screen, services, testing schedule, name tags, reminder emails |
-| 3. After the training | The last session | Report page and printable questionnaire, reimbursements |
+| Stage                  | Ready by                          | Includes                                                                                                                                                                     |
+| ---------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Registration        | About 20 Nov 2026                 | Registration form in three languages, confirmation email with edit link, edit and cancel, coordinator list of registrations, payment checkboxes, outline counts per language |
+| 2. During the training | One week before the first session | Study groups, attendance on a phone, hymns, verses and rules for the screen, services, testing schedule, name tags, reminder emails                                          |
+| 3. After the training  | The last session                  | Report page and printable questionnaire, reimbursements                                                                                                                      |
 
 Stage 1 must be live before the outline order on 1 Dec, so the counts come from the new system. If stage 1 slips, registration opens on the current Google Form and the data is imported later. Everything not in a stage can follow after January.
 
