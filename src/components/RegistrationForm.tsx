@@ -64,6 +64,9 @@ export function RegistrationForm(props: Props) {
   const [ukraine, setUkraine] = useState(d?.ukraine_not_employed ?? false);
   const [sessionsMissing, setSessionsMissing] = useState(false);
   const [formKey, setFormKey] = useState(0);
+  // The total as it was when the form was sent. Waivers and outlines stay
+  // editable while the request runs, so the receipt must not use live state.
+  const [submittedTotal, setSubmittedTotal] = useState(0);
   // The result whose receipt was closed with "Register another person". A new
   // submission yields a new state object, so its receipt shows again only once
   // that submission has actually succeeded.
@@ -94,6 +97,7 @@ export function RegistrationForm(props: Props) {
       return;
     }
     setSessionsMissing(false);
+    setSubmittedTotal(fees.trainingCents + fees.outlineCents);
     startTransition(() => formAction(form));
   }
 
@@ -109,7 +113,7 @@ export function RegistrationForm(props: Props) {
   if (state.status === "done" && state !== dismissedResult) {
     return (
       <Receipt
-        totalCents={fees.trainingCents + fees.outlineCents}
+        totalCents={submittedTotal}
         payment={props.payment}
         onRegisterAnother={registerAnother}
       />
