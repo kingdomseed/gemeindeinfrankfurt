@@ -20,6 +20,7 @@ commit here. Do not edit vendored files in place; add project rules to
 | `narrow-react-prop-types` | Narrow React prop types to what live call sites actually pass | [humanlayer/skills](https://github.com/humanlayer/skills/tree/main/plugins/narrow-react-prop-types) | `4d69d20` | MIT, `narrow-react-prop-types/LICENSE` |
 | `visual-pr` | Write a PR description with a compact visual outline (runs only when invoked by name) | [humanlayer/skills](https://github.com/humanlayer/skills/tree/main/plugins/visual-pr) | `4d69d20` | MIT, `visual-pr/LICENSE` |
 | `supabase` | Supabase Auth, RLS, SSR, CLI, migrations and security checklist | [supabase/agent-skills](https://github.com/supabase/agent-skills/tree/main/skills/supabase) | `c9be0e9` | MIT, `supabase/LICENSE` |
+| `react-doctor` | Run React Doctor after React changes and triage its findings | [react-doctor](https://www.npmjs.com/package/react-doctor) npm package, `dist/skills/react-doctor`, installed with `npx react-doctor install` | `0.9.22` (skill v1.2.0) | Modified MIT, `react-doctor/LICENSE`: free to use and redistribute, but using it as AI training data or selling it as a hosted service needs Million's permission |
 | `supabase-postgres-best-practices` | Postgres schema, index, RLS and query rules | [supabase/agent-skills](https://github.com/supabase/agent-skills/tree/main/skills/supabase-postgres-best-practices) | `c9be0e9` | MIT, `supabase-postgres-best-practices/LICENSE` |
 
 ## Notes for this repo

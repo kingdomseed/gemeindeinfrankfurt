@@ -1,8 +1,11 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+
+import { requireLocale } from "@/i18n/locale";
+
 import { LoginForm } from "./LoginForm";
 
 export default async function LoginPage({ params }: PageProps<"/[locale]/coordinator/login">) {
-  const { locale } = await params;
+  const locale = requireLocale((await params).locale);
   setRequestLocale(locale);
   const t = await getTranslations("coordinator");
   return (

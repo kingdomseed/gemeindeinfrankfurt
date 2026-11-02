@@ -4,16 +4,12 @@ import { getTrainingById } from "@/lib/data";
 import { canCancel, canChangeSeatOrSessions } from "@/lib/domain/cutoffs";
 import type { Language } from "@/lib/domain/types";
 import { sendCancellation, sendConfirmation } from "@/lib/email/send";
-import {
-  findByToken,
-  parseRegistrationForm,
-  replaceSessions,
-  toRow,
-} from "@/lib/registrations";
+import { findByToken, parseRegistrationForm, replaceSessions, toRow } from "@/lib/registrations";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type EditState = { status: "idle" | "error" | "saved" | "cancelled" | "locked" };
 
+// react-doctor-disable-next-line react-doctor/server-auth-actions -- registrants have no account; the edit token checked by findByToken is the credential.
 export async function updateRegistration(
   token: string,
   locale: Language,
@@ -51,10 +47,8 @@ export async function updateRegistration(
   return { status: "saved" };
 }
 
-export async function cancelRegistration(
-  token: string,
-  locale: Language,
-): Promise<EditState> {
+// react-doctor-disable-next-line react-doctor/server-auth-actions -- registrants have no account; the edit token checked by findByToken is the credential.
+export async function cancelRegistration(token: string, locale: Language): Promise<EditState> {
   const existing = await findByToken(token);
   if (!existing || existing.status === "cancelled") return { status: "error" };
   const training = await getTrainingById(existing.training_id);

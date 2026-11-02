@@ -1,8 +1,8 @@
 import "server-only";
 import { z } from "zod";
-import { createAdminClient } from "@/lib/supabase/admin";
+
 import { hashToken } from "@/lib/domain/token";
-import type { SeatType } from "@/lib/domain/types";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const language = z.enum(["de", "en", "ru"]);
 
@@ -42,7 +42,7 @@ export function parseRegistrationForm(form: FormData) {
     const v = form.get(name);
     return typeof v === "string" ? v : undefined;
   };
-  const seatType = text("seat_type") as SeatType | undefined;
+  const seatType = text("seat_type");
   return registrationSchema.safeParse({
     seat_type: seatType,
     session_ids: seatType === "part_time" ? form.getAll("session_ids") : [],
@@ -63,15 +63,7 @@ export function parseRegistrationForm(form: FormData) {
   });
 }
 
-export type StoredRegistration = Omit<RegistrationInput, "session_ids"> & {
-  id: string;
-  training_id: string;
-  status: "active" | "cancelled";
-  locale: "de" | "en" | "ru";
-  registration_sessions: { session_id: string }[];
-};
-
-export async function findByToken(token: string): Promise<StoredRegistration | null> {
+export async function findByToken(token: string) {
   if (!/^[A-Za-z0-9_-]{43}$/.test(token)) return null;
   const { data, error } = await createAdminClient()
     .from("registrations")
@@ -79,7 +71,7 @@ export async function findByToken(token: string): Promise<StoredRegistration | n
     .eq("edit_token_hash", hashToken(token))
     .maybeSingle();
   if (error) throw error;
-  return data as StoredRegistration | null;
+  return data;
 }
 
 export async function hasPossibleDuplicate(trainingId: string, r: RegistrationInput) {
@@ -96,12 +88,12 @@ export async function hasPossibleDuplicate(trainingId: string, r: RegistrationIn
 }
 
 export function toRow(r: RegistrationInput) {
-  const row: Partial<RegistrationInput> = { ...r };
-  delete row.session_ids;
+  const { session_ids: _sessionIds, partner_first_name, partner_last_name, ...row } = r;
+  const shared = r.seat_type === "shared";
   return {
     ...row,
-    partner_first_name: r.seat_type === "shared" ? r.partner_first_name : null,
-    partner_last_name: r.seat_type === "shared" ? r.partner_last_name : null,
+    partner_first_name: shared ? (partner_first_name ?? null) : null,
+    partner_last_name: shared ? (partner_last_name ?? null) : null,
   };
 }
 

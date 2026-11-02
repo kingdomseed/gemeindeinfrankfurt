@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
+import { notFound } from "next/navigation";
+
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { requireLocale } from "@/i18n/locale";
+import { routing } from "@/i18n/routing";
+
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -11,7 +14,7 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
-  const { locale } = await params;
+  const locale = requireLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "common" });
   return { title: t("appName") };
 }

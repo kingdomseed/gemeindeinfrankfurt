@@ -19,11 +19,11 @@ The full scope, rules and decisions are in
 
 This is the initial scaffold. Work is staged around the January 2027 training:
 
-| Stage | Ready by | Scope | State |
-| --- | --- | --- | --- |
-| 1. Registration | ~20 Nov 2026 | Form in 3 languages, confirmation email with edit link, edit and cancel, registration list, payment checkboxes, outline counts | Scaffolded |
-| 2. During the training | 1 week before the first session | Study groups, phone attendance, hymns/verses/rules on screen, services, testing schedule, name tags, reminders | Schema only |
-| 3. After the training | Last session | Report page, printable questionnaire, reimbursements | Schema only |
+| Stage                  | Ready by                        | Scope                                                                                                                          | State       |
+| ---------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| 1. Registration        | ~20 Nov 2026                    | Form in 3 languages, confirmation email with edit link, edit and cancel, registration list, payment checkboxes, outline counts | Scaffolded  |
+| 2. During the training | 1 week before the first session | Study groups, phone attendance, hymns/verses/rules on screen, services, testing schedule, name tags, reminders                 | Schema only |
+| 3. After the training  | Last session                    | Report page, printable questionnaire, reimbursements                                                                           | Schema only |
 
 Before stage 1 goes live, still to do:
 
@@ -43,6 +43,10 @@ Before stage 1 goes live, still to do:
 - [next-intl](https://next-intl.dev) for translations (`messages/*.json`).
 - [Resend](https://resend.com) for email.
 - [Vitest](https://vitest.dev) for unit tests.
+- [Oxlint](https://oxc.rs/docs/guide/usage/linter) (type-aware) and
+  [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) for linting and formatting,
+  [React Doctor](https://github.com/millionco/react-doctor) for React-specific
+  checks, [Lefthook](https://lefthook.dev) for git hooks.
 
 ## How it fits together
 
@@ -73,7 +77,7 @@ registrations close at the end of the first local day (Europe/Berlin).
 
 ## Getting started
 
-Requirements: Node 22, Docker (for local Supabase).
+Requirements: Node 22.18 or later, Docker (for local Supabase).
 
 ```bash
 npm install
@@ -96,13 +100,19 @@ Then sign in at `/de/coordinator/login`.
 ### Checks
 
 ```bash
-npm run lint
-npm run typecheck
-npm test
+npm run check    # format check, type check, lint, tests, React Doctor
 npm run build
+npm run format   # rewrite files with Oxfmt
+npm run lint:fix # apply Oxlint's safe fixes
 ```
 
-CI runs the same four on every push and pull request.
+CI runs all of these on every push and pull request, and `npm install` sets up
+git hooks that format and lint staged files on commit and run `npm run check`
+before a push. After changing a migration, run `npm run db:types` with the local
+stack running to regenerate `src/lib/supabase/database.types.ts`.
+
+The rules that keep people and coding agents from shipping mistakes, and the
+reasons behind them, are in [AGENTS.md](AGENTS.md).
 
 ## Personal data
 
