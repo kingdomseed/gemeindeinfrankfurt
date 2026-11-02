@@ -3,8 +3,7 @@
 import { HStack, Link } from "@chakra-ui/react";
 import { useLocale } from "next-intl";
 
-import { Link as LocaleLink, usePathname } from "@/i18n/navigation";
-import { locales, type Locale } from "@/i18n/routing";
+import { Link as LocaleLink, locales, usePathname, type Locale } from "@/i18n/navigation";
 
 // Each language is named in itself, so someone who cannot read the current
 // page can still find their own.
