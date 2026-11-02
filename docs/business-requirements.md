@@ -116,6 +116,10 @@ Several serving ones log in to the same coordination site. Everyone can edit, an
 
 23. Export a print-ready list of name tags: one per seat, with both names on a shared seat.
 
+**Webcast access**
+
+24. Lebensstrom sends the church the **login for the LSM website** where the training videos are played. The system stores it, and only coordinators serving in **AV (Technik)** can see it. It never appears on the form, in emails or in the WhatsApp group.
+
 ## Email
 
 Email is a big part of the system. Every email goes out in German, English and Russian.
@@ -126,10 +130,10 @@ Email is a big part of the system. Every email goes out in German, English and R
 | Confirmation                  | Right after each registration and each change   | What they registered for, the amount to pay and the IBAN, their personal edit link |
 | Cancellation                  | When a registration is cancelled                | Confirmation that it is cancelled                                                  |
 | Payment reminder              | Sent by a coordinator, to everyone still unpaid | Amounts still open and the IBAN                                                    |
-| Before the training           | A few days before the first session             | Schedule, place or Zoom details, rules, what to bring                              |
+| Before the training           | A few days before the first session             | Schedule, place, rules, what to bring, and how to join the private WhatsApp group  |
 | Message to all or to a group  | Any time, sent by a coordinator                 | Free text, for example a schedule change                                           |
 
-The Zoom link only goes to registered people, never to a public page.
+The Zoom link for our local meeting goes only to registered people, through the training's private WhatsApp group, never to a public page. It is a different thing from the Lebensstrom webcast login (see Webcast access).
 
 ## Reporting to Lebensstrom after the training
 
@@ -152,47 +156,48 @@ Within **7 days** of the last session, the contact brother pays the fees to Lebe
 
 These come from the [Lebensstrom video training page](https://lebensstrom.de/video-training-en/) for December 2026 (updated 9 Oct 2026). Where the page and the questionnaire PDF differ, the page wins.
 
-| Rule                                                                                           | How the system applies it                              |
-| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| Registrants must be 18 or older                                                                | A required checkbox on the form                        |
-| Seats are full-time, part-time, or shared; a shared seat is full-time and pays once            | Seat types on the form; a shared seat forces full-time |
-| €70 per seat; €0 for Anaheim attendees and for Ukrainian saints who are not gainfully employed | Fee set per training; waivers as checkboxes            |
-| Outlines are €5 each, printed only, in German, English or Russian, and invoiced separately     | Outline payment tracked apart from the fee             |
-| Church registration with Lebensstrom by 29 Oct 2026, 13:00                                     | Deadline shown on the coordination dashboard           |
-| Outline order by 1 Dec 2026, 16:00; order extras for late sign-ups                             | Outline counts and extras ready before this date       |
-| Numbers can change free of charge until the start; no new registrations after the first day    | Registration closes automatically after day one        |
-| No unexcused absences; at most two excused                                                     | Counted and shown for the report                       |
-| Part-timers count as absent only for sessions they chose before the start                      | Session choices lock at the first session              |
-| Name tag required; one per seat, both names on a shared seat                                   | Name tag export                                        |
-| Study groups of 8–10                                                                           | Group suggestions                                      |
-| Tests for messages 1–10; attendance for all 12                                                 | Testing schedule and attendance                        |
-| Webcast login and Zoom ID are not shared with individual registrants                           | Visible only to coordinators                           |
-| Fees, questionnaire and reimbursements are due within 7 days of the end                        | Report page and reminder on the dashboard              |
+| Rule                                                                                                | How the system applies it                                        |
+| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Registrants must be 18 or older                                                                     | A required checkbox on the form                                  |
+| Seats are full-time, part-time, or shared; a shared seat is full-time and pays once                 | Seat types on the form; a shared seat forces full-time           |
+| €70 per seat; €0 for Anaheim attendees and for Ukrainian saints who are not gainfully employed      | Fee set per training; waivers as checkboxes                      |
+| Outlines are €5 each, printed only, in German, English or Russian, and invoiced separately          | Outline payment tracked apart from the fee                       |
+| Church registration with Lebensstrom by 29 Oct 2026, 13:00                                          | Deadline shown on the coordination dashboard                     |
+| Outline order by 1 Dec 2026, 16:00; order extras for late sign-ups                                  | Outline counts and extras ready before this date                 |
+| Numbers can change free of charge until the start; no new registrations after the first day         | Registration closes automatically after day one                  |
+| No unexcused absences; at most two excused                                                          | Counted and shown for the report                                 |
+| Part-timers count as absent only for sessions they chose before the start                           | Session choices lock at the first session                        |
+| Name tag required; one per seat, both names on a shared seat                                        | Name tag export                                                  |
+| Study groups of 8–10                                                                                | Group suggestions                                                |
+| Tests for messages 1–10; attendance for all 12                                                      | Testing schedule and attendance                                  |
+| The webcast login (from Lebensstrom, for the LSM website) is not shared with individual registrants | Stored in the system; visible only to coordinators serving in AV |
+| Fees, questionnaire and reimbursements are due within 7 days of the end                             | Report page and reminder on the dashboard                        |
 
 ## Decisions made
 
 No questions are open. Every question raised while preparing this document is answered below, either by the Lebensstrom page, by the coordinators, or as a working decision that follows from the rules.
 
-| Question                                                                | Decision                                                                                                                                | Basis                                                           |
-| ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| How many absences are allowed?                                          | None unexcused, at most two excused                                                                                                     | Lebensstrom page; confirmed by the coordinators                 |
-| What happens when someone goes over?                                    | Nothing. It is recorded for the report only.                                                                                            | Coordinators                                                    |
-| Do we track test failures?                                              | No. In practice they don't happen.                                                                                                      | Coordinators                                                    |
-| Do we take payments online?                                             | No. Bank transfer to the church's IBAN, ticked by hand.                                                                                 | Coordinators                                                    |
-| What fee do we charge?                                                  | The fee per seat is set for each training. For December 2026 it is €70, the amount we owe Lebensstrom per seat.                         | Lebensstrom page                                                |
-| Who pays nothing?                                                       | Anaheim attendees, Ukrainian saints who are not gainfully employed, and anyone the coordinators grant a hardship waiver (with a reason) | Lebensstrom page; past practice                                 |
-| When must the questionnaire go in: one week or two?                     | Within one week (7 days). The PDF's "two weeks" is outdated.                                                                            | Lebensstrom page                                                |
-| Tests cover messages 1–10 but attendance covers 12. Is that a conflict? | No. Test 1–10, take attendance for all 12.                                                                                              | Lebensstrom page                                                |
-| Until when can people register?                                         | Through the first day of the local training                                                                                             | Lebensstrom page                                                |
-| Until when can part-timers change sessions?                             | Until the first session starts. After that their choices are fixed, so absences are counted correctly.                                  | Follows from the Lebensstrom absence rule                       |
-| Until when can people cancel?                                           | Until the first session starts. After that, coordinators handle it.                                                                     | Working decision, in line with the free changes until the start |
-| Can a shared seat be part-time?                                         | No. Shared seats are always full-time.                                                                                                  | Lebensstrom page                                                |
-| Can one email address be used for several registrations?                | Yes. Each registration gets its own edit link.                                                                                          | Coordinators                                                    |
-| How do registrants edit without an account?                             | A personal edit link in the confirmation email                                                                                          | Coordinators (as with today's plugin)                           |
-| Who can see contact details?                                            | Coordinators only                                                                                                                       | Working decision                                                |
-| What happens to personal data afterwards?                               | Names and contact details are deleted once the report is filed and accepted. Only counts are kept.                                      | Working decision                                                |
-| Which questionnaire form do we use?                                     | The December 2026 version from the Lebensstrom page                                                                                     | Lebensstrom page                                                |
-| Which account do fees go to?                                            | Saints pay the church. The church transfers to Lebensstrom e.V. with the reference "Spende 2026 WT".                                    | Lebensstrom page                                                |
+| Question                                                                | Decision                                                                                                                                            | Basis                                                           |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| How many absences are allowed?                                          | None unexcused, at most two excused                                                                                                                 | Lebensstrom page; confirmed by the coordinators                 |
+| What happens when someone goes over?                                    | Nothing. It is recorded for the report only.                                                                                                        | Coordinators                                                    |
+| Do we track test failures?                                              | No. In practice they don't happen.                                                                                                                  | Coordinators                                                    |
+| Do we take payments online?                                             | No. Bank transfer to the church's IBAN, ticked by hand.                                                                                             | Coordinators                                                    |
+| What fee do we charge?                                                  | The fee per seat is set for each training. For December 2026 it is €70, the amount we owe Lebensstrom per seat.                                     | Lebensstrom page                                                |
+| Who pays nothing?                                                       | Anaheim attendees, Ukrainian saints who are not gainfully employed, and anyone the coordinators grant a hardship waiver (with a reason)             | Lebensstrom page; past practice                                 |
+| When must the questionnaire go in: one week or two?                     | Within one week (7 days). The PDF's "two weeks" is outdated.                                                                                        | Lebensstrom page                                                |
+| Tests cover messages 1–10 but attendance covers 12. Is that a conflict? | No. Test 1–10, take attendance for all 12.                                                                                                          | Lebensstrom page                                                |
+| Until when can people register?                                         | Through the first day of the local training                                                                                                         | Lebensstrom page                                                |
+| Until when can part-timers change sessions?                             | Until the first session starts. After that their choices are fixed, so absences are counted correctly.                                              | Follows from the Lebensstrom absence rule                       |
+| Until when can people cancel?                                           | Until the first session starts. After that, coordinators handle it.                                                                                 | Working decision, in line with the free changes until the start |
+| Can a shared seat be part-time?                                         | No. Shared seats are always full-time.                                                                                                              | Lebensstrom page                                                |
+| Can one email address be used for several registrations?                | Yes. Each registration gets its own edit link.                                                                                                      | Coordinators                                                    |
+| How do registrants edit without an account?                             | A personal edit link in the confirmation email                                                                                                      | Coordinators (as with today's plugin)                           |
+| Who can see contact details?                                            | Coordinators only                                                                                                                                   | Working decision                                                |
+| What happens to personal data afterwards?                               | Names and contact details are deleted once the report is filed and accepted. Only counts are kept.                                                  | Working decision                                                |
+| Which questionnaire form do we use?                                     | The December 2026 version from the Lebensstrom page                                                                                                 | Lebensstrom page                                                |
+| Which account do fees go to?                                            | Saints pay the church. The church transfers to Lebensstrom e.V. with the reference "Spende 2026 WT".                                                | Lebensstrom page                                                |
+| Who gets the Zoom link, and who gets the webcast login?                 | Everyone registered gets our local Zoom link through the private WhatsApp group. Only coordinators serving in AV see the Lebensstrom webcast login. | Coordinators                                                    |
 
 ## Technical approach
 
