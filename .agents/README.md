@@ -22,8 +22,16 @@ commit here. Do not edit vendored files in place; add project rules to
 | `supabase` | Supabase Auth, RLS, SSR, CLI, migrations and security checklist | [supabase/agent-skills](https://github.com/supabase/agent-skills/tree/main/skills/supabase) | `c9be0e9` | MIT, `supabase/LICENSE` |
 | `react-doctor` | Run React Doctor after React changes and triage its findings | [react-doctor](https://www.npmjs.com/package/react-doctor) npm package, `dist/skills/react-doctor`, installed with `npx react-doctor install` | `0.9.22` (skill v1.2.0) | Modified MIT, `react-doctor/LICENSE`: free to use and redistribute, but using it as AI training data or selling it as a hosted service needs Million's permission |
 | `supabase-postgres-best-practices` | Postgres schema, index, RLS and query rules | [supabase/agent-skills](https://github.com/supabase/agent-skills/tree/main/skills/supabase-postgres-best-practices) | `c9be0e9` | MIT, `supabase-postgres-best-practices/LICENSE` |
+| `impeccable` | Frontend design vocabulary: `critique`, `audit`, `polish`, `harden`, `layout`, `typeset` and more, plus a deterministic anti-pattern detector (`scripts/impeccable detect`) | [pbakaus/impeccable](https://github.com/pbakaus/impeccable/tree/main/.agents/skills/impeccable) | `9c3808b` (v4.8.0) | Apache-2.0, `impeccable/LICENSE` |
 
 ## Notes for this repo
+
+- `impeccable` is copied from the generic `.agents/` build in its repo (the
+  Codex-style build, so its docs say `$impeccable`; in Claude Code type
+  `/impeccable`). Its `scripts/impeccable` launcher downloads a checksum-verified
+  engine binary into `~/.impeccable/bin/` on first run. It has no `PRODUCT.md` or
+  `DESIGN.md` here yet; `/impeccable init` and `/impeccable document` create them.
+  The optional design hook (`npx impeccable install`) is not set up.
 
 - Some skills were written for their authors' own repos. `narrow-react-prop-types`
   shows `bun` typecheck commands and a sample CI workflow in `references/`; here,

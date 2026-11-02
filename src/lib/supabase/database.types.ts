@@ -159,6 +159,7 @@ export type Database = {
           last_name: string;
           partner_first_name: string | null;
           partner_last_name: string | null;
+          payer_name: string;
           email: string;
           phone: string;
           locale: Database["public"]["Enums"]["language_code"];
@@ -189,6 +190,7 @@ export type Database = {
           last_name: string;
           partner_first_name?: string | null;
           partner_last_name?: string | null;
+          payer_name?: string;
           email: string;
           phone?: string;
           locale: Database["public"]["Enums"]["language_code"];
@@ -219,6 +221,7 @@ export type Database = {
           last_name?: string;
           partner_first_name?: string | null;
           partner_last_name?: string | null;
+          payer_name?: string;
           email?: string;
           phone?: string;
           locale?: Database["public"]["Enums"]["language_code"];

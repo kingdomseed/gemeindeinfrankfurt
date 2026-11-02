@@ -14,13 +14,14 @@ export type Training = {
   payee_name: string;
   payee_iban: string;
   payment_reference: string;
+  venue: string;
   rules: { [L in Language]?: string | undefined };
 };
 
 export type TrainingWithSessions = Training & { sessions: Session[] };
 
 const TRAINING_COLUMNS =
-  "id, slug, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, rules, sessions(id, message_number, starts_at, ends_at)";
+  "id, slug, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, rules, sessions(id, message_number, starts_at, ends_at)";
 
 const trainingQuery = () => createAdminClient().from("trainings").select(TRAINING_COLUMNS);
 type TrainingRow = QueryData<ReturnType<typeof trainingQuery>>[number];

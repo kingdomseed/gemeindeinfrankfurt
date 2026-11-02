@@ -1,16 +1,24 @@
 {
   "common": {
     "appName": "Video Training",
-    "languages": { "de": "German", "en": "English", "ru": "Russian" },
+    "languages": {
+      "de": "German",
+      "en": "English",
+      "ru": "Russian"
+    },
     "privacy": "Privacy notice",
-    "imprint": "Imprint"
+    "imprint": "Imprint",
+    "languageNav": "Language",
+    "timezone": "All times are Frankfurt time (CET).",
+    "questions": "Questions?"
   },
   "home": {
     "noTraining": "Registration is not open yet.",
     "register": "Register",
     "schedule": "Schedule",
     "message": "Message {number}",
-    "fee": "Fee per seat: {fee}. Outline: {outline} each."
+    "fee": "Fee per seat: {fee}. Outline: {outline} each.",
+    "scheduleCount": "{count} messages"
   },
   "register": {
     "title": "Register for {training}",
@@ -46,7 +54,32 @@
     "duplicateWarning": "A registration with this name and email already exists. Register anyway?",
     "registerAnyway": "Yes, register anyway",
     "done": "Thank you! We have sent a confirmation email with a link to change or cancel your registration.",
-    "error": "Something went wrong. Please check the form and try again."
+    "error": "Something went wrong. Please check the form and try again.",
+    "sectionAboutYou": "About you",
+    "sectionLanguages": "Languages and outlines",
+    "sectionFreeSeat": "Free seat",
+    "freeSeatHelp": "Tick one if it applies. The training fee is then waived; outlines are still paid.",
+    "sectionConfirm": "Rules and confirmation",
+    "sectionPayment": "Payment",
+    "optional": "optional",
+    "sessionsRequired": "Please choose at least one session.",
+    "sending": "Sending…",
+    "total": "Total",
+    "payee": "Payee",
+    "iban": "IBAN",
+    "reference": "Reference",
+    "waived": "waived",
+    "copy": "Copy",
+    "copied": "Copied",
+    "payHint": "Please transfer the total with this reference.",
+    "receiptTitle": "You are registered",
+    "receiptBody": "We have sent a confirmation email with a link to change or cancel your registration. If you cannot find it, please check your spam folder.",
+    "receiptPay": "Please transfer {total} now:",
+    "registerAnother": "Register another person",
+    "locality": "Locality: {locality}",
+    "payerName": "Who sends the bank transfer?",
+    "payerNameHelp": "Only if it is not you, for example a spouse or one transfer for the whole family. It helps the coordinators match the payment.",
+    "payer": "Paid by {name}"
   },
   "edit": {
     "title": "Your registration",
@@ -85,6 +118,41 @@
     "outlineCounts": "Outlines needed",
     "ordered": "Ordered",
     "extra": "Extra",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "emailLabel": "Email",
+    "save": "Save",
+    "waived": "Waived",
+    "shortBy": "{count} missing",
+    "seatShort": {
+      "full_time": "Full-time",
+      "part_time": "Part-time",
+      "shared": "Shared seat"
+    },
+    "language": "Language",
+    "orderedFor": "Ordered, {language}",
+    "saveFailed": "Not saved. Try again.",
+    "needed": "Needed",
+    "payer": "Paid by {name}"
+  },
+  "privacy": {
+    "title": "Privacy notice",
+    "intro": "This website is used to register for the local video training and to organise it. This notice explains which personal data we process, why, and what rights you have under the EU General Data Protection Regulation (GDPR).",
+    "controllerTitle": "Who is responsible",
+    "controllerBody": "Please write to one of them with any question about your data.",
+    "dataTitle": "What we collect",
+    "dataBody": "Your name (and your partner's name for a shared seat), email address, phone number if you give it, seat type and sessions, study group and outline languages, your comments, the name of the person who pays if you give it, whether a free seat applies to you, your confirmation that you are 18 or older and accept the rules, and whether your payments have arrived. When coordinators sign in, we store their email address and a sign-in session.",
+    "purposeTitle": "Why we use it",
+    "purposeBody": "To register you, calculate what you pay, send you a confirmation with a link to change or cancel your registration, check payments, order outlines, form study groups and organise the sessions. We do not use your data for advertising and we do not sell it.",
+    "basisTitle": "Legal basis",
+    "basisBody": "Art. 6(1)(b) GDPR, because the data is needed to take part in the training you register for, and Art. 6(1)(f) GDPR for our legitimate interest in organising the training reliably.",
+    "recipientsTitle": "Who can see it",
+    "recipientsBody": "Only the coordinators of this training. We use service providers who process data on our behalf under data processing agreements: Supabase (database, hosted in Frankfurt, Germany), our website host in the EU, and Resend (sending emails). Some of these providers are based in the United States; where data leaves the EU, it is protected by the safeguards the GDPR requires, such as the EU-U.S. Data Privacy Framework or standard contractual clauses.",
+    "retentionTitle": "How long we keep it",
+    "retentionBody": "Names and contact details are deleted once the training's report has been filed and accepted. After that we keep only counts, without names.",
+    "rightsTitle": "Your rights",
+    "rightsBody": "You can ask for a copy of your data, have it corrected or deleted, restrict its use, object to its use, and receive it in a portable format. You can change or cancel your registration yourself with the link in your confirmation email, or write to the address above.",
+    "complaintTitle": "Complaints",
+    "complaintBody": "You have the right to complain to a data protection supervisory authority, for example the Hessian Commissioner for Data Protection and Freedom of Information (HBDI).",
+    "noContact": "The contact person for this site has not been set yet."
   }
 }

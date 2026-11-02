@@ -1,16 +1,24 @@
 {
   "common": {
     "appName": "Videotraining",
-    "languages": { "de": "Deutsch", "en": "Englisch", "ru": "Russisch" },
+    "languages": {
+      "de": "Deutsch",
+      "en": "Englisch",
+      "ru": "Russisch"
+    },
     "privacy": "Datenschutzerklärung",
-    "imprint": "Impressum"
+    "imprint": "Impressum",
+    "languageNav": "Sprache",
+    "timezone": "Alle Zeiten sind Frankfurter Zeit (MEZ).",
+    "questions": "Fragen?"
   },
   "home": {
     "noTraining": "Die Anmeldung ist noch nicht geöffnet.",
     "register": "Anmelden",
     "schedule": "Zeitplan",
     "message": "Botschaft {number}",
-    "fee": "Beitrag pro Platz: {fee}. Gliederung: je {outline}."
+    "fee": "Beitrag pro Platz: {fee}. Gliederung: je {outline}.",
+    "scheduleCount": "{count} Botschaften"
   },
   "register": {
     "title": "Anmeldung: {training}",
@@ -46,7 +54,32 @@
     "duplicateWarning": "Es gibt bereits eine Anmeldung mit diesem Namen und dieser E-Mail. Trotzdem anmelden?",
     "registerAnyway": "Ja, trotzdem anmelden",
     "done": "Danke! Wir haben dir eine Bestätigung mit einem Link zum Ändern oder Stornieren geschickt.",
-    "error": "Etwas ist schiefgelaufen. Bitte prüfe das Formular und versuche es erneut."
+    "error": "Etwas ist schiefgelaufen. Bitte prüfe das Formular und versuche es erneut.",
+    "sectionAboutYou": "Angaben zur Person",
+    "sectionLanguages": "Sprachen und Gliederungen",
+    "sectionFreeSeat": "Kostenloser Platz",
+    "freeSeatHelp": "Bitte ankreuzen, wenn zutreffend. Die Trainingsgebühr entfällt dann; Gliederungen werden trotzdem bezahlt.",
+    "sectionConfirm": "Regeln und Bestätigung",
+    "sectionPayment": "Zahlung",
+    "optional": "optional",
+    "sessionsRequired": "Bitte wähle mindestens eine Einheit aus.",
+    "sending": "Wird gesendet…",
+    "total": "Gesamt",
+    "payee": "Empfänger",
+    "iban": "IBAN",
+    "reference": "Verwendungszweck",
+    "waived": "entfällt",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "payHint": "Bitte überweise den Gesamtbetrag mit diesem Verwendungszweck.",
+    "receiptTitle": "Du bist angemeldet",
+    "receiptBody": "Wir haben dir eine Bestätigung mit einem Link zum Ändern oder Stornieren geschickt. Falls du sie nicht findest, schau bitte im Spam-Ordner nach.",
+    "receiptPay": "Bitte überweise jetzt {total}:",
+    "registerAnother": "Weitere Person anmelden",
+    "locality": "Ort: {locality}",
+    "payerName": "Wer überweist?",
+    "payerNameHelp": "Nur wenn nicht du selbst, zum Beispiel Ehepartner oder eine Überweisung für die ganze Familie. So können die Koordinatoren die Zahlung zuordnen.",
+    "payer": "Bezahlt von {name}"
   },
   "edit": {
     "title": "Deine Anmeldung",
@@ -85,6 +118,41 @@
     "outlineCounts": "Benötigte Gliederungen",
     "ordered": "Bestellt",
     "extra": "Zusätzlich",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "emailLabel": "E-Mail",
+    "save": "Speichern",
+    "waived": "Entfällt",
+    "shortBy": "{count} fehlen",
+    "seatShort": {
+      "full_time": "Vollzeit",
+      "part_time": "Teilzeit",
+      "shared": "Geteilter Platz"
+    },
+    "language": "Sprache",
+    "orderedFor": "Bestellt, {language}",
+    "saveFailed": "Nicht gespeichert. Bitte erneut versuchen.",
+    "needed": "Benötigt",
+    "payer": "Bezahlt von {name}"
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "intro": "Diese Website dient der Anmeldung zum örtlichen Videotraining und seiner Organisation. Hier erklären wir, welche personenbezogenen Daten wir verarbeiten, wozu, und welche Rechte du nach der Datenschutz-Grundverordnung (DSGVO) hast.",
+    "controllerTitle": "Verantwortlich",
+    "controllerBody": "Bitte wende dich mit allen Fragen zu deinen Daten an eine dieser Personen.",
+    "dataTitle": "Welche Daten wir erheben",
+    "dataBody": "Deinen Namen (bei einem geteilten Platz auch den der zweiten Person), deine E-Mail-Adresse, deine Telefonnummer, falls angegeben, Platzart und Einheiten, Sprache der Lerngruppe und der Gliederungen, deine Anmerkungen, den Namen der überweisenden Person, falls angegeben, ob ein kostenloser Platz für dich gilt, deine Bestätigung, dass du mindestens 18 Jahre alt bist und die Regeln annimmst, sowie ob deine Zahlungen eingegangen sind. Wenn sich Koordinatoren anmelden, speichern wir ihre E-Mail-Adresse und eine Anmeldesitzung.",
+    "purposeTitle": "Wozu wir sie nutzen",
+    "purposeBody": "Um dich anzumelden, deinen Betrag zu berechnen, dir eine Bestätigung mit einem Link zum Ändern oder Stornieren zu schicken, Zahlungen zu prüfen, Gliederungen zu bestellen, Lerngruppen zu bilden und die Einheiten zu organisieren. Wir nutzen deine Daten nicht für Werbung und verkaufen sie nicht.",
+    "basisTitle": "Rechtsgrundlage",
+    "basisBody": "Art. 6 Abs. 1 lit. b DSGVO, weil die Daten für die Teilnahme am Training nötig sind, für das du dich anmeldest, und Art. 6 Abs. 1 lit. f DSGVO für unser berechtigtes Interesse, das Training zuverlässig zu organisieren.",
+    "recipientsTitle": "Wer die Daten sieht",
+    "recipientsBody": "Nur die Koordinatoren dieses Trainings. Wir nutzen Dienstleister, die Daten in unserem Auftrag auf Grundlage von Auftragsverarbeitungsverträgen verarbeiten: Supabase (Datenbank, gehostet in Frankfurt), unseren Website-Host in der EU und Resend (E-Mail-Versand). Einige dieser Anbieter haben ihren Sitz in den USA; verlassen Daten die EU, sind sie durch die von der DSGVO verlangten Garantien geschützt, etwa das EU-US Data Privacy Framework oder Standardvertragsklauseln.",
+    "retentionTitle": "Wie lange wir sie speichern",
+    "retentionBody": "Namen und Kontaktdaten werden gelöscht, sobald der Bericht zum Training eingereicht und angenommen ist. Danach bleiben nur Zahlen ohne Namen.",
+    "rightsTitle": "Deine Rechte",
+    "rightsBody": "Du kannst Auskunft über deine Daten verlangen, sie berichtigen oder löschen lassen, ihre Verarbeitung einschränken, ihr widersprechen und sie in einem übertragbaren Format erhalten. Deine Anmeldung kannst du selbst über den Link in der Bestätigungs-E-Mail ändern oder stornieren, oder du schreibst an die Adresse oben.",
+    "complaintTitle": "Beschwerde",
+    "complaintBody": "Du hast das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren, zum Beispiel beim Hessischen Beauftragten für Datenschutz und Informationsfreiheit (HBDI).",
+    "noContact": "Für diese Website ist noch keine Kontaktperson eingetragen."
   }
 }

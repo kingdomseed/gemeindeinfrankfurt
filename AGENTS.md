@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Agent skills
 
-Vendored agent skills live in `.agents/skills/` (Claude Code reads them through the `.claude/skills` symlink). See `.agents/README.md` for each skill's source, commit and license. Use `vercel-react-best-practices` and `vercel-composition-patterns` when writing React/Next.js code, `supabase` and `supabase-postgres-best-practices` for anything touching Supabase or SQL migrations.
+Vendored agent skills live in `.agents/skills/` (Claude Code reads them through the `.claude/skills` symlink). See `.agents/README.md` for each skill's source, commit and license. Use `vercel-react-best-practices` and `vercel-composition-patterns` when writing React/Next.js code, `supabase` and `supabase-postgres-best-practices` for anything touching Supabase or SQL migrations, and `impeccable` (`/impeccable critique|audit|polish …`) for UI and design work.
 
 ## Definition of done
 
