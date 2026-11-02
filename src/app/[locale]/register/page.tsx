@@ -23,8 +23,15 @@ export default async function RegisterPage({ params }: PageProps<"/[locale]/regi
   if (!training || !canRegister(training.sessions)) return <p className="mt-10">{t("closed")}</p>;
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">{t("title", { training: training.title[locale] })}</h1>
+    <div className="space-y-8">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-semibold tracking-tight text-balance">
+          {t("title", { training: training.title[locale] })}
+        </h1>
+        {training.venue && (
+          <p className="text-lg text-muted">{t("locality", { locality: training.venue })}</p>
+        )}
+      </div>
       <RegistrationForm
         sessions={training.sessions.map((s) => ({
           id: s.id,

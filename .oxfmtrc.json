@@ -3,5 +3,11 @@
   "printWidth": 100,
   "sortImports": true,
   "sortTailwindcss": { "stylesheet": "./src/app/globals.css" },
-  "ignorePatterns": [".agents/**", "supabase/**", "package-lock.json", "next-env.d.ts"]
+  "ignorePatterns": [
+    ".agents/**",
+    ".claude/skills/**",
+    "supabase/**",
+    "package-lock.json",
+    "next-env.d.ts"
+  ]
 }

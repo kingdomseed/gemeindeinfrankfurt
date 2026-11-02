@@ -24,8 +24,16 @@ commit here. Do not edit vendored files in place; add project rules to
 | `supabase-postgres-best-practices` | Postgres schema, index, RLS and query rules | [supabase/agent-skills](https://github.com/supabase/agent-skills/tree/main/skills/supabase-postgres-best-practices) | `c9be0e9` | MIT, `supabase-postgres-best-practices/LICENSE` |
 | `chakra-ui-builder` | Build Chakra UI v3 components and pages, set up the provider, theme tokens, semantic tokens and recipes | [chakra-ui/chakra-ui](https://github.com/chakra-ui/chakra-ui/tree/main/skills/chakra-ui-builder) | `731ecac` | MIT, `chakra-ui-builder/LICENSE` (copied from the repo root) |
 | `chakra-ui-refactor` | Review Chakra UI code and convert Tailwind or plain HTML to Chakra UI v3 | [chakra-ui/chakra-ui](https://github.com/chakra-ui/chakra-ui/tree/main/skills/chakra-ui-refactor) | `731ecac` | MIT, `chakra-ui-refactor/LICENSE` (copied from the repo root) |
+| `impeccable` | Frontend design vocabulary: `critique`, `audit`, `polish`, `harden`, `layout`, `typeset` and more, plus a deterministic anti-pattern detector (`scripts/impeccable detect`) | [pbakaus/impeccable](https://github.com/pbakaus/impeccable/tree/main/.agents/skills/impeccable) | `9c3808b` (v4.8.0) | Apache-2.0, `impeccable/LICENSE` |
 
 ## Notes for this repo
+
+- `impeccable` is copied from the generic `.agents/` build in its repo (the
+  Codex-style build, so its docs say `$impeccable`; in Claude Code type
+  `/impeccable`). Its `scripts/impeccable` launcher downloads a checksum-verified
+  engine binary into `~/.impeccable/bin/` on first run. It has no `PRODUCT.md` or
+  `DESIGN.md` here yet; `/impeccable init` and `/impeccable document` create them.
+  The optional design hook (`npx impeccable install`) is not set up.
 
 - Some skills were written for their authors' own repos. `narrow-react-prop-types`
   shows `bun` typecheck commands and a sample CI workflow in `references/`; here,

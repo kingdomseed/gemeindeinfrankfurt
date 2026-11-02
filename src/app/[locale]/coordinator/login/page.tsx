@@ -10,8 +10,8 @@ export default async function LoginPage({ params }: PageProps<"/[locale]/coordin
   const t = await getTranslations("coordinator");
   return (
     <div className="mt-10 max-w-sm space-y-4">
-      <h1 className="text-2xl font-semibold">{t("signIn")}</h1>
-      <p>{t("signInHelp")}</p>
+      <h1 className="text-3xl font-semibold tracking-tight">{t("signIn")}</h1>
+      <p className="text-muted">{t("signInHelp")}</p>
       <LoginForm />
     </div>
   );

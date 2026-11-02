@@ -3,11 +3,11 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { fieldClass } from "@/components/styles";
 import { createClient } from "@/lib/supabase/browser";
 
 export function LoginForm() {
   const t = useTranslations("coordinator");
-  const tr = useTranslations("register");
   const locale = useLocale();
   const [sent, setSent] = useState(false);
 
@@ -25,20 +25,23 @@ export function LoginForm() {
     setSent(true); // Same message either way, so the form doesn't reveal who is a coordinator.
   }
 
-  if (sent) return <p>{t("linkSent")}</p>;
+  if (sent) {
+    return (
+      <output className="block rounded-lg bg-success-bg p-4 text-success-ink">
+        {t("linkSent")}
+      </output>
+    );
+  }
   return (
-    <form action={onSubmit} className="space-y-3">
+    <form action={onSubmit} className="space-y-4">
       <label className="block">
-        {tr("email")}
-        <input
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          className="mt-1 w-full rounded border border-neutral-300 px-3 py-2 dark:border-neutral-700 dark:bg-neutral-900"
-        />
+        {t("emailLabel")}
+        <input name="email" type="email" autoComplete="email" required className={fieldClass} />
       </label>
-      <button type="submit" className="rounded bg-teal-800 px-5 py-2 font-semibold text-white">
+      <button
+        type="submit"
+        className="min-h-11 rounded-md bg-brand px-6 font-semibold text-brand-ink hover:bg-brand-hover"
+      >
         {t("sendLink")}
       </button>
     </form>

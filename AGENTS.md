@@ -23,7 +23,7 @@ Skills live in `.agents/skills/` (Claude Code also sees them through `.claude/sk
 | touch Supabase: auth, clients, RLS, storage, CLI                     | `supabase`                                                                        |
 | write SQL, a migration, an index or an RLS policy                    | `supabase-postgres-best-practices`                                                |
 | finish any React change, or React Doctor reports something           | `react-doctor`                                                                    |
-| critique, polish or harden a screen's design                         | `impeccable`                                                                      |
+| critique, polish or harden a screen's design                         | `impeccable` (`/impeccable critique`, `audit`, `polish` …)                        |
 | check accessibility and UX against web interface guidelines          | `web-design-guidelines`                                                           |
 | need to see the change running in a browser                          | `next-dev-loop` (drives `agent-browser`)                                          |
 | are asked for a visual PR description                                | `visual-pr` (only when asked by name)                                             |
