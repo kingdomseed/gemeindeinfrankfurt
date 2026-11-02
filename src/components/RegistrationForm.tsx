@@ -30,6 +30,7 @@ export type RegistrationDefaults = {
   outline_language: Language;
   second_outline_language: Language | null;
   comments: string;
+  payer_name: string;
   attended_anaheim: boolean;
   ukraine_not_employed: boolean;
 };
@@ -67,7 +68,10 @@ export function RegistrationForm(props: Props) {
   const [ukraine, setUkraine] = useState(d?.ukraine_not_employed ?? false);
   const [sessionsMissing, setSessionsMissing] = useState(false);
   const [formKey, setFormKey] = useState(0);
-  const [receiptDismissed, setReceiptDismissed] = useState(false);
+  // The result whose receipt was closed with "Register another person". A new
+  // submission yields a new state object, so its receipt shows again only once
+  // that submission has actually succeeded.
+  const [dismissedResult, setDismissedResult] = useState<State | null>(null);
   const statusRef = useRef<HTMLParagraphElement>(null);
 
   // "done" is shown as the receipt below, not as a banner.
@@ -95,17 +99,18 @@ export function RegistrationForm(props: Props) {
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    if (seatType === "part_time" && form.getAll("session_ids").length === 0) {
+    // A locked seat keeps its stored sessions (the server restores them), and
+    // its disabled checkboxes are not sent, so only check editable selections.
+    if (!props.seatLocked && seatType === "part_time" && form.getAll("session_ids").length === 0) {
       setSessionsMissing(true);
       e.currentTarget.querySelector<HTMLInputElement>('input[name="session_ids"]')?.focus();
       return;
     }
     setSessionsMissing(false);
-    setReceiptDismissed(false);
     startTransition(() => formAction(form));
   }
 
-  if (state.status === "done" && !receiptDismissed) {
+  if (state.status === "done" && state !== dismissedResult) {
     return (
       <section
         ref={(el) => el?.focus()}
@@ -124,7 +129,11 @@ export function RegistrationForm(props: Props) {
         <button
           type="button"
           onClick={() => {
-            setReceiptDismissed(true);
+            setDismissedResult(state);
+            // Waivers belong to the person just registered; seat type and
+            // languages often carry over within a family, so they stay.
+            setAnaheim(false);
+            setUkraine(false);
             setFormKey((k) => k + 1);
           }}
           className="font-semibold underline"
@@ -273,6 +282,11 @@ export function RegistrationForm(props: Props) {
         </dl>
         <p className="mt-4 text-sm text-muted">{t("payHint")}</p>
         <TransferDetails payment={props.payment} />
+        <label className="mt-4 block">
+          {t("payerName")} <span className="text-sm text-muted">({t("optional")})</span>
+          <span className="block text-sm text-muted">{t("payerNameHelp")}</span>
+          <input name="payer_name" defaultValue={d?.payer_name} autoComplete="off" className={fieldClass} />
+        </label>
       </section>
 
       <Section legend={t("sectionConfirm")}>

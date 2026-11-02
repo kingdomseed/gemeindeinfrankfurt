@@ -23,6 +23,7 @@ type Row = {
   attended_anaheim: boolean;
   ukraine_not_employed: boolean;
   waiver: string | null;
+  payer_name: string;
   fee_paid: boolean;
   outline_paid: boolean;
 };
@@ -48,7 +49,7 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
     supabase
       .from("registrations")
       .select(
-        "id, seat_type, first_name, last_name, partner_first_name, partner_last_name, group_language, outline_language, second_outline_language, attended_anaheim, ukraine_not_employed, waiver, fee_paid, outline_paid",
+        "id, seat_type, first_name, last_name, partner_first_name, partner_last_name, group_language, outline_language, second_outline_language, attended_anaheim, ukraine_not_employed, waiver, payer_name, fee_paid, outline_paid",
       )
       .eq("training_id", training.id)
       .eq("status", "active")
@@ -196,6 +197,7 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
           {list.map((row) => (
             <li key={row.r.id} className="py-3">
               <p className="font-semibold">{row.name}</p>
+              {row.r.payer_name && <p className="text-sm">{t("payer", { name: row.r.payer_name })}</p>}
               <p className="text-sm text-muted">
                 {t(`seatShort.${row.r.seat_type}`)} · {row.langs}
               </p>
@@ -221,7 +223,12 @@ export default async function CoordinatorPage({ params }: PageProps<"/[locale]/c
             <tbody>
               {list.map((row) => (
                 <tr key={row.r.id} className="border-b border-line">
-                  <th scope="row" className="py-1 pr-3 font-normal">{row.name}</th>
+                  <th scope="row" className="py-1 pr-3 font-normal">
+                    {row.name}
+                    {row.r.payer_name && (
+                      <span className="block text-xs text-muted">{t("payer", { name: row.r.payer_name })}</span>
+                    )}
+                  </th>
                   <td className="pr-3">{t(`seatShort.${row.r.seat_type}`)}</td>
                   <td className="pr-3 tabular-nums">{row.langs}</td>
                   <td className="pr-3">{feeToggle(row)}</td>

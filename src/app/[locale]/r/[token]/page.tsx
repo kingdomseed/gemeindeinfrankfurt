@@ -57,6 +57,7 @@ export default async function EditPage({ params }: PageProps<"/[locale]/r/[token
           outline_language: reg.outline_language,
           second_outline_language: reg.second_outline_language,
           comments: reg.comments,
+          payer_name: reg.payer_name,
           attended_anaheim: reg.attended_anaheim,
           ukraine_not_employed: reg.ukraine_not_employed,
         }}

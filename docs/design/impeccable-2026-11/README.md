@@ -21,14 +21,13 @@ The first [Impeccable](https://github.com/pbakaus/impeccable) pass over the plat
 | The form was one flat list of about 17 controls. The rules were collapsed directly above "I have read the rules". | P2 | The form is now grouped into sections (seat, about you, languages, free seat, payment, rules). The rules are shown in full, optional fields are marked, and `autocomplete` is set. Radios and checkboxes are 20px with 44px rows. |
 | The language switcher showed "DE EN RU" at 19×20px. | P3 | Each language is now named in itself ("Deutsch · English · Русский"), with `lang` and `hreflang` set and 44px targets. The header shows the app name, linking home. |
 
-## Open product questions (not changed)
+## Follow-ups from Jason (2 Nov 2026)
 
-These need a decision or content from the team. The code does not guess at them.
-
-1. **Contact and legal links.** The "contact the coordinators" messages give no contact. The privacy notice and Impressum links required by `business-requirements.md` are not rendered yet, because the pages do not exist.
-2. **Payment reference per person.** Every registrant uses the same reference, so coordinators cannot match a bank transfer to a registration. One option is to add the last name to the reference.
-3. **Who runs it.** No church or city name appears anywhere. People are asked to send money to an IBAN, so a name and a contact would build trust.
-4. **Translation review.** The new German and Russian strings were written by Claude and should be read by a native speaker.
+- **Contact people.** The footer and the privacy page list everyone in `CONTACTS` (`"Name <email>; Name <email>"`).
+- **Privacy notice.** A typical GDPR notice, in German, English and Russian, at `/[locale]/privacy`. It is a template, not legal advice, and should be reviewed before launch. There is no Impressum yet, because it would need a postal address.
+- **Who pays.** An optional "Who sends the bank transfer?" field (`payer_name`, added by a migration) appears on the form. Coordinators see "Paid by …" in their list.
+- **Locality.** The form shows the training's locality (`trainings.venue`). The church's name stays out of the public pages.
+- **Translation review.** The new German and Russian strings still need a check by a native speaker.
 
 ## Next Impeccable steps
 
@@ -38,6 +37,8 @@ These need a decision or content from the team. The code does not guess at them.
 
 ![Register, desktop](register-en-desktop.webp)
 ![Register, phone](register-en-mobile.webp)
+![Receipt after registering](receipt-en-desktop.webp)
+![Privacy notice, German, phone](privacy-de-mobile.webp)
 ![Register, dark](register-en-desktop-dark.webp)
 ![Coordinator, phone](coordinator-en-mobile.webp)
 ![Coordinator, dark](coordinator-en-desktop-dark.webp)

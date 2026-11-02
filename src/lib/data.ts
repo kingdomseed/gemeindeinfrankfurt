@@ -11,13 +11,14 @@ export type Training = {
   payee_name: string;
   payee_iban: string;
   payment_reference: string;
+  venue: string;
   rules: Partial<Record<Language, string>>;
 };
 
 export type TrainingWithSessions = Training & { sessions: Session[] };
 
 const TRAINING_COLUMNS =
-  "id, slug, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, rules, sessions(id, message_number, starts_at, ends_at)";
+  "id, slug, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, rules, sessions(id, message_number, starts_at, ends_at)";
 
 // The training currently open for registration: the published one whose
 // schedule starts last. Coordinators publish one training at a time.
