@@ -1,6 +1,7 @@
 import { Box, Button, Heading, HStack, Input, Table } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 
+import { ColumnHeader } from "@/components/ui/column-header";
 import type { OutlineStock } from "@/lib/domain/payments";
 
 // Outlines needed per language, with a form per row to record how many were ordered.
@@ -20,18 +21,10 @@ export function OutlineOrders(props: {
         <Table.Root size="sm" maxW="md" fontVariantNumeric="tabular-nums" variant="line">
           <Table.Header>
             <Table.Row bg="transparent">
-              <Table.ColumnHeader color="fg.muted" fontWeight="normal">
-                {t("language")}
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="fg.muted" fontWeight="normal" textAlign="end">
-                {t("needed")}
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="fg.muted" fontWeight="normal">
-                {t("ordered")}
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="fg.muted" fontWeight="normal" textAlign="end">
-                {t("extra")}
-              </Table.ColumnHeader>
+              <ColumnHeader>{t("language")}</ColumnHeader>
+              <ColumnHeader align="end">{t("needed")}</ColumnHeader>
+              <ColumnHeader>{t("ordered")}</ColumnHeader>
+              <ColumnHeader align="end">{t("extra")}</ColumnHeader>
             </Table.Row>
           </Table.Header>
           <Table.Body>

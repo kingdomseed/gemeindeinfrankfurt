@@ -1,8 +1,8 @@
-import { Heading, Link, List, Stack, Text } from "@chakra-ui/react";
+import { Link, List, Stack, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
 
 import { PageHeading } from "@/components/ui/page-heading";
+import { TitledSection } from "@/components/ui/titled-section";
 import type { Contact } from "@/lib/site";
 
 const sections = [
@@ -15,17 +15,6 @@ const sections = [
   "complaint",
 ] as const;
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <Stack as="section" gap="1">
-      <Heading as="h2" size="xl" fontWeight="semibold">
-        {title}
-      </Heading>
-      {children}
-    </Stack>
-  );
-}
-
 export function PrivacyNotice({ contacts }: { contacts: readonly Contact[] }) {
   const t = useTranslations("privacy");
   return (
@@ -34,7 +23,7 @@ export function PrivacyNotice({ contacts }: { contacts: readonly Contact[] }) {
         <PageHeading title={t("title")} />
         <Text>{t("intro")}</Text>
       </Stack>
-      <Section title={t("controllerTitle")}>
+      <TitledSection title={t("controllerTitle")}>
         {contacts.length > 0 ? (
           <>
             <List.Root listStyle="none">
@@ -52,11 +41,11 @@ export function PrivacyNotice({ contacts }: { contacts: readonly Contact[] }) {
         ) : (
           <Text>{t("noContact")}</Text>
         )}
-      </Section>
+      </TitledSection>
       {sections.map((s) => (
-        <Section key={s} title={t(`${s}Title`)}>
+        <TitledSection key={s} title={t(`${s}Title`)}>
           <Text>{t(`${s}Body`)}</Text>
-        </Section>
+        </TitledSection>
       ))}
     </Stack>
   );

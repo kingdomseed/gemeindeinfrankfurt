@@ -1,7 +1,9 @@
 import { defineSemanticTokens } from "@chakra-ui/react";
 
+// Chakra's own tokens are written as { _light, _dark } and the configs are
+// deep-merged, so ours must use the same keys to replace both values.
 const mode = (light: string, dark: string) => ({
-  value: { base: `{colors.${light}}`, _dark: `{colors.${dark}}` },
+  value: { _light: `{colors.${light}}`, _dark: `{colors.${dark}}` },
 });
 
 // Chakra's own semantic token names (bg, fg, border, fg.error, ...) mapped to

@@ -1,36 +1,12 @@
-import { Box, Flex, Heading, Input, Span, Text } from "@chakra-ui/react";
+import { Box, Heading, Input, Span, Text } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
-import type { ReactNode } from "react";
 
 import { FormField } from "@/components/ui/form-field";
 import { formatEuro, type FeeBreakdown } from "@/lib/domain/fees";
 
+import { PaymentLine } from "./PaymentLine";
 import { TransferDetails } from "./TransferDetails";
 import type { PaymentDetails } from "./types";
-
-function Line(props: { label: ReactNode; children: ReactNode; total?: boolean }) {
-  return (
-    <Flex
-      as="div"
-      justify="space-between"
-      align="baseline"
-      gap="6"
-      fontVariantNumeric="tabular-nums"
-      {...(props.total && {
-        mt: "2",
-        pt: "2",
-        borderTopWidth: "1px",
-        borderColor: "border.emphasized",
-        fontWeight: "semibold",
-      })}
-    >
-      <dt>{props.label}</dt>
-      <Box as="dd" textAlign="right" fontSize={props.total ? "lg" : undefined}>
-        {props.children}
-      </Box>
-    </Flex>
-  );
-}
 
 // The live total while the form is filled in, the transfer details, and who pays.
 export function PaymentSummary(props: {
@@ -48,18 +24,20 @@ export function PaymentSummary(props: {
         {t("sectionPayment")}
       </Heading>
       <Box as="dl" mt="3">
-        <Line label={t("trainingFee")}>
+        <PaymentLine label={t("trainingFee")}>
           {fees.waived && (
             <Span fontSize="sm" color="fg.muted">
               {t("waived")}{" "}
             </Span>
           )}
           {euro(fees.trainingCents)}
-        </Line>
-        <Line label={t("outlines", { count: fees.outlineCount })}>{euro(fees.outlineCents)}</Line>
-        <Line label={t("total")} total>
+        </PaymentLine>
+        <PaymentLine label={t("outlines", { count: fees.outlineCount })}>
+          {euro(fees.outlineCents)}
+        </PaymentLine>
+        <PaymentLine label={t("total")} total>
           {euro(fees.trainingCents + fees.outlineCents)}
-        </Line>
+        </PaymentLine>
       </Box>
       <Text mt="4" fontSize="sm" color="fg.muted">
         {t("payHint")}

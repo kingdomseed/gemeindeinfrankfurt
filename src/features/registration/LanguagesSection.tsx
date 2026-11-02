@@ -1,27 +1,10 @@
-import { NativeSelect, SimpleGrid, Textarea } from "@chakra-ui/react";
+import { SimpleGrid, Textarea } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
 
 import { FormField } from "@/components/ui/form-field";
 import { FormSection } from "@/components/ui/form-section";
+import { SelectField } from "@/components/ui/select-field";
 import { isLanguage, languages, type Language } from "@/lib/domain/types";
-
-function Select(props: {
-  label: string;
-  children: ReactNode;
-  field: Parameters<typeof NativeSelect.Field>[0];
-}) {
-  return (
-    <FormField label={props.label}>
-      <NativeSelect.Root>
-        <NativeSelect.Field bg="bg" {...props.field}>
-          {props.children}
-        </NativeSelect.Field>
-        <NativeSelect.Indicator />
-      </NativeSelect.Root>
-    </FormField>
-  );
-}
 
 export function LanguagesSection(props: {
   groupLanguage: Language;
@@ -42,13 +25,13 @@ export function LanguagesSection(props: {
   return (
     <FormSection legend={t("sectionLanguages")}>
       <SimpleGrid columns={{ base: 1, sm: 3 }} gap="4">
-        <Select
+        <SelectField
           label={t("groupLanguage")}
           field={{ name: "group_language", defaultValue: props.groupLanguage }}
         >
           {options(languages)}
-        </Select>
-        <Select
+        </SelectField>
+        <SelectField
           label={t("outlineLanguage")}
           field={{
             name: "outline_language",
@@ -59,8 +42,8 @@ export function LanguagesSection(props: {
           }}
         >
           {options(languages)}
-        </Select>
-        <Select
+        </SelectField>
+        <SelectField
           label={t("secondOutlineLanguage")}
           field={{
             name: "second_outline_language",
@@ -73,7 +56,7 @@ export function LanguagesSection(props: {
         >
           <option value="">{t("none")}</option>
           {options(languages.filter((l) => l !== props.outline))}
-        </Select>
+        </SelectField>
       </SimpleGrid>
       <FormField label={t("comments")} optionalLabel={t("optional")}>
         <Textarea name="comments" defaultValue={props.comments} rows={3} bg="bg" />
