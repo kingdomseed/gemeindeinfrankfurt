@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 export function TitledSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Stack as="section" gap="1">
-      <Heading as="h2" size="xl" fontWeight="semibold">
+      <Heading as="h2" size="xl">
         {title}
       </Heading>
       {children}

@@ -14,7 +14,7 @@ export function OutlineOrders(props: {
   const tl = useTranslations("common.languages");
   return (
     <Box as="section" aria-labelledby="outlines-heading">
-      <Heading as="h2" id="outlines-heading" size="xl" fontWeight="semibold">
+      <Heading as="h2" id="outlines-heading" size="xl">
         {t("outlineCounts")}
       </Heading>
       <Table.ScrollArea mt="3">
@@ -50,14 +50,12 @@ export function OutlineOrders(props: {
                           aria-label={label}
                           size="sm"
                           w="16"
-                          bg="bg"
                         />
                         <Button
                           type="submit"
                           size="sm"
                           variant="outline"
                           color="fg"
-                          borderColor="border.emphasized"
                           aria-label={`${t("save")}: ${label}`}
                         >
                           {t("save")}

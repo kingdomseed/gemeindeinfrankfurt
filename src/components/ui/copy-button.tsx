@@ -8,7 +8,7 @@ export function CopyButton(props: { value: string; label: string; copiedLabel: s
   return (
     <Clipboard.Root value={props.value} timeout={2000}>
       <Clipboard.Trigger asChild>
-        <Button variant="outline" size="xs" minH="8" borderColor="border.emphasized">
+        <Button variant="outline" size="xs" minH="8">
           <span aria-live="polite">
             <Clipboard.Indicator copied={props.copiedLabel}>{props.label}</Clipboard.Indicator>
           </span>

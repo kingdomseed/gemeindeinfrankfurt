@@ -29,7 +29,7 @@ export function Receipt(props: {
       p="5"
       outline="none"
     >
-      <Heading as="h2" size="xl" fontWeight="semibold">
+      <Heading as="h2" size="xl">
         {t("receiptTitle")}
       </Heading>
       <Text>{t("receiptBody")}</Text>

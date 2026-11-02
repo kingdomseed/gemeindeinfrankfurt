@@ -29,7 +29,6 @@ export function TextField(props: {
         type={props.type ?? "text"}
         defaultValue={props.value}
         autoComplete={props.autoComplete}
-        bg="bg"
       />
     </FormField>
   );

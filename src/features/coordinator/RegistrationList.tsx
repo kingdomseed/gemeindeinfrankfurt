@@ -13,7 +13,7 @@ export function RegistrationList(props: {
   const t = useTranslations("coordinator");
   return (
     <Box as="section" aria-labelledby="registrations-heading">
-      <Heading as="h2" id="registrations-heading" size="xl" fontWeight="semibold">
+      <Heading as="h2" id="registrations-heading" size="xl">
         {t("registrations")}
       </Heading>
       <RegistrationCards {...props} />
