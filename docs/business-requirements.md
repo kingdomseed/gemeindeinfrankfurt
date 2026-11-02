@@ -116,6 +116,10 @@ Several serving ones log in to the same coordination site. Everyone can edit, an
 
 23. Export a print-ready list of name tags: one per seat, with both names on a shared seat.
 
+**Webcast access**
+
+24. Lebensstrom sends the church the **login for the LSM website** where the training videos are played. The system stores it, and only coordinators serving in **AV (Technik)** can see it. It never appears on the form, in emails or in the WhatsApp group.
+
 ## Email
 
 Email is a big part of the system. Every email goes out in German, English and Russian.
@@ -126,10 +130,10 @@ Email is a big part of the system. Every email goes out in German, English and R
 | Confirmation | Right after each registration and each change | What they registered for, the amount to pay and the IBAN, their personal edit link |
 | Cancellation | When a registration is cancelled | Confirmation that it is cancelled |
 | Payment reminder | Sent by a coordinator, to everyone still unpaid | Amounts still open and the IBAN |
-| Before the training | A few days before the first session | Schedule, place or Zoom details, rules, what to bring |
+| Before the training | A few days before the first session | Schedule, place, rules, what to bring, and how to join the private WhatsApp group |
 | Message to all or to a group | Any time, sent by a coordinator | Free text, for example a schedule change |
 
-The Zoom link only goes to registered people, never to a public page.
+The Zoom link for our local meeting goes only to registered people, through the training's private WhatsApp group, never to a public page. It is a different thing from the Lebensstrom webcast login (see Webcast access).
 
 ## Reporting to Lebensstrom after the training
 
@@ -166,7 +170,7 @@ These come from the [Lebensstrom video training page](https://lebensstrom.de/vid
 | Name tag required; one per seat, both names on a shared seat | Name tag export |
 | Study groups of 8–10 | Group suggestions |
 | Tests for messages 1–10; attendance for all 12 | Testing schedule and attendance |
-| Webcast login and Zoom ID are not shared with individual registrants | Visible only to coordinators |
+| The webcast login (from Lebensstrom, for the LSM website) is not shared with individual registrants | Stored in the system; visible only to coordinators serving in AV |
 | Fees, questionnaire and reimbursements are due within 7 days of the end | Report page and reminder on the dashboard |
 
 ## Decisions made
@@ -193,6 +197,7 @@ No questions are open. Every question raised while preparing this document is an
 | What happens to personal data afterwards? | Names and contact details are deleted once the report is filed and accepted. Only counts are kept. | Working decision |
 | Which questionnaire form do we use? | The December 2026 version from the Lebensstrom page | Lebensstrom page |
 | Which account do fees go to? | Saints pay the church. The church transfers to Lebensstrom e.V. with the reference "Spende 2026 WT". | Lebensstrom page |
+| Who gets the Zoom link, and who gets the webcast login? | Everyone registered gets our local Zoom link through the private WhatsApp group. Only coordinators serving in AV see the Lebensstrom webcast login. | Coordinators |
 
 ## Technical approach
 
