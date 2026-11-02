@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
 import { computeFees } from "./fees";
 import { countOutlines } from "./outlines";
+import { sessionLabel } from "./sessions";
 import { hashToken, newEditToken } from "./token";
 
 const prices = { feeCents: 7000, outlinePriceCents: 500 };
@@ -93,5 +94,12 @@ describe("edit token", () => {
     expect(token.length).toBeGreaterThanOrEqual(43);
     expect(hash).toBe(hashToken(token));
     expect(hash).not.toContain(token);
+  });
+});
+
+describe("sessionLabel", () => {
+  it("shows Berlin time in the page's language", () => {
+    const session = { id: "s1", message_number: 1, starts_at: "2026-12-26T08:00:00Z", ends_at: "" };
+    expect(sessionLabel(session, "en", "Message 1")).toBe("Message 1: Sat, Dec 26, 09:00 AM");
   });
 });

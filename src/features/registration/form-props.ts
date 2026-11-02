@@ -1,6 +1,6 @@
 import type { TrainingWithSessions } from "@/lib/data";
+import { sessionLabel } from "@/lib/domain/sessions";
 import type { Language } from "@/lib/domain/types";
-import { sessionLabel } from "@/lib/format";
 
 import type { PaymentDetails, SessionOption } from "./types";
 

@@ -5,7 +5,7 @@ import { PageHeading } from "@/components/ui/page-heading";
 import { Link } from "@/i18n/navigation";
 import type { TrainingWithSessions } from "@/lib/data";
 import { formatEuro } from "@/lib/domain/fees";
-import { sessionLabel } from "@/lib/format";
+import { sessionLabel } from "@/lib/domain/sessions";
 
 // The landing page: title, fee, a register button and the schedule.
 export function TrainingOverview({ training }: { training: TrainingWithSessions }) {

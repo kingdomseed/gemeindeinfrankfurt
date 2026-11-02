@@ -1,4 +1,4 @@
-import type { Session } from "@/lib/domain/types";
+import type { Session } from "./types";
 
 // Session labels in every language come from the same timestamps.
 export function sessionLabel(s: Session, locale: string, messageWord: string) {

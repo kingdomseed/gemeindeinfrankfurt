@@ -61,7 +61,7 @@ src/features/<feature>/      screens built from UI pieces: shell, home, registra
 src/components/ui/           generic Chakra building blocks (field, choice, notice, provider)
 src/theme/                   Chakra system: colour tokens, dark mode, recipe defaults
 src/lib/coordinator.ts       coordinator page queries
-src/lib/domain/              pure rules: fees, cutoffs, outline counts, payments, tokens (tested)
+src/lib/domain/              pure rules: fees, cutoffs, outline counts, payments, session labels, tokens (tested)
 src/lib/registrations.ts     form validation and registration storage
 src/lib/email/send.ts        confirmation and cancellation emails
 supabase/migrations/         schema, row-level security, copy_training, purge_personal_data
