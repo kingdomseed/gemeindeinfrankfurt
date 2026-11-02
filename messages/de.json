@@ -1,0 +1,90 @@
+{
+  "common": {
+    "appName": "Videotraining",
+    "languages": { "de": "Deutsch", "en": "Englisch", "ru": "Russisch" },
+    "privacy": "Datenschutzerklärung",
+    "imprint": "Impressum"
+  },
+  "home": {
+    "noTraining": "Die Anmeldung ist noch nicht geöffnet.",
+    "register": "Anmelden",
+    "schedule": "Zeitplan",
+    "message": "Botschaft {number}",
+    "fee": "Beitrag pro Platz: {fee}. Gliederung: je {outline}."
+  },
+  "register": {
+    "title": "Anmeldung: {training}",
+    "closed": "Die Anmeldung ist geschlossen. Bitte wende dich an die Koordinatoren.",
+    "seatType": "Art des Platzes",
+    "seat": {
+      "full_time": "Vollzeit (alle Einheiten)",
+      "part_time": "Teilzeit (Einheiten auswählen)",
+      "shared": "Geteilter Platz (zwei Personen, abwechselnd; Vollzeit)"
+    },
+    "sessions": "Einheiten, an denen du teilnimmst",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "partnerFirstName": "Zweite Person: Vorname",
+    "partnerLastName": "Zweite Person: Nachname",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "groupLanguage": "Sprache der Studiengruppe",
+    "outlineLanguage": "Sprache der Gliederung",
+    "secondOutlineLanguage": "Zweite Gliederung (optional)",
+    "none": "Keine",
+    "comments": "Anmerkungen",
+    "attendedAnaheim": "Ich habe am Live-Training in Anaheim teilgenommen",
+    "ukraineNotEmployed": "Ich komme aus der Ukraine und bin nicht erwerbstätig",
+    "confirmAdult": "Ich bin mindestens 18 Jahre alt",
+    "acceptRules": "Ich habe die Trainingsregeln gelesen",
+    "rules": "Trainingsregeln",
+    "toPay": "Zu zahlen",
+    "trainingFee": "Trainingsbeitrag",
+    "outlines": "Gliederungen ({count})",
+    "payTo": "Bitte überweise an {payee}, IBAN {iban}, Verwendungszweck „{reference}“.",
+    "submit": "Anmelden",
+    "duplicateWarning": "Es gibt bereits eine Anmeldung mit diesem Namen und dieser E-Mail. Trotzdem anmelden?",
+    "registerAnyway": "Ja, trotzdem anmelden",
+    "done": "Danke! Wir haben dir eine Bestätigung mit einem Link zum Ändern oder Stornieren geschickt.",
+    "error": "Etwas ist schiefgelaufen. Bitte prüfe das Formular und versuche es erneut."
+  },
+  "edit": {
+    "title": "Deine Anmeldung",
+    "notFound": "Dieser Link ist ungültig.",
+    "save": "Änderungen speichern",
+    "saved": "Gespeichert. Wir haben dir eine neue Bestätigung geschickt.",
+    "cancel": "Anmeldung stornieren",
+    "cancelConfirm": "Möchtest du diese Anmeldung wirklich stornieren?",
+    "cancelled": "Diese Anmeldung ist storniert.",
+    "locked": "Platzart, Einheiten und Stornierung können online nicht mehr geändert werden. Bitte wende dich an die Koordinatoren."
+  },
+  "email": {
+    "confirmationSubject": "Anmeldung bestätigt: {training}",
+    "confirmationIntro": "Hallo {name}, deine Anmeldung ist bestätigt.",
+    "cancellationSubject": "Anmeldung storniert: {training}",
+    "cancellationBody": "Hallo {name}, deine Anmeldung wurde storniert.",
+    "editLink": "Anmeldung ändern oder stornieren: {url}"
+  },
+  "coordinator": {
+    "title": "Koordination",
+    "signIn": "Anmelden",
+    "signInHelp": "Koordinatoren erhalten einen Anmeldelink per E-Mail.",
+    "sendLink": "Anmeldelink senden",
+    "linkSent": "Bitte schau in deine E-Mails.",
+    "notCoordinator": "Dieses Konto ist kein Koordinator.",
+    "registrations": "Anmeldungen",
+    "seats": "Plätze",
+    "feesReceived": "Beiträge erhalten",
+    "outlinesReceived": "Gliederungen bezahlt",
+    "unpaid": "Noch offen",
+    "name": "Name",
+    "seat": "Platz",
+    "languages": "Sprachen",
+    "feePaid": "Beitrag bezahlt",
+    "outlinePaid": "Gliederung bezahlt",
+    "outlineCounts": "Benötigte Gliederungen",
+    "ordered": "Bestellt",
+    "extra": "Zusätzlich",
+    "signOut": "Abmelden"
+  }
+}

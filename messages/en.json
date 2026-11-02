@@ -1,0 +1,90 @@
+{
+  "common": {
+    "appName": "Video Training",
+    "languages": { "de": "German", "en": "English", "ru": "Russian" },
+    "privacy": "Privacy notice",
+    "imprint": "Imprint"
+  },
+  "home": {
+    "noTraining": "Registration is not open yet.",
+    "register": "Register",
+    "schedule": "Schedule",
+    "message": "Message {number}",
+    "fee": "Fee per seat: {fee}. Outline: {outline} each."
+  },
+  "register": {
+    "title": "Register for {training}",
+    "closed": "Registration is closed. Please contact the coordinators.",
+    "seatType": "Seat type",
+    "seat": {
+      "full_time": "Full-time (all sessions)",
+      "part_time": "Part-time (choose sessions)",
+      "shared": "Shared seat (two people, one attends at a time; full-time)"
+    },
+    "sessions": "Sessions you will attend",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "partnerFirstName": "Second person: first name",
+    "partnerLastName": "Second person: last name",
+    "email": "Email",
+    "phone": "Phone",
+    "groupLanguage": "Study group language",
+    "outlineLanguage": "Outline language",
+    "secondOutlineLanguage": "Second outline (optional)",
+    "none": "None",
+    "comments": "Comments",
+    "attendedAnaheim": "I attended the live training in Anaheim",
+    "ukraineNotEmployed": "I am from Ukraine and not gainfully employed",
+    "confirmAdult": "I am 18 or older",
+    "acceptRules": "I have read the training rules",
+    "rules": "Training rules",
+    "toPay": "To pay",
+    "trainingFee": "Training fee",
+    "outlines": "Outlines ({count})",
+    "payTo": "Please transfer to {payee}, IBAN {iban}, reference \"{reference}\".",
+    "submit": "Register",
+    "duplicateWarning": "A registration with this name and email already exists. Register anyway?",
+    "registerAnyway": "Yes, register anyway",
+    "done": "Thank you! We have sent a confirmation email with a link to change or cancel your registration.",
+    "error": "Something went wrong. Please check the form and try again."
+  },
+  "edit": {
+    "title": "Your registration",
+    "notFound": "This link is not valid.",
+    "save": "Save changes",
+    "saved": "Saved. We have sent you an updated confirmation.",
+    "cancel": "Cancel registration",
+    "cancelConfirm": "Do you really want to cancel this registration?",
+    "cancelled": "This registration is cancelled.",
+    "locked": "Seat type, sessions and cancellation can no longer be changed online. Please contact the coordinators."
+  },
+  "email": {
+    "confirmationSubject": "Registration confirmed: {training}",
+    "confirmationIntro": "Hello {name}, your registration is confirmed.",
+    "cancellationSubject": "Registration cancelled: {training}",
+    "cancellationBody": "Hello {name}, your registration has been cancelled.",
+    "editLink": "Change or cancel your registration: {url}"
+  },
+  "coordinator": {
+    "title": "Coordination",
+    "signIn": "Sign in",
+    "signInHelp": "Coordinators receive a sign-in link by email.",
+    "sendLink": "Send sign-in link",
+    "linkSent": "Check your email for the sign-in link.",
+    "notCoordinator": "This account is not a coordinator.",
+    "registrations": "Registrations",
+    "seats": "Seats",
+    "feesReceived": "Fees received",
+    "outlinesReceived": "Outline money received",
+    "unpaid": "Still unpaid",
+    "name": "Name",
+    "seat": "Seat",
+    "languages": "Languages",
+    "feePaid": "Fee paid",
+    "outlinePaid": "Outline paid",
+    "outlineCounts": "Outlines needed",
+    "ordered": "Ordered",
+    "extra": "Extra",
+    "signOut": "Sign out"
+  }
+}
