@@ -1,3 +1,4 @@
+import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -15,6 +16,13 @@ const nextConfig: NextConfig = {
         ],
       },
     ]),
+  // German pages of the old WordPress site. Its English pages (/en/...)
+  // already match the new addresses.
+  redirects: () =>
+    Promise.resolve([
+      { source: "/fur-besucher", destination: "/de/fur-besucher", permanent: true },
+      { source: "/unser-glaube", destination: "/de/unser-glaube", permanent: true },
+    ]),
 };
 
-export default withNextIntl(nextConfig);
+export default withPayload(withNextIntl(nextConfig));

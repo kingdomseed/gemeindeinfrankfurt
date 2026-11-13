@@ -8,7 +8,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-Registration and coordination site for a church's local video training: Next.js App Router, Supabase, Chakra UI v3, next-intl (de, en, ru). Requirements are in `docs/business-requirements.md`.
+Website of the church in Frankfurt: its public pages (managed in Payload CMS at `/admin`) and, under `/[locale]/training`, the registration and coordination site for its local video training. Next.js App Router, Payload CMS, Supabase, Chakra UI v3, next-intl (de, en, ru). Training requirements are in `docs/business-requirements.md`; the old site's wording is in `archive/wordpress-2022/`.
 
 ## Design lives on the canvas
 
@@ -50,7 +50,8 @@ Code is split into layers. Each layer imports only from the layers below it, and
 | Features       | `src/features/<feature>/`  | Screens' building blocks for one feature (registration, coordinator, …)    |
 | UI             | `src/components/ui/`       | Generic Chakra pieces with no app knowledge                                |
 | Theme          | `src/theme/`               | Chakra `createSystem`, tokens, semantic tokens, recipes                    |
-| Data access    | `src/lib/` (not `domain/`) | Server-only Supabase queries, auth, email, small helpers                   |
+| Data access    | `src/lib/` (not `domain/`) | Server-only Supabase and CMS queries, auth, email, small helpers           |
+| CMS schema     | `src/cms/`                 | Payload collections, globals and the content seed                          |
 | Business rules | `src/lib/domain/`          | Pure functions with tests                                                  |
 
 Each of these folders has its own `AGENTS.md` with the rules for that layer; read it before editing there. Import across layers with the `@/` alias, never with `../` paths, so the boundary rules can see the import.
@@ -83,3 +84,4 @@ These are enforced by `tsconfig.json`, `.oxlintrc.json`, React Doctor and tests.
 | `npm test`          | Vitest unit tests                                                 |
 | `npm run doctor`    | React Doctor scan, plus a dependency supply-chain check           |
 | `npm run db:types`  | Regenerate Supabase types from the local database                 |
+| `npm run seed:cms`  | Load the church pages and site settings into Payload              |
