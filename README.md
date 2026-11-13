@@ -1,7 +1,12 @@
-# Video Training Platform
+# die Gemeinde in Frankfurt
 
-Registration and coordination for a local church's showing of the semiannual
-video training. It replaces the Google Forms and spreadsheets we used before:
+The website of the church in Frankfurt (gemeindeinfrankfurt.de): its public
+pages, edited in Payload CMS at `/admin`, and under `/[locale]/training` the
+registration and coordination site for its showing of the semiannual video
+training. The pages' wording comes from the old WordPress site, recovered in
+[archive/wordpress-2022](archive/wordpress-2022/README.md).
+
+The training site replaces the Google Forms and spreadsheets we used before:
 
 - **Registrants** sign up, see the schedule and what to pay, and change or cancel
   their registration through a personal link in their confirmation email. No
@@ -54,10 +59,14 @@ Before stage 1 goes live, still to do:
 
 ```
 messages/{de,en,ru}.json     all UI and email text
-src/proxy.ts                 locale routing + coordinator session refresh
-src/app/[locale]/            thin routes: home, /register, /r/[token] (edit link), /privacy
-src/app/[locale]/coordinator coordinator dashboard, sign-in and their server actions
-src/features/<feature>/      screens built from UI pieces: shell, home, registration, coordinator, privacy
+src/proxy.ts                 locale routing + coordinator session refresh (not /admin or /api)
+src/app/[locale]/            thin routes: church home, /[slug] (CMS pages), /privacy
+src/app/[locale]/training/   training home, /register, /r/[token] (edit link), /coordinator
+src/app/(payload)/           Payload admin (/admin) and REST API (/api), set up as in Payload's template
+src/payload.config.ts        Payload config: locales, Postgres schema "payload"
+src/cms/                     Payload collections and globals, and the content seed
+src/lib/cms.ts               CMS page and site-settings queries
+src/features/<feature>/      screens built from UI pieces: shell, church, home, registration, coordinator, privacy
 src/components/ui/           generic Chakra building blocks (field, choice, notice, provider)
 src/theme/                   Chakra system: colour tokens, dark mode, recipe defaults
 src/lib/coordinator.ts       coordinator page queries
@@ -89,7 +98,8 @@ Requirements: Node 22.18 or later, Docker (for local Supabase).
 npm install
 npx supabase start          # local Postgres, Auth, Realtime, and the Inbucket mail viewer
 npx supabase db reset       # applies migrations and seed.sql
-cp .env.example .env.local  # paste the URL and keys printed by `supabase start`
+cp .env.example .env.local  # paste the URL and keys printed by `supabase start`, set PAYLOAD_SECRET
+npm run seed:cms            # loads the church pages into Payload (run again after a db reset)
 npm run dev                 # http://localhost:3000
 ```
 
@@ -101,7 +111,10 @@ insert into coordinators (user_id, display_name, is_admin)
 values ('<auth user id>', 'Your name', true);
 ```
 
-Then sign in at `/de/coordinator/login`.
+Then sign in at `/de/training/coordinator/login`.
+
+To edit the church pages, open http://localhost:3000/admin and create the first
+CMS user there. CMS users are separate from coordinators.
 
 ### Checks
 

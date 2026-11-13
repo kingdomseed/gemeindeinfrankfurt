@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
 import { computeFees } from "./fees";
+import { openStreetMapUrl } from "./maps";
 import { countOutlines } from "./outlines";
 import { berlinDay, berlinDayTime, scheduleDays, sessionLabel } from "./sessions";
 import { hashToken, newEditToken } from "./token";
@@ -141,5 +142,13 @@ describe("berlinDay and berlinDayTime", () => {
     const instant = new Date("2027-01-09T08:30:00Z");
     expect(berlinDay(instant, "de")).toBe("Samstag, 9. Januar");
     expect(berlinDayTime(instant, "en-GB")).toBe("Saturday 9 January at 09:30");
+  });
+});
+
+describe("openStreetMapUrl", () => {
+  it("searches OpenStreetMap for the address", () => {
+    const url = new URL(openStreetMapUrl("Ginnheimer Stadtweg 120, 60431 Frankfurt am Main"));
+    expect(url.origin + url.pathname).toBe("https://www.openstreetmap.org/search");
+    expect(url.searchParams.get("query")).toBe("Ginnheimer Stadtweg 120, 60431 Frankfurt am Main");
   });
 });

@@ -31,7 +31,8 @@
     "coverage/**",
     "next-env.d.ts",
     ".agents/**",
-    ".claude/skills/**"
+    ".claude/skills/**",
+    "archive/**"
   ],
   "rules": {
     "eqeqeq": [
@@ -239,6 +240,7 @@
                   "@/components/**",
                   "@/theme/**",
                   "@/i18n/**",
+                  "@/cms/**",
                   "@/lib/*",
                   "@/lib/*/**",
                   "!@/lib/domain/**"
@@ -258,7 +260,14 @@
           {
             "patterns": [
               {
-                "group": ["@/app/**", "@/features/**", "@/components/**", "@/lib/**", "@/i18n/**"],
+                "group": [
+                  "@/app/**",
+                  "@/features/**",
+                  "@/components/**",
+                  "@/lib/**",
+                  "@/i18n/**",
+                  "@/cms/**"
+                ],
                 "message": "src/theme holds Chakra tokens and recipes only; it imports nothing from the app."
               }
             ]
@@ -283,10 +292,22 @@
                   "@/lib/auth",
                   "@/lib/data",
                   "@/lib/registrations",
-                  "@/lib/email/**"
+                  "@/lib/email/**",
+                  "@/lib/cms"
                 ],
                 "allowTypeImports": true,
                 "message": "Components never touch data access. Load data in the route or server action and pass it in as props."
+              },
+              {
+                "group": [
+                  "payload",
+                  "@payloadcms/db-*",
+                  "@payloadcms/next/**",
+                  "@payload-config",
+                  "@/payload.config",
+                  "@/cms/**"
+                ],
+                "message": "Components never touch Payload. The route loads CMS content through src/lib/cms.ts and passes it in."
               }
             ]
           }
@@ -337,15 +358,55 @@
                   "@/lib/auth",
                   "@/lib/data",
                   "@/lib/registrations",
-                  "@/lib/email/**"
+                  "@/lib/email/**",
+                  "@/lib/cms"
                 ],
                 "allowTypeImports": true,
                 "message": "Features never touch server data access. The route or server action loads data and passes it in. Only @/lib/supabase/browser (login, realtime) is allowed."
               },
               {
+                "group": [
+                  "payload",
+                  "@payloadcms/db-*",
+                  "@payloadcms/next/**",
+                  "@payload-config",
+                  "@/payload.config",
+                  "@/cms/**"
+                ],
+                "message": "Features never touch Payload directly. The route loads CMS content through src/lib/cms.ts and passes it in; features may render rich text with @payloadcms/richtext-lexical/react."
+              },
+              {
                 "group": ["@supabase/*"],
                 "allowTypeImports": true,
                 "message": "Features never talk to Supabase directly."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/cms/**", "src/payload.config.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/app/**",
+                  "@/features/**",
+                  "@/components/**",
+                  "@/theme/**",
+                  "@/lib/*",
+                  "@/lib/*/**",
+                  "!@/lib/domain/**"
+                ],
+                "message": "src/cms is the Payload schema and seed. It imports Payload, @/i18n/routing and @/lib/domain only; routes read CMS content through src/lib/cms.ts."
+              },
+              {
+                "group": ["@supabase/*"],
+                "message": "src/cms talks to the database through Payload only."
               }
             ]
           }

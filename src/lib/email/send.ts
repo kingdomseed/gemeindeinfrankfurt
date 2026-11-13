@@ -33,7 +33,7 @@ async function send(to: string, subject: string, text: string) {
 }
 
 export function editUrl(locale: Language, token: string) {
-  return `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/r/${token}`;
+  return `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/training/r/${token}`;
 }
 
 export async function sendConfirmation(opts: {

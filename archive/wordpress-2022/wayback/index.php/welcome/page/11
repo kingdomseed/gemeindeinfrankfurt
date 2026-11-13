@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+Optical Transceiver Module - BiDi, SFP, XFP, GBIC, 2x5, 1x9, CWDM</title>
+<meta name="description" content="OptixCom offers a comprehensive product line of dual fiber and bi-directional (BiDi) optical transceivers for your optical networks. Fiber Optic Transceivers, Data, Voice, Video Communications, Ethernet, Storage, Wireless, Cable Networks">
+<meta name="keywords" content="" />
+<meta http-equiv="X-UA-Compatible" content="edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href='http://fonts.googleapis.com/css?family=Share+Tech' rel='stylesheet' type='text/css'>
+<link href="http://gemeindeinfrankfurt.de/css/bootstraptable.css" rel="stylesheet">
+<link href="http://gemeindeinfrankfurt.de/css/page.css" rel="stylesheet">
+<link href="http://gemeindeinfrankfurt.de/css/style.css" rel="stylesheet">
+<link href="http://gemeindeinfrankfurt.de/css/company.css" rel="stylesheet">
+<link href="http://gemeindeinfrankfurt.de/css/news.css" rel="stylesheet">
+<link href="http://gemeindeinfrankfurt.de/css/contact.css" rel="stylesheet">
+<link href="http://gemeindeinfrankfurt.de/css/font-awesome.css" rel="stylesheet">
+<!--[if IE 7]>
+  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+<![endif]-->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script src="http://gemeindeinfrankfurt.de/js/cascade.js" type="text/javascript"></script>
+<script src="http://gemeindeinfrankfurt.de/js/jquery.megamenu.js" type="text/javascript"></script>
+<script src="http://gemeindeinfrankfurt.de/js/jquery.cycle.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://gemeindeinfrankfurt.de/js/jquery.selectboxes.js"></script>
+<script type="text/javascript" src="http://gemeindeinfrankfurt.de/js/jquery.selectboxes.min.js"></script>
+<script type="text/javascript" src="http://gemeindeinfrankfurt.de/js/jquery.selectboxes.pack.js"></script>
+<script type="text/javascript">
+      jQuery(function(){
+        var SelfLocation = window.location.href.split('?');
+        switch (SelfLocation[1]) {
+          case "justify_right":
+            jQuery(".megamenu").megamenu({ 'justify':'right' });
+            break;
+          case "justify_left":
+          default:
+            jQuery(".megamenu").megamenu({'activate_action':'click'}); 
+        }
+      });
+      jQuery(function(){
+        var SelfLocation = window.location.href.split('?');
+        switch (SelfLocation[1]) {
+          case "justify_right":
+            jQuery(".megamenu2").megamenu({ 'justify':'right' });
+            break;
+          case "justify_left":
+          default:
+            jQuery(".megamenu2").megamenu();
+        }
+      });
+      
+      $(document).ready(function(){
+
+ 	 $("#pro").hide();
+	});
+	
+	
+      
+    
+     function SelZero(vall){
+      	if(vall !="")
+     		$("#pro").show();
+     	else
+     		$("#pro").hide();
+  		 var arr=new Array();
+		var p1={'' : '','4' : 'SFP Dual LC','2' : 'SFP+ Dual LC','3' : 'XFP Dual LC','16' : 'QSFP MPO','5' : 'X2 Dual SC','6' : 'Xenpak Dual SC','8' : 'SFF Dual LC','7' : '1x9 Dual SC','9' : 'GBIC Dual SC' };     var p2={'' : '','10' : 'SFP BiDi  LC','11' : 'SFP+ BiDi LC','12' : 'XFP BiDi LC','15' : 'Dual BiDi LC','14' : '2x5 BiDi SC','13' : '1x9 BiDi SC' };     var p3={'' : '','19' : 'Optical Video','17' : 'SDI SFP' };     var p4={'' : '','21' : 'Mux/DeMux','23' : 'Fiber Cable' };     var p32={'' : '' };     var p33={'' : '' };     var p7={'' : '','366' : 'SFP-155SX-AT2K','292' : 'SFP-1250SX-AT500M ','293' : 'SFP-2125SX-AT300M ','294' : 'SFP-4250SX-AT500M ','295' : 'SFP-155LX-AT2K ','288' : 'SFP-155LX-AT20K ','289' : 'SFP-155LX-AT40K ','300' : 'SFP-155LX-AT60K ','287' : 'SFP-1250LX-AT2K ','301' : 'SFP-1250LX-AT10K ','388' : 'SFP-1250LX-AT20K','302' : 'SFP-1250LX-AT40K ','303' : 'SFP-1250LX-AT50K ','290' : 'SFP-2670LX-AT5K ','324' : 'SFP-2670LX-AT20K ','325' : 'SFP-2670LX-AT50K ','363' : 'SFP-4250LX-AT4K ','364' : 'SFP-4250LX-AT10K ','561' : 'SFP-4250LX-AT30K','326' : 'SFP-155EX-AT80K ','327' : 'SFP-155EX-AT100K ','328' : 'SFP-155EX-AT120K ','387' : 'SFP-155EX-AT150K ','329' : 'SFP-1250EX-AT30K ','330' : 'SFP-1250EX-AT60K ','331' : 'SFP-1250EX-AT80K ','389' : 'SFP-1250EX-AT120K','332' : 'SFP-2670EX-AT30K ','333' : 'SFP-2670EX-AT50K ','334' : 'SFP-2670EX-AT80K ','335' : 'SFP-2670EX-AT90K ','336' : 'SFP-2670EX-AT110K ','337' : 'SFP-1250CLX-AT40K-XX ','338' : 'SFP-1250CLX-AT60K-XX','339' : 'SFP-1250CLX-AT80K-XX','340' : 'SFP-1250CLX-AT100K-XX','341' : 'SFP-1250CEX-AT60K-XX','342' : 'SFP-1250CEX-AT80K-XX','343' : 'SFP-1250CEX-AT100K-XX','344' : 'SFP-1250CEX-AT120K-XX' };     var p16={'' : '','417' : 'BD7-155T3R5-ATM2K ','418' : 'BD7-155T5R3-ATM2K ','419' : 'BD7-155T3R5-ATM5K ','420' : 'BD7-155T5R3-ATM5K ','421' : 'BD7-155T3R5-AT10K ','422' : 'BD7-155T5R3-AT10K ','423' : 'BD7-155T3R5-AT20K ','424' : 'BD7-155T5R3-AT20K ','425' : 'BD7-155T3R5-AT40K ','426' : 'BD7-155T5R3-AT40K ','427' : 'BD7-155T4R5-AT60K ','428' : 'BD7-155T5R4-AT60K ','429' : 'BD7-155T4R5-AT80K ','430' : 'BD7-155T5R4-AT80K ','484' : 'BD7-155T4R5-AT100K ','485' : 'BD7-155T5R4-AT100K','486' : 'BD7-155T4R5-AT120K','487' : 'BD7-155T5R4-AT120K','547' : 'BD7-1250T3R5-AT2K','548' : 'BD7-1250T5R3-AT2K','482' : 'BD7-1250T3R5-ATM500M','483' : 'BD7-1250T5R3-ATM500M','431' : 'BD7-1250T3R5-AT10K ','432' : 'BD7-1250T5R3-AT10K ','433' : 'BD7-1250T3R5-AT20K ','434' : 'BD7-1250T5R3-AT20K ','435' : 'BD7-1250T3R5-AT40K ','436' : 'BD7-1250T5R3-AT40K ','437' : 'BD7-1250T4R5-AT60K ','438' : 'BD7-1250T5R4-AT60K ','488' : 'BD7-1250T4R5-AT80K','489' : 'BD7-1250T5R4-AT80K','543' : 'BD7-1250T4R5-AT100K','544' : 'BD7-1250T5R4-AT100K','545' : 'BD7-1250T4R5-AT120K','490' : 'BD7-2500T3R5-AT20K','546' : 'BD7-1250T5R4-AT120K','491' : 'BD7-2500T5R3-AT20K','492' : 'BD7-2500T3R5-AT40K','493' : 'BD7-2500T5R3-AT40K','494' : 'BD7-2500T4R5-AT60K','495' : 'BD7-2500T5R4-AT60K','496' : 'BD7-2500T4R5-AT80K','497' : 'BD7-2500T5R4-AT80K' };     var p22={'' : '','565' : 'SDI-2970LX-2T2K','566' : 'SDI-2970LX-2T20K','567' : 'SDI-2970LX-2T40K','568' : 'SDI-2970EX-2T40K','569' : 'SDI-2970EX-2R40K','570' : 'SDI-2970LX-TR2K','571' : 'SDI-2970LX-TR20K','573' : 'SDI-2970LX-TR40K','574' : 'SDI-2970EX-TR40K' };     var p24={'' : '' };     var p8={'' : '','374' : 'SFP-8500SX-AT150M ','376' : 'SFP-10000SX-AT300M ','384' : 'SFP-6250LX-AT2K','383' : 'SFP-6250LX-AT10K','375' : 'SFP-8500LX-AT10K','390' : 'SFP-10000LX-AT2K','377' : 'SFP-10000LX-AT10K','391' : 'SFP-10000LX-AT20K','378' : 'SFP-10000EX-AT40K','379' : 'SFP-10000EX-AT80K','380' : 'SFP-10000CLX-AT10K-XX','381' : 'SFP-10000CEX-AT40K-XX','382' : 'SFP-10000CEX-AT80K-XX','392' : 'SFP-10000DEX-AT40K-XX','393' : 'SFP-10000DEX-AT80K-XX' };     var p17={'' : '','461' : 'BD4-10000T2R3-AT10K','498' : 'BD4-10000T3R2-AT10K','501' : 'BD4-10000T2R3-AT20K','502' : 'BD4-10000T3R2-AT20K','503' : 'BD4-10000T2R3-AT40K','504' : 'BD4-10000T3R2-AT40K','537' : 'BD4-10000T2R3-AT60K','538' : 'BD4-10000T3R2-AT60K' };     var p23={'' : '','505' : 'DVI-LCTX-500M-1','506' : 'DVI-LCRX-500M-1','507' : 'DVI-LCTX-5K-1','508' : 'DVI-LCRX-5K-1','509' : 'HDI-SCTX-200M-1','510' : 'HDI-SCRX-200M-1','511' : 'CVI-FCTX-20K-1','512' : 'CVI-FCRX-20K-1','513' : 'CVA-FCTX-20K-1','514' : 'CVA-FCRX-20K-1' };     var p25={'' : '' };     var p9={'' : '','1' : 'QFP-40GMPSX-AT100M' };     var p18={'' : '','463' : 'BD6-10000T2R3-AT10K','464' : 'BD6-10000T3R2-AT10K','465' : 'BD6-10000T2R3-AT20K','462' : 'BD6-10000T3R2-AT20K','499' : 'BD6-10000T2R3-AT40K','500' : 'BD6-10000T3R2-AT40K','541' : 'BD6-10000T2R3-AT60K','542' : 'BD6-10000T3R2-AT60K' };     var p10={'' : '','367' : 'XFP-10000SX-AT300M','368' : 'XFP-10000LX-AT10K','369' : 'XFP-10000EX-AT40K','370' : 'XFP-10000EX-AT80K','371' : 'XFP-10000CLX-AT10K-XX','372' : 'XFP-10000CEX-AT40K-XX','373' : 'XFP-10000CEX-AT80K-XX','385' : 'XFP-10000DEX-AT40K-XX','386' : 'XFP-10000DEX-AT80K-XX' };     var p19={'' : '','549' : 'CBD-1250T3R4-AT20K','550' : 'CBD-1250T4R3-AT20K' };     var p11={'' : '','516' : 'X2-10000SX-AT300M','517' : 'X2-10000LX-AT10K','518' : 'X2-10000EX-AT40K','519' : 'X2-10000EX-AT80K','520' : 'X2-10000CEX-AT40KXX','521' : 'X2-10000CEX-AT80KXX','522' : 'X2-10000DEX-AT40KXX','523' : 'X2-10000DEX-AT80KXX' };     var p20={'' : '','395' : 'BD5-155T3R5-DPM2K','396' : 'BD5-155T5R3-DPM2K','397' : 'BD5-155T3R5-DPM5K','398' : 'BD5-155T5R3-DPM5K','399' : 'BD5-155T3R5-DP15K','400' : 'BD5-155T5R3-DP15K','401' : 'BD5-155T3R5-DP25K','402' : 'BD5-155T5R3-DP25K','403' : 'BD5-155T3R5-DP40K','404' : 'BD5-155T5R3-DP40K','405' : 'BD5-155T3R5-DP60K','406' : 'BD5-155T5R3-DP60K','407' : 'BD5-155T3R5-DP80K','408' : 'BD5-155T5R3-DP80K','476' : 'BD5-155T1R7-DP100K ','477' : 'BD5-155T7R1-DP100K','478' : 'BD5-155T1R7-DP120K','479' : 'BD5-155T7R1-DP120K','474' : 'BD5-1250T3R5-ATM500M','475' : 'BD5-1250T5R3-ATM500M','409' : 'BD5-1250T3R5-AT15K','410' : 'BD5-1250T5R3-AT15K ','411' : 'BD5-1250T3R5-AT25K ','412' : 'BD5-1250T5R3-AT25K ','413' : 'BD5-1250T3R5-AT40K ','414' : 'BD5-1250T5R3-AT40K ','415' : 'BD5-1250T3R5-AT60K ','416' : 'BD5-1250T5R3-AT60K ','480' : 'BD5-1250T1R7-AT80K','481' : 'BD5-1250T7R1-AT80K' };     var p12={'' : '','526' : 'XEN-10000SX-AT300M','527' : 'XEN-10000LX-AT10K','528' : 'XEN-10000EX-AT40K','529' : 'XEN-10000EX-AT80K','530' : 'XEN-10000CEX-AT40KXX','532' : 'XEN-10000CEX-AT80KXX','533' : 'XEN-10000DEX-AT40KXX','534' : 'XEN-10000DEX-AT80KXX' };     var p21={'' : '','439' : 'BD9-155T3R5-DPM2K ','440' : 'BD9-155T5R3-DPM2K ','441' : 'BD9-155T3R5-DPM5K ','442' : 'BD9-155T5R3-DPM5K ','443' : 'BD9-155T3R5-DP15K ','444' : 'BD9-155T5R3-DP15K ','445' : 'BD9-155T3R5-DP25K ','446' : 'BD9-155T5R3-DP25K ','447' : 'BD9-155T3R5-DP40K ','448' : 'BD9-155T5R3-DP40K ','449' : 'BD9-155T3R5-DP60K ','450' : 'BD9-155T5R3-DP60K ','451' : 'BD9-155T3R5-DP80K ','452' : 'BD9-155T5R3-DP80K ','468' : 'BD9-155T1R7-DP100K ','469' : 'BD9-155T7R1-DP100K','470' : 'BD9-155T1R7-DP120K','471' : 'BD9-155T7R1-DP120K','466' : 'BD9-1250T3R5-ATM500M','467' : 'BD9-1250T5R3-ATM500M','453' : 'BD9-1250T3R5-AT15K ','454' : 'BD9-1250T5R3-AT15K ','455' : 'BD9-1250T3R5-AT25K ','456' : 'BD9-1250T5R3-AT25K ','457' : 'BD9-1250T3R5-AT40K ','458' : 'BD9-1250T5R3-AT40K ','459' : 'BD9-1250T3R5-AT60K ','460' : 'BD9-1250T5R3-AT60K ','472' : 'BD9-1250T1R7-AT80K','473' : 'BD9-1250T7R1-AT80K' };     var p13={'' : '','365' : 'DSC-155SX-DP2K','291' : 'DSC-1250SX-AT500M ','297' : 'DSC-155LX-DP2K ','299' : 'DSC-155LX-DP15K ','304' : 'DSC-155LX-DP30K ','305' : 'DSC-155LX-DP60K ','298' : 'DSC-1250LX-AT2K ','306' : 'DSC-1250LX-AT10K ','307' : 'DSC-1250LX-AT40K ','312' : 'DSC-1250LX-AT50K ','313' : 'DSC-155EX-DP20K ','314' : 'DSC-155EX-DP100K ','315' : 'DSC-155EX-DP120K ','316' : 'DSC-1250EX-AT-30K ','317' : 'DSC-1250EX-AT-60K ','318' : 'DSC-1250EX-AT-80K ','319' : 'DSC-1250CLX-AT40K-XX','320' : 'DSC-1250CLX-AT60K-XX','321' : 'DSC-1250CEX-AT60K-XX','322' : 'DSC-1250CEX-AT80K-XX','559' : 'DSC-1250CEX-AT100K-XX' };     var p14={'' : '','323' : 'SFF-1250SX-AT500M ','345' : 'SFF-155LX-DP2K ','347' : 'SFF-155LX-DP15K ','348' : 'SFF-155LX-DP30K ','349' : 'SFF-155LX-DP60K ','346' : 'SFF-1250LX-AT2K ','350' : 'SFF-1250LX-AT10K ','351' : 'SFF-1250LX-AT40K ','352' : 'SFF-1250LX-AT50K ','353' : 'SFF-155EX-DP20K ','354' : 'SFF-155EX-DP100K ','355' : 'SFF-155EX-DP120K ','356' : 'SFF-1250EX-AT30K ','357' : 'SFF-1250EX-AT60K ','358' : 'SFF-1250EX-AT80K ','359' : 'SFF-1250CLX-AT40K-XX','360' : 'SFF-1250CLX-AT60K-XX','361' : 'SFF-1250CEX-AT60K-XX','362' : 'SFF-1250CEX-AT80K-XX' };     var p15={'' : '','283' : 'GBC-1250SX-AT500M ','284' : 'GBC-1250LX-AT2K ','285' : 'GBC-1250LX-AT10K ','286' : 'GBC-1250LX-AT40K ','92' : 'GBC-1250LX-AT50K ','281' : 'GBC-1250EX-AT30K ','282' : 'GBC-1250EX-AT60K ','308' : 'GBC-1250EX-AT80K ','309' : 'GBC-1250CLX-AT40K-XX','310' : 'GBC-1250CLX-AT60K-XX','311' : 'GBC-1250CEX-AT60K-XX','296' : 'GBC-1250CEX-AT80K-XX' };     arr[1] = p1;arr[2] = p2;arr[3] = p3;arr[4] = p4;arr[32] = p32;arr[33] = p33;arr[7] = p7;arr[16] = p16;arr[22] = p22;arr[24] = p24;arr[8] = p8;arr[17] = p17;arr[23] = p23;arr[25] = p25;arr[9] = p9;arr[18] = p18;arr[10] = p10;arr[19] = p19;arr[11] = p11;arr[20] = p20;arr[12] = p12;arr[21] = p21;arr[13] = p13;arr[14] = p14;arr[15] = p15;	
+$("#product").removeOption(/./);         //先移除原有的選項
+ //alert( arr[0]);
+$("#product").addOption(arr[vall], false); //帶入新的選項
+
+	
+}
+</script>
+
+<link type="text/css" rel="stylesheet" href="http://gemeindeinfrankfurt.de/css/jquery.dropdown.css" />
+<script type="text/javascript" src="http://gemeindeinfrankfurt.de/js/jquery.dropdown.js"></script>
+<style type="text/css">
+.dropdown-panel a{text-shadow:none;width:100px;color:#0037ea !important;display: block;margin:0;padding:5px 0 !important;text-align: center;}
+.dropdown-panel a:hover{background-color: #E2F5FF;color:#004DB8 !important;}
+.dropdown-panel br{display: none}
+a.plinkitem{padding:0 !important;width:auto !important;background: none !important}
+</style>
+</head>
+<body>
+<div id="containter">
+
+    
+      <style type="text/css">
+body{background:#fff url(http://gemeindeinfrankfurt.de/img/pagebg.jpg) repeat-x left top;-webkit-text-size-adjust: none;}
+
+		td.pro2{text-align:center}
+		td.removeven{padding:0;border:1px solid #fff}
+		td.pro3{text-align:center}
+		.pro3pdf{border:0;background: none;width:300px;}
+		.pro3feature{border:0;background:none;color:#fff;margin-left:50px;}
+		.pro3feature h3{color:#fff !important;border-bottom: 1px solid #35ABFB !important}
+		.pro3feature h3 i{color:#C8E1FF !important;}
+		
+	 </style>
+
+<div id="header">
+	<div class="logo"><a href="http://gemeindeinfrankfurt.de/"><img src="http://gemeindeinfrankfurt.de/img/logo.png" width="325" height="116"></a></div>
+	<div class="links">
+	<ul class="megamenu2">
+    <li><a href="http://gemeindeinfrankfurt.de/index.php/welcome/company">Company</a></li><li><a href="http://gemeindeinfrankfurt.de/index.php/welcome/news">&nbsp;&nbsp;News</a></li><li><a href="http://gemeindeinfrankfurt.de/index.php/welcome/contact">&nbsp;Contact Us</a></li>
+    <li><a href="#"><img src="http://gemeindeinfrankfurt.de/img/sbtn2.png" style="width:20px;height:20px;vertical-align:text-top;margin-top:0px" alt="search">&nbsp;Search&nbsp;<i class="icon-chevron-down"></i></a>
+	
+		 <div style="z-index:99;text-align:center" class="searchblock">
+                	<form action='http://gemeindeinfrankfurt.de/index.php/welcome/search' method="get">
+                    <select  id='categoryid'  name='categoryid' style='width:170px;' onchange="SelZero(this.options[this.options.selectedIndex].value);"> 
+    				<option value=''>Product</option> <option>----Duplex Optics</option> <option value='7'>  SFP</option> <option value='8'>  SFP+</option> <option value='9'>  QSFP</option> <option value='10'>  XFP</option> <option value='11'>  X2</option> <option value='12'>  XENPAK</option> <option value='13'>  1x9 DSC</option> <option value='14'>  2x5 SFF</option> <option value='15'>  GBIC</option> <option>----BiDi Optics</option> <option value='16'>  SFP BiDi</option> <option value='17'>  SFP+ BiDi</option> <option value='18'>  XFP BiDi</option> <option value='19'>  Dual BiDi</option> <option value='20'>  2x5 BiDi</option> <option value='21'>  1x9 BiDi</option> <option>----SDI Video</option> <option value='22'>  SDI SFP</option> <option value='23'>  Optical Video</option> </select> <br><br> <select name="DataRate" style="width:170px;"> <option value=''>DataRate</option> 	<option value='0'>155 Mb/s</option> 	<option value='1'>1.25 Gb/s</option> 	<option value='2'>155 Mb/s - 2.7 Gb/s</option> 	<option value='3'>2.125 Gb/s</option> 	<option value='4'>2.5 Gb/s</option> 	<option value='11'>50 Mb/s - 3 Gb/s</option> 	<option value='5'>4.25 Gb/s</option> 	<option value='6'>6.25 Gb/s</option> 	<option value='7'>8.5 Gb/s</option> 	<option value='8'>10 Gb/s</option> 	<option value='9'>40 Gb/s</option> 	<option value='12'>6-10 Gb/s</option> </select> <br><br>
+    <select name="WavLen" style="width:170px;"> 
+	<option value=''>Wavelength</option> <option value='0'>850 nm</option> <option value='1'>1310 nm</option> <option value='2'>1550 nm</option> <option value='9'>1270 nm/1330 nm BiDi</option> <option value='5'>1310 nm/1490 nm BiDi</option> <option value='3'>1310 nm/1550 nm BiDi</option> <option value='21'>1490 mn/1550 mn BiDi</option> <option value='7'>1510 nm/1570 nm BiDi</option> <option value='22'>TX 1550 mn/RX 1490 nm</option> <option value='11'>1270 - 1450 nm CWDM</option> <option value='12'>1470 - 1610 nm CWDM</option> <option value='14'>850 & 1310 nm</option> <option value='15'>850 - 1550 nm, C/DWDM</option> <option value='17'>1310/1490/1550 nm</option> <option value='18'>1270/1330 nm</option> <option value='13'>ITU 17-61 DWDM</option> </select> <br><br>
+    <select name="Distance" style="width:170px;"> 
+	<option value=''>Distance</option> 
+	<option value='4'>&lt; 2 km</option> 
+	<option value='1'>2 - 10 km</option> 
+	<option value='2'>10 - 80 km</option> 
+	<option value='3'>> 80 km</option> 
+	</select> 
+   <br><br>&nbsp;&nbsp;&nbsp;<button type="submit" style="width:100px;text-align:center;padding:5px 0">Search&nbsp;</button><br></form>				</div>
+			</li>
+		</ul>
+		<ul class="productsnav">
+		<li><a href="#" data-dropdown="#dropdown-1">Dual Fiber</a>
+            <div id="dropdown-1" class="dropdown dropdown-tip">
+            <div class="dropdown-panel">
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/7">SFP</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/8">SFP+</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/9">QSFP</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/10">XFP</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/11">X2</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/12">XENPAK</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/13">1x9 DSC</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/14">2x5 SFF</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/15">GBIC</a><br>
+            </div>
+            </div>
+        </li>
+        <li><a href="#" data-dropdown="#dropdown-2">BiDi Optics</a>
+            <div id="dropdown-2" class="dropdown dropdown-tip">
+            <div class="dropdown-panel">
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/16">SFP BiDi</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/17">SFP+ BiDi</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/18">XFP BiDi</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/19#">Dual BiDi</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/20">2x5 BiDi</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/21">1x9 BiDi</a><br>
+            </div>
+            </div>
+        </li>
+        <li><a href="#" data-dropdown="#dropdown-3">Optical Video</a>
+            <div id="dropdown-3" class="dropdown dropdown-tip">
+            <div class="dropdown-panel">
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/22">SDI SFP</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/23">Optical Video</a><br>
+            </div>
+            </div>
+        </li>
+        <li><a href="#" data-dropdown="#dropdown-4">Passive</a>
+            <div id="dropdown-4" class="dropdown dropdown-tip">
+            <div class="dropdown-panel">
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/24">Mux/DeMux</a><br>
+            <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/25">Fiber Cable</a><br>
+            </div>
+            </div>
+        </li>
+		</ul>
+			
+		</div><!-- links -->
+	</div><!-- header -->
+	<div id="pcontent">
+		
+		<div id="pintro">
+			<h2 align="center">10G X2 SC Optical Transceivers</h2>
+			<p></br>OptixCom’s 10 Gb/s X2 optical transceivers are designed with advanced optics and high speed electronics to achieve the optimum performance for optical interconnect applications. Our X2 transceivers comply with industry standard X2 Multi-Source Agreement (MSA).  The package is hot pluggable with a 70-pin edge connector and dual SC optical interface.  OptixCom offers multimode and single mode X2 transceivers for both datacom and telecomm markets.  X2 has the same electrical pin-out but smaller mechanical package with XENPAK.</p>
+		</div><!-- pintro -->
+		<div id="pimg">
+			<div class="productimg"></br></br><img src="/images/product/x2.png"></div>
+			<div class="productpdf">
+				<ul>
+					<li><a href="/product_pdf/1.duplex/5-X2/X2 Catalog.pdf"> X2 Product Catalog</a></li>
+					<li> <a href="/product_pdf/1.duplex/5-X2/X2_MSA.pdf">X2 MSA Document</a></li>
+					<li><a href="/product_pdf/1.duplex/5-X2/X2 Design Guide.pdf">  X2 Design Guide</a></li>
+					<li><a href="/product_pdf/1.duplex/5-X2/802.3-10G Serial.pdf"> IEEE 802.3-10G Serial</a>       </li>
+				</ul>
+		  </div>
+			<div class="clearfix"></div>	
+		</div><!-- pimg -->
+
+		<div id="pdesc">
+			<div class="feature">
+			  <h3><i class="icon-info-sign"></i></i> Features</h3>
+				<ul>
+					<li>	850 nm multimode, 1310/1550 nm single mode, C/DWDM </li>
+					<li>	  	9.95 to 11.3 Gb/s, up to 80 km </li>
+					 <li>	 	Duplex SC connector, 70-pin Z-axis hot pluggable package </li>
+					 <li>	 	Standard 4-channel XAUI interface </li>
+				    <li>		X2 MSA, IEEE 802.3ae 10GBASE, and RoHS compliant</li>
+				</ul>
+			</div>
+			<div class="app">
+			  <h3><i class="icon-info-sign"></i></i> Applications</h3>
+				<ul>
+					<li>	10G Ethernet, 10G Fiber Channel </li>
+					 <li>	 	SONET OC-192/SDH STM-64 </li>
+					<li>	  	CWDM and ITU-T G.709 DWDM networks </li>
+					 <li>	 	Data Communication for SAN and LAN </li>
+				    <li>		Routers and switches, computer cluster cross-connect </li>
+				</ul>
+			</div>
+			<div class="clearfix"></div>				
+		</div><!-- pdesc -->
+<div id="example2">		
+ <form action="http://gemeindeinfrankfurt.de/index.php/welcome/downloaditem" method='get'>
+		<div id="download">Product Catalog & Technacal Library
+
+            <select  id='simple_select'>
+                <option class="simple-group" value=''>Category</option>
+
+                                    <option class="simple-group-1.duplex">-Duplex Optics </option>
+                                            <option class="simple-group-1-SFP">	SFP </option>
+
+                                            <option class="simple-group-2-SFPplus">	SFP+ </option>
+
+                                            <option class="simple-group-3-QSFP">	QSFP </option>
+
+                                            <option class="simple-group-4-XFP">	XFP </option>
+
+                                            <option class="simple-group-5-X2">	X2 </option>
+
+                                            <option class="simple-group-6-Xenpak">	Xenpak </option>
+
+                                            <option class="simple-group-7-1x9 DSC">	1x9 DSC </option>
+
+                                            <option class="simple-group-8-2x5 SFF">	2x5 SFF </option>
+
+                                            <option class="simple-group-9-GBIC">	GBIC </option>
+
+                                        <option class="simple-group-2.bidi">-BiDi Optics </option>
+                                            <option class="simple-group-1-SFP_BiDi">	SFP_BiDi </option>
+
+                                            <option class="simple-group-2-SFPplus_BiDi">	SFP+_BiDi </option>
+
+                                            <option class="simple-group-3-XFP_BiDi">	XFP_BiDi </option>
+
+                                            <option class="simple-group-4-Dual_BIDI">	Dual_BIDI </option>
+
+                                            <option class="simple-group-5-2x5_BiDi">	2x5_BiDi </option>
+
+                                            <option class="simple-group-6-1x9_BiDi">	1x9_BiDi </option>
+
+                                        <option class="simple-group-3.sdi_video">-SDI Video </option>
+                                            <option class="simple-group-1-SDI SFP">	SDI SFP </option>
+
+                                            <option class="simple-group-2-Optical Video">	Optical Video </option>
+
+                                        <option class="simple-group-4.passive">-Passive Optics </option>
+                                            <option class="simple-group-1-Mux-DeMux">	Mux-DeMux </option>
+
+                                            <option class="simple-group-2-FiberCable">	FiberCable </option>
+
+                    
+            </select>
+            <select  name="item" id="simple_select_child" style="width:150px;margin:2px;"  >
+                <option class="simple-group" value=''>Content</option>
+                                            <option class="simple-group-1-SFP" value='product_pdf/1.duplex/1-SFP/SFP Catalog.pdf'>	SFP Catalog.pdf </option>
+
+                                                    <option class="simple-group-1-SFP" value='product_pdf/1.duplex/1-SFP/SFP Design Guide.pdf'>	SFP Design Guide.pdf </option>
+
+                                                    <option class="simple-group-1-SFP" value='product_pdf/1.duplex/1-SFP/SFP_MSA.pdf'>	SFP_MSA.pdf </option>
+
+                                                    <option class="simple-group-2-SFPplus" value='product_pdf/1.duplex/2-SFPplus/802.3-10G Serial.pdf'>	802.3-10G Serial.pdf </option>
+
+                                                    <option class="simple-group-2-SFPplus" value='product_pdf/1.duplex/2-SFPplus/SFP+ Catalog.pdf'>	SFP+ Catalog.pdf </option>
+
+                                                    <option class="simple-group-2-SFPplus" value='product_pdf/1.duplex/2-SFPplus/SFP+ Design Guide.pdf'>	SFP+ Design Guide.pdf </option>
+
+                                                    <option class="simple-group-2-SFPplus" value='product_pdf/1.duplex/2-SFPplus/SFP+ MSA-SFF-8431.pdf'>	SFP+ MSA-SFF-8431.pdf </option>
+
+                                                    <option class="simple-group-3-QSFP" value='product_pdf/1.duplex/3-QSFP/QSFP Catalog.pdf'>	QSFP Catalog.pdf </option>
+
+                                                    <option class="simple-group-3-QSFP" value='product_pdf/1.duplex/3-QSFP/QSFP Design Guide.pdf'>	QSFP Design Guide.pdf </option>
+
+                                                    <option class="simple-group-3-QSFP" value='product_pdf/1.duplex/3-QSFP/QSFP_MSA.pdf'>	QSFP_MSA.pdf </option>
+
+                                                    <option class="simple-group-4-XFP" value='product_pdf/1.duplex/4-XFP/802.3-10G Serial.pdf'>	802.3-10G Serial.pdf </option>
+
+                                                    <option class="simple-group-4-XFP" value='product_pdf/1.duplex/4-XFP/XFP Catalog.pdf'>	XFP Catalog.pdf </option>
+
+                                                    <option class="simple-group-4-XFP" value='product_pdf/1.duplex/4-XFP/XFP Design Guide.pdf'>	XFP Design Guide.pdf </option>
+
+                                                    <option class="simple-group-4-XFP" value='product_pdf/1.duplex/4-XFP/XFP MSA.pdf'>	XFP MSA.pdf </option>
+
+                                                    <option class="simple-group-5-X2" value='product_pdf/1.duplex/5-X2/802.3-10G Serial.pdf'>	802.3-10G Serial.pdf </option>
+
+                                                    <option class="simple-group-5-X2" value='product_pdf/1.duplex/5-X2/X2 Catalog.pdf'>	X2 Catalog.pdf </option>
+
+                                                    <option class="simple-group-5-X2" value='product_pdf/1.duplex/5-X2/X2 Design Guide.pdf'>	X2 Design Guide.pdf </option>
+
+                                                    <option class="simple-group-5-X2" value='product_pdf/1.duplex/5-X2/X2_MSA.pdf'>	X2_MSA.pdf </option>
+
+                                                    <option class="simple-group-6-Xenpak" value='product_pdf/1.duplex/6-Xenpak/802.3-10G Serial.pdf'>	802.3-10G Serial.pdf </option>
+
+                                                    <option class="simple-group-6-Xenpak" value='product_pdf/1.duplex/6-Xenpak/XENPAK Catalog.pdf'>	XENPAK Catalog.pdf </option>
+
+                                                    <option class="simple-group-6-Xenpak" value='product_pdf/1.duplex/6-Xenpak/XENPAK Design Guide.pdf'>	XENPAK Design Guide.pdf </option>
+
+                                                    <option class="simple-group-6-Xenpak" value='product_pdf/1.duplex/6-Xenpak/XENPAK MSA.PDF'>	XENPAK MSA.PDF </option>
+
+                                                    <option class="simple-group-7-1x9 DSC" value='product_pdf/1.duplex/7-1x9 DSC/1x9 DSC Catalog.pdf'>	1x9 DSC Catalog.pdf </option>
+
+                                                    <option class="simple-group-7-1x9 DSC" value='product_pdf/1.duplex/7-1x9 DSC/1x9 DSC Design Guide.pdf'>	1x9 DSC Design Guide.pdf </option>
+
+                                                    <option class="simple-group-8-2x5 SFF" value='product_pdf/1.duplex/8-2x5 SFF/2x5 SFF Catalog.pdf'>	2x5 SFF Catalog.pdf </option>
+
+                                                    <option class="simple-group-8-2x5 SFF" value='product_pdf/1.duplex/8-2x5 SFF/2x5 SFF Design Guide.pdf'>	2x5 SFF Design Guide.pdf </option>
+
+                                                    <option class="simple-group-9-GBIC" value='product_pdf/1.duplex/9-GBIC/GBIC Catalog.pdf'>	GBIC Catalog.pdf </option>
+
+                                                    <option class="simple-group-9-GBIC" value='product_pdf/1.duplex/9-GBIC/GBIC Design Guide.pdf'>	GBIC Design Guide.pdf </option>
+
+                                                    <option class="simple-group-9-GBIC" value='product_pdf/1.duplex/9-GBIC/GBIC_MSA.pdf'>	GBIC_MSA.pdf </option>
+
+                                                    <option class="simple-group-1-SFP_BiDi" value='product_pdf/2.bidi/1-SFP_BiDi/SFP BiDi Catalog.pdf'>	SFP BiDi Catalog.pdf </option>
+
+                                                    <option class="simple-group-1-SFP_BiDi" value='product_pdf/2.bidi/1-SFP_BiDi/SFP BiDi Design Guide.pdf'>	SFP BiDi Design Guide.pdf </option>
+
+                                                    <option class="simple-group-1-SFP_BiDi" value='product_pdf/2.bidi/1-SFP_BiDi/SFP_MSA.pdf'>	SFP_MSA.pdf </option>
+
+                                                    <option class="simple-group-2-SFPplus_BiDi" value='product_pdf/2.bidi/2-SFPplus_BiDi/SFP+ BiDi Catalog.pdf'>	SFP+ BiDi Catalog.pdf </option>
+
+                                                    <option class="simple-group-2-SFPplus_BiDi" value='product_pdf/2.bidi/2-SFPplus_BiDi/SFP+ BiDi Design Guide.pdf'>	SFP+ BiDi Design Guide.pdf </option>
+
+                                                    <option class="simple-group-2-SFPplus_BiDi" value='product_pdf/2.bidi/2-SFPplus_BiDi/SFP+ MSA-SFF-8431.pdf'>	SFP+ MSA-SFF-8431.pdf </option>
+
+                                                    <option class="simple-group-3-XFP_BiDi" value='product_pdf/2.bidi/3-XFP_BiDi/802.3-10G Serial.pdf'>	802.3-10G Serial.pdf </option>
+
+                                                    <option class="simple-group-3-XFP_BiDi" value='product_pdf/2.bidi/3-XFP_BiDi/XFP BiDi Catalog.pdf'>	XFP BiDi Catalog.pdf </option>
+
+                                                    <option class="simple-group-3-XFP_BiDi" value='product_pdf/2.bidi/3-XFP_BiDi/XFP BiDi Design Guide.pdf'>	XFP BiDi Design Guide.pdf </option>
+
+                                                    <option class="simple-group-3-XFP_BiDi" value='product_pdf/2.bidi/3-XFP_BiDi/XFP MSA.pdf'>	XFP MSA.pdf </option>
+
+                                                    <option class="simple-group-4-Dual_BIDI" value='product_pdf/2.bidi/4-Dual_BIDI/CFP-MSA-HW-Spec-rev1-40.pdf'>	CFP-MSA-HW-Spec-rev1-40.pdf </option>
+
+                                                    <option class="simple-group-4-Dual_BIDI" value='product_pdf/2.bidi/4-Dual_BIDI/CFP_MSA.pdf'>	CFP_MSA.pdf </option>
+
+                                                    <option class="simple-group-4-Dual_BIDI" value='product_pdf/2.bidi/4-Dual_BIDI/Dual BiDi Catalog.pdf'>	Dual BiDi Catalog.pdf </option>
+
+                                                    <option class="simple-group-4-Dual_BIDI" value='product_pdf/2.bidi/4-Dual_BIDI/Dual BiDi Design Guide.pdf'>	Dual BiDi Design Guide.pdf </option>
+
+                                                    <option class="simple-group-5-2x5_BiDi" value='product_pdf/2.bidi/5-2x5_BiDi/2x5 BiDi Catalog.pdf'>	2x5 BiDi Catalog.pdf </option>
+
+                                                    <option class="simple-group-5-2x5_BiDi" value='product_pdf/2.bidi/5-2x5_BiDi/2x5 BiDi Design Guide.pdf'>	2x5 BiDi Design Guide.pdf </option>
+
+                                                    <option class="simple-group-6-1x9_BiDi" value='product_pdf/2.bidi/6-1x9_BiDi/1x9 BiDi Catalog.pdf'>	1x9 BiDi Catalog.pdf </option>
+
+                                                    <option class="simple-group-6-1x9_BiDi" value='product_pdf/2.bidi/6-1x9_BiDi/1x9 BiDi Design Guide.pdf'>	1x9 BiDi Design Guide.pdf </option>
+
+                                                    <option class="simple-group-1-SDI SFP" value='product_pdf/3.sdi_video/1-SDI SFP/SDI SFP Catalog.pdf'>	SDI SFP Catalog.pdf </option>
+
+                                                    <option class="simple-group-1-SDI SFP" value='product_pdf/3.sdi_video/1-SDI SFP/SDI SFP Design Guide.pdf'>	SDI SFP Design Guide.pdf </option>
+
+                                                    <option class="simple-group-1-SDI SFP" value='product_pdf/3.sdi_video/1-SDI SFP/SFP_MSA.pdf'>	SFP_MSA.pdf </option>
+
+                                                    <option class="simple-group-2-Optical Video" value='product_pdf/3.sdi_video/2-Optical Video/Optical Video Catalog.pdf'>	Optical Video Catalog.pdf </option>
+
+                                                    <option class="simple-group-1-Mux-DeMux" value='product_pdf/4.passive/1-Mux-DeMux/MuxDeMux Catalog.pdf'>	MuxDeMux Catalog.pdf </option>
+
+                                                    <option class="simple-group-2-FiberCable" value='product_pdf/4.passive/2-FiberCable/Cable.pdf'>	Cable.pdf </option>
+
+                                    </select>
+            <script type="text/javascript" charset="utf-8">
+                $(document).ready(function() {
+                    $('#simple_select').cascade();
+
+                });
+            </script>
+	<input type="submit" value="Download">
+	</div><!-- download -->
+	</form>
+   </div>
+	</div><!-- pcontent -->
+	
+		<table id="ptable" class="table table-hover table-bordered">
+            <thead>
+                <tr class="tdbg1 info">
+                    <th>Part Number</th>
+                    <th>Data Rate</th>
+                    <th>Wavelength</th>
+                    <th>Distance</th>
+                    <th>Power Budget</th>
+                    <th>Temp. Range</th>
+                </tr></thead>
+            <tbody>
+            	
+            	            	
+               	<tr class="odd">
+                    <td class="tdbg3"><a href="/product_file/X2/X2-10000SX-AT300M.pdf" title="X2, SC, 10 Gb/s, 850 nm, MM, 300m, AC Coupled, 3.3V, RoHS, TX:-6.5 to -1 dB, RX:-9.9 dB 
+
+Part Numbers:
+X2-10000SX-AT300M (0–70°C)" target="_blank">X2-10000SX-AT300M</a></td>
+                            <td class="tdbg2">10 Gb/s</td>
+                            <td class="tdbg2">850 nm</td>
+                            <td class="tdbg2">0.3 km</td>
+                            <td class="tdbg2">4 dB</td>
+                            <td class="tdbg2">0 – 70°C</td>
+                        </tr>
+                                  	
+               	<tr class="odd">
+                    <td class="tdbg3"><a href="/product_file/X2/X2-10000LX-AT10K.pdf" title="X2, SC, 10 Gb/s, 1310 nm, SM, 10km, AC Coupled, 3.3/5V, RoHS, TX:-8.2 to +0.5 dB, RX:-14.4 dB 
+
+Part Numbers:
+X2-10000LX-AT10K (0–70°C)" target="_blank">X2-10000LX-AT10K</a></td>
+                            <td class="tdbg2">10 Gb/s</td>
+                            <td class="tdbg2">1310 nm</td>
+                            <td class="tdbg2">10 km</td>
+                            <td class="tdbg2">4 dB</td>
+                            <td class="tdbg2">0 – 70°C</td>
+                        </tr>
+                                  	
+               	<tr class="odd">
+                    <td class="tdbg3"><a href="/product_file/X2/X2-10000EX-AT40K.pdf" title="X2, SC, 10 Gb/s, 1550 nm, SM, 40km, AC Coupled, 3.3/5V, RoHS, TX:-1 to +2 dB, RX:-15.8 dB 
+
+Part Numbers:
+X2-10000EX-AT40K (0–70°C)" target="_blank">X2-10000EX-AT40K</a></td>
+                            <td class="tdbg2">10 Gb/s</td>
+                            <td class="tdbg2">1550 nm</td>
+                            <td class="tdbg2">40 km</td>
+                            <td class="tdbg2">15 dB</td>
+                            <td class="tdbg2">0 – 70°C</td>
+                        </tr>
+                                  	
+               	<tr class="odd">
+                    <td class="tdbg3"><a href="/product_file/X2/X2-10000EX-AT80K.pdf" title="X2, SC, 10 Gb/s, 1550 nm, SM, 80km, AC Coupled, 3.3/5V, RoHS, TX:0 to +4 dB, RX:-24 dB 
+
+Part Numbers:
+X2-10000EX-AT80K (0–70°C)" target="_blank">X2-10000EX-AT80K</a></td>
+                            <td class="tdbg2">10 Gb/s</td>
+                            <td class="tdbg2">1550 nm</td>
+                            <td class="tdbg2">80 km</td>
+                            <td class="tdbg2">24 dB</td>
+                            <td class="tdbg2">0 – 70°C</td>
+                        </tr>
+                                  	
+               	<tr class="odd">
+                    <td class="tdbg3"><a href="/product_file/X2/X2-10000CEX-AT40&80K.pdf" title="X2, SC, 10 Gb/s, CWDM 1470 - 1610 nm, SM, 40km, AC Coupled, 3.3V, RoHS, TX:-1 to +2 dB, RX:-15.8 dB 
+
+Part Numbers:
+X2-10000CEX-AT40K-XX (0–70°C)
+1XX0 nm wavelength, XX = 47 - 61" target="_blank">X2-10000CEX-AT40KXX</a></td>
+                            <td class="tdbg2">10 Gb/s</td>
+                            <td class="tdbg2">1470 - 1610 nm CWDM</td>
+                            <td class="tdbg2">40 km</td>
+                            <td class="tdbg2">15 dB</td>
+                            <td class="tdbg2">0 – 70°C</td>
+                        </tr>
+                                  	
+               	<tr class="odd">
+                    <td class="tdbg3"><a href="/product_file/X2/X2-10000CEX-AT40&80K.pdf" title="X2, SC, 10 Gb/s, CWDM 1470 - 1610 nm, SM, 80km, AC Coupled, 3.3V, RoHS, TX:0 to +4 dB, RX:-24 dB 
+
+Part Numbers:
+X2-10000CEX-AT80K-XX (0–70°C)
+1XX0 nm wavelength, XX = 47 - 61" target="_blank">X2-10000CEX-AT80KXX</a></td>
+                            <td class="tdbg2">10 Gb/s</td>
+                            <td class="tdbg2">1470 - 1610 nm CWDM</td>
+                            <td class="tdbg2">80 km</td>
+                            <td class="tdbg2">24 dB</td>
+                            <td class="tdbg2">0 – 70°C</td>
+                        </tr>
+                                  	
+               	<tr class="odd">
+                    <td class="tdbg3"><a href="/product_file/X2/X2-10000DEX-AT40&80K.pdf" title="X2, SC, 10 Gb/s, DWDM, ITU channel code 17-61, SM, 40km, AC Coupled, 3.3V, RoHS, TX:-1 to +2 dB, RX:-15.8 dB 
+
+Part Numbers:
+X2-10000DEX-AT40K-XX (0–70°C)
+ITU channel code 17-61" target="_blank">X2-10000DEX-AT40KXX</a></td>
+                            <td class="tdbg2">10 Gb/s</td>
+                            <td class="tdbg2">ITU 17-61 DWDM</td>
+                            <td class="tdbg2">40 km</td>
+                            <td class="tdbg2">15 dB</td>
+                            <td class="tdbg2">0–70°C</td>
+                        </tr>
+                                  	
+               	<tr class="odd">
+                    <td class="tdbg3"><a href="/product_file/X2/X2-10000DEX-AT40&80K.pdf" title="X2, SC, 10 Gb/s, DWDM, ITU channel code 17-61, SM, 80km, AC Coupled, 3.3V, RoHS, TX:0 to +4 dB, RX:-24 dB 
+
+Part Numbers:
+X2-10000DEX-AT80K-XX (0–70°C)
+ITU channel code 17-59" target="_blank">X2-10000DEX-AT80KXX</a></td>
+                            <td class="tdbg2">10 Gb/s</td>
+                            <td class="tdbg2">ITU 17-61 DWDM</td>
+                            <td class="tdbg2">80 km</td>
+                            <td class="tdbg2">24 dB</td>
+                            <td class="tdbg2">0–70°C</td>
+                        </tr>
+                        
+
+            </tbody>
+        </table>
+        
+                
+      
+      <div style="clean:both;" ></div>
+      
+    <div id="footer">
+        <p>Duplex: <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/7">SFP</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/8">SFP+</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/9">QSFP</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/10">XFP</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/11">X2</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/12">XENPAK</a>|<a href=http://gemeindeinfrankfurt.de/index.php/welcome/page/13">1X9 DSC</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/14">2X5 SFF</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/15">GBIC</a>|
+        &nbsp;&nbsp;	 SDI Video<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/22">SDI SFP</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/23">Optical Video</a>|   </p>
+        <p>BiDi: <a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/16">SFP BiDi</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/17">SFP+ BiDi</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/18">XFP BiDi</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/19">Dual BiDi</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/20">1X9 BiDi</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/21">2x5 BiDi</a>| 
+         &nbsp;&nbsp;   Passive:<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/24">Mux/DeMux</a>|<a href="http://gemeindeinfrankfurt.de/index.php/welcome/page/25">Fiber Cable</a>|</p>
+        <p>Copyright © 2014 Optix Communications, Inc.  All Rights Reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>

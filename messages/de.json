@@ -12,6 +12,14 @@
     "timezone": "Alle Zeiten sind Frankfurter Zeit (MEZ).",
     "questions": "Fragen?"
   },
+  "site": {
+    "training": "Video-Training",
+    "mainNav": "Hauptmenü",
+    "copyright": "Copyright {year} {siteName}",
+    "contactHeading": "Kontakt",
+    "meetingPlace": "Versammlungsort",
+    "openMap": "Auf der Karte ansehen (OpenStreetMap)"
+  },
   "home": {
     "noTraining": "Die Anmeldung ist noch nicht geöffnet",
     "register": "Anmelden",

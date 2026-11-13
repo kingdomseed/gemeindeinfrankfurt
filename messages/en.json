@@ -12,6 +12,14 @@
     "timezone": "All times are Frankfurt time (CET).",
     "questions": "Questions?"
   },
+  "site": {
+    "training": "Video-Training",
+    "mainNav": "Main menu",
+    "copyright": "Copyright {year} {siteName}",
+    "contactHeading": "Contact",
+    "meetingPlace": "Meeting place",
+    "openMap": "View on the map (OpenStreetMap)"
+  },
   "home": {
     "noTraining": "Registration is not open yet",
     "register": "Register",

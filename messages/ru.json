@@ -12,6 +12,14 @@
     "timezone": "Всё время указано по Франкфурту (CET).",
     "questions": "Вопросы?"
   },
+  "site": {
+    "training": "Видеотренинг",
+    "mainNav": "Главное меню",
+    "copyright": "© {year} {siteName}",
+    "contactHeading": "Контакты",
+    "meetingPlace": "Место собраний",
+    "openMap": "Посмотреть на карте (OpenStreetMap)"
+  },
   "home": {
     "noTraining": "Регистрация ещё не открыта",
     "register": "Зарегистрироваться",
