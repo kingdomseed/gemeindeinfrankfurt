@@ -14,7 +14,13 @@ export type RichTextContent = SerializedEditorState;
 
 export type NavPage = { title: string; slug: string; isHome: boolean };
 
-export type PageContent = { title: string; body: RichTextContent | null };
+// pageHrefs maps a page id to its address in this language, for links
+// editors make to other pages.
+export type PageContent = {
+  title: string;
+  body: RichTextContent | null;
+  pageHrefs: Record<string, string>;
+};
 
 export type SiteSettings = {
   siteName: string;
@@ -61,12 +67,14 @@ const pageContent = z.object({
   body: editorState.nullish(),
 });
 
+// Every field may be empty on a new database before the seed has run; the
+// training pages share this layout and must still load.
 const siteSettings = z.object({
-  siteName: z.string(),
+  siteName: z.string().nullish(),
   tagline: z.string().nullish(),
   contactHeading: z.string().nullish(),
   contactIntro: z.string().nullish(),
-  meetingAddress: z.string(),
+  meetingAddress: z.string().nullish(),
   contactEmail: z.string().nullish(),
 });
 
@@ -135,18 +143,24 @@ export async function getPageContent(id: number | string, locale: Locale): Promi
     select: { title: true, body: true },
   });
   const page = pageContent.parse(doc);
-  return { title: page.title, body: page.body ?? null };
+  const pageHrefs = Object.fromEntries(
+    (await loadPages()).map((p) => [
+      String(p.id),
+      p.isHome === true ? `/${locale}` : `/${locale}/${inLocale(p.slug, locale)}`,
+    ]),
+  );
+  return { title: page.title, body: page.body ?? null, pageHrefs };
 }
 
 export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettings> => {
   const doc = await (await cms()).findGlobal({ slug: "site-settings", locale, depth: 0 });
   const settings = siteSettings.parse(doc);
   return {
-    siteName: settings.siteName,
+    siteName: settings.siteName ?? "",
     tagline: settings.tagline ?? "",
     contactHeading: settings.contactHeading ?? "",
     contactIntro: settings.contactIntro ?? "",
-    meetingAddress: settings.meetingAddress,
+    meetingAddress: settings.meetingAddress ?? "",
     contactEmail: settings.contactEmail || null,
   };
 });

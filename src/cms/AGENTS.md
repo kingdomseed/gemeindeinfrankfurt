@@ -7,4 +7,4 @@ Payload CMS 3 holds the church's public pages and site settings. Its admin is at
 - May import Payload packages, `@/i18n/routing` and `@/lib/domain`, nothing else from the app (lint enforces this). Routes read content through `src/lib/cms.ts`, never from here.
 - `seed/` loads the pages from `archive/wordpress-2022/content` word for word, and Russian from `seed/ru/`. Keep the recovered wording as it is, typos included. `npm run seed:cms` updates the same pages when run again.
 - After adding an editor feature or admin component, run `npm run cms:importmap` and commit `src/app/(payload)/admin/importMap.ts`.
-- Payload creates its tables itself in development. Before the first deployment, create migrations with `npx payload migrate:create`.
+- Payload creates its tables itself in development. In production it runs the migrations in `migrations/` on startup (`prodMigrations`). After changing a collection or global, run `npx payload migrate:create <name>` and commit the result. On a new database, run `npm run seed:cms` once after the first start.

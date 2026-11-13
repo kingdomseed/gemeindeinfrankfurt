@@ -21,7 +21,7 @@ export function ChurchPage({ page, settings }: { page: PageContent; settings: Si
         >
           <Stack as="article" flex="1" minW="0" gap="6" maxW="prose">
             <PageHeading title={page.title} />
-            {page.body && <PageBody content={page.body} />}
+            {page.body && <PageBody content={page.body} pageHrefs={page.pageHrefs} />}
           </Stack>
           <ContactPanel settings={settings} />
         </Flex>

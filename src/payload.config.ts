@@ -7,6 +7,7 @@ import { buildConfig } from "payload";
 import { Pages } from "@/cms/collections/Pages";
 import { Users } from "@/cms/collections/Users";
 import { SiteSettings } from "@/cms/globals/SiteSettings";
+import { migrations } from "@/cms/migrations";
 import { locales } from "@/i18n/routing";
 
 const localeLabels = { de: "Deutsch", en: "English", ru: "Русский" } as const;
@@ -42,6 +43,9 @@ export default buildConfig({
     pool: { connectionString: process.env.DATABASE_URI },
     // Keeps Payload's tables out of `public`, where the training app's tables and RLS live.
     schemaName: "payload",
+    migrationDir: path.resolve(process.cwd(), "src/cms/migrations"),
+    // Production has no schema push; this brings its tables up to date on startup.
+    prodMigrations: migrations,
   }),
   graphQL: { disable: true },
   typescript: { autoGenerate: false },
