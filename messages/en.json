@@ -116,7 +116,7 @@
     "nextPaid": "We tick your payment when it arrives. You do not need to send proof.",
     "nextBefore": "A few days before the training we email you the place, the rules and how to join the private WhatsApp group.",
     "nextChange": "To change or cancel, use the link in your confirmation email.",
-    "seatRules": "Trainees may register full time or part time. They must attend all sessions for which they are registered. The donation is the same whether full or part time.",
+    "seatRules": "Trainees may register full time or part time. They must attend all sessions for which they are registered. The donation is the same whether full or part time. It is {fee}.",
     "seatHelp": {
       "shared": "Shared seats must be occupied full time. Those sharing a seat count as one person and need only give one donation.",
       "anaheim": "Those who attend the live training may attend the same video training without giving the donation. Choose the messages you would like to join."

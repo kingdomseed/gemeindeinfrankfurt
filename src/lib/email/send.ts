@@ -46,8 +46,10 @@ export async function sendConfirmation(opts: {
   training: TrainingWithSessions;
   registration: RegistrationInput;
   token: string;
+  // A coordinator's waiver on the saved registration.
+  waived: boolean;
 }) {
-  const { locale, training, registration: r, token } = opts;
+  const { locale, training, registration: r, token, waived } = opts;
   const [t, tr, tc, tl] = await Promise.all([
     getTranslations({ locale, namespace: "email" }),
     getTranslations({ locale, namespace: "register" }),
@@ -57,6 +59,7 @@ export async function sendConfirmation(opts: {
   const fees = computeFees(
     {
       seatType: r.seat_type,
+      hardshipWaiver: waived,
       outlineLanguage: r.outline_language,
       secondOutlineLanguage: r.second_outline_language,
     },
