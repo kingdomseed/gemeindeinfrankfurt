@@ -24,4 +24,4 @@ export type RegistrationDefaults = PersonDefaults & {
 };
 
 // What a registration server action answers; the form maps status to text.
-export type ActionState = { status: string };
+export type ActionState = { status: string; calendarUrl?: string };

@@ -10,6 +10,8 @@ export function RegistrationPage(props: {
   title: string;
   dates?: string | undefined;
   lockedNotice?: string | undefined;
+  // Shown under the heading, such as the add-to-calendar buttons.
+  aside?: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -24,6 +26,7 @@ export function RegistrationPage(props: {
           )
         }
       />
+      {props.aside}
       {props.lockedNotice && <Notice tone="neutral">{props.lockedNotice}</Notice>}
       {props.children}
     </Stack>

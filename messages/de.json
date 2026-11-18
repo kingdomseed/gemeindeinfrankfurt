@@ -217,5 +217,14 @@
     "complaintTitle": "Beschwerde",
     "complaintBody": "Du hast das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren, zum Beispiel beim Hessischen Beauftragten für Datenschutz und Informationsfreiheit (HBDI).",
     "noContact": "Für diese Website ist noch keine Kontaktperson eingetragen."
+  },
+  "calendar": {
+    "download": ".ics-Datei herunterladen",
+    "google": "Google Kalender",
+    "apple": "Apple Kalender",
+    "outlook": "Outlook",
+    "allMessages": "Alle Botschaften in den Kalender eintragen",
+    "yourMessages": "Deine Botschaften in den Kalender eintragen",
+    "emailLine": "Deine Botschaften für den Kalender: {url}"
   }
 }

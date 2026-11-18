@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
 import { computeFees } from "./fees";
+import { buildCalendar } from "./ics";
 import { openStreetMapUrl } from "./maps";
 import { countOutlines } from "./outlines";
 import { berlinDay, berlinDayTime, scheduleDays, sessionLabel, trainingDates } from "./sessions";
@@ -180,5 +181,31 @@ describe("trainingDates", () => {
 
   it("is empty without sessions", () => {
     expect(trainingDates([], "en")).toBeNull();
+  });
+});
+
+describe("buildCalendar", () => {
+  const event = {
+    uid: "s1@gemeindeinfrankfurt.de",
+    title: "Video Training, Message 1",
+    startsAt: "2027-01-09T08:30:00.000Z",
+    endsAt: "2027-01-09T10:00:00Z",
+    location: "Hall; Frankfurt",
+  };
+
+  it("writes one event per session in UTC with CRLF lines", () => {
+    const ics = buildCalendar("Training", [event], new Date("2026-11-18T12:00:00Z"));
+    expect(ics).toContain("\r\nDTSTART:20270109T083000Z\r\n");
+    expect(ics).toContain("\r\nDTEND:20270109T100000Z\r\n");
+    expect(ics).toContain("\r\nSUMMARY:Video Training\\, Message 1\r\n");
+    expect(ics).toContain("\r\nLOCATION:Hall\\; Frankfurt\r\n");
+    expect(ics.endsWith("END:VCALENDAR\r\n")).toBe(true);
+  });
+
+  it("folds lines longer than 75 octets", () => {
+    const ics = buildCalendar("Training", [{ ...event, title: "Ж".repeat(60) }], new Date());
+    for (const line of ics.split("\r\n")) {
+      expect(new TextEncoder().encode(line).length).toBeLessThanOrEqual(75);
+    }
   });
 });

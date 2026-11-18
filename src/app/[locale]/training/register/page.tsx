@@ -1,10 +1,12 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { PageMessage } from "@/components/ui/page-message";
+import { AddToCalendar } from "@/features/registration/AddToCalendar";
 import { trainingFormProps } from "@/features/registration/form-props";
 import { RegistrationForm } from "@/features/registration/RegistrationForm";
 import { RegistrationPage } from "@/features/registration/RegistrationPage";
 import { requireLocale } from "@/i18n/locale";
+import { calendarUrl } from "@/lib/calendar";
 import { getPublishedTraining } from "@/lib/data";
 import { canRegister } from "@/lib/domain/cutoffs";
 import { trainingDates } from "@/lib/domain/sessions";
@@ -22,9 +24,10 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/training
 export default async function RegisterPage({ params }: PageProps<"/[locale]/training/register">) {
   const locale = requireLocale((await params).locale);
   setRequestLocale(locale);
-  const [t, th, training] = await Promise.all([
+  const [t, th, tc, training] = await Promise.all([
     getTranslations("register"),
     getTranslations("home"),
+    getTranslations("calendar"),
     getPublishedTraining(),
   ]);
 
@@ -36,6 +39,7 @@ export default async function RegisterPage({ params }: PageProps<"/[locale]/trai
     <RegistrationPage
       title={t("title")}
       dates={trainingDates(training.sessions, locale) ?? undefined}
+      aside={<AddToCalendar icsUrl={calendarUrl(locale)} label={tc("allMessages")} />}
     >
       <RegistrationForm
         {...trainingFormProps(training, locale, (number) => th("message", { number }))}

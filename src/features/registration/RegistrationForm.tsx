@@ -92,6 +92,7 @@ export function RegistrationForm(props: Props) {
       <Receipt
         totalCents={submittedTotal}
         payment={props.payment}
+        calendarUrl={state.calendarUrl}
         onRegisterAnother={registerAnother}
       />
     );

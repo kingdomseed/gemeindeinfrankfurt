@@ -1,5 +1,6 @@
 "use server";
 
+import { calendarUrl } from "@/lib/calendar";
 import { getPublishedTraining } from "@/lib/data";
 import { canRegister } from "@/lib/domain/cutoffs";
 import { newEditToken } from "@/lib/domain/token";
@@ -13,7 +14,10 @@ import {
 } from "@/lib/registrations";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export type RegisterState = { status: "idle" | "error" | "duplicate" | "closed" | "done" };
+export type RegisterState = {
+  status: "idle" | "error" | "duplicate" | "closed" | "done";
+  calendarUrl?: string;
+};
 
 export async function register(
   locale: Language,
@@ -44,5 +48,5 @@ export async function register(
   await replaceSessions(data.id, input);
 
   await sendConfirmation({ locale, training, registration: input, token });
-  return { status: "done" };
+  return { status: "done", calendarUrl: calendarUrl(locale, token) };
 }

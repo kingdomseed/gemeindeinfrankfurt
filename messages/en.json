@@ -217,5 +217,14 @@
     "complaintTitle": "Complaints",
     "complaintBody": "You have the right to complain to a data protection supervisory authority, for example the Hessian Commissioner for Data Protection and Freedom of Information (HBDI).",
     "noContact": "The contact person for this site has not been set yet."
+  },
+  "calendar": {
+    "download": "Download .ics file",
+    "google": "Google Calendar",
+    "apple": "Apple Calendar",
+    "outlook": "Outlook",
+    "allMessages": "Add all messages to your calendar",
+    "yourMessages": "Add your messages to your calendar",
+    "emailLine": "Add your messages to your calendar: {url}"
   }
 }

@@ -2,6 +2,7 @@ import "server-only";
 import { getTranslations } from "next-intl/server";
 import { Resend } from "resend";
 
+import { calendarUrl } from "@/lib/calendar";
 import type { Training } from "@/lib/data";
 import { computeFees, formatEuro } from "@/lib/domain/fees";
 import type { Language } from "@/lib/domain/types";
@@ -43,8 +44,11 @@ export async function sendConfirmation(opts: {
   token: string;
 }) {
   const { locale, training, registration: r, token } = opts;
-  const t = await getTranslations({ locale, namespace: "email" });
-  const tr = await getTranslations({ locale, namespace: "register" });
+  const [t, tr, tc] = await Promise.all([
+    getTranslations({ locale, namespace: "email" }),
+    getTranslations({ locale, namespace: "register" }),
+    getTranslations({ locale, namespace: "calendar" }),
+  ]);
   const fees = computeFees(
     {
       seatType: r.seat_type,
@@ -70,6 +74,8 @@ export async function sendConfirmation(opts: {
           }),
         ]
       : []),
+    "",
+    tc("emailLine", { url: calendarUrl(locale, token) }),
     "",
     t("editLink", { url: editUrl(locale, token) }),
   ].join("\n");

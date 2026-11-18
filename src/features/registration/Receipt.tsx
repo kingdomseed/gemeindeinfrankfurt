@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { focusOnMount } from "@/components/ui/focus";
 import { formatEuro } from "@/lib/domain/fees";
 
+import { AddToCalendar } from "./AddToCalendar";
 import { TransferDetails } from "./TransferDetails";
 import type { PaymentDetails } from "./types";
 
@@ -14,9 +15,11 @@ const nextSteps = ["nextPaid", "nextBefore", "nextChange"] as const;
 export function Receipt(props: {
   totalCents: number;
   payment: PaymentDetails;
+  calendarUrl?: string | undefined;
   onRegisterAnother: () => void;
 }) {
   const t = useTranslations("register");
+  const tc = useTranslations("calendar");
   const locale = useLocale();
   return (
     <Stack gap="10" align="flex-start">
@@ -41,6 +44,11 @@ export function Receipt(props: {
           </Heading>
         </Stack>
         <Text>{t("receiptBody")}</Text>
+        {props.calendarUrl && (
+          <Box rounded="lg" bg="bg" color="fg" p="4">
+            <AddToCalendar icsUrl={props.calendarUrl} label={tc("yourMessages")} />
+          </Box>
+        )}
         {props.totalCents > 0 && (
           <Box rounded="lg" bg="bg" color="fg" p="4">
             <Text fontWeight="semibold" fontVariantNumeric="tabular-nums">
