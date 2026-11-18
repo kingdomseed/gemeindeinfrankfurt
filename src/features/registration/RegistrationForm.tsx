@@ -45,7 +45,6 @@ export function RegistrationForm(props: Props) {
   const [outline, setOutline] = useState<Language>(d?.outline_language ?? locale);
   const [second, setSecond] = useState<Language | "">(d?.second_outline_language ?? "");
   const [anaheim, setAnaheim] = useState(d?.attended_anaheim ?? false);
-  const [ukraine, setUkraine] = useState(d?.ukraine_not_employed ?? false);
   const [sessionsMissing, setSessionsMissing] = useState(false);
   const [formKey, setFormKey] = useState(0);
   // The total as it was when the form was sent. Waivers and outlines stay
@@ -60,7 +59,7 @@ export function RegistrationForm(props: Props) {
     {
       seatType,
       attendedAnaheim: anaheim,
-      ukraineNotEmployed: ukraine,
+      ukraineNotEmployed: d?.ukraine_not_employed ?? false,
       outlineLanguage: outline,
       secondOutlineLanguage: second || null,
     },
@@ -90,7 +89,6 @@ export function RegistrationForm(props: Props) {
     // Waivers belong to the person just registered; seat type and languages
     // often carry over within a family, so they stay.
     setAnaheim(false);
-    setUkraine(false);
     setFormKey((k) => k + 1);
   }
 
@@ -129,12 +127,7 @@ export function RegistrationForm(props: Props) {
         onSecond={setSecond}
         comments={d?.comments}
       />
-      <FreeSeatSection
-        anaheim={anaheim}
-        ukraine={ukraine}
-        onAnaheim={setAnaheim}
-        onUkraine={setUkraine}
-      />
+      <FreeSeatSection anaheim={anaheim} onAnaheim={setAnaheim} />
       <PaymentSummary fees={fees} payment={props.payment} payerName={d?.payer_name} />
       <ConfirmSection rules={props.rules} confirmed={Boolean(d)} />
       <SubmitArea

@@ -22,7 +22,7 @@
     "noTrainingBody": "Bitte schau später wieder vorbei oder frag die Koordinatoren.",
     "openUntil": "Anmeldung bis zum Ende des ersten Tages: {day}",
     "freeSeatsTitle": "Kostenlose Plätze.",
-    "freeSeats": "Wer am Live-Training in Anaheim teilgenommen hat oder aus der Ukraine kommt und nicht erwerbstätig ist, zahlt keinen Trainingsbeitrag. Gliederungen werden trotzdem bezahlt. Du kreuzt das im Formular an.",
+    "freeSeats": "Wer am Live-Training in Anaheim teilgenommen hat, zahlt keinen Trainingsbeitrag. Gliederungen werden trotzdem bezahlt. Du kreuzt das im Formular an.",
     "seatsTitle": "Plätze",
     "seatInfo": {
       "full_time": {
@@ -68,7 +68,6 @@
     "none": "Keine",
     "comments": "Anmerkungen",
     "attendedAnaheim": "Ich habe am Live-Training in Anaheim teilgenommen",
-    "ukraineNotEmployed": "Ich komme aus der Ukraine und bin nicht erwerbstätig",
     "confirmAdult": "Ich bin mindestens 18 Jahre alt",
     "acceptRules": "Ich habe die Trainingsregeln gelesen",
     "rules": "Trainingsregeln",

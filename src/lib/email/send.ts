@@ -40,6 +40,8 @@ export async function sendConfirmation(opts: {
   locale: Language;
   training: Training;
   registration: RegistrationInput;
+  // Set only by coordinators, so it comes from the stored row, not the form.
+  ukraineNotEmployed: boolean;
   token: string;
 }) {
   const { locale, training, registration: r, token } = opts;
@@ -49,7 +51,7 @@ export async function sendConfirmation(opts: {
     {
       seatType: r.seat_type,
       attendedAnaheim: r.attended_anaheim,
-      ukraineNotEmployed: r.ukraine_not_employed,
+      ukraineNotEmployed: opts.ukraineNotEmployed,
       outlineLanguage: r.outline_language,
       secondOutlineLanguage: r.second_outline_language,
     },

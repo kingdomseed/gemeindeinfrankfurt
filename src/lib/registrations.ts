@@ -22,7 +22,6 @@ export const registrationSchema = z
     comments: z.string().trim().max(2000).default(""),
     payer_name: z.string().trim().max(200).default(""),
     attended_anaheim: z.boolean(),
-    ukraine_not_employed: z.boolean(),
     confirmed_adult: z.literal(true),
     accepted_rules: z.literal(true),
   })
@@ -59,7 +58,6 @@ export function parseRegistrationForm(form: FormData) {
     comments: text("comments"),
     payer_name: text("payer_name"),
     attended_anaheim: form.get("attended_anaheim") === "on",
-    ukraine_not_employed: form.get("ukraine_not_employed") === "on",
     confirmed_adult: form.get("confirmed_adult") === "on",
     accepted_rules: form.get("accepted_rules") === "on",
   });

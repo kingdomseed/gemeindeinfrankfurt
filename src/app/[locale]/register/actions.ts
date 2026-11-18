@@ -43,6 +43,12 @@ export async function register(
   if (error) throw error;
   await replaceSessions(data.id, input);
 
-  await sendConfirmation({ locale, training, registration: input, token });
+  await sendConfirmation({
+    locale,
+    training,
+    registration: input,
+    ukraineNotEmployed: false,
+    token,
+  });
   return { status: "done" };
 }

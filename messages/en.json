@@ -22,7 +22,7 @@
     "noTrainingBody": "Please check again later, or ask the coordinators.",
     "openUntil": "Open until the end of the first day: {day}",
     "freeSeatsTitle": "Free seats.",
-    "freeSeats": "There is no training fee if you attended the live training in Anaheim, or if you are from Ukraine and not gainfully employed. Outlines are still paid. You tick this on the form.",
+    "freeSeats": "There is no training fee if you attended the live training in Anaheim. Outlines are still paid. You tick this on the form.",
     "seatsTitle": "Seats",
     "seatInfo": {
       "full_time": {
@@ -68,7 +68,6 @@
     "none": "None",
     "comments": "Comments",
     "attendedAnaheim": "I attended the live training in Anaheim",
-    "ukraineNotEmployed": "I am from Ukraine and not gainfully employed",
     "confirmAdult": "I am 18 or older",
     "acceptRules": "I have read the training rules",
     "rules": "Training rules",
@@ -84,7 +83,7 @@
     "sectionAboutYou": "About you",
     "sectionLanguages": "Languages and outlines",
     "sectionFreeSeat": "Free seat",
-    "freeSeatHelp": "Tick one if it applies. The training fee is then waived; outlines are still paid.",
+    "freeSeatHelp": "Tick this if it applies. The training fee is then waived; outlines are still paid.",
     "sectionConfirm": "Rules and confirmation",
     "sectionPayment": "Payment",
     "optional": "optional",

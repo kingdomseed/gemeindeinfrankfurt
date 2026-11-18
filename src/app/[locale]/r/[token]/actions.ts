@@ -43,7 +43,13 @@ export async function updateRegistration(
   if (error) throw error;
   if (!seatLocked) await replaceSessions(existing.id, input);
 
-  await sendConfirmation({ locale, training, registration: input, token });
+  await sendConfirmation({
+    locale,
+    training,
+    registration: input,
+    ukraineNotEmployed: existing.ukraine_not_employed,
+    token,
+  });
   return { status: "saved" };
 }
 

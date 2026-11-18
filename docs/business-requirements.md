@@ -39,7 +39,7 @@ A saint can go through the whole process on their own, from reading the schedule
    - **Shared seat.** Two people share one seat, for example a couple with a child at home, so one of them attends each time. A shared seat is always full-time, has both names, and pays one fee.
 3. They confirm they are **18 or older** and that they have **read the training rules**, which the form shows.
 4. They enter everything today's form asks for: first and last name, study-group language, outline language, an optional second outline in another language, email, phone and comments.
-5. Optional checkboxes: "I attended the live training in Anaheim" and "I am from Ukraine and not gainfully employed". Either one sets the fee to €0.
+5. Optional checkbox: "I attended the live training in Anaheim" sets the fee to €0. The waiver for Ukrainian saints who are not gainfully employed is a private matter, so it is not on the form: a coordinator records it.
 6. The form shows **how much to pay and where**: the church's IBAN and a reference. Training and outline are shown as two separate amounts.
 7. One person can submit **as many registrations as they want**, for example for family members, all from the same email address.
 8. The system warns if someone registers who seems to be registered already (same name and email).
@@ -156,22 +156,22 @@ Within **7 days** of the last session, the contact brother pays the fees to Lebe
 
 These come from the [Lebensstrom video training page](https://lebensstrom.de/video-training-en/) for December 2026 (updated 9 Oct 2026). Where the page and the questionnaire PDF differ, the page wins.
 
-| Rule                                                                                                | How the system applies it                                        |
-| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Registrants must be 18 or older                                                                     | A required checkbox on the form                                  |
-| Seats are full-time, part-time, or shared; a shared seat is full-time and pays once                 | Seat types on the form; a shared seat forces full-time           |
-| €70 per seat; €0 for Anaheim attendees and for Ukrainian saints who are not gainfully employed      | Fee set per training; waivers as checkboxes                      |
-| Outlines are €5 each, printed only, in German, English or Russian, and invoiced separately          | Outline payment tracked apart from the fee                       |
-| Church registration with Lebensstrom by 29 Oct 2026, 13:00                                          | Deadline shown on the coordination dashboard                     |
-| Outline order by 1 Dec 2026, 16:00; order extras for late sign-ups                                  | Outline counts and extras ready before this date                 |
-| Numbers can change free of charge until the start; no new registrations after the first day         | Registration closes automatically after day one                  |
-| No unexcused absences; at most two excused                                                          | Counted and shown for the report                                 |
-| Part-timers count as absent only for sessions they chose before the start                           | Session choices lock at the first session                        |
-| Name tag required; one per seat, both names on a shared seat                                        | Name tag export                                                  |
-| Study groups of 8–10                                                                                | Group suggestions                                                |
-| Tests for messages 1–10; attendance for all 12                                                      | Testing schedule and attendance                                  |
-| The webcast login (from Lebensstrom, for the LSM website) is not shared with individual registrants | Stored in the system; visible only to coordinators serving in AV |
-| Fees, questionnaire and reimbursements are due within 7 days of the end                             | Report page and reminder on the dashboard                        |
+| Rule                                                                                                | How the system applies it                                                      |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Registrants must be 18 or older                                                                     | A required checkbox on the form                                                |
+| Seats are full-time, part-time, or shared; a shared seat is full-time and pays once                 | Seat types on the form; a shared seat forces full-time                         |
+| €70 per seat; €0 for Anaheim attendees and for Ukrainian saints who are not gainfully employed      | Fee set per training; Anaheim as a checkbox, other waivers set by coordinators |
+| Outlines are €5 each, printed only, in German, English or Russian, and invoiced separately          | Outline payment tracked apart from the fee                                     |
+| Church registration with Lebensstrom by 29 Oct 2026, 13:00                                          | Deadline shown on the coordination dashboard                                   |
+| Outline order by 1 Dec 2026, 16:00; order extras for late sign-ups                                  | Outline counts and extras ready before this date                               |
+| Numbers can change free of charge until the start; no new registrations after the first day         | Registration closes automatically after day one                                |
+| No unexcused absences; at most two excused                                                          | Counted and shown for the report                                               |
+| Part-timers count as absent only for sessions they chose before the start                           | Session choices lock at the first session                                      |
+| Name tag required; one per seat, both names on a shared seat                                        | Name tag export                                                                |
+| Study groups of 8–10                                                                                | Group suggestions                                                              |
+| Tests for messages 1–10; attendance for all 12                                                      | Testing schedule and attendance                                                |
+| The webcast login (from Lebensstrom, for the LSM website) is not shared with individual registrants | Stored in the system; visible only to coordinators serving in AV               |
+| Fees, questionnaire and reimbursements are due within 7 days of the end                             | Report page and reminder on the dashboard                                      |
 
 ## Decisions made
 
