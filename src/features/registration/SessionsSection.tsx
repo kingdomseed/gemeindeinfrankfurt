@@ -17,9 +17,7 @@ export function SessionsSection(props: {
   const t = useTranslations("register");
   return (
     <FormSection legend={t("sessions")} disabled={props.locked}>
-      <Text mb="2" fontSize="sm" color="fg.muted">
-        {props.hint}
-      </Text>
+      <Text mb="2">{props.hint}</Text>
       {props.missing && (
         <Text id="sessions-error" mb="2" fontWeight="semibold" color="fg.error">
           {t("sessionsRequired")}

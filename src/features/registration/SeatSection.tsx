@@ -20,9 +20,7 @@ export function SeatSection(props: {
   }
   return (
     <FormSection legend={t("seatType")} disabled={props.locked}>
-      <Text mb="2" fontSize="sm" color="fg.muted">
-        {t("seatRules", { fee: props.fee })}
-      </Text>
+      <Text mb="2">{t("seatRules", { fee: props.fee })}</Text>
       <RadioChoices
         name="seat_type"
         value={props.value}

@@ -66,9 +66,7 @@ export function LanguagesSection(props: {
         )}
       </SimpleGrid>
       {props.needsOutline && (
-        <Text fontSize="sm" color="fg.muted">
-          {t("outlinesRule", { price: props.outlinePrice })}
-        </Text>
+        <Text fontWeight="medium">{t("outlinesRule", { price: props.outlinePrice })}</Text>
       )}
       <FormField label={t("comments")} optionalLabel={t("optional")}>
         <Textarea name="comments" defaultValue={props.comments} rows={3} />
