@@ -9,6 +9,7 @@ import { PageHeading } from "@/components/ui/page-heading";
 export function RegistrationPage(props: {
   title: string;
   dates?: string | undefined;
+  subtitle?: string | undefined;
   lockedNotice?: string | undefined;
   // Shown under the heading, such as the add-to-calendar buttons.
   aside?: ReactNode;
@@ -19,10 +20,12 @@ export function RegistrationPage(props: {
       <PageHeading
         title={props.title}
         subtitle={
-          props.dates && (
+          props.dates ? (
             <Span fontWeight="semibold" color="brand.solid">
               {props.dates}
             </Span>
+          ) : (
+            props.subtitle
           )
         }
       />

@@ -1,6 +1,7 @@
 import { List, Stack, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 
+import { Card } from "@/components/ui/card";
 import { CheckboxChoice } from "@/components/ui/choice";
 import { FormSection } from "@/components/ui/form-section";
 
@@ -12,7 +13,7 @@ export function ConfirmSection(props: { confirmed: boolean }) {
   const t = useTranslations("register");
   return (
     <FormSection legend={t("sectionConfirm")}>
-      <Stack borderWidth="1px" rounded="lg" p="4" gap="2">
+      <Card>
         <Text fontWeight="medium">{t("rulesIntro")}</Text>
         <List.Root ps="5" gap="2">
           {attendRules.map((key) => (
@@ -26,7 +27,7 @@ export function ConfirmSection(props: { confirmed: boolean }) {
           <List.Item>{t("materialsRule")}</List.Item>
           <List.Item>{t("copiesRule")}</List.Item>
         </List.Root>
-      </Stack>
+      </Card>
       <Stack gap="1">
         <CheckboxChoice name="confirmed_adult" required defaultChecked={props.confirmed}>
           {t("confirmAdult")}

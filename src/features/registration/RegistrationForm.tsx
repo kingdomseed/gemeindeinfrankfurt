@@ -4,8 +4,8 @@ import { chakra } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useState, useTransition, type SyntheticEvent } from "react";
 
-import { computeFees, formatEuro } from "@/lib/domain/fees";
-import { picksSessions, type Language, type SeatType } from "@/lib/domain/types";
+import { computeFees, formatEuro, type FeeBreakdown } from "@/lib/domain/fees";
+import { isLanguage, picksSessions, type Language, type SeatType } from "@/lib/domain/types";
 
 import { AboutYouSection } from "./AboutYouSection";
 import { ConfirmSection } from "./ConfirmSection";
@@ -14,7 +14,13 @@ import { Receipt } from "./Receipt";
 import { SeatSection } from "./SeatSection";
 import { SessionsSection } from "./SessionsSection";
 import { SubmitArea } from "./SubmitArea";
-import type { ActionState, PaymentDetails, RegistrationDefaults, SessionOption } from "./types";
+import type {
+  ActionState,
+  PaymentDetails,
+  RegistrationDefaults,
+  SessionOption,
+  SubmittedSummary,
+} from "./types";
 
 type Props = {
   sessions: SessionOption[];
@@ -44,9 +50,9 @@ export function RegistrationForm(props: Props) {
   const [second, setSecond] = useState<Language | "">(d?.second_outline_language ?? "");
   const [sessionsMissing, setSessionsMissing] = useState(false);
   const [formKey, setFormKey] = useState(0);
-  // The total as it was when the form was sent. Seat and outlines stay
-  // editable while the request runs, so the receipt must not use live state.
-  const [submittedTotal, setSubmittedTotal] = useState(0);
+  // The form as it was sent. Fields stay editable while the request runs, so
+  // the receipt must not use live state.
+  const [submitted, setSubmitted] = useState<{ fees: FeeBreakdown; summary: SubmittedSummary }>();
   // The result whose receipt was closed with "Register another person". A new
   // submission yields a new state object, so its receipt shows again only once
   // that submission has actually succeeded.
@@ -77,7 +83,7 @@ export function RegistrationForm(props: Props) {
       return;
     }
     setSessionsMissing(false);
-    setSubmittedTotal(fees.trainingCents + fees.outlineCents);
+    setSubmitted({ fees, summary: summarize(form, seatType) });
     startTransition(() => formAction(form));
   }
 
@@ -87,10 +93,12 @@ export function RegistrationForm(props: Props) {
     setFormKey((k) => k + 1);
   }
 
-  if (state.status === "done" && state !== dismissedResult) {
+  if (state.status === "done" && state !== dismissedResult && submitted) {
     return (
       <Receipt
-        totalCents={submittedTotal}
+        fees={submitted.fees}
+        summary={submitted.summary}
+        sessionCount={props.sessions.length}
         payment={props.payment}
         calendarUrl={state.calendarUrl}
         onRegisterAnother={registerAnother}
@@ -141,4 +149,26 @@ export function RegistrationForm(props: Props) {
       />
     </chakra.form>
   );
+}
+
+function summarize(form: FormData, seatType: SeatType): SubmittedSummary {
+  const text = (name: string) => {
+    const v = form.get(name);
+    return typeof v === "string" ? v.trim() : "";
+  };
+  const language = (name: string) => {
+    const v = text(name);
+    return isLanguage(v) ? v : null;
+  };
+  const partner =
+    seatType === "shared" ? ` + ${text("partner_first_name")} ${text("partner_last_name")}` : "";
+  return {
+    name: `${text("first_name")} ${text("last_name")}${partner}`,
+    email: text("email"),
+    seatType,
+    chosenSessions: picksSessions(seatType) ? form.getAll("session_ids").length : null,
+    groupLanguage: language("group_language") ?? "de",
+    outlineLanguage: language("outline_language"),
+    secondOutlineLanguage: language("second_outline_language"),
+  };
 }

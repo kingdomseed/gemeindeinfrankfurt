@@ -106,7 +106,7 @@
     "copied": "Kopiert",
     "receiptTitle": "Du bist angemeldet",
     "receiptBody": "Wir haben dir eine Bestätigung mit einem Link zum Ändern oder Stornieren geschickt. Falls du sie nicht findest, schau bitte im Spam-Ordner nach.",
-    "receiptPay": "Bitte überweise jetzt {total}:",
+    "receiptPay": "Bitte überweise jetzt {total}",
     "registerAnother": "Weitere Person anmelden",
     "payer": "Bezahlt von {name}",
     "closedTitle": "Die Anmeldung ist geschlossen",
@@ -135,7 +135,17 @@
     },
     "confirmAdultHelp": "Die Teilnehmer müssen mindestens 17 Jahre alt sein.",
     "materialsTitle": "Unterlagen für das Training:",
-    "copiesRule": "Wir bitten die Heiligen davon abzusehen, Kopien in irgendeiner Art vom Material dieses Trainings herzustellen und auch keine solchen Kopien, die auf illegale Weise hergestellt wurden. Dies gilt auch für illegale Kopien, die für den \"persönlichen Gebrauch\" gedacht sind."
+    "copiesRule": "Wir bitten die Heiligen davon abzusehen, Kopien in irgendeiner Art vom Material dieses Trainings herzustellen und auch keine solchen Kopien, die auf illegale Weise hergestellt wurden. Dies gilt auch für illegale Kopien, die für den \"persönlichen Gebrauch\" gedacht sind.",
+    "payHint": "Bitte überweise den Betrag mit diesem Verwendungszweck, damit wir deine Zahlung zuordnen können.",
+    "summaryTitle": "Wofür du dich angemeldet hast",
+    "summaryName": "Name",
+    "summarySeat": "Platz",
+    "summaryGroup": "Studiengruppe",
+    "summaryOutline": "Gliederung",
+    "summaryEmail": "E-Mail",
+    "messagesAll": "alle {total} Botschaften",
+    "messagesChosen": "{count} von {total} Botschaften",
+    "backToSchedule": "Zurück zum Zeitplan"
   },
   "edit": {
     "title": "Deine Anmeldung",
@@ -151,7 +161,14 @@
     "cancelledBody": "Falls das ein Versehen war, kannst du dich erneut anmelden, solange die Anmeldung offen ist.",
     "cancelExplain": "Dein Platz wird freigegeben. Online lässt sich das nicht rückgängig machen.",
     "cancelYes": "Ja, Anmeldung stornieren",
-    "cancelKeep": "Anmeldung behalten"
+    "cancelKeep": "Anmeldung behalten",
+    "subtitle": "{training} · Verwendungszweck {reference}",
+    "paymentTitle": "Zahlung",
+    "received": "Erhalten",
+    "notReceived": "Noch nicht erhalten",
+    "stillToPay": "Noch zu zahlen",
+    "payTo": "Bitte überweise an IBAN {iban} mit dem Verwendungszweck {reference}.",
+    "cancelIntro": "Wenn du nicht mehr kommen kannst, melde dich bitte ab, damit wir die richtige Zahl an Gliederungen bestellen. Bereits gezahltes Geld erstatten die Koordinatoren."
   },
   "email": {
     "confirmationSubject": "Anmeldung bestätigt: {training}",

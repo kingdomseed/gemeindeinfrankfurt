@@ -25,3 +25,15 @@ export type RegistrationDefaults = PersonDefaults & {
 
 // What a registration server action answers; the form maps status to text.
 export type ActionState = { status: string; calendarUrl?: string };
+
+// What the receipt repeats back after a successful submit, taken from the form
+// as it was sent. `chosenSessions` is null for seats that attend every message.
+export type SubmittedSummary = {
+  name: string;
+  email: string;
+  seatType: SeatType;
+  chosenSessions: number | null;
+  groupLanguage: Language;
+  outlineLanguage: Language | null;
+  secondOutlineLanguage: Language | null;
+};

@@ -1,13 +1,18 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { Card } from "@/components/ui/card";
 import { PageMessage } from "@/components/ui/page-message";
+import { AddToCalendar } from "@/features/registration/AddToCalendar";
 import { CancelRegistration } from "@/features/registration/CancelRegistration";
 import { trainingFormProps } from "@/features/registration/form-props";
+import { PaymentStatus } from "@/features/registration/PaymentStatus";
 import { RegistrationForm } from "@/features/registration/RegistrationForm";
 import { RegistrationPage } from "@/features/registration/RegistrationPage";
 import { requireLocale } from "@/i18n/locale";
+import { calendarUrl } from "@/lib/calendar";
 import { getTrainingById } from "@/lib/data";
 import { canChangeSeatOrSessions } from "@/lib/domain/cutoffs";
+import { feesForRegistration } from "@/lib/domain/payments";
 import { findByToken } from "@/lib/registrations";
 
 import { cancelRegistration, updateRegistration } from "./actions";
@@ -24,10 +29,11 @@ export default async function EditPage({ params }: PageProps<"/[locale]/training
   const { locale: raw, token } = await params;
   const locale = requireLocale(raw);
   setRequestLocale(locale);
-  const [t, tr, th, reg] = await Promise.all([
+  const [t, tr, th, tc, reg] = await Promise.all([
     getTranslations("edit"),
     getTranslations("register"),
     getTranslations("home"),
+    getTranslations("calendar"),
     findByToken(token),
   ]);
 
@@ -38,14 +44,31 @@ export default async function EditPage({ params }: PageProps<"/[locale]/training
 
   const training = await getTrainingById(reg.training_id);
   const seatLocked = !canChangeSeatOrSessions(training.sessions);
+  const formProps = trainingFormProps(training, locale, (number) => th("message", { number }));
+  const fees = feesForRegistration(reg, formProps.prices);
 
   return (
     <RegistrationPage
-      title={`${t("title")}: ${training.title[locale]}`}
+      title={t("title")}
+      subtitle={t("subtitle", {
+        training: training.title[locale],
+        reference: training.payment_reference,
+      })}
       lockedNotice={seatLocked ? t("locked") : undefined}
     >
+      {fees.trainingCents + fees.outlineCents > 0 && (
+        <PaymentStatus
+          fees={fees}
+          feePaid={reg.fee_paid}
+          outlinePaid={reg.outline_paid}
+          payment={formProps.payment}
+        />
+      )}
+      <Card>
+        <AddToCalendar icsUrl={calendarUrl(locale, token)} label={tc("yourMessages")} />
+      </Card>
       <RegistrationForm
-        {...trainingFormProps(training, locale, (number) => th("message", { number }))}
+        {...formProps}
         seatLocked={seatLocked}
         defaults={{
           seat_type: reg.seat_type,
@@ -72,6 +95,7 @@ export default async function EditPage({ params }: PageProps<"/[locale]/training
             cancel: t("cancel"),
             confirm: t("cancelConfirm"),
             explain: t("cancelExplain"),
+            intro: t("cancelIntro"),
             yes: t("cancelYes"),
             keep: t("cancelKeep"),
           }}

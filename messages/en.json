@@ -106,7 +106,7 @@
     "copied": "Copied",
     "receiptTitle": "You are registered",
     "receiptBody": "We have sent a confirmation email with a link to change or cancel your registration. If you cannot find it, please check your spam folder.",
-    "receiptPay": "Please transfer {total} now:",
+    "receiptPay": "Please transfer {total} now",
     "registerAnother": "Register another person",
     "payer": "Paid by {name}",
     "closedTitle": "Registration is closed",
@@ -135,7 +135,17 @@
     },
     "confirmAdultHelp": "Registrants must be at least 17 years old.",
     "materialsTitle": "Training Materials:",
-    "copiesRule": "We would ask the saints not to create copies of the training materials in any format or to not accept copies that have been produced illegally. This applies to illegal copies for so-called \"personal use\"."
+    "copiesRule": "We would ask the saints not to create copies of the training materials in any format or to not accept copies that have been produced illegally. This applies to illegal copies for so-called \"personal use\".",
+    "payHint": "Please transfer the total with this reference, so we can match your payment.",
+    "summaryTitle": "What you registered for",
+    "summaryName": "Name",
+    "summarySeat": "Seat",
+    "summaryGroup": "Study group",
+    "summaryOutline": "Outline",
+    "summaryEmail": "Email",
+    "messagesAll": "all {total} messages",
+    "messagesChosen": "{count} of {total} messages",
+    "backToSchedule": "Back to the schedule"
   },
   "edit": {
     "title": "Your registration",
@@ -151,7 +161,14 @@
     "cancelledBody": "If this was a mistake, you can register again while registration is open.",
     "cancelExplain": "Your seat is given up. You cannot undo this online.",
     "cancelYes": "Yes, cancel registration",
-    "cancelKeep": "Keep my registration"
+    "cancelKeep": "Keep my registration",
+    "subtitle": "{training} · reference {reference}",
+    "paymentTitle": "Payment",
+    "received": "Received",
+    "notReceived": "Not yet received",
+    "stillToPay": "Still to pay",
+    "payTo": "Please transfer to IBAN {iban} with the reference {reference}.",
+    "cancelIntro": "If you can no longer come, please cancel so we can order the right number of outlines. Money you have paid is returned by the coordinators."
   },
   "email": {
     "confirmationSubject": "Registration confirmed: {training}",
