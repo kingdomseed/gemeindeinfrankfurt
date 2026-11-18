@@ -175,7 +175,12 @@
     "confirmationIntro": "Hallo {name}, deine Anmeldung ist bestätigt.",
     "cancellationSubject": "Anmeldung storniert: {training}",
     "cancellationBody": "Hallo {name}, deine Anmeldung wurde storniert.",
-    "editLink": "Anmeldung ändern oder stornieren: {url}"
+    "editLink": "Anmeldung ändern oder stornieren: {url}",
+    "changeIntro": "Um deine Anmeldung zu ändern oder abzusagen, nutze deinen persönlichen Link. Du brauchst kein Passwort.",
+    "changeButton": "Anmeldung ändern oder absagen",
+    "linkPrivate": "Dieser Link gilt nur für diese Anmeldung. Bitte leite ihn nicht weiter.",
+    "footer": "Fragen? Antworte einfach auf diese E-Mail. Alle Zeiten sind Frankfurter Zeit (MEZ).",
+    "transferTitle": "Bitte überweise {total}"
   },
   "coordinator": {
     "title": "Koordination",

@@ -175,7 +175,12 @@
     "confirmationIntro": "Hello {name}, your registration is confirmed.",
     "cancellationSubject": "Registration cancelled: {training}",
     "cancellationBody": "Hello {name}, your registration has been cancelled.",
-    "editLink": "Change or cancel your registration: {url}"
+    "editLink": "Change or cancel your registration: {url}",
+    "changeIntro": "To change or cancel your registration, use your personal link. You do not need a password.",
+    "changeButton": "Change or cancel your registration",
+    "linkPrivate": "This link is only for this registration. Please do not forward it.",
+    "footer": "Questions? Reply to this email. All times are Frankfurt time (CET).",
+    "transferTitle": "Please transfer {total}"
   },
   "coordinator": {
     "title": "Coordination",
