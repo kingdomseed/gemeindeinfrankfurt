@@ -123,7 +123,7 @@
     },
     "sessionsPartHint": "Diejenigen, die teilzeitig dabei sind, sollten im Voraus angeben, an welchen Botschaften sie teilnehmen werden; sie dürfen auch an anderen Botschaften anwesend sein, sofern diese für alle zugänglich sind.",
     "sessionsAnaheimHint": "Kreuze die Botschaften an, an denen du teilnehmen möchtest. Du musst nicht kommen.",
-    "outlinesRule": "Die Gliederungen für das Training sind obligatorisch. Sie kosten {price} pro Stück.",
+    "outlinesRule": "Die Gliederungen für das Training sind obligatorisch.",
     "materialsRule": "Sämtliches Material von diesem Training, sowohl Gedrucktes als auch in elektronischer Form (inkl. Gliederungen, Audio-Dateien und Video-Material) müssen direkt von Living Stream Ministry bestellt werden.",
     "rulesIntro": "Es dürfen nur diejenigen, die angemeldet sind oder in Anaheim am selben Training teilgenommen haben, die Versammlungen besuchen:",
     "attendRules": {

@@ -123,7 +123,6 @@ export function RegistrationForm(props: Props) {
       <LanguagesSection
         groupLanguage={d?.group_language ?? locale}
         needsOutline={!anaheim}
-        outlinePrice={euro(props.prices.outlinePriceCents)}
         outline={outline}
         second={second}
         onOutline={setOutline}

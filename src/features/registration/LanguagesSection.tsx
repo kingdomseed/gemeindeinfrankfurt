@@ -10,7 +10,6 @@ export function LanguagesSection(props: {
   groupLanguage: Language;
   // Anaheim attendees already have their outlines, so they choose none.
   needsOutline: boolean;
-  outlinePrice: string;
   outline: Language;
   second: Language | "";
   onOutline: (l: Language) => void;
@@ -65,9 +64,7 @@ export function LanguagesSection(props: {
           </>
         )}
       </SimpleGrid>
-      {props.needsOutline && (
-        <Text fontWeight="medium">{t("outlinesRule", { price: props.outlinePrice })}</Text>
-      )}
+      {props.needsOutline && <Text fontWeight="medium">{t("outlinesRule")}</Text>}
       <FormField label={t("comments")} optionalLabel={t("optional")}>
         <Textarea name="comments" defaultValue={props.comments} rows={3} />
       </FormField>
