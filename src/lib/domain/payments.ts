@@ -11,13 +11,13 @@ export type PaymentRow = {
   outline_paid: boolean;
 };
 
-// What one stored registration owes, including a hardship waiver that only
-// coordinators can set.
+// What one stored registration owes, including a waiver that only
+// coordinators can set (hardship, or Anaheim on a shared seat).
 export function feesForRegistration(row: PaymentRow, prices: FeePrices): FeeBreakdown {
   return computeFees(
     {
       seatType: row.seat_type,
-      hardshipWaiver: row.waiver === "hardship",
+      hardshipWaiver: row.waiver !== null,
       outlineLanguage: row.outline_language,
       secondOutlineLanguage: row.second_outline_language,
     },

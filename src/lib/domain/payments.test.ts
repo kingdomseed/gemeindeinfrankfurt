@@ -17,6 +17,11 @@ describe("feesForRegistration", () => {
     const fees = feesForRegistration({ ...row, waiver: "hardship" }, prices);
     expect(fees).toMatchObject({ trainingCents: 0, outlineCents: 500, waived: true });
   });
+
+  it("applies an Anaheim waiver on a shared seat to the fee only", () => {
+    const fees = feesForRegistration({ ...row, seat_type: "shared", waiver: "anaheim" }, prices);
+    expect(fees).toMatchObject({ trainingCents: 0, outlineCents: 500, waived: true });
+  });
 });
 
 describe("paymentTotals", () => {
