@@ -4,10 +4,8 @@ import { languages, type Language, type SeatType } from "./types";
 
 export type PaymentRow = {
   seat_type: SeatType;
-  attended_anaheim: boolean;
-  ukraine_not_employed: boolean;
   waiver: string | null;
-  outline_language: Language;
+  outline_language: Language | null;
   second_outline_language: Language | null;
   fee_paid: boolean;
   outline_paid: boolean;
@@ -19,8 +17,6 @@ export function feesForRegistration(row: PaymentRow, prices: FeePrices): FeeBrea
   return computeFees(
     {
       seatType: row.seat_type,
-      attendedAnaheim: row.attended_anaheim,
-      ukraineNotEmployed: row.ukraine_not_employed,
       hardshipWaiver: row.waiver === "hardship",
       outlineLanguage: row.outline_language,
       secondOutlineLanguage: row.second_outline_language,

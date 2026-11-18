@@ -7,6 +7,7 @@ import { RegistrationPage } from "@/features/registration/RegistrationPage";
 import { requireLocale } from "@/i18n/locale";
 import { getPublishedTraining } from "@/lib/data";
 import { canRegister } from "@/lib/domain/cutoffs";
+import { trainingDates } from "@/lib/domain/sessions";
 
 import { register } from "./actions";
 
@@ -33,8 +34,8 @@ export default async function RegisterPage({ params }: PageProps<"/[locale]/trai
 
   return (
     <RegistrationPage
-      title={t("title", { training: training.title[locale] })}
-      subtitle={training.venue ? t("locality", { locality: training.venue }) : undefined}
+      title={t("title")}
+      dates={trainingDates(training.sessions, locale) ?? undefined}
     >
       <RegistrationForm
         {...trainingFormProps(training, locale, (number) => th("message", { number }))}

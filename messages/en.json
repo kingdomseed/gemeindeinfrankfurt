@@ -30,7 +30,7 @@
     "noTrainingBody": "Please check again later, or ask the coordinators.",
     "openUntil": "Open until the end of the first day: {day}",
     "freeSeatsTitle": "Free seats.",
-    "freeSeats": "There is no training fee if you attended the live training in Anaheim, or if you are from Ukraine and not gainfully employed. Outlines are still paid. You tick this on the form.",
+    "freeSeats": "Those who attend the live training in Anaheim may attend the same video training without giving the donation. Choose this as your seat type on the form.",
     "seatsTitle": "Seats",
     "seatInfo": {
       "full_time": {
@@ -44,6 +44,10 @@
       "shared": {
         "title": "Shared seat",
         "body": "Two people share one full-time seat and pay one fee, for example a couple with a child at home. One of you attends each message."
+      },
+      "anaheim": {
+        "title": "Live training in Anaheim",
+        "body": "No donation and no outline. You choose the messages you would like to join and do not have to come."
       }
     },
     "changesTitle": "Changing your registration",
@@ -55,13 +59,14 @@
     "anyTime": "Any time during the training"
   },
   "register": {
-    "title": "Register for {training}",
+    "title": "Video Training Registration Form",
     "closed": "Registration is closed. Please contact the coordinators.",
     "seatType": "Seat type",
     "seat": {
       "full_time": "Full-time (all sessions)",
       "part_time": "Part-time (choose sessions)",
-      "shared": "Shared seat (two people, one attends at a time; full-time)"
+      "shared": "Shared seat",
+      "anaheim": "I will attend the live training in Anaheim"
     },
     "sessions": "Sessions you will attend",
     "firstName": "First name",
@@ -75,11 +80,8 @@
     "secondOutlineLanguage": "Second outline (optional)",
     "none": "None",
     "comments": "Comments",
-    "attendedAnaheim": "I attended the live training in Anaheim",
-    "ukraineNotEmployed": "I am from Ukraine and not gainfully employed",
-    "confirmAdult": "I am 18 or older",
-    "acceptRules": "I have read the training rules",
-    "rules": "Training rules",
+    "confirmAdult": "I am at least 17 years old",
+    "acceptRules": "I will keep the rules and regulations of the training",
     "toPay": "To pay",
     "trainingFee": "Training fee",
     "outlines": "Outlines ({count})",
@@ -91,10 +93,7 @@
     "error": "Something went wrong. Please check the form and try again.",
     "sectionAboutYou": "About you",
     "sectionLanguages": "Languages and outlines",
-    "sectionFreeSeat": "Free seat",
-    "freeSeatHelp": "Tick one if it applies. The training fee is then waived; outlines are still paid.",
     "sectionConfirm": "Rules and confirmation",
-    "sectionPayment": "Payment",
     "optional": "optional",
     "sessionsRequired": "Please choose at least one session.",
     "sending": "Sending…",
@@ -105,14 +104,10 @@
     "waived": "waived",
     "copy": "Copy",
     "copied": "Copied",
-    "payHint": "Please transfer the total with this reference.",
     "receiptTitle": "You are registered",
     "receiptBody": "We have sent a confirmation email with a link to change or cancel your registration. If you cannot find it, please check your spam folder.",
     "receiptPay": "Please transfer {total} now:",
     "registerAnother": "Register another person",
-    "locality": "Locality: {locality}",
-    "payerName": "Who sends the bank transfer?",
-    "payerNameHelp": "Only if it is not you, for example a spouse or one transfer for the whole family. It helps the coordinators match the payment.",
     "payer": "Paid by {name}",
     "closedTitle": "Registration is closed",
     "closedBody": "New registrations ended with the first day of the training. Already registered? Use the link in your confirmation email to change your details. Otherwise please contact the coordinators.",
@@ -120,7 +115,27 @@
     "nextTitle": "What happens next",
     "nextPaid": "We tick your payment when it arrives. You do not need to send proof.",
     "nextBefore": "A few days before the training we email you the place, the rules and how to join the private WhatsApp group.",
-    "nextChange": "To change or cancel, use the link in your confirmation email."
+    "nextChange": "To change or cancel, use the link in your confirmation email.",
+    "seatRules": "Trainees may register full time or part time. They must attend all sessions for which they are registered. The donation is the same whether full or part time. It is {fee}.",
+    "seatHelp": {
+      "shared": "Shared seats must be occupied full time. Those sharing a seat count as one person and need only give one donation.",
+      "anaheim": "Those who attend the live training may attend the same video training without giving the donation. Choose the messages you would like to join."
+    },
+    "sessionsPartHint": "Those attending part time should sign up in advance for the sessions they will attend; they may also attend other sessions when they are free.",
+    "sessionsAnaheimHint": "Tick the messages you would like to join. You do not have to come.",
+    "outlinesRule": "Training outlines are mandatory for each trainee. They cost {price} each.",
+    "materialsRule": "All materials from this training, in both print and electronic formats, including outlines, audio materials, and video materials, must be obtained directly from Living Stream Ministry.",
+    "rulesIntro": "Only those who are registered or those who attended the live training may attend:",
+    "attendRules": {
+      "seat": "Be in assigned seat five minutes before starting time.",
+      "nameTag": "No admission to any session without a name tag.",
+      "absences": "No unexcused absences; no more than two excused absences.",
+      "testing": "Testing and sharing on each message.",
+      "leaving": "Permission is needed for leaving any session early."
+    },
+    "confirmAdultHelp": "Registrants must be at least 17 years old.",
+    "materialsTitle": "Training Materials:",
+    "copiesRule": "We would ask the saints not to create copies of the training materials in any format or to not accept copies that have been produced illegally. This applies to illegal copies for so-called \"personal use\"."
   },
   "edit": {
     "title": "Your registration",
@@ -173,7 +188,8 @@
     "seatShort": {
       "full_time": "Full-time",
       "part_time": "Part-time",
-      "shared": "Shared seat"
+      "shared": "Shared seat",
+      "anaheim": "Anaheim"
     },
     "language": "Language",
     "orderedFor": "Ordered, {language}",

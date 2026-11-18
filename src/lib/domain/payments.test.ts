@@ -5,8 +5,6 @@ import { feesForRegistration, outlineStock, paymentTotals, type PaymentRow } fro
 const prices = { feeCents: 7000, outlinePriceCents: 500 };
 const row: PaymentRow = {
   seat_type: "full_time",
-  attended_anaheim: false,
-  ukraine_not_employed: false,
   waiver: null,
   outline_language: "de",
   second_outline_language: null,

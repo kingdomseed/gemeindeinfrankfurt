@@ -63,3 +63,17 @@ export function berlinDayTime(instant: Date, locale: string): string {
     minute: "2-digit",
   }).format(instant);
 }
+
+// "Saturday 9 – Sunday 17 January 2027": first to last message day, in the
+// reader's language on the Frankfurt calendar. Null when there are no sessions.
+export function trainingDates(sessions: Session[], locale: string): string | null {
+  const starts = sessions.map((s) => Date.parse(s.starts_at));
+  if (starts.length === 0) return null;
+  return new Intl.DateTimeFormat(locale, {
+    timeZone,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).formatRange(Math.min(...starts), Math.max(...starts));
+}

@@ -18,12 +18,9 @@ export type RegistrationDefaults = PersonDefaults & {
   seat_type: SeatType;
   session_ids: string[];
   group_language: Language;
-  outline_language: Language;
+  outline_language: Language | null;
   second_outline_language: Language | null;
   comments: string;
-  payer_name: string;
-  attended_anaheim: boolean;
-  ukraine_not_employed: boolean;
 };
 
 // What a registration server action answers; the form maps status to text.

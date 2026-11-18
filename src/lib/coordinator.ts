@@ -5,7 +5,7 @@ import type { createClient } from "@/lib/supabase/server";
 type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 const REGISTRATION_COLUMNS =
-  "id, seat_type, first_name, last_name, partner_first_name, partner_last_name, group_language, outline_language, second_outline_language, attended_anaheim, ukraine_not_employed, waiver, payer_name, fee_paid, outline_paid";
+  "id, seat_type, first_name, last_name, partner_first_name, partner_last_name, group_language, outline_language, second_outline_language, waiver, payer_name, fee_paid, outline_paid";
 
 // Everything the coordinator page shows for the newest training, read as the
 // signed-in coordinator (row-level security applies). Null when there is no

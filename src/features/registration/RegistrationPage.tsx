@@ -1,19 +1,29 @@
-import { Stack } from "@chakra-ui/react";
+import { Span, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
 import { Notice } from "@/components/ui/notice";
 import { PageHeading } from "@/components/ui/page-heading";
 
-// Page frame for registering and editing: heading, optional notice, the form.
+// Page frame for registering and editing: heading with the training's dates,
+// optional notice, the form.
 export function RegistrationPage(props: {
   title: string;
-  subtitle?: string | undefined;
+  dates?: string | undefined;
   lockedNotice?: string | undefined;
   children: ReactNode;
 }) {
   return (
     <Stack gap="8">
-      <PageHeading title={props.title} subtitle={props.subtitle} />
+      <PageHeading
+        title={props.title}
+        subtitle={
+          props.dates && (
+            <Span fontWeight="semibold" color="brand.solid">
+              {props.dates}
+            </Span>
+          )
+        }
+      />
       {props.lockedNotice && <Notice tone="neutral">{props.lockedNotice}</Notice>}
       {props.children}
     </Stack>

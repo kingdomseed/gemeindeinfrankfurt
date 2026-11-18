@@ -55,9 +55,11 @@ export function Receipt(props: {
           {t("nextTitle")}
         </Heading>
         <List.Root as="ol" mt="3" ps="5" gap="2">
-          {nextSteps.map((key) => (
-            <List.Item key={key}>{t(key)}</List.Item>
-          ))}
+          {nextSteps
+            .filter((key) => key !== "nextPaid" || props.totalCents > 0)
+            .map((key) => (
+              <List.Item key={key}>{t(key)}</List.Item>
+            ))}
         </List.Root>
       </Box>
       <Button variant="outline" px="6" onClick={props.onRegisterAnother}>

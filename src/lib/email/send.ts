@@ -48,8 +48,6 @@ export async function sendConfirmation(opts: {
   const fees = computeFees(
     {
       seatType: r.seat_type,
-      attendedAnaheim: r.attended_anaheim,
-      ukraineNotEmployed: r.ukraine_not_employed,
       outlineLanguage: r.outline_language,
       secondOutlineLanguage: r.second_outline_language,
     },
@@ -60,13 +58,18 @@ export async function sendConfirmation(opts: {
     t("confirmationIntro", { name: r.first_name }),
     "",
     `${title}: ${tr(`seat.${r.seat_type}`)}`,
-    `${tr("trainingFee")}: ${formatEuro(fees.trainingCents, locale)}`,
-    `${tr("outlines", { count: fees.outlineCount })}: ${formatEuro(fees.outlineCents, locale)}`,
-    tr("payTo", {
-      payee: training.payee_name,
-      iban: training.payee_iban,
-      reference: training.payment_reference,
-    }),
+    // Anaheim attendees owe nothing, so they get no payment lines.
+    ...(fees.trainingCents + fees.outlineCents > 0
+      ? [
+          `${tr("trainingFee")}: ${formatEuro(fees.trainingCents, locale)}`,
+          `${tr("outlines", { count: fees.outlineCount })}: ${formatEuro(fees.outlineCents, locale)}`,
+          tr("payTo", {
+            payee: training.payee_name,
+            iban: training.payee_iban,
+            reference: training.payment_reference,
+          }),
+        ]
+      : []),
     "",
     t("editLink", { url: editUrl(locale, token) }),
   ].join("\n");

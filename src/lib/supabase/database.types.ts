@@ -164,13 +164,11 @@ export type Database = {
           phone: string;
           locale: Database["public"]["Enums"]["language_code"];
           group_language: Database["public"]["Enums"]["language_code"];
-          outline_language: Database["public"]["Enums"]["language_code"];
+          outline_language: Database["public"]["Enums"]["language_code"] | null;
           second_outline_language: Database["public"]["Enums"]["language_code"] | null;
           comments: string;
           confirmed_adult: boolean;
           accepted_rules: boolean;
-          attended_anaheim: boolean;
-          ukraine_not_employed: boolean;
           waiver: Database["public"]["Enums"]["fee_waiver"] | null;
           waiver_reason: string;
           fee_paid: boolean;
@@ -195,13 +193,11 @@ export type Database = {
           phone?: string;
           locale: Database["public"]["Enums"]["language_code"];
           group_language: Database["public"]["Enums"]["language_code"];
-          outline_language: Database["public"]["Enums"]["language_code"];
+          outline_language?: Database["public"]["Enums"]["language_code"] | null;
           second_outline_language?: Database["public"]["Enums"]["language_code"] | null;
           comments?: string;
           confirmed_adult: boolean;
           accepted_rules: boolean;
-          attended_anaheim?: boolean;
-          ukraine_not_employed?: boolean;
           waiver?: Database["public"]["Enums"]["fee_waiver"] | null;
           waiver_reason?: string;
           fee_paid?: boolean;
@@ -226,13 +222,11 @@ export type Database = {
           phone?: string;
           locale?: Database["public"]["Enums"]["language_code"];
           group_language?: Database["public"]["Enums"]["language_code"];
-          outline_language?: Database["public"]["Enums"]["language_code"];
+          outline_language?: Database["public"]["Enums"]["language_code"] | null;
           second_outline_language?: Database["public"]["Enums"]["language_code"] | null;
           comments?: string;
           confirmed_adult?: boolean;
           accepted_rules?: boolean;
-          attended_anaheim?: boolean;
-          ukraine_not_employed?: boolean;
           waiver?: Database["public"]["Enums"]["fee_waiver"] | null;
           waiver_reason?: string;
           fee_paid?: boolean;
@@ -601,7 +595,7 @@ export type Database = {
     };
     Enums: {
       language_code: "de" | "en" | "ru";
-      seat_type: "full_time" | "part_time" | "shared";
+      seat_type: "full_time" | "part_time" | "shared" | "anaheim";
       registration_status: "active" | "cancelled";
       fee_waiver: "anaheim" | "ukraine_not_employed" | "hardship";
       attendance_mark: "present" | "absent" | "excused" | "not_registered";

@@ -30,7 +30,7 @@
     "noTrainingBody": "Bitte schau später wieder vorbei oder frag die Koordinatoren.",
     "openUntil": "Anmeldung bis zum Ende des ersten Tages: {day}",
     "freeSeatsTitle": "Kostenlose Plätze.",
-    "freeSeats": "Wer am Live-Training in Anaheim teilgenommen hat oder aus der Ukraine kommt und nicht erwerbstätig ist, zahlt keinen Trainingsbeitrag. Gliederungen werden trotzdem bezahlt. Du kreuzt das im Formular an.",
+    "freeSeats": "Diejenigen, die am Live-Training in Anaheim teilgenommen haben, können am selben örtlichen Video-Training teilnehmen ohne eine zusätzliche Gabe zu entrichten. Wähle das im Formular als Platzart.",
     "seatsTitle": "Plätze",
     "seatInfo": {
       "full_time": {
@@ -44,6 +44,10 @@
       "shared": {
         "title": "Geteilter Platz",
         "body": "Zwei Personen teilen sich einen Vollzeitplatz und zahlen einen Beitrag, zum Beispiel ein Ehepaar mit einem Kind zu Hause. Bei jeder Botschaft ist einer von euch da."
+      },
+      "anaheim": {
+        "title": "Live-Training in Anaheim",
+        "body": "Keine Gabe und keine Gliederung. Du wählst die Botschaften, an denen du teilnehmen möchtest, und musst nicht kommen."
       }
     },
     "changesTitle": "Anmeldung ändern",
@@ -55,13 +59,14 @@
     "anyTime": "Jederzeit während des Trainings"
   },
   "register": {
-    "title": "Anmeldung: {training}",
+    "title": "Anmeldeformular für das Video-Training",
     "closed": "Die Anmeldung ist geschlossen. Bitte wende dich an die Koordinatoren.",
     "seatType": "Art des Platzes",
     "seat": {
       "full_time": "Vollzeit (alle Einheiten)",
       "part_time": "Teilzeit (Einheiten auswählen)",
-      "shared": "Geteilter Platz (zwei Personen, abwechselnd; Vollzeit)"
+      "shared": "Geteilter Platz",
+      "anaheim": "Ich nehme am Live-Training in Anaheim teil"
     },
     "sessions": "Einheiten, an denen du teilnimmst",
     "firstName": "Vorname",
@@ -75,11 +80,8 @@
     "secondOutlineLanguage": "Zweite Gliederung (optional)",
     "none": "Keine",
     "comments": "Anmerkungen",
-    "attendedAnaheim": "Ich habe am Live-Training in Anaheim teilgenommen",
-    "ukraineNotEmployed": "Ich komme aus der Ukraine und bin nicht erwerbstätig",
-    "confirmAdult": "Ich bin mindestens 18 Jahre alt",
-    "acceptRules": "Ich habe die Trainingsregeln gelesen",
-    "rules": "Trainingsregeln",
+    "confirmAdult": "Ich bin mindestens 17 Jahre alt",
+    "acceptRules": "Ich werde mich an die Bestimmungen des Trainings halten",
     "toPay": "Zu zahlen",
     "trainingFee": "Trainingsbeitrag",
     "outlines": "Gliederungen ({count})",
@@ -91,10 +93,7 @@
     "error": "Etwas ist schiefgelaufen. Bitte prüfe das Formular und versuche es erneut.",
     "sectionAboutYou": "Angaben zur Person",
     "sectionLanguages": "Sprachen und Gliederungen",
-    "sectionFreeSeat": "Kostenloser Platz",
-    "freeSeatHelp": "Bitte ankreuzen, wenn zutreffend. Die Trainingsgebühr entfällt dann; Gliederungen werden trotzdem bezahlt.",
     "sectionConfirm": "Regeln und Bestätigung",
-    "sectionPayment": "Zahlung",
     "optional": "optional",
     "sessionsRequired": "Bitte wähle mindestens eine Einheit aus.",
     "sending": "Wird gesendet…",
@@ -105,14 +104,10 @@
     "waived": "entfällt",
     "copy": "Kopieren",
     "copied": "Kopiert",
-    "payHint": "Bitte überweise den Gesamtbetrag mit diesem Verwendungszweck.",
     "receiptTitle": "Du bist angemeldet",
     "receiptBody": "Wir haben dir eine Bestätigung mit einem Link zum Ändern oder Stornieren geschickt. Falls du sie nicht findest, schau bitte im Spam-Ordner nach.",
     "receiptPay": "Bitte überweise jetzt {total}:",
     "registerAnother": "Weitere Person anmelden",
-    "locality": "Ort: {locality}",
-    "payerName": "Wer überweist?",
-    "payerNameHelp": "Nur wenn nicht du selbst, zum Beispiel Ehepartner oder eine Überweisung für die ganze Familie. So können die Koordinatoren die Zahlung zuordnen.",
     "payer": "Bezahlt von {name}",
     "closedTitle": "Die Anmeldung ist geschlossen",
     "closedBody": "Neue Anmeldungen waren bis zum ersten Tag des Trainings möglich. Schon angemeldet? Mit dem Link in deiner Bestätigung kannst du deine Angaben ändern. Sonst wende dich bitte an die Koordinatoren.",
@@ -120,7 +115,27 @@
     "nextTitle": "Wie es weitergeht",
     "nextPaid": "Wir haken deine Zahlung ab, sobald sie eingeht. Du musst keinen Nachweis schicken.",
     "nextBefore": "Einige Tage vor dem Training schicken wir dir den Ort, die Regeln und wie du der privaten WhatsApp-Gruppe beitrittst.",
-    "nextChange": "Zum Ändern oder Stornieren nutze den Link in deiner Bestätigung."
+    "nextChange": "Zum Ändern oder Stornieren nutze den Link in deiner Bestätigung.",
+    "seatRules": "Teilnehmer können sich voll- oder teilzeitig anmelden. Sie müssen an allen Botschaften teilnehmen, an denen sie sich angemeldet haben. Die Gabe ist für Voll- oder Teilzeit gleich hoch. Sie beträgt {fee}.",
+    "seatHelp": {
+      "shared": "Geteilte Sitze müssen vollzeitig besetzt sein. Es dürfen nur Schwestern oder Ehepaare, die sich beim Babysitten abwechseln, einen Sitz teilen. Diejenigen, die einen Sitz teilen, zählen als eine Person und geben eine Gabe.",
+      "anaheim": "Diejenigen, die am Live-Training teilgenommen haben, können am selben örtlichen Video-Training teilnehmen ohne eine zusätzliche Gabe zu entrichten. Wähle die Botschaften, an denen du teilnehmen möchtest."
+    },
+    "sessionsPartHint": "Diejenigen, die teilzeitig dabei sind, sollten im Voraus angeben, an welchen Botschaften sie teilnehmen werden; sie dürfen auch an anderen Botschaften anwesend sein, sofern diese für alle zugänglich sind.",
+    "sessionsAnaheimHint": "Kreuze die Botschaften an, an denen du teilnehmen möchtest. Du musst nicht kommen.",
+    "outlinesRule": "Die Gliederungen für das Training sind obligatorisch. Sie kosten {price} pro Stück.",
+    "materialsRule": "Sämtliches Material von diesem Training, sowohl Gedrucktes als auch in elektronischer Form (inkl. Gliederungen, Audio-Dateien und Video-Material) müssen direkt von Living Stream Ministry bestellt werden.",
+    "rulesIntro": "Es dürfen nur diejenigen, die angemeldet sind oder in Anaheim am selben Training teilgenommen haben, die Versammlungen besuchen:",
+    "attendRules": {
+      "seat": "Auf dem bezeichneten Sitz 5 Minuten vor Beginn Platz nehmen.",
+      "nameTag": "Kein Zutritt zu irgendeiner Versammlung ohne Namensschild.",
+      "absences": "Kein unentschuldigtes Fernbleiben; nicht mehr als 2 entschuldigte Abwesenheiten.",
+      "testing": "Bezeugen und Mitteilen nach jeder Botschaft. Nicht mehr als 3 Abwesenheiten beim Testen.",
+      "leaving": "Eine Erlaubnis ist nötig, wenn eine Versammlung früher verlassen wird."
+    },
+    "confirmAdultHelp": "Die Teilnehmer müssen mindestens 17 Jahre alt sein.",
+    "materialsTitle": "Unterlagen für das Training:",
+    "copiesRule": "Wir bitten die Heiligen davon abzusehen, Kopien in irgendeiner Art vom Material dieses Trainings herzustellen und auch keine solchen Kopien, die auf illegale Weise hergestellt wurden. Dies gilt auch für illegale Kopien, die für den \"persönlichen Gebrauch\" gedacht sind."
   },
   "edit": {
     "title": "Deine Anmeldung",
@@ -173,7 +188,8 @@
     "seatShort": {
       "full_time": "Vollzeit",
       "part_time": "Teilzeit",
-      "shared": "Geteilter Platz"
+      "shared": "Geteilter Platz",
+      "anaheim": "Anaheim"
     },
     "language": "Sprache",
     "orderedFor": "Bestellt, {language}",

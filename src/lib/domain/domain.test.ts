@@ -4,14 +4,13 @@ import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoff
 import { computeFees } from "./fees";
 import { openStreetMapUrl } from "./maps";
 import { countOutlines } from "./outlines";
-import { berlinDay, berlinDayTime, scheduleDays, sessionLabel } from "./sessions";
+import { berlinDay, berlinDayTime, scheduleDays, sessionLabel, trainingDates } from "./sessions";
 import { hashToken, newEditToken } from "./token";
+import { picksSessions, seatTypes } from "./types";
 
 const prices = { feeCents: 7000, outlinePriceCents: 500 };
 const base = {
   seatType: "full_time" as const,
-  attendedAnaheim: false,
-  ukraineNotEmployed: false,
   outlineLanguage: "de" as const,
   secondOutlineLanguage: null,
 };
@@ -32,11 +31,20 @@ describe("computeFees", () => {
 
   it("waives the fee but not the outlines", () => {
     const fees = computeFees(
-      { ...base, ukraineNotEmployed: true, secondOutlineLanguage: "ru" },
+      { ...base, hardshipWaiver: true, secondOutlineLanguage: "ru" },
       prices,
     );
     expect(fees.trainingCents).toBe(0);
     expect(fees.outlineCents).toBe(1000);
+  });
+
+  it("charges an Anaheim seat nothing and orders no outline", () => {
+    expect(computeFees({ ...base, seatType: "anaheim", outlineLanguage: null }, prices)).toEqual({
+      trainingCents: 0,
+      outlineCents: 0,
+      outlineCount: 0,
+      waived: true,
+    });
   });
 });
 
@@ -84,8 +92,15 @@ describe("countOutlines", () => {
         { outline_language: "de", second_outline_language: "en" },
         { outline_language: "ru", second_outline_language: null },
         { outline_language: "de", second_outline_language: null },
+        { outline_language: null, second_outline_language: null },
       ]),
     ).toEqual({ de: 2, en: 1, ru: 1 });
+  });
+});
+
+describe("picksSessions", () => {
+  it("lets part-time and Anaheim seats choose messages", () => {
+    expect(seatTypes.filter(picksSessions)).toEqual(["part_time", "anaheim"]);
   });
 });
 
@@ -150,5 +165,20 @@ describe("openStreetMapUrl", () => {
     const url = new URL(openStreetMapUrl("Ginnheimer Stadtweg 120, 60431 Frankfurt am Main"));
     expect(url.origin + url.pathname).toBe("https://www.openstreetmap.org/search");
     expect(url.searchParams.get("query")).toBe("Ginnheimer Stadtweg 120, 60431 Frankfurt am Main");
+  });
+});
+
+describe("trainingDates", () => {
+  it("spans the first to the last message day in Frankfurt", () => {
+    const dates = trainingDates(
+      [sessionAt("b", 12, "2027-01-17T13:00:00Z"), sessionAt("a", 1, "2027-01-09T08:30:00Z")],
+      "en-GB",
+    );
+    expect(dates).toContain("Saturday 9");
+    expect(dates).toContain("Sunday 17 January 2027");
+  });
+
+  it("is empty without sessions", () => {
+    expect(trainingDates([], "en")).toBeNull();
   });
 });
