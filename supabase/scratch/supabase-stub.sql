@@ -16,6 +16,16 @@ $$;
 create schema auth;
 create schema extensions;
 
+-- Supabase installs extensions in their own schema and puts it on the search
+-- path, so they stay out of the generated types (whose content would otherwise
+-- depend on the server's pgcrypto version).
+create extension if not exists pgcrypto with schema extensions;
+do $$
+begin
+  execute format('alter database %I set search_path = public, extensions', current_database());
+end
+$$;
+
 create table auth.users (
   id uuid primary key default gen_random_uuid(),
   email text

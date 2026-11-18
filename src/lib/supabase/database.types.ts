@@ -608,11 +608,7 @@ export type Database = {
         Args: { p_shift: string; p_slug: string; p_source: string; p_title: Json };
         Returns: string;
       };
-      dearmor: { Args: { "": string }; Returns: string };
-      gen_random_uuid: { Args: Record<PropertyKey, never>; Returns: string };
-      gen_salt: { Args: { "": string }; Returns: string };
       is_coordinator: { Args: Record<PropertyKey, never>; Returns: boolean };
-      pgp_armor_headers: { Args: { "": string }; Returns: Record<string, unknown>[] };
       purge_personal_data: { Args: { p_training: string }; Returns: undefined };
     };
     Enums: {
