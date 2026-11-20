@@ -1,6 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { feesForRegistration, outlineStock, paymentTotals, type PaymentRow } from "./payments";
+import {
+  feesForRegistration,
+  inListFilter,
+  openCents,
+  outlineStock,
+  paymentTotals,
+  settledMark,
+  type ListRow,
+  type PaymentRow,
+} from "./payments";
 
 const prices = { feeCents: 7000, outlinePriceCents: 500 };
 const row: PaymentRow = {
@@ -43,5 +52,55 @@ describe("outlineStock", () => {
       { language: "en", needed: 1, ordered: 0, extra: -1 },
       { language: "ru", needed: 0, ordered: 2, extra: 2 },
     ]);
+  });
+});
+
+describe("inListFilter", () => {
+  const active: ListRow = { ...row, status: "active" };
+  const fees = feesForRegistration(active, prices);
+
+  it("lists an active registration with money open as unpaid", () => {
+    expect(openCents({ ...active, fee_paid: true }, fees)).toBe(500);
+    expect(inListFilter(active, fees, "unpaid")).toBe(true);
+    expect(inListFilter({ ...active, fee_paid: true, outline_paid: true }, fees, "unpaid")).toBe(
+      false,
+    );
+  });
+
+  it("keeps a live-training seat out of unpaid", () => {
+    const live: ListRow = { ...active, seat_type: "anaheim", outline_language: null };
+    const liveFees = feesForRegistration(live, prices);
+    expect(inListFilter(live, liveFees, "live")).toBe(true);
+    expect(inListFilter(live, liveFees, "unpaid")).toBe(false);
+  });
+
+  it("shows a cancelled registration only under all and cancelled", () => {
+    const cancelled: ListRow = { ...active, waiver: "hardship", status: "cancelled" };
+    expect(openCents(cancelled, fees)).toBe(0);
+    expect(inListFilter(cancelled, fees, "all")).toBe(true);
+    expect(inListFilter(cancelled, fees, "cancelled")).toBe(true);
+    expect(inListFilter(cancelled, fees, "unpaid")).toBe(false);
+    expect(inListFilter(cancelled, fees, "waived")).toBe(false);
+  });
+});
+
+describe("settledMark", () => {
+  it("dates a received payment today when no date was given", () => {
+    expect(settledMark({ paid: true, paidOn: null, transaction: "TX1" }, "2026-11-20")).toEqual({
+      paid: true,
+      paidOn: "2026-11-20",
+      transaction: "TX1",
+    });
+  });
+
+  it("keeps the date the coordinator entered", () => {
+    const mark = { paid: true, paidOn: "2026-11-03", transaction: "" };
+    expect(settledMark(mark, "2026-11-20")).toEqual(mark);
+  });
+
+  it("clears the date and transaction number of an unmarked payment", () => {
+    expect(
+      settledMark({ paid: false, paidOn: "2026-11-03", transaction: "TX1" }, "2026-11-20"),
+    ).toEqual({ paid: false, paidOn: null, transaction: "" });
   });
 });

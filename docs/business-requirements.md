@@ -88,8 +88,8 @@ Several serving ones log in to the same coordination site. Everyone can edit, an
 
 **Payments (tracked by hand)**
 
-12. Two separate checkboxes per registration: **training fee paid** and **outline paid**. A serving one ticks them when the money arrives. Nothing is matched automatically.
-13. A payment can also be marked **waived**, with a reason (Anaheim attendee or a hardship reduction).
+12. Two separate marks per registration: **donation received** and **outlines received**. A coordinator ticks them on the registration's own page when the money arrives, with the date received and, if wanted, the bank's transaction number. The registrations list only shows the status (Paid / Not paid). Nothing is matched automatically, and each change is kept in the registration's history with the coordinator's name.
+13. A donation can also be marked **waived**, with a reason (a hardship reduction). The seat for those who attend the live training in Anaheim owes nothing.
 14. Running totals: seats, fees received, outline money received, still unpaid.
 
 **Outlines**

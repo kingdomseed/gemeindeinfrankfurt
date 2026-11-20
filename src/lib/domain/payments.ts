@@ -55,3 +55,35 @@ export function outlineStock(
     return { language, needed: needed[language], ordered: have, extra: have - needed[language] };
   });
 }
+
+export const listFilters = ["all", "unpaid", "live", "waived", "cancelled"] as const;
+export type ListFilter = (typeof listFilters)[number];
+
+export type ListRow = PaymentRow & { status: "active" | "cancelled" };
+
+// What an active registration still owes, in cents. A cancelled one owes nothing.
+export function openCents(row: ListRow, fees: FeeBreakdown): number {
+  if (row.status === "cancelled") return 0;
+  return (row.fee_paid ? 0 : fees.trainingCents) + (row.outline_paid ? 0 : fees.outlineCents);
+}
+
+// Whether a registration belongs under one of the coordinator list's filters.
+// "all" shows everything; the other filters except "cancelled" hold active
+// registrations only.
+export function inListFilter(row: ListRow, fees: FeeBreakdown, filter: ListFilter): boolean {
+  if (filter === "all") return true;
+  if (filter === "cancelled") return row.status === "cancelled";
+  if (row.status === "cancelled") return false;
+  if (filter === "unpaid") return openCents(row, fees) > 0;
+  if (filter === "live") return row.seat_type === "anaheim";
+  return row.waiver !== null;
+}
+
+export type PaymentMark = { paid: boolean; paidOn: string | null; transaction: string };
+
+// A payment mark as it is stored. A received payment with no date is dated
+// today; an unmarked one keeps neither its date nor its transaction number.
+export function settledMark(mark: PaymentMark, today: string): PaymentMark {
+  if (!mark.paid) return { paid: false, paidOn: null, transaction: "" };
+  return { ...mark, paidOn: mark.paidOn ?? today };
+}
