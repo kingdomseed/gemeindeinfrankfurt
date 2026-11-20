@@ -1,5 +1,7 @@
 "use server";
 
+import { refresh } from "next/cache";
+
 import { getTrainingById } from "@/lib/data";
 import { canCancel, canChangeSeatOrSessions } from "@/lib/domain/cutoffs";
 import type { Language } from "@/lib/domain/types";
@@ -43,7 +45,15 @@ export async function updateRegistration(
   if (error) throw error;
   if (!seatLocked) await replaceSessions(existing.id, input);
 
-  await sendConfirmation({ locale, training, registration: input, token });
+  await sendConfirmation({
+    locale,
+    training,
+    registration: input,
+    token,
+    waived: existing.waiver !== null,
+  });
+  // The payment panel above the form is rendered on the server from the saved row.
+  refresh();
   return { status: "saved" };
 }
 

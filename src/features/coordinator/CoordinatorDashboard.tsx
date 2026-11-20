@@ -8,7 +8,6 @@ import { CoordinatorHeader } from "./CoordinatorHeader";
 import { OutlineOrders } from "./OutlineOrders";
 import { PaymentStats } from "./PaymentStats";
 import { RegistrationList } from "./RegistrationList";
-import type { SetPaymentFlag } from "./types";
 
 // The coordinator page: totals, outline orders and every registration.
 export function CoordinatorDashboard(props: {
@@ -16,7 +15,6 @@ export function CoordinatorDashboard(props: {
   actions: {
     signOut: () => Promise<void>;
     saveOutlineOrder: (form: FormData) => Promise<void>;
-    setPaymentFlag: SetPaymentFlag;
   };
 }) {
   const locale = useLocale();
@@ -26,8 +24,10 @@ export function CoordinatorDashboard(props: {
     registration,
     fees: feesForRegistration(registration, prices),
   }));
+  // Cancelled registrations stay in the list but count for nothing.
+  const active = rows.filter((r) => r.registration.status === "active");
   const totals = paymentTotals(
-    rows.map((r) => ({
+    active.map((r) => ({
       fees: r.fees,
       fee_paid: r.registration.fee_paid,
       outline_paid: r.registration.outline_paid,
@@ -37,13 +37,16 @@ export function CoordinatorDashboard(props: {
   return (
     <Stack gap="10">
       <CoordinatorHeader trainingTitle={training.title[locale]} signOut={props.actions.signOut} />
-      <PaymentStats seats={rows.length} totals={totals} />
+      <PaymentStats seats={active.length} totals={totals} />
       <OutlineOrders
         trainingId={training.id}
-        stock={outlineStock(registrations, ordered)}
+        stock={outlineStock(
+          active.map((r) => r.registration),
+          ordered,
+        )}
         saveOrder={props.actions.saveOutlineOrder}
       />
-      <RegistrationList rows={rows} setPaymentFlag={props.actions.setPaymentFlag} />
+      <RegistrationList rows={rows} />
     </Stack>
   );
 }

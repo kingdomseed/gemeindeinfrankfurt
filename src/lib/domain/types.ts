@@ -1,5 +1,11 @@
-export type SeatType = "full_time" | "part_time" | "shared";
-export const seatTypes: readonly SeatType[] = ["full_time", "part_time", "shared"];
+export type SeatType = "full_time" | "part_time" | "shared" | "anaheim";
+export const seatTypes: readonly SeatType[] = ["full_time", "part_time", "shared", "anaheim"];
+
+// Seats whose holder picks the messages: part-time, and Anaheim attendees, who
+// may join any message without having to come.
+export function picksSessions(seat: SeatType): boolean {
+  return seat === "part_time" || seat === "anaheim";
+}
 export type Language = "de" | "en" | "ru";
 export const languages: readonly Language[] = ["de", "en", "ru"];
 

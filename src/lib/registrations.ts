@@ -2,13 +2,15 @@ import "server-only";
 import { z } from "zod";
 
 import { hashToken } from "@/lib/domain/token";
+import { picksSessions } from "@/lib/domain/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const language = z.enum(["de", "en", "ru"]);
+const seatType = z.enum(["full_time", "part_time", "shared", "anaheim"]);
 
 export const registrationSchema = z
   .object({
-    seat_type: z.enum(["full_time", "part_time", "shared"]),
+    seat_type: seatType,
     session_ids: z.array(z.uuid()).default([]),
     first_name: z.string().trim().min(1).max(100),
     last_name: z.string().trim().min(1).max(100),
@@ -17,12 +19,9 @@ export const registrationSchema = z
     email: z.email().max(200),
     phone: z.string().trim().max(50).default(""),
     group_language: language,
-    outline_language: language,
+    outline_language: language.nullable(),
     second_outline_language: language.nullable(),
     comments: z.string().trim().max(2000).default(""),
-    payer_name: z.string().trim().max(200).default(""),
-    attended_anaheim: z.boolean(),
-    ukraine_not_employed: z.boolean(),
     confirmed_adult: z.literal(true),
     accepted_rules: z.literal(true),
   })
@@ -32,9 +31,16 @@ export const registrationSchema = z
   .refine((r) => r.seat_type !== "part_time" || r.session_ids.length > 0, {
     path: ["session_ids"],
   })
-  .refine((r) => r.second_outline_language !== r.outline_language, {
-    path: ["second_outline_language"],
-  });
+  // Anaheim attendees already have their outlines; everyone else orders one.
+  .refine((r) => (r.seat_type === "anaheim") === (r.outline_language === null), {
+    path: ["outline_language"],
+  })
+  .refine(
+    (r) =>
+      r.second_outline_language === null ||
+      (r.outline_language !== null && r.second_outline_language !== r.outline_language),
+    { path: ["second_outline_language"] },
+  );
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;
 
@@ -43,23 +49,21 @@ export function parseRegistrationForm(form: FormData) {
     const v = form.get(name);
     return typeof v === "string" ? v : undefined;
   };
-  const seatType = text("seat_type");
+  const seat = seatType.safeParse(text("seat_type")).data;
+  const anaheim = seat === "anaheim";
   return registrationSchema.safeParse({
-    seat_type: seatType,
-    session_ids: seatType === "part_time" ? form.getAll("session_ids") : [],
+    seat_type: seat,
+    session_ids: seat && picksSessions(seat) ? form.getAll("session_ids") : [],
     first_name: text("first_name"),
     last_name: text("last_name"),
-    partner_first_name: seatType === "shared" ? text("partner_first_name") : undefined,
-    partner_last_name: seatType === "shared" ? text("partner_last_name") : undefined,
+    partner_first_name: seat === "shared" ? text("partner_first_name") : undefined,
+    partner_last_name: seat === "shared" ? text("partner_last_name") : undefined,
     email: text("email")?.trim().toLowerCase(),
     phone: text("phone"),
     group_language: text("group_language"),
-    outline_language: text("outline_language"),
-    second_outline_language: text("second_outline_language") || null,
+    outline_language: anaheim ? null : text("outline_language"),
+    second_outline_language: anaheim ? null : text("second_outline_language") || null,
     comments: text("comments"),
-    payer_name: text("payer_name"),
-    attended_anaheim: form.get("attended_anaheim") === "on",
-    ukraine_not_employed: form.get("ukraine_not_employed") === "on",
     confirmed_adult: form.get("confirmed_adult") === "on",
     accepted_rules: form.get("accepted_rules") === "on",
   });
@@ -103,7 +107,7 @@ export async function replaceSessions(registrationId: string, r: RegistrationInp
   const db = createAdminClient();
   const del = await db.from("registration_sessions").delete().eq("registration_id", registrationId);
   if (del.error) throw del.error;
-  if (r.seat_type !== "part_time") return;
+  if (!picksSessions(r.seat_type) || r.session_ids.length === 0) return;
   const ins = await db
     .from("registration_sessions")
     .insert(r.session_ids.map((session_id) => ({ registration_id: registrationId, session_id })));

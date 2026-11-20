@@ -8,7 +8,7 @@ import { redirect } from "@/i18n/navigation";
 import { getCoordinatorClient } from "@/lib/auth";
 import { loadCoordinatorDashboard } from "@/lib/coordinator";
 
-import { setOutlineOrder, setPaymentFlag, signOut } from "./actions";
+import { setOutlineOrder, signOut } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -35,10 +35,7 @@ export default async function CoordinatorPage({
   return (
     <>
       <LiveRefresh trainingId={data.training.id} />
-      <CoordinatorDashboard
-        data={data}
-        actions={{ signOut, saveOutlineOrder: setOutlineOrder, setPaymentFlag }}
-      />
+      <CoordinatorDashboard data={data} actions={{ signOut, saveOutlineOrder: setOutlineOrder }} />
     </>
   );
 }
