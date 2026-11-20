@@ -29,7 +29,13 @@ alter table registrations
     end
   );
 
--- The Anaheim checkbox is now the seat type, and the form no longer asks about
--- employment or origin: that is a private matter.
+-- The form no longer asks about employment or origin: that is a private
+-- matter. Whoever was exempt on that ground stays exempt, as a plain hardship
+-- waiver that does not record why.
+update registrations
+  set waiver = 'hardship'
+  where ukraine_not_employed and waiver is null and seat_type <> 'anaheim';
+
+-- The Anaheim checkbox is now the seat type.
 alter table registrations drop column attended_anaheim;
 alter table registrations drop column ukraine_not_employed;

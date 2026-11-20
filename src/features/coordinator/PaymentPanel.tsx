@@ -30,8 +30,9 @@ export function PaymentPanel(props: {
   });
   const [, startTransition] = useTransition();
   const { registration: r, fees } = props;
-  // Sent through a transition so React does not reset the fields afterwards;
-  // each payment's fields remount (see `key`) once its stored values change.
+  // Sent through a transition so React does not reset the fields afterwards.
+  // The form remounts (see `key`) whenever the stored row changes, so every
+  // field then shows what is saved.
   function onSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
@@ -52,14 +53,19 @@ export function PaymentPanel(props: {
 
   return (
     <Panel tone="brand" aria-labelledby="payment-heading">
-      <chakra.form onSubmit={onSubmit} display="flex" flexDirection="column" gap="5">
+      <chakra.form
+        key={r.updated_at}
+        onSubmit={onSubmit}
+        display="flex"
+        flexDirection="column"
+        gap="5"
+      >
         <Heading as="h2" id="payment-heading" size="xl">
           {t("paymentTitle")}
         </Heading>
         <input type="hidden" name="version" value={r.updated_at} />
         {!fees.waived && (
           <PaymentFields
-            key={`${r.fee_paid}|${r.fee_paid_on}|${r.fee_transaction}`}
             name="fee"
             label={`${t("donationReceived")} · ${euro(fees.trainingCents)}`}
             paid={r.fee_paid}
@@ -69,7 +75,6 @@ export function PaymentPanel(props: {
         )}
         {fees.outlineCount > 0 && (
           <PaymentFields
-            key={`${r.outline_paid}|${r.outline_paid_on}|${r.outline_transaction}`}
             name="outline"
             label={`${t("outlinesReceivedCount", { count: fees.outlineCount })} · ${euro(fees.outlineCents)}`}
             paid={r.outline_paid}
