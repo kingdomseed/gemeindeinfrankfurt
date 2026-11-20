@@ -271,6 +271,7 @@
       "outline_unmarked": "Outlines marked not received",
       "waiver_set": "Donation waived",
       "waiver_removed": "Waiver removed",
+      "payment_edited": "Payment details corrected",
       "edited": "Registration changed",
       "cancelled": "Registration cancelled",
       "link_sent": "New edit link sent"

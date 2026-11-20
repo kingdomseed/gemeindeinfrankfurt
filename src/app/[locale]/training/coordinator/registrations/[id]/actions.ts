@@ -54,7 +54,9 @@ export async function savePayment(rawId: string, _prev: State, form: FormData): 
 
   const { data: existing, error: readError } = await supabase
     .from("registrations")
-    .select("status, seat_type, waiver, outline_language, fee_paid, outline_paid, updated_at")
+    .select(
+      "status, seat_type, waiver, waiver_reason, outline_language, fee_paid, fee_paid_on, fee_transaction, outline_paid, outline_paid_on, outline_transaction",
+    )
     .eq("id", registrationId)
     .maybeSingle();
   if (readError) throw readError;
@@ -95,6 +97,19 @@ export async function savePayment(rawId: string, _prev: State, form: FormData): 
   if ((input.waiver === null) !== (existing.waiver === null)) {
     events.push(input.waiver === null ? "waiver_removed" : "waiver_set");
   }
+  // A corrected date, transaction number or waiver reason, with the marks as they were.
+  const feeCorrected =
+    fee?.paid === existing.fee_paid &&
+    (fee.paidOn !== existing.fee_paid_on || fee.transaction !== existing.fee_transaction);
+  const outlineCorrected =
+    outline?.paid === existing.outline_paid &&
+    (outline.paidOn !== existing.outline_paid_on ||
+      outline.transaction !== existing.outline_transaction);
+  const reasonCorrected =
+    input.waiver !== null &&
+    existing.waiver !== null &&
+    input.waiver_reason !== existing.waiver_reason;
+  if (feeCorrected || outlineCorrected || reasonCorrected) events.push("payment_edited");
 
   const { data: updated, error } = await supabase
     .from("registrations")

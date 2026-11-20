@@ -58,6 +58,7 @@ export const eventKinds = [
   "outline_unmarked",
   "waiver_set",
   "waiver_removed",
+  "payment_edited",
   "edited",
   "cancelled",
   "link_sent",

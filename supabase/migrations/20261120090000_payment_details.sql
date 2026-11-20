@@ -14,7 +14,7 @@ create table registration_events (
   registration_id uuid not null references registrations (id) on delete cascade,
   kind text not null check (kind in (
     'fee_received', 'fee_unmarked', 'outline_received', 'outline_unmarked',
-    'waiver_set', 'waiver_removed', 'edited', 'cancelled', 'link_sent'
+    'waiver_set', 'waiver_removed', 'payment_edited', 'edited', 'cancelled', 'link_sent'
   )),
   actor_id uuid default auth.uid() references auth.users (id) on delete set null,
   actor_name text not null default '',
