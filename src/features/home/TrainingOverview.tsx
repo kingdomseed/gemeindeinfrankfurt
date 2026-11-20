@@ -33,7 +33,7 @@ export function TrainingOverview({ training }: { training: TrainingWithSessions 
         {cutoffs && canRegister(training.sessions) ? (
           <Flex wrap="wrap" align="center" columnGap="5" rowGap="3">
             <Button asChild px="6">
-              <Link href="/register">{t("register")}</Link>
+              <Link href="/training/register">{t("register")}</Link>
             </Button>
             <Text fontSize="sm" color="fg.muted">
               {t("openUntil", { day: berlinDay(cutoffs.registrationClosesAt, locale) })}

@@ -1,34 +1,30 @@
-import { Box } from "@chakra-ui/react";
+"use client";
+
+import { chakra } from "@chakra-ui/react";
 import type { ReactNode } from "react";
+
+import { noticeRecipe } from "@/theme/box-recipes";
 
 import { focusOnMount } from "./focus";
 
-const tones = {
-  success: { bg: "bg.success", color: "fg.success" },
-  warning: { bg: "bg.warning", color: "fg.warning" },
-  neutral: { bg: "bg.subtle", color: "fg" },
-} as const;
+const NoticeBox = chakra("p", noticeRecipe);
 
 // A tinted message block. `announce="alert"` reads an error out, `announce="status"`
 // renders an <output> for the result of an action, and no role is a plain note.
 export function Notice(props: {
-  tone: keyof typeof tones;
+  tone: "neutral" | "success" | "warning" | "error";
   announce?: "alert" | "status";
   focus?: boolean;
   children: ReactNode;
 }) {
   return (
-    <Box
+    <NoticeBox
       as={props.announce === "status" ? "output" : "p"}
       role={props.announce === "alert" ? "alert" : undefined}
-      display="block"
-      rounded="lg"
-      p="4"
-      outline="none"
-      {...tones[props.tone]}
+      tone={props.tone}
       {...(props.focus && { ref: focusOnMount, tabIndex: -1 })}
     >
       {props.children}
-    </Box>
+    </NoticeBox>
   );
 }

@@ -2,10 +2,8 @@ import type { Language, SeatType } from "./types";
 
 export type FeeInput = {
   seatType: SeatType;
-  attendedAnaheim: boolean;
-  ukraineNotEmployed: boolean;
   hardshipWaiver?: boolean;
-  outlineLanguage: Language;
+  outlineLanguage: Language | null;
   secondOutlineLanguage: Language | null;
 };
 
@@ -18,12 +16,15 @@ export type FeeBreakdown = {
   waived: boolean;
 };
 
-// Lebensstrom: one fee per seat (a shared seat pays once); €0 for Anaheim
-// attendees and Ukrainian saints who are not gainfully employed. Outlines are
-// billed separately and are never waived.
+// Lebensstrom: one donation per seat (a shared seat gives once). Those who
+// attended the live training in Anaheim give nothing and already have their
+// outlines. Coordinators can also grant a hardship waiver, which covers the
+// fee but not the outlines.
 export function computeFees(input: FeeInput, prices: FeePrices): FeeBreakdown {
-  const waived = input.attendedAnaheim || input.ukraineNotEmployed || Boolean(input.hardshipWaiver);
-  const outlineCount = input.secondOutlineLanguage ? 2 : 1;
+  const anaheim = input.seatType === "anaheim";
+  const waived = anaheim || Boolean(input.hardshipWaiver);
+  let outlineCount = 0;
+  if (!anaheim && input.outlineLanguage) outlineCount = input.secondOutlineLanguage ? 2 : 1;
   return {
     trainingCents: waived ? 0 : prices.feeCents,
     outlineCents: outlineCount * prices.outlinePriceCents,

@@ -24,6 +24,17 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # Applies every migration to the runner's own Postgres (no Docker) and
+      # checks that the committed database types match what they produce.
+      - name: Migrations and database types
+        run: |
+          sudo systemctl start postgresql.service
+          sudo -u postgres psql -qc "alter user postgres password 'postgres'"
+          npm run db:types
+          git diff --exit-code src/lib/supabase/database.types.ts || {
+            echo "::error file=src/lib/supabase/database.types.ts::Out of date. Run npm run db:types, or apply the diff above."
+            exit 1
+          }
       - name: Format
         run: npm run format:check
       - name: Type check

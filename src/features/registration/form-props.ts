@@ -14,7 +14,6 @@ export function trainingFormProps(
   sessions: SessionOption[];
   prices: { feeCents: number; outlinePriceCents: number };
   payment: PaymentDetails;
-  rules: string;
 } {
   return {
     sessions: training.sessions.map((s) => ({
@@ -27,6 +26,5 @@ export function trainingFormProps(
       iban: training.payee_iban,
       reference: training.payment_reference,
     },
-    rules: training.rules[locale] ?? "",
   };
 }

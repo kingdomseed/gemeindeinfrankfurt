@@ -1,9 +1,12 @@
+import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  // `next upgrade --agent` and the upgrade reminders follow security advisories.
+  experimental: { agentUpgrade: "security" },
   // No page of this site may be framed by another site (clickjacking).
   headers: () =>
     Promise.resolve([
@@ -15,6 +18,13 @@ const nextConfig: NextConfig = {
         ],
       },
     ]),
+  // German pages of the old WordPress site. Its English pages (/en/...)
+  // already match the new addresses.
+  redirects: () =>
+    Promise.resolve([
+      { source: "/fur-besucher", destination: "/de/fur-besucher", permanent: true },
+      { source: "/unser-glaube", destination: "/de/unser-glaube", permanent: true },
+    ]),
 };
 
-export default withNextIntl(nextConfig);
+export default withPayload(withNextIntl(nextConfig));

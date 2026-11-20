@@ -37,9 +37,9 @@ A saint can go through the whole process on their own, from reading the schedule
    - **Full-time.** All sessions are selected automatically.
    - **Part-time.** They tick the sessions they will attend.
    - **Shared seat.** Two people share one seat, for example a couple with a child at home, so one of them attends each time. A shared seat is always full-time, has both names, and pays one fee.
-3. They confirm they are **18 or older** and that they have **read the training rules**, which the form shows.
+3. They confirm they are **at least 17** and that they **will keep the rules** of the training. The rules sit next to the fields they apply to, word for word from the earlier Google form.
 4. They enter everything today's form asks for: first and last name, study-group language, outline language, an optional second outline in another language, email, phone and comments.
-5. Optional checkboxes: "I attended the live training in Anaheim" and "I am from Ukraine and not gainfully employed". Either one sets the fee to €0.
+5. A fourth seat type, "I will attend the live training in Anaheim": it works like part-time but with no obligation to come, no fee and no outline. The form no longer asks about origin or employment; that is a private matter.
 6. The form shows **how much to pay and where**: the church's IBAN and a reference. Training and outline are shown as two separate amounts.
 7. One person can submit **as many registrations as they want**, for example for family members, all from the same email address.
 8. The system warns if someone registers who seems to be registered already (same name and email).
@@ -88,8 +88,8 @@ Several serving ones log in to the same coordination site. Everyone can edit, an
 
 **Payments (tracked by hand)**
 
-12. Two separate checkboxes per registration: **training fee paid** and **outline paid**. A serving one ticks them when the money arrives. Nothing is matched automatically.
-13. A payment can also be marked **waived**, with a reason (Anaheim attendee, Ukrainian and not employed, or a hardship reduction).
+12. Two separate marks per registration: **donation received** and **outlines received**. A coordinator ticks them on the registration's own page when the money arrives, with the date received and, if wanted, the bank's transaction number. The registrations list only shows the status (Paid / Not paid). Nothing is matched automatically, and each change is kept in the registration's history with the coordinator's name.
+13. A donation can also be marked **waived**, with a reason (a hardship reduction). The seat for those who attend the live training in Anaheim owes nothing.
 14. Running totals: seats, fees received, outline money received, still unpaid.
 
 **Outlines**
@@ -158,9 +158,9 @@ These come from the [Lebensstrom video training page](https://lebensstrom.de/vid
 
 | Rule                                                                                                | How the system applies it                                        |
 | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Registrants must be 18 or older                                                                     | A required checkbox on the form                                  |
+| Registrants must be at least 17 (Jason, 18 Nov 2026; the Lebensstrom page says 18)                  | A required checkbox on the form                                  |
 | Seats are full-time, part-time, or shared; a shared seat is full-time and pays once                 | Seat types on the form; a shared seat forces full-time           |
-| €70 per seat; €0 for Anaheim attendees and for Ukrainian saints who are not gainfully employed      | Fee set per training; waivers as checkboxes                      |
+| €70 per seat; €0 for Anaheim attendees                                                              | Fee set per training; waivers as checkboxes                      |
 | Outlines are €5 each, printed only, in German, English or Russian, and invoiced separately          | Outline payment tracked apart from the fee                       |
 | Church registration with Lebensstrom by 29 Oct 2026, 13:00                                          | Deadline shown on the coordination dashboard                     |
 | Outline order by 1 Dec 2026, 16:00; order extras for late sign-ups                                  | Outline counts and extras ready before this date                 |
@@ -184,7 +184,7 @@ No questions are open. Every question raised while preparing this document is an
 | Do we track test failures?                                              | No. In practice they don't happen.                                                                                                                  | Coordinators                                                    |
 | Do we take payments online?                                             | No. Bank transfer to the church's IBAN, ticked by hand.                                                                                             | Coordinators                                                    |
 | What fee do we charge?                                                  | The fee per seat is set for each training. For December 2026 it is €70, the amount we owe Lebensstrom per seat.                                     | Lebensstrom page                                                |
-| Who pays nothing?                                                       | Anaheim attendees, Ukrainian saints who are not gainfully employed, and anyone the coordinators grant a hardship waiver (with a reason)             | Lebensstrom page; past practice                                 |
+| Who pays nothing?                                                       | Anaheim attendees, and anyone the coordinators grant a hardship waiver (with a reason)                                                              | Lebensstrom page; past practice                                 |
 | When must the questionnaire go in: one week or two?                     | Within one week (7 days). The PDF's "two weeks" is outdated.                                                                                        | Lebensstrom page                                                |
 | Tests cover messages 1–10 but attendance covers 12. Is that a conflict? | No. Test 1–10, take attendance for all 12.                                                                                                          | Lebensstrom page                                                |
 | Until when can people register?                                         | Through the first day of the local training                                                                                                         | Lebensstrom page                                                |

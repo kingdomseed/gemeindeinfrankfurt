@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, chakra, Flex, Stack, Text } from "@chakra-ui/react";
+import { Button, chakra, Flex, Heading, Stack, Text } from "@chakra-ui/react";
 import { useActionState, useState } from "react";
 
 import { focusOnMount } from "@/components/ui/focus";
@@ -12,7 +12,14 @@ import type { ActionState } from "./types";
 // cancelling means; only the second, explicit answer sends the form.
 export function CancelRegistration(props: {
   action: (prev: ActionState) => Promise<ActionState>;
-  labels: { cancel: string; confirm: string; explain: string; yes: string; keep: string };
+  labels: {
+    cancel: string;
+    intro: string;
+    confirm: string;
+    explain: string;
+    yes: string;
+    keep: string;
+  };
   messages: Record<string, string>;
 }) {
   const [state, formAction, pending] = useActionState(props.action, { status: "idle" });
@@ -29,7 +36,18 @@ export function CancelRegistration(props: {
     );
   }
   return (
-    <Stack as="section" borderTopWidth="1px" pt="6" align="flex-start">
+    <Stack
+      as="section"
+      aria-labelledby="cancel-heading"
+      borderTopWidth="1px"
+      pt="6"
+      gap="3"
+      align="flex-start"
+    >
+      <Heading as="h2" id="cancel-heading" size="xl">
+        {labels.cancel}
+      </Heading>
+      <Text>{labels.intro}</Text>
       {asking ? (
         <chakra.form action={formAction} display="flex" flexDirection="column" gap="3">
           <Text ref={focusOnMount} tabIndex={-1} outline="none" fontWeight="semibold">

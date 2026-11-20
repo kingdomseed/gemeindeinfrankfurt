@@ -8,7 +8,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-Registration and coordination site for a church's local video training: Next.js App Router, Supabase, Chakra UI v3, next-intl (de, en, ru). Requirements are in `docs/business-requirements.md`.
+Website of the church in Frankfurt: its public pages (managed in Payload CMS at `/admin`) and, under `/[locale]/training`, the registration and coordination site for its local video training. Next.js App Router, Payload CMS, Supabase, Chakra UI v3, next-intl (de, en, ru). Training requirements are in `docs/business-requirements.md`; the old site's wording is in `archive/wordpress-2022/`.
 
 ## Design lives on the canvas
 
@@ -50,7 +50,8 @@ Code is split into layers. Each layer imports only from the layers below it, and
 | Features       | `src/features/<feature>/`  | Screens' building blocks for one feature (registration, coordinator, …)    |
 | UI             | `src/components/ui/`       | Generic Chakra pieces with no app knowledge                                |
 | Theme          | `src/theme/`               | Chakra `createSystem`, tokens, semantic tokens, recipes                    |
-| Data access    | `src/lib/` (not `domain/`) | Server-only Supabase queries, auth, email, small helpers                   |
+| Data access    | `src/lib/` (not `domain/`) | Server-only Supabase and CMS queries, auth, email, small helpers           |
+| CMS schema     | `src/cms/`                 | Payload collections, globals and the content seed                          |
 | Business rules | `src/lib/domain/`          | Pure functions with tests                                                  |
 
 Each of these folders has its own `AGENTS.md` with the rules for that layer; read it before editing there. Import across layers with the `@/` alias, never with `../` paths, so the boundary rules can see the import.
@@ -69,6 +70,7 @@ These are enforced by `tsconfig.json`, `.oxlintrc.json`, React Doctor and tests.
 - Await every promise, or mark a deliberate fire-and-forget with `void`.
 - Validate everything that crosses a trust boundary with zod: form data, route params, search params, jsonb columns, third-party responses.
 - User-facing text goes in `messages/{de,en,ru}.json`, with the same keys in all three files.
+- The training rules on the registration form (`register` keys such as `seatRules`, `attendRules`, `materialsRule`, `copiesRule`) are the church's own wording, word for word. Never shorten, paraphrase or add to them, in code or on the canvas, without the site owner's explicit permission; where a rule seems not to fit, keep it and ask.
 - Never put real participant names, emails or phone numbers in code, tests, seeds, commits or PRs.
 - Keep changes small and on topic. Before finishing, re-read your diff and remove dead code, debug output and comments that only narrate the code.
 
@@ -82,4 +84,6 @@ These are enforced by `tsconfig.json`, `.oxlintrc.json`, React Doctor and tests.
 | `npm run typecheck` | Generate Next.js route types, then `tsc --noEmit`                 |
 | `npm test`          | Vitest unit tests                                                 |
 | `npm run doctor`    | React Doctor scan, plus a dependency supply-chain check           |
-| `npm run db:types`  | Regenerate Supabase types from the local database                 |
+| `npm run db:new`    | Create an empty, timestamped migration in `supabase/migrations/`  |
+| `npm run db:types`  | Regenerate Supabase types from the migrations, on plain Postgres  |
+| `npm run seed:cms`  | Load the church pages and site settings into Payload              |

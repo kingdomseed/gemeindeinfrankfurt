@@ -4,24 +4,20 @@ import { languages, type Language, type SeatType } from "./types";
 
 export type PaymentRow = {
   seat_type: SeatType;
-  attended_anaheim: boolean;
-  ukraine_not_employed: boolean;
   waiver: string | null;
-  outline_language: Language;
+  outline_language: Language | null;
   second_outline_language: Language | null;
   fee_paid: boolean;
   outline_paid: boolean;
 };
 
-// What one stored registration owes, including a hardship waiver that only
-// coordinators can set.
+// What one stored registration owes, including a waiver that only
+// coordinators can set (hardship, or Anaheim on a shared seat).
 export function feesForRegistration(row: PaymentRow, prices: FeePrices): FeeBreakdown {
   return computeFees(
     {
       seatType: row.seat_type,
-      attendedAnaheim: row.attended_anaheim,
-      ukraineNotEmployed: row.ukraine_not_employed,
-      hardshipWaiver: row.waiver === "hardship",
+      hardshipWaiver: row.waiver !== null,
       outlineLanguage: row.outline_language,
       secondOutlineLanguage: row.second_outline_language,
     },
@@ -58,4 +54,36 @@ export function outlineStock(
     const have = ordered[language] ?? 0;
     return { language, needed: needed[language], ordered: have, extra: have - needed[language] };
   });
+}
+
+export const listFilters = ["all", "unpaid", "live", "waived", "cancelled"] as const;
+export type ListFilter = (typeof listFilters)[number];
+
+export type ListRow = PaymentRow & { status: "active" | "cancelled" };
+
+// What an active registration still owes, in cents. A cancelled one owes nothing.
+export function openCents(row: ListRow, fees: FeeBreakdown): number {
+  if (row.status === "cancelled") return 0;
+  return (row.fee_paid ? 0 : fees.trainingCents) + (row.outline_paid ? 0 : fees.outlineCents);
+}
+
+// Whether a registration belongs under one of the coordinator list's filters.
+// "all" shows everything; the other filters except "cancelled" hold active
+// registrations only.
+export function inListFilter(row: ListRow, fees: FeeBreakdown, filter: ListFilter): boolean {
+  if (filter === "all") return true;
+  if (filter === "cancelled") return row.status === "cancelled";
+  if (row.status === "cancelled") return false;
+  if (filter === "unpaid") return openCents(row, fees) > 0;
+  if (filter === "live") return row.seat_type === "anaheim";
+  return row.waiver !== null;
+}
+
+export type PaymentMark = { paid: boolean; paidOn: string | null; transaction: string };
+
+// A payment mark as it is stored. A received payment with no date is dated
+// today; an unmarked one keeps neither its date nor its transaction number.
+export function settledMark(mark: PaymentMark, today: string): PaymentMark {
+  if (!mark.paid) return { paid: false, paidOn: null, transaction: "" };
+  return { ...mark, paidOn: mark.paidOn ?? today };
 }

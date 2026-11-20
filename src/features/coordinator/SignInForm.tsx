@@ -17,7 +17,7 @@ export function SignInForm() {
   async function onSubmit(form: FormData) {
     const email = form.get("email");
     if (typeof email !== "string") return;
-    const next = `/${locale}/coordinator`;
+    const next = `/${locale}/training/coordinator`;
     await createClient().auth.signInWithOtp({
       email,
       options: {
