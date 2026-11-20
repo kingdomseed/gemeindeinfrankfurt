@@ -8,7 +8,13 @@ import { getPayload } from "payload";
 import { locales, type Locale } from "@/i18n/routing";
 import { openStreetMapUrl } from "@/lib/domain/maps";
 
-import { parsePageFile, toEditorMarkdown, type PageFile } from "./markdown";
+import {
+  parsePageFile,
+  toEditorMarkdown,
+  toSeedBlocks,
+  type PageFile,
+  type SeedBlock,
+} from "./markdown";
 
 // Loads the church's pages and site settings into Payload: German and English
 // word for word from the recovered WordPress site, Russian from the
@@ -79,6 +85,22 @@ function toRichText(markdown: string) {
   });
 }
 
+function toLayoutBlock(block: SeedBlock) {
+  if (block.blockType === "text") {
+    return { blockType: block.blockType, content: toRichText(block.markdown) };
+  }
+  if (block.blockType === "faq") {
+    return {
+      blockType: block.blockType,
+      items: block.items.map((item) => ({
+        question: item.question,
+        answer: toRichText(item.answer),
+      })),
+    };
+  }
+  return block;
+}
+
 // All languages of a page, and of the site settings, are stored on one
 // document, so its writes go one language at a time.
 async function forEachLocale(write: (locale: Locale) => Promise<void>) {
@@ -111,6 +133,10 @@ async function seedPage(page: PageSeed) {
       title: file.title,
       slug: page.sources[locale].slug,
       body: toRichText(file.body),
+      layout: [
+        ...toSeedBlocks(file.body).map(toLayoutBlock),
+        ...(page.isHome ? [{ blockType: "announcements" as const, limit: 3 }] : []),
+      ],
       navOrder: page.navOrder,
       isHome: page.isHome,
     };

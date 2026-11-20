@@ -74,7 +74,7 @@ src/lib/domain/              pure rules: fees, cutoffs, outline counts, payments
 src/lib/registrations.ts     form validation and registration storage
 src/lib/email/send.ts        confirmation and cancellation emails
 supabase/migrations/         schema, row-level security, copy_training, purge_personal_data
-supabase/seed.sql            local sample training (no personal data)
+supabase/seed.sql            sample training for a development project (no personal data)
 ```
 
 **Security model.** Registrants never talk to the database directly. Their edit
@@ -92,19 +92,21 @@ registrations close at the end of the first local day (Europe/Berlin).
 
 ## Getting started
 
-Requirements: Node 22.18 or later, Docker (for local Supabase).
+Requirements: Node 22.18 or later. Docker is not used: there is no local
+Supabase stack. Develop against a hosted Supabase project, ideally a separate
+development project rather than production.
 
 ```bash
 npm install
-npx supabase start          # local Postgres, Auth, Realtime, and the Inbucket mail viewer
-npx supabase db reset       # applies migrations and seed.sql
-cp .env.example .env.local  # paste the URL and keys printed by `supabase start`, set PAYLOAD_SECRET
-npm run seed:cms            # loads the church pages into Payload (run again after a db reset)
+cp .env.example .env.local  # the project's URL, keys and database URL; set PAYLOAD_SECRET
+npx supabase db push --remote="<dev database URL>" --include-seed  # migrations and seed.sql
+npm run seed:cms            # loads the church pages into Payload
 npm run dev                 # http://localhost:3000
 ```
 
-To become a coordinator locally, sign up a user in Supabase Studio
-(http://127.0.0.1:54323) and add a row for it:
+Only push the seed to a development project, never to production. To become a
+coordinator, add a user under Authentication in the Supabase dashboard and a row
+for it in the SQL editor:
 
 ```sql
 insert into coordinators (user_id, display_name, is_admin)
@@ -127,8 +129,29 @@ npm run lint:fix # apply Oxlint's safe fixes
 
 CI runs all of these on every push and pull request, and `npm install` sets up
 git hooks that format and lint staged files on commit and run `npm run check`
-before a push. After changing a migration, run `npm run db:types` with the local
-stack running to regenerate `src/lib/supabase/database.types.ts`.
+before a push.
+
+### Database migrations
+
+Schema changes are SQL files in `supabase/migrations/`, and none of this needs
+Docker.
+
+1. `npm run db:new <name>` creates an empty, timestamped migration. Write the
+   SQL by hand (`supabase db diff` and `db pull` need Docker, so we don't use them).
+2. `npm run db:types` regenerates `src/lib/supabase/database.types.ts`. It
+   applies the migrations to a throwaway database on any plain Postgres server
+   (`SCRATCH_DB_URL`, default `postgres:postgres@127.0.0.1:5432`). Without one,
+   push the branch: CI does the same on the runner's Postgres and fails with the
+   expected diff when the committed file is out of date.
+3. After the pull request merges, the
+   [Migrate database](.github/workflows/migrate.yml) workflow runs
+   `supabase db push` against production and applies only the new files.
+
+The workflow needs one secret, `SUPABASE_DB_URL`, in the `production`
+environment (Settings, Environments, production): the database connection
+string from the Supabase dashboard's Connect panel. Use the session pooler URL,
+because GitHub's runners have no IPv6 for the direct connection. Without the
+secret the workflow only warns. It can also be run by hand from the Actions tab.
 
 The rules that keep people and coding agents from shipping mistakes, and the
 reasons behind them, are in [AGENTS.md](AGENTS.md).

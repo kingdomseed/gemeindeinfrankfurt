@@ -1,6 +1,8 @@
 import { defineRecipe, defineSlotRecipe } from "@chakra-ui/react";
 import { checkboxAnatomy, nativeSelectAnatomy, radioGroupAnatomy } from "@chakra-ui/react/anatomy";
 
+import { cardRecipe, noticeRecipe, panelRecipe, statusTagRecipe } from "./box-recipes";
+
 // Project defaults layered over Chakra's own recipes (the configs are merged):
 // 44px controls for touch, and control borders that keep 3:1 contrast
 // against the page (WCAG 1.4.11). Text fields are filled with the page colour
@@ -21,6 +23,10 @@ export const recipes = {
     defaultVariants: { size: "lg" },
   }),
   textarea: defineRecipe({ variants: { variant: { outline: field } } }),
+  panel: panelRecipe,
+  card: cardRecipe,
+  notice: noticeRecipe,
+  statusTag: statusTagRecipe,
 };
 
 export const slotRecipes = {

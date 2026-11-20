@@ -1,17 +1,18 @@
 import { describe, expect, it } from "vitest";
 
+import { earliestOpenEndDate } from "./announcements";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
 import { computeFees } from "./fees";
+import { buildCalendar } from "./ics";
 import { openStreetMapUrl } from "./maps";
 import { countOutlines } from "./outlines";
-import { berlinDay, berlinDayTime, scheduleDays, sessionLabel } from "./sessions";
+import { berlinDay, berlinDayTime, scheduleDays, sessionLabel, trainingDates } from "./sessions";
 import { hashToken, newEditToken } from "./token";
+import { picksSessions, seatTypes } from "./types";
 
 const prices = { feeCents: 7000, outlinePriceCents: 500 };
 const base = {
   seatType: "full_time" as const,
-  attendedAnaheim: false,
-  ukraineNotEmployed: false,
   outlineLanguage: "de" as const,
   secondOutlineLanguage: null,
 };
@@ -32,11 +33,20 @@ describe("computeFees", () => {
 
   it("waives the fee but not the outlines", () => {
     const fees = computeFees(
-      { ...base, ukraineNotEmployed: true, secondOutlineLanguage: "ru" },
+      { ...base, hardshipWaiver: true, secondOutlineLanguage: "ru" },
       prices,
     );
     expect(fees.trainingCents).toBe(0);
     expect(fees.outlineCents).toBe(1000);
+  });
+
+  it("charges an Anaheim seat nothing and orders no outline", () => {
+    expect(computeFees({ ...base, seatType: "anaheim", outlineLanguage: null }, prices)).toEqual({
+      trainingCents: 0,
+      outlineCents: 0,
+      outlineCount: 0,
+      waived: true,
+    });
   });
 });
 
@@ -84,8 +94,15 @@ describe("countOutlines", () => {
         { outline_language: "de", second_outline_language: "en" },
         { outline_language: "ru", second_outline_language: null },
         { outline_language: "de", second_outline_language: null },
+        { outline_language: null, second_outline_language: null },
       ]),
     ).toEqual({ de: 2, en: 1, ru: 1 });
+  });
+});
+
+describe("picksSessions", () => {
+  it("lets part-time and Anaheim seats choose messages", () => {
+    expect(seatTypes.filter(picksSessions)).toEqual(["part_time", "anaheim"]);
   });
 });
 
@@ -150,5 +167,62 @@ describe("openStreetMapUrl", () => {
     const url = new URL(openStreetMapUrl("Ginnheimer Stadtweg 120, 60431 Frankfurt am Main"));
     expect(url.origin + url.pathname).toBe("https://www.openstreetmap.org/search");
     expect(url.searchParams.get("query")).toBe("Ginnheimer Stadtweg 120, 60431 Frankfurt am Main");
+  });
+});
+
+describe("earliestOpenEndDate", () => {
+  // The CMS stores an end date picked as 20 November as noon UTC on that day.
+  const pickedNov20 = "2026-11-20T12:00:00.000Z";
+
+  it("keeps an announcement up until the end of its last day in Frankfurt", () => {
+    const lateEvening = new Date("2026-11-20T22:30:00Z");
+    expect(pickedNov20 >= earliestOpenEndDate(lateEvening)).toBe(true);
+  });
+
+  it("ends it once the next day has begun in Frankfurt", () => {
+    const justAfterMidnight = new Date("2026-11-20T23:05:00Z");
+    expect(earliestOpenEndDate(justAfterMidnight)).toBe("2026-11-21T00:00:00.000Z");
+    expect(pickedNov20 >= earliestOpenEndDate(justAfterMidnight)).toBe(false);
+  });
+});
+
+describe("trainingDates", () => {
+  it("spans the first to the last message day in Frankfurt", () => {
+    const dates = trainingDates(
+      [sessionAt("b", 12, "2027-01-17T13:00:00Z"), sessionAt("a", 1, "2027-01-09T08:30:00Z")],
+      "en-GB",
+    );
+    expect(dates).toContain("Saturday 9");
+    expect(dates).toContain("Sunday 17 January 2027");
+  });
+
+  it("is empty without sessions", () => {
+    expect(trainingDates([], "en")).toBeNull();
+  });
+});
+
+describe("buildCalendar", () => {
+  const event = {
+    uid: "s1@gemeindeinfrankfurt.de",
+    title: "Video Training, Message 1",
+    startsAt: "2027-01-09T08:30:00.000Z",
+    endsAt: "2027-01-09T10:00:00Z",
+    location: "Hall; Frankfurt",
+  };
+
+  it("writes one event per session in UTC with CRLF lines", () => {
+    const ics = buildCalendar("Training", [event], new Date("2026-11-18T12:00:00Z"));
+    expect(ics).toContain("\r\nDTSTART:20270109T083000Z\r\n");
+    expect(ics).toContain("\r\nDTEND:20270109T100000Z\r\n");
+    expect(ics).toContain("\r\nSUMMARY:Video Training\\, Message 1\r\n");
+    expect(ics).toContain("\r\nLOCATION:Hall\\; Frankfurt\r\n");
+    expect(ics.endsWith("END:VCALENDAR\r\n")).toBe(true);
+  });
+
+  it("folds lines longer than 75 octets", () => {
+    const ics = buildCalendar("Training", [{ ...event, title: "Ж".repeat(60) }], new Date());
+    for (const line of ics.split("\r\n")) {
+      expect(new TextEncoder().encode(line).length).toBeLessThanOrEqual(75);
+    }
   });
 });

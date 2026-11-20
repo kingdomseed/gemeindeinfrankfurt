@@ -70,6 +70,7 @@ These are enforced by `tsconfig.json`, `.oxlintrc.json`, React Doctor and tests.
 - Await every promise, or mark a deliberate fire-and-forget with `void`.
 - Validate everything that crosses a trust boundary with zod: form data, route params, search params, jsonb columns, third-party responses.
 - User-facing text goes in `messages/{de,en,ru}.json`, with the same keys in all three files.
+- The training rules on the registration form (`register` keys such as `seatRules`, `attendRules`, `materialsRule`, `copiesRule`) are the church's own wording, word for word. Never shorten, paraphrase or add to them, in code or on the canvas, without the site owner's explicit permission; where a rule seems not to fit, keep it and ask.
 - Never put real participant names, emails or phone numbers in code, tests, seeds, commits or PRs.
 - Keep changes small and on topic. Before finishing, re-read your diff and remove dead code, debug output and comments that only narrate the code.
 
@@ -83,5 +84,6 @@ These are enforced by `tsconfig.json`, `.oxlintrc.json`, React Doctor and tests.
 | `npm run typecheck` | Generate Next.js route types, then `tsc --noEmit`                 |
 | `npm test`          | Vitest unit tests                                                 |
 | `npm run doctor`    | React Doctor scan, plus a dependency supply-chain check           |
-| `npm run db:types`  | Regenerate Supabase types from the local database                 |
+| `npm run db:new`    | Create an empty, timestamped migration in `supabase/migrations/`  |
+| `npm run db:types`  | Regenerate Supabase types from the migrations, on plain Postgres  |
 | `npm run seed:cms`  | Load the church pages and site settings into Payload              |

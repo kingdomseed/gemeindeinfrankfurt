@@ -1,0 +1,44 @@
+name: Migrate database
+
+# Applies new files in supabase/migrations to the production database after
+# they reach main. Plain `supabase db push` over a Postgres connection: no
+# Docker, no linked project, no access token.
+on:
+  push:
+    branches: [main]
+    paths:
+      - supabase/migrations/**
+      - .github/workflows/migrate.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: migrate-production
+  cancel-in-progress: false
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    # Keep SUPABASE_DB_URL as a secret of this environment, limited to main.
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Apply migrations
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          # Only the Supabase CLI, with install scripts off, rather than `npm ci`:
+          # no dependency's install script runs where the database secret is.
+          # Keep the version in step with the `supabase` devDependency.
+          npm_config_ignore_scripts: "true"
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo "::warning::SUPABASE_DB_URL is not set for the production environment, so no migrations were applied."
+            exit 0
+          fi
+          npx --yes supabase@3.0.0 db push --remote="$SUPABASE_DB_URL" --dry-run
+          npx --yes supabase@3.0.0 db push --remote="$SUPABASE_DB_URL" --yes

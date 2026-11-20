@@ -1,28 +1,31 @@
 "use client";
 
 import { chakra } from "@chakra-ui/react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useState, useTransition, type SyntheticEvent } from "react";
 
-import { computeFees } from "@/lib/domain/fees";
-import type { Language, SeatType } from "@/lib/domain/types";
+import { computeFees, formatEuro, type FeeBreakdown } from "@/lib/domain/fees";
+import { isLanguage, picksSessions, type Language, type SeatType } from "@/lib/domain/types";
 
 import { AboutYouSection } from "./AboutYouSection";
 import { ConfirmSection } from "./ConfirmSection";
-import { FreeSeatSection } from "./FreeSeatSection";
 import { LanguagesSection } from "./LanguagesSection";
-import { PaymentSummary } from "./PaymentSummary";
 import { Receipt } from "./Receipt";
 import { SeatSection } from "./SeatSection";
 import { SessionsSection } from "./SessionsSection";
 import { SubmitArea } from "./SubmitArea";
-import type { ActionState, PaymentDetails, RegistrationDefaults, SessionOption } from "./types";
+import type {
+  ActionState,
+  PaymentDetails,
+  RegistrationDefaults,
+  SessionOption,
+  SubmittedSummary,
+} from "./types";
 
 type Props = {
   sessions: SessionOption[];
   prices: { feeCents: number; outlinePriceCents: number };
   payment: PaymentDetails;
-  rules: string;
   defaults?: RegistrationDefaults;
   seatLocked?: boolean;
   submitLabel: string;
@@ -37,6 +40,7 @@ const successStatuses = new Set(["done", "saved"]);
 // form state; each section only renders its fields.
 export function RegistrationForm(props: Props) {
   const locale = useLocale();
+  const t = useTranslations("register");
   const d = props.defaults;
 
   const [state, formAction, pending] = useActionState(props.action, { status: "idle" });
@@ -44,25 +48,23 @@ export function RegistrationForm(props: Props) {
   const [seatType, setSeatType] = useState<SeatType>(d?.seat_type ?? "full_time");
   const [outline, setOutline] = useState<Language>(d?.outline_language ?? locale);
   const [second, setSecond] = useState<Language | "">(d?.second_outline_language ?? "");
-  const [anaheim, setAnaheim] = useState(d?.attended_anaheim ?? false);
-  const [ukraine, setUkraine] = useState(d?.ukraine_not_employed ?? false);
   const [sessionsMissing, setSessionsMissing] = useState(false);
   const [formKey, setFormKey] = useState(0);
-  // The total as it was when the form was sent. Waivers and outlines stay
-  // editable while the request runs, so the receipt must not use live state.
-  const [submittedTotal, setSubmittedTotal] = useState(0);
+  // The form as it was sent. Fields stay editable while the request runs, so
+  // the receipt must not use live state.
+  const [submitted, setSubmitted] = useState<{ fees: FeeBreakdown; summary: SubmittedSummary }>();
   // The result whose receipt was closed with "Register another person". A new
   // submission yields a new state object, so its receipt shows again only once
   // that submission has actually succeeded.
   const [dismissedResult, setDismissedResult] = useState<ActionState | null>(null);
 
+  const anaheim = seatType === "anaheim";
+  const euro = (cents: number) => formatEuro(cents, locale);
   const fees = computeFees(
     {
       seatType,
-      attendedAnaheim: anaheim,
-      ukraineNotEmployed: ukraine,
-      outlineLanguage: outline,
-      secondOutlineLanguage: second || null,
+      outlineLanguage: anaheim ? null : outline,
+      secondOutlineLanguage: anaheim ? null : second || null,
     },
     props.prices,
   );
@@ -81,24 +83,24 @@ export function RegistrationForm(props: Props) {
       return;
     }
     setSessionsMissing(false);
-    setSubmittedTotal(fees.trainingCents + fees.outlineCents);
+    setSubmitted({ fees, summary: summarize(form, seatType) });
     startTransition(() => formAction(form));
   }
 
   function registerAnother() {
     setDismissedResult(state);
-    // Waivers belong to the person just registered; seat type and languages
-    // often carry over within a family, so they stay.
-    setAnaheim(false);
-    setUkraine(false);
+    // Seat type and languages often carry over within a family, so they stay.
     setFormKey((k) => k + 1);
   }
 
-  if (state.status === "done" && state !== dismissedResult) {
+  if (state.status === "done" && state !== dismissedResult && submitted) {
     return (
       <Receipt
-        totalCents={submittedTotal}
+        fees={submitted.fees}
+        summary={submitted.summary}
+        sessionCount={props.sessions.length}
         payment={props.payment}
+        calendarUrl={state.calendarUrl}
         onRegisterAnother={registerAnother}
       />
     );
@@ -106,10 +108,16 @@ export function RegistrationForm(props: Props) {
 
   return (
     <chakra.form key={formKey} onSubmit={onSubmit} display="flex" flexDirection="column" gap="10">
-      <SeatSection value={seatType} onChange={setSeatType} locked={props.seatLocked} />
-      {seatType === "part_time" && (
+      <SeatSection
+        value={seatType}
+        fee={euro(props.prices.feeCents)}
+        onChange={setSeatType}
+        locked={props.seatLocked}
+      />
+      {picksSessions(seatType) && (
         <SessionsSection
           sessions={props.sessions}
+          hint={anaheim ? t("sessionsAnaheimHint") : t("sessionsPartHint")}
           chosen={new Set(d?.session_ids)}
           missing={sessionsMissing}
           onPick={() => setSessionsMissing(false)}
@@ -123,20 +131,14 @@ export function RegistrationForm(props: Props) {
       />
       <LanguagesSection
         groupLanguage={d?.group_language ?? locale}
+        needsOutline={!anaheim}
         outline={outline}
         second={second}
         onOutline={setOutline}
         onSecond={setSecond}
         comments={d?.comments}
       />
-      <FreeSeatSection
-        anaheim={anaheim}
-        ukraine={ukraine}
-        onAnaheim={setAnaheim}
-        onUkraine={setUkraine}
-      />
-      <PaymentSummary fees={fees} payment={props.payment} payerName={d?.payer_name} />
-      <ConfirmSection rules={props.rules} confirmed={Boolean(d)} />
+      <ConfirmSection confirmed={Boolean(d)} />
       <SubmitArea
         // Hidden while sending, so each answer mounts afresh and takes focus.
         message={pending || state.status === "done" ? undefined : props.messages[state.status]}
@@ -147,4 +149,26 @@ export function RegistrationForm(props: Props) {
       />
     </chakra.form>
   );
+}
+
+function summarize(form: FormData, seatType: SeatType): SubmittedSummary {
+  const text = (name: string) => {
+    const v = form.get(name);
+    return typeof v === "string" ? v.trim() : "";
+  };
+  const language = (name: string) => {
+    const v = text(name);
+    return isLanguage(v) ? v : null;
+  };
+  const partner =
+    seatType === "shared" ? ` + ${text("partner_first_name")} ${text("partner_last_name")}` : "";
+  return {
+    name: `${text("first_name")} ${text("last_name")}${partner}`,
+    email: text("email"),
+    seatType,
+    chosenSessions: picksSessions(seatType) ? form.getAll("session_ids").length : null,
+    groupLanguage: language("group_language") ?? "de",
+    outlineLanguage: language("outline_language"),
+    secondOutlineLanguage: language("second_outline_language"),
+  };
 }

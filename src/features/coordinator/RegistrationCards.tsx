@@ -1,45 +1,38 @@
 import { HStack, List, Text } from "@chakra-ui/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
-import { displayLanguages, displayName } from "./display";
-import { PaymentStatus } from "./PaymentStatus";
-import type { RegistrationRow, SetPaymentFlag } from "./types";
+import { formatEuro } from "@/lib/domain/fees";
+import { openCents } from "@/lib/domain/payments";
 
-// Phones: one card per registration, with labelled payment toggles.
-export function RegistrationCards(props: {
-  rows: readonly RegistrationRow[];
-  setPaymentFlag: SetPaymentFlag;
-}) {
+import { displayLanguages } from "./display";
+import { PaymentTag } from "./PaymentTag";
+import { RegistrationName } from "./RegistrationName";
+import type { RegistrationRow } from "./types";
+
+// Phones: one card per registration.
+export function RegistrationCards({ rows }: { rows: readonly RegistrationRow[] }) {
   const t = useTranslations("coordinator");
+  const locale = useLocale();
   return (
-    <List.Root listStyle="none" mt="3" borderYWidth="1px" hideFrom="sm">
-      {props.rows.map((row, i) => (
+    <List.Root listStyle="none" borderYWidth="1px" hideFrom="sm">
+      {rows.map((row, i) => (
         <List.Item
           key={row.registration.id}
           display="block"
           py="3"
           borderTopWidth={i === 0 ? "0" : "1px"}
         >
-          <Text fontWeight="semibold">{displayName(row)}</Text>
-          {row.registration.payer_name && (
-            <Text fontSize="sm">{t("payer", { name: row.registration.payer_name })}</Text>
-          )}
+          <RegistrationName row={row} />
           <Text fontSize="sm" color="fg.muted">
-            {t(`seatShort.${row.registration.seat_type}`)} · {displayLanguages(row)}
+            {t(`seatShort.${row.registration.seat_type}`)} · {displayLanguages(row.registration)}
+            {" · "}
+            {t("toPay")}: {formatEuro(openCents(row.registration, row.fees), locale)}
           </Text>
-          <HStack wrap="wrap" columnGap="6" mt="1">
-            <PaymentStatus
-              row={row}
-              payment="fee"
-              setPaymentFlag={props.setPaymentFlag}
-              showLabel
-            />
-            <PaymentStatus
-              row={row}
-              payment="outline"
-              setPaymentFlag={props.setPaymentFlag}
-              showLabel
-            />
+          <HStack wrap="wrap" columnGap="4" rowGap="1" mt="2" fontSize="sm">
+            <Text as="span">{t("donation")}</Text>
+            <PaymentTag row={row} payment="fee" />
+            <Text as="span">{t("outlines")}</Text>
+            <PaymentTag row={row} payment="outline" />
           </HStack>
         </List.Item>
       ))}

@@ -1,4 +1,4 @@
-import { Checkbox, RadioGroup } from "@chakra-ui/react";
+import { Checkbox, RadioGroup, Text } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
 // A checkbox with its label, sized as a 44px touch target. Works both
@@ -42,11 +42,12 @@ export function CheckboxChoice(props: {
   );
 }
 
-// One-of-many choice shown as a vertical list of radios.
+// One-of-many choice shown as a vertical list of radios, each with an optional
+// line of explanation under its label.
 export function RadioChoices<T extends string>(props: {
   name: string;
   value: T;
-  options: readonly { value: T; label: string }[];
+  options: readonly { value: T; label: string; description?: string | undefined }[];
   disabled?: boolean | undefined;
   onChange: (value: T) => void;
 }) {
@@ -73,7 +74,14 @@ export function RadioChoices<T extends string>(props: {
         >
           <RadioGroup.ItemHiddenInput />
           <RadioGroup.ItemIndicator mt="0.5" />
-          <RadioGroup.ItemText fontWeight="normal">{o.label}</RadioGroup.ItemText>
+          <RadioGroup.ItemText fontWeight="normal">
+            {o.label}
+            {o.description && (
+              <Text as="span" display="block" mt="0.5" fontSize="sm" color="fg.muted">
+                {o.description}
+              </Text>
+            )}
+          </RadioGroup.ItemText>
         </RadioGroup.Item>
       ))}
     </RadioGroup.Root>

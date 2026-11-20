@@ -1,4 +1,4 @@
-import { SimpleGrid, Textarea } from "@chakra-ui/react";
+import { SimpleGrid, Text, Textarea } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 
 import { FormField } from "@/components/ui/form-field";
@@ -8,6 +8,8 @@ import { isLanguage, languages, type Language } from "@/lib/domain/types";
 
 export function LanguagesSection(props: {
   groupLanguage: Language;
+  // Anaheim attendees already have their outlines, so they choose none.
+  needsOutline: boolean;
   outline: Language;
   second: Language | "";
   onOutline: (l: Language) => void;
@@ -31,33 +33,38 @@ export function LanguagesSection(props: {
         >
           {options(languages)}
         </SelectField>
-        <SelectField
-          label={t("outlineLanguage")}
-          field={{
-            name: "outline_language",
-            value: props.outline,
-            onChange: (e) => {
-              if (isLanguage(e.currentTarget.value)) props.onOutline(e.currentTarget.value);
-            },
-          }}
-        >
-          {options(languages)}
-        </SelectField>
-        <SelectField
-          label={t("secondOutlineLanguage")}
-          field={{
-            name: "second_outline_language",
-            value: props.second,
-            onChange: (e) => {
-              const v = e.currentTarget.value;
-              props.onSecond(isLanguage(v) ? v : "");
-            },
-          }}
-        >
-          <option value="">{t("none")}</option>
-          {options(languages.filter((l) => l !== props.outline))}
-        </SelectField>
+        {props.needsOutline && (
+          <>
+            <SelectField
+              label={t("outlineLanguage")}
+              field={{
+                name: "outline_language",
+                value: props.outline,
+                onChange: (e) => {
+                  if (isLanguage(e.currentTarget.value)) props.onOutline(e.currentTarget.value);
+                },
+              }}
+            >
+              {options(languages)}
+            </SelectField>
+            <SelectField
+              label={t("secondOutlineLanguage")}
+              field={{
+                name: "second_outline_language",
+                value: props.second,
+                onChange: (e) => {
+                  const v = e.currentTarget.value;
+                  props.onSecond(isLanguage(v) ? v : "");
+                },
+              }}
+            >
+              <option value="">{t("none")}</option>
+              {options(languages.filter((l) => l !== props.outline))}
+            </SelectField>
+          </>
+        )}
       </SimpleGrid>
+      {props.needsOutline && <Text fontWeight="medium">{t("outlinesRule")}</Text>}
       <FormField label={t("comments")} optionalLabel={t("optional")}>
         <Textarea name="comments" defaultValue={props.comments} rows={3} />
       </FormField>

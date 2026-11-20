@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parsePageFile, toEditorMarkdown } from "./markdown";
+import { parsePageFile, toEditorMarkdown, toSeedBlocks } from "./markdown";
 
 const mapUrl = (address: string) => `https://map.example/?q=${address}`;
 
@@ -78,5 +78,49 @@ describe("toEditorMarkdown", () => {
     expect(toEditorMarkdown("**Our meeting place:**\n\nText", mapUrl)).toBe(
       "**Our meeting place:**\n\nText",
     );
+  });
+});
+
+describe("toSeedBlocks", () => {
+  it("keeps plain text as one text section per part", () => {
+    expect(toSeedBlocks("First.\n\n---\n\nSecond.")).toEqual([
+      { blockType: "text", markdown: "First." },
+      { blockType: "text", markdown: "Second." },
+    ]);
+  });
+
+  it("turns the part with the map link into the meeting place", () => {
+    const body =
+      "**Our meeting place:**\n\n[Karte / Map: Example Street 1](https://www.google.com/maps/embed?pb=1)";
+    expect(toSeedBlocks(body)).toEqual([
+      { blockType: "meetingPlace", heading: "Our meeting place:" },
+    ]);
+  });
+
+  it("splits questions and answers, in either emphasis style", () => {
+    const body = "Intro.\n\n---\n\n***First?***  \nYes.\n\nMore.\n\n_**Second?**_  \nNo.";
+    expect(toSeedBlocks(body)).toEqual([
+      { blockType: "text", markdown: "Intro." },
+      {
+        blockType: "faq",
+        items: [
+          { question: "First?", answer: "Yes.\n\nMore." },
+          { question: "Second?", answer: "No." },
+        ],
+      },
+    ]);
+  });
+
+  it("splits statements from their references and keeps text before them", () => {
+    const body = "#### Lead\n\n**THE BIBLE**The Bible is complete.  \n(2 Pet. 1:21)";
+    expect(toSeedBlocks(body)).toEqual([
+      { blockType: "text", markdown: "#### Lead" },
+      {
+        blockType: "statements",
+        items: [
+          { heading: "THE BIBLE", text: "The Bible is complete.", references: "(2 Pet. 1:21)" },
+        ],
+      },
+    ]);
   });
 });
