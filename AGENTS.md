@@ -84,5 +84,6 @@ These are enforced by `tsconfig.json`, `.oxlintrc.json`, React Doctor and tests.
 | `npm run typecheck` | Generate Next.js route types, then `tsc --noEmit`                 |
 | `npm test`          | Vitest unit tests                                                 |
 | `npm run doctor`    | React Doctor scan, plus a dependency supply-chain check           |
-| `npm run db:types`  | Regenerate Supabase types from the local database                 |
+| `npm run db:new`    | Create an empty, timestamped migration in `supabase/migrations/`  |
+| `npm run db:types`  | Regenerate Supabase types from the migrations, on plain Postgres  |
 | `npm run seed:cms`  | Load the church pages and site settings into Payload              |
