@@ -19,8 +19,32 @@ export type NavPage = { title: string; slug: string; isHome: boolean };
 export type PageContent = {
   title: string;
   body: RichTextContent | null;
+  blocks: PageBlock[];
   pageHrefs: Record<string, string>;
 };
+
+export type Announcement = {
+  id: string;
+  title: string;
+  body: RichTextContent | null;
+  publishedAt: Date;
+};
+
+// A section of a page, as an editor stacked it in the CMS.
+export type PageBlock =
+  | { type: "text"; id: string; content: RichTextContent }
+  | {
+      type: "faq";
+      id: string;
+      items: { id: string; question: string; answer: RichTextContent }[];
+    }
+  | {
+      type: "statements";
+      id: string;
+      items: { id: string; heading: string; text: string; references: string }[];
+    }
+  | { type: "meetingPlace"; id: string; heading: string }
+  | { type: "announcements"; id: string; heading: string; items: Announcement[] };
 
 export type SiteSettings = {
   siteName: string;
@@ -62,10 +86,50 @@ const pageIndex = z.array(
   }),
 );
 
+const rowId = z.string().nullish();
+
+const storedBlock = z.discriminatedUnion("blockType", [
+  z.object({ blockType: z.literal("text"), id: rowId, content: editorState }),
+  z.object({
+    blockType: z.literal("faq"),
+    id: rowId,
+    items: z.array(z.object({ id: rowId, question: z.string(), answer: editorState })),
+  }),
+  z.object({
+    blockType: z.literal("statements"),
+    id: rowId,
+    items: z.array(
+      z.object({
+        id: rowId,
+        heading: z.string(),
+        text: z.string(),
+        references: z.string().nullish(),
+      }),
+    ),
+  }),
+  z.object({ blockType: z.literal("meetingPlace"), id: rowId, heading: z.string().nullish() }),
+  z.object({
+    blockType: z.literal("announcements"),
+    id: rowId,
+    heading: z.string().nullish(),
+    limit: z.number().nullish(),
+  }),
+]);
+
 const pageContent = z.object({
   title: z.string(),
   body: editorState.nullish(),
+  layout: z.array(storedBlock).nullish(),
 });
+
+const storedAnnouncements = z.array(
+  z.object({
+    id: z.union([z.number(), z.string()]),
+    title: z.string(),
+    body: editorState.nullish(),
+    publishedAt: z.coerce.date(),
+  }),
+);
 
 // Every field may be empty on a new database before the seed has run; the
 // training pages share this layout and must still load.
@@ -140,16 +204,88 @@ export async function getPageContent(id: number | string, locale: Locale): Promi
     id,
     locale,
     depth: 0,
-    select: { title: true, body: true },
+    select: { title: true, body: true, layout: true },
   });
   const page = pageContent.parse(doc);
+  const blocks = await Promise.all(
+    (page.layout ?? []).map((block, index) => toPageBlock(block, `block-${index}`, locale)),
+  );
   const pageHrefs = Object.fromEntries(
     (await loadPages()).map((p) => [
       String(p.id),
       p.isHome === true ? `/${locale}` : `/${locale}/${inLocale(p.slug, locale)}`,
     ]),
   );
-  return { title: page.title, body: page.body ?? null, pageHrefs };
+  return { title: page.title, body: page.body ?? null, blocks, pageHrefs };
+}
+
+async function toPageBlock(
+  block: z.infer<typeof storedBlock>,
+  fallbackId: string,
+  locale: Locale,
+): Promise<PageBlock> {
+  const id = block.id ?? fallbackId;
+  if (block.blockType === "text") return { type: "text", id, content: block.content };
+  if (block.blockType === "faq") {
+    return {
+      type: "faq",
+      id,
+      items: block.items.map((item, index) => ({
+        id: item.id ?? `${id}-${index}`,
+        question: item.question,
+        answer: item.answer,
+      })),
+    };
+  }
+  if (block.blockType === "statements") {
+    return {
+      type: "statements",
+      id,
+      items: block.items.map((item, index) => ({
+        id: item.id ?? `${id}-${index}`,
+        heading: item.heading,
+        text: item.text,
+        references: item.references ?? "",
+      })),
+    };
+  }
+  if (block.blockType === "meetingPlace") {
+    return { type: "meetingPlace", id, heading: block.heading ?? "" };
+  }
+  return {
+    type: "announcements",
+    id,
+    heading: block.heading ?? "",
+    items: await getAnnouncements(locale, block.limit ?? 3),
+  };
+}
+
+// Published announcements that have started and not yet ended, newest first.
+export async function getAnnouncements(locale: Locale, limit: number): Promise<Announcement[]> {
+  const now = new Date().toISOString();
+  const { docs } = await (
+    await cms()
+  ).find({
+    collection: "announcements",
+    locale,
+    depth: 0,
+    limit,
+    sort: "-publishedAt",
+    where: {
+      and: [
+        { _status: { equals: "published" } },
+        { publishedAt: { less_than_equal: now } },
+        { or: [{ showUntil: { exists: false } }, { showUntil: { greater_than_equal: now } }] },
+      ],
+    },
+    select: { title: true, body: true, publishedAt: true },
+  });
+  return storedAnnouncements.parse(docs).map((doc) => ({
+    id: String(doc.id),
+    title: doc.title,
+    body: doc.body ?? null,
+    publishedAt: doc.publishedAt,
+  }));
 }
 
 export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettings> => {

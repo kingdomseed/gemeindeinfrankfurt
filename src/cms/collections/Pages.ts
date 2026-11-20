@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { pageBlocks } from "@/cms/blocks";
+
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 // Fixed routes under /[locale] that would hide a CMS page with the same slug.
@@ -34,7 +36,19 @@ export const Pages: CollectionConfig = {
         return reservedSlugs.has(value) ? `"${value}" is already used by the site.` : true;
       },
     },
-    { name: "body", type: "richText", localized: true },
+    {
+      name: "layout",
+      type: "blocks",
+      localized: true,
+      blocks: pageBlocks,
+      admin: { initCollapsed: true, description: "The sections of the page, top to bottom." },
+    },
+    {
+      name: "body",
+      type: "richText",
+      localized: true,
+      admin: { description: "Shown only while the page has no sections above." },
+    },
     {
       name: "navOrder",
       type: "number",

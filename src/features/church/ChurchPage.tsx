@@ -1,10 +1,11 @@
-import { Container, Flex, Stack } from "@chakra-ui/react";
+import { Box, Container, Flex, Stack } from "@chakra-ui/react";
 
 import { PageHeading } from "@/components/ui/page-heading";
 import type { PageContent, SiteSettings } from "@/lib/cms";
 
 import { ContactPanel } from "./ContactPanel";
 import { HeaderPhoto } from "./HeaderPhoto";
+import { PageBlocks } from "./PageBlocks";
 import { PageBody } from "./PageBody";
 
 // A public church page: the header photo, then the page text with the
@@ -19,9 +20,21 @@ export function ChurchPage({ page, settings }: { page: PageContent; settings: Si
           align="flex-start"
           gap={{ base: "10", lg: "12" }}
         >
-          <Stack as="article" flex="1" minW="0" gap="6" maxW="prose">
+          <Stack as="article" flex="1" minW="0" gap="8">
             <PageHeading title={page.title} />
-            {page.body && <PageBody content={page.body} pageHrefs={page.pageHrefs} />}
+            {page.blocks.length > 0 ? (
+              <PageBlocks
+                blocks={page.blocks}
+                pageHrefs={page.pageHrefs}
+                meetingAddress={settings.meetingAddress}
+              />
+            ) : (
+              page.body && (
+                <Box maxW="prose">
+                  <PageBody content={page.body} pageHrefs={page.pageHrefs} />
+                </Box>
+              )
+            )}
           </Stack>
           <ContactPanel settings={settings} />
         </Flex>
