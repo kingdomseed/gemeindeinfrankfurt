@@ -256,6 +256,7 @@
     "saveChanges": "Änderungen speichern",
     "saved": "Gespeichert.",
     "error": "Nicht gespeichert. Bitte prüfen Sie die Felder und versuchen Sie es erneut.",
+    "stale": "Nicht gespeichert. Jemand anderes hat diese Anmeldung inzwischen geändert. Das Formular zeigt jetzt den aktuellen Stand; bitte die Änderung noch einmal vornehmen.",
     "sendLinkTitle": "Bearbeitungslink",
     "sendEditLink": "Neuen Bearbeitungslink senden",
     "sendLinkHelp": "Sendet der angemeldeten Person eine neue Bestätigung mit einem neuen Link. Der alte Link funktioniert dann nicht mehr.",

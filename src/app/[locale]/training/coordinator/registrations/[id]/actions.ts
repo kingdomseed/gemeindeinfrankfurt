@@ -16,7 +16,7 @@ import {
   toRow,
 } from "@/lib/registrations";
 
-type State = { status: "idle" | "saved" | "error" };
+type State = { status: "idle" | "saved" | "error" | "stale" };
 
 const id = z.uuid();
 const day = z.union([z.iso.date(), z.literal("").transform(() => null)]);
@@ -34,6 +34,8 @@ const payment = z.object({
   outline_transaction: mark.transaction.default(""),
   waiver: z.union([z.enum(["hardship", "anaheim"]), z.literal("").transform(() => null)]),
   waiver_reason: z.string().trim().max(500),
+  // The row's updated_at as the form was rendered.
+  version: z.string().min(1),
 });
 
 // en-CA writes a date as YYYY-MM-DD.
@@ -41,7 +43,8 @@ const berlinDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }
 
 // Marks the donation and the outlines as received (or not) and sets the waiver.
 // Only the payments the form showed are touched: a waived donation and a seat
-// without outlines keep what they had.
+// without outlines keep what they had. A form rendered before someone else's
+// change is refused, so it cannot undo that change.
 export async function savePayment(rawId: string, _prev: State, form: FormData): Promise<State> {
   const supabase = await requireAuth();
   const registrationId = id.parse(rawId);
@@ -51,7 +54,7 @@ export async function savePayment(rawId: string, _prev: State, form: FormData): 
 
   const { data: existing, error: readError } = await supabase
     .from("registrations")
-    .select("status, seat_type, waiver, outline_language, fee_paid, outline_paid")
+    .select("status, seat_type, waiver, outline_language, fee_paid, outline_paid, updated_at")
     .eq("id", registrationId)
     .maybeSingle();
   if (readError) throw readError;
@@ -93,7 +96,7 @@ export async function savePayment(rawId: string, _prev: State, form: FormData): 
     events.push(input.waiver === null ? "waiver_removed" : "waiver_set");
   }
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("registrations")
     .update({
       ...(fee && {
@@ -109,8 +112,14 @@ export async function savePayment(rawId: string, _prev: State, form: FormData): 
       waiver: input.waiver,
       waiver_reason: input.waiver === null ? "" : input.waiver_reason,
     })
-    .eq("id", registrationId);
+    .eq("id", registrationId)
+    .eq("updated_at", input.version)
+    .select("id");
   if (error) throw error;
+  if (updated.length === 0) {
+    refresh();
+    return { status: "stale" };
+  }
   await recordEvents(supabase, registrationId, events);
   refresh();
   return { status: "saved" };
@@ -199,12 +208,8 @@ export async function sendEditLink(rawId: string): Promise<State> {
   });
   if (!registration.success) return { status: "error" };
 
+  // The email goes first: if it fails, the old link keeps working.
   const { token, hash } = newEditToken();
-  const { error } = await supabase
-    .from("registrations")
-    .update({ edit_token_hash: hash })
-    .eq("id", registrationId);
-  if (error) throw error;
   await sendConfirmation({
     locale: existing.locale,
     training: await getTrainingById(existing.training_id),
@@ -212,6 +217,11 @@ export async function sendEditLink(rawId: string): Promise<State> {
     token,
     waived: existing.waiver !== null,
   });
+  const { error } = await supabase
+    .from("registrations")
+    .update({ edit_token_hash: hash })
+    .eq("id", registrationId);
+  if (error) throw error;
   await recordEvents(supabase, registrationId, ["link_sent"]);
   refresh();
   return { status: "saved" };

@@ -14,6 +14,8 @@ import { formatEuro, type FeeBreakdown } from "@/lib/domain/fees";
 import { PaymentFields } from "./PaymentFields";
 import type { FormState } from "./types";
 
+const notice = { idle: "error", error: "error", saved: "paymentSaved", stale: "stale" } as const;
+
 // The only place a payment is marked: one form for the donation, the outlines
 // and the donation waiver.
 export function PaymentPanel(props: {
@@ -54,6 +56,7 @@ export function PaymentPanel(props: {
         <Heading as="h2" id="payment-heading" size="xl">
           {t("paymentTitle")}
         </Heading>
+        <input type="hidden" name="version" value={r.updated_at} />
         {!fees.waived && (
           <PaymentFields
             key={`${r.fee_paid}|${r.fee_paid_on}|${r.fee_transaction}`}
@@ -95,7 +98,7 @@ export function PaymentPanel(props: {
             announce={state.status === "saved" ? "status" : "alert"}
             focus
           >
-            {state.status === "saved" ? t("paymentSaved") : t("error")}
+            {t(notice[state.status])}
           </Notice>
         )}
         <Button type="submit" alignSelf="flex-start" px="6" disabled={pending}>

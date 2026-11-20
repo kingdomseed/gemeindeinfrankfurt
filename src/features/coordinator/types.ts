@@ -5,4 +5,4 @@ import type { FeeBreakdown } from "@/lib/domain/fees";
 export type RegistrationRow = { registration: CoordinatorRegistration; fees: FeeBreakdown };
 
 // What a coordinator's form action answers; the form maps status to text.
-export type FormState = { status: "idle" | "saved" | "error" };
+export type FormState = { status: "idle" | "saved" | "error" | "stale" };

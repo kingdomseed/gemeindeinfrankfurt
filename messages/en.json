@@ -256,6 +256,7 @@
     "saveChanges": "Save changes",
     "saved": "Saved.",
     "error": "Not saved. Please check the fields and try again.",
+    "stale": "Not saved. Someone else changed this registration in the meantime. The form now shows the current state; please make your change again.",
     "sendLinkTitle": "Edit link",
     "sendEditLink": "Send a new edit link",
     "sendLinkHelp": "Emails the registrant a new confirmation with a new link. The old link stops working.",
