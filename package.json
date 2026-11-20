@@ -50,7 +50,7 @@
     "oxlint": "^1.90.0",
     "oxlint-tsgolint": "^7.0.2005",
     "react-doctor": "^0.9.22",
-    "supabase": "^3.0.0",
+    "supabase": "^3.2.0",
     "typescript": "^5",
     "vitest": "^5.1.0"
   },
