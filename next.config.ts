@@ -5,6 +5,8 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  // `next upgrade --agent` and the upgrade reminders follow security advisories.
+  experimental: { agentUpgrade: "security" },
   // No page of this site may be framed by another site (clickjacking).
   headers: () =>
     Promise.resolve([
