@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { earliestOpenEndDate } from "./announcements";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
 import { computeFees } from "./fees";
 import { openStreetMapUrl } from "./maps";
@@ -150,5 +151,21 @@ describe("openStreetMapUrl", () => {
     const url = new URL(openStreetMapUrl("Ginnheimer Stadtweg 120, 60431 Frankfurt am Main"));
     expect(url.origin + url.pathname).toBe("https://www.openstreetmap.org/search");
     expect(url.searchParams.get("query")).toBe("Ginnheimer Stadtweg 120, 60431 Frankfurt am Main");
+  });
+});
+
+describe("earliestOpenEndDate", () => {
+  // The CMS stores an end date picked as 20 November as noon UTC on that day.
+  const pickedNov20 = "2026-11-20T12:00:00.000Z";
+
+  it("keeps an announcement up until the end of its last day in Frankfurt", () => {
+    const lateEvening = new Date("2026-11-20T22:30:00Z");
+    expect(pickedNov20 >= earliestOpenEndDate(lateEvening)).toBe(true);
+  });
+
+  it("ends it once the next day has begun in Frankfurt", () => {
+    const justAfterMidnight = new Date("2026-11-20T23:05:00Z");
+    expect(earliestOpenEndDate(justAfterMidnight)).toBe("2026-11-21T00:00:00.000Z");
+    expect(pickedNov20 >= earliestOpenEndDate(justAfterMidnight)).toBe(false);
   });
 });

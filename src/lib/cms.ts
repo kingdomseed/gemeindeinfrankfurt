@@ -6,6 +6,7 @@ import { cache } from "react";
 import { z } from "zod";
 
 import { locales, type Locale } from "@/i18n/routing";
+import { earliestOpenEndDate } from "@/lib/domain/announcements";
 
 // Public pages and site settings from Payload, read through its Local API.
 // Content comes from editors, so every document is parsed before it is used.
@@ -275,7 +276,12 @@ export async function getAnnouncements(locale: Locale, limit: number): Promise<A
       and: [
         { _status: { equals: "published" } },
         { publishedAt: { less_than_equal: now } },
-        { or: [{ showUntil: { exists: false } }, { showUntil: { greater_than_equal: now } }] },
+        {
+          or: [
+            { showUntil: { exists: false } },
+            { showUntil: { greater_than_equal: earliestOpenEndDate(new Date()) } },
+          ],
+        },
       ],
     },
     select: { title: true, body: true, publishedAt: true },
