@@ -102,7 +102,8 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
 
 export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
-   ALTER TABLE "payload"."pages_blocks_upcoming_events" DISABLE ROW LEVEL SECURITY;
+   ALTER TABLE "payload"."payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_events_fk";
+  ALTER TABLE "payload"."pages_blocks_upcoming_events" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "payload"."events" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "payload"."events_locales" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "payload"."_events_v" DISABLE ROW LEVEL SECURITY;
@@ -112,7 +113,6 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
   DROP TABLE "payload"."events_locales" CASCADE;
   DROP TABLE "payload"."_events_v" CASCADE;
   DROP TABLE "payload"."_events_v_locales" CASCADE;
-  ALTER TABLE "payload"."payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_events_fk";
   
   DROP INDEX "payload"."payload_locked_documents_rels_events_id_idx";
   ALTER TABLE "payload"."users" DROP COLUMN "enable_a_p_i_key";

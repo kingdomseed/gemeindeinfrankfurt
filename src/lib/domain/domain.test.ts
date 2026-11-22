@@ -287,6 +287,19 @@ describe("startOfBerlinToday", () => {
       "2027-06-30T22:00:00.000Z",
     );
   });
+  it("is today's midnight on the evenings the clocks change", () => {
+    // 31 October 2027, 23:30 in Frankfurt, after the clocks went back.
+    expect(startOfBerlinToday(new Date("2027-10-31T22:30:00Z")).toISOString()).toBe(
+      "2027-10-30T22:00:00.000Z",
+    );
+    // 28 March 2027, 00:30 and 23:30 in Frankfurt, around the clocks going forward.
+    expect(startOfBerlinToday(new Date("2027-03-27T23:30:00Z")).toISOString()).toBe(
+      "2027-03-27T23:00:00.000Z",
+    );
+    expect(startOfBerlinToday(new Date("2027-03-28T21:30:00Z")).toISOString()).toBe(
+      "2027-03-27T23:00:00.000Z",
+    );
+  });
 });
 
 describe("eventWhen", () => {

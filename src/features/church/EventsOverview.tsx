@@ -1,24 +1,20 @@
-import { Link, Stack, Text } from "@chakra-ui/react";
+import { Stack, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 
 import { PageHeading } from "@/components/ui/page-heading";
-import { Link as LocaleLink } from "@/i18n/navigation";
 import type { ChurchEvent } from "@/lib/cms";
 
 import { EventList } from "./EventList";
 
-// The events page: every upcoming event, and the calendar feed.
-export function EventsOverview({ events }: { events: readonly ChurchEvent[] }) {
+// The events page: every upcoming event, then a way to subscribe to them.
+export function EventsOverview(props: { events: readonly ChurchEvent[]; subscribe: ReactNode }) {
   const t = useTranslations("site");
   return (
     <Stack gap="6">
       <PageHeading title={t("eventsTitle")} subtitle={t("eventsIntro")} />
-      {events.length > 0 ? <EventList items={events} /> : <Text>{t("noEvents")}</Text>}
-      <Link asChild color="brand.fg" textDecoration="underline" alignSelf="flex-start">
-        <LocaleLink href="/events.ics" prefetch={false}>
-          {t("subscribeEvents")}
-        </LocaleLink>
-      </Link>
+      {props.events.length > 0 ? <EventList items={props.events} /> : <Text>{t("noEvents")}</Text>}
+      {props.subscribe}
     </Stack>
   );
 }

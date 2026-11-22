@@ -1,19 +1,22 @@
 import { endOfBerlinDay } from "./cutoffs";
 import { berlinDay, berlinDayTime } from "./sessions";
 
-// The start of today in Frankfurt. An event stays in the list of upcoming
-// events until the end of the day it ends on (or starts on, without an end),
-// so the Lord's Day meeting still shows on the Lord's Day afternoon.
-export function startOfBerlinToday(now: Date): Date {
-  return new Date(endOfBerlinDay(new Date(now.getTime() - 24 * 3600_000)).getTime() + 1);
-}
-
 const berlinDayKey = new Intl.DateTimeFormat("en-CA", {
   timeZone: "Europe/Berlin",
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
 });
+
+// The start of today in Frankfurt. An event stays in the list of upcoming
+// events until the end of the day it ends on (or starts on, without an end),
+// so the Lord's Day meeting still shows on the Lord's Day afternoon.
+export function startOfBerlinToday(now: Date): Date {
+  // Noon UTC the day before today's Frankfurt date is always on yesterday's
+  // Frankfurt date, whatever the clocks did overnight.
+  const yesterdayNoon = Date.parse(`${berlinDayKey.format(now)}T00:00:00Z`) - 12 * 3600_000;
+  return new Date(endOfBerlinDay(new Date(yesterdayNoon)).getTime() + 1);
+}
 
 // When an event takes place, in the reader's language and Frankfurt time:
 // "Saturday 9 January, 09:30", "Saturday 9 January, 09:30–12:00", or
