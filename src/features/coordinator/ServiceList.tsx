@@ -51,7 +51,7 @@ export function ServiceList(props: {
                   </Text>
                 )}
               </Box>
-              <form action={props.actions.setLead}>
+              <form action={props.actions.setLead} key={s.lead}>
                 <input type="hidden" name="id" value={s.id} />
                 <NativeSelect.Root>
                   <NativeSelect.Field

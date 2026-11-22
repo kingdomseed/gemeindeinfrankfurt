@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { absenceCount, currentSession, isRequired, nextMark, type Mark } from "./attendance";
+import {
+  absenceCounts,
+  currentSession,
+  isRequired,
+  nextMark,
+  overLimit,
+  type Mark,
+} from "./attendance";
 
 describe("isRequired", () => {
   const chosen = new Set(["s2"]);
@@ -15,23 +22,38 @@ describe("isRequired", () => {
   });
 });
 
-describe("absenceCount", () => {
-  it("counts absences only for messages the seat had to come to", () => {
-    const marks = new Map<string, Mark>([
-      ["s1", "absent"],
-      ["s2", "absent"],
-      ["s3", "present"],
-    ]);
-    expect(absenceCount("full_time", new Set(), marks)).toBe(2);
-    expect(absenceCount("part_time", new Set(["s2", "s3"]), marks)).toBe(1);
+describe("absenceCounts", () => {
+  const marks = new Map<string, Mark>([
+    ["s1", "absent"],
+    ["s2", "excused"],
+    ["s3", "present"],
+    ["s4", "excused"],
+  ]);
+  it("counts unexcused and excused absences apart", () => {
+    expect(absenceCounts("full_time", new Set(), marks)).toEqual({ unexcused: 1, excused: 2 });
+  });
+  it("counts only messages the seat had to come to", () => {
+    expect(absenceCounts("part_time", new Set(["s2", "s3"]), marks)).toEqual({
+      unexcused: 0,
+      excused: 1,
+    });
+  });
+});
+
+describe("overLimit", () => {
+  it("flags any unexcused absence, or more than two excused", () => {
+    expect(overLimit({ unexcused: 0, excused: 2 })).toBe(false);
+    expect(overLimit({ unexcused: 1, excused: 0 })).toBe(true);
+    expect(overLimit({ unexcused: 0, excused: 3 })).toBe(true);
   });
 });
 
 describe("nextMark", () => {
-  it("goes from empty to present to absent and back to empty", () => {
+  it("goes from empty to present, absent, excused and back to empty", () => {
     expect(nextMark(null, true)).toBe("present");
     expect(nextMark("present", true)).toBe("absent");
-    expect(nextMark("absent", true)).toBeNull();
+    expect(nextMark("absent", true)).toBe("excused");
+    expect(nextMark("excused", true)).toBeNull();
   });
   it("only marks present for a message someone did not have to come to", () => {
     expect(nextMark(null, false)).toBe("present");

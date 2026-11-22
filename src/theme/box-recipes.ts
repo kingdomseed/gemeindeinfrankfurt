@@ -97,6 +97,7 @@ export const markRecipe = defineRecipe({
     tone: {
       present: { _pressed: { bg: "bg.success", color: "fg.success", borderColor: "fg.success" } },
       absent: { _pressed: { bg: "bg.error", color: "fg.error", borderColor: "fg.error" } },
+      excused: { _pressed: { bg: "bg.warning", color: "fg.warning", borderColor: "fg.warning" } },
       // A message someone did not have to come to.
       optional: { bg: "bg.muted", color: "fg.muted", borderColor: "transparent" },
     },

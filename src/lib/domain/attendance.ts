@@ -1,6 +1,6 @@
 import { picksSessions, type SeatType } from "./types";
 
-export type Mark = "present" | "absent";
+export type Mark = "present" | "absent" | "excused";
 
 // Whether a seat has to come to a message: full-time and shared seats come to
 // all of them, part-timers and Anaheim attendees only to the ones they chose.
@@ -8,27 +8,39 @@ export function isRequired(seat: SeatType, chosen: ReadonlySet<string>, sessionI
   return !picksSessions(seat) || chosen.has(sessionId);
 }
 
-// Absences that count: only for messages the seat had to come to.
-export function absenceCount(
+// Absences that count, unexcused and excused apart: only for messages the
+// seat had to come to.
+export function absenceCounts(
   seat: SeatType,
   chosen: ReadonlySet<string>,
   marks: ReadonlyMap<string, Mark>,
 ) {
-  let count = 0;
+  let unexcused = 0;
+  let excused = 0;
   for (const [sessionId, mark] of marks) {
-    if (mark === "absent" && isRequired(seat, chosen, sessionId)) count++;
+    if (!isRequired(seat, chosen, sessionId)) continue;
+    if (mark === "absent") unexcused++;
+    if (mark === "excused") excused++;
   }
-  return count;
+  return { unexcused, excused };
 }
 
-// The training allows two absences at most.
-export const MAX_ABSENCES = 2;
+// The training allows no unexcused absence and two excused ones at most.
+// Over the limit is for the report only; nothing happens to the registrant.
+export const MAX_EXCUSED = 2;
 
-// What a click on a box in the overview does: empty, present, absent, empty.
-// A message someone did not have to come to can only be marked present.
+export function overLimit(counts: { unexcused: number; excused: number }) {
+  return counts.unexcused > 0 || counts.excused > MAX_EXCUSED;
+}
+
+// What a click on a box in the overview does: empty, present, absent,
+// excused, empty. A message someone did not have to come to can only be
+// marked present.
 export function nextMark(current: Mark | null, required: boolean): Mark | null {
   if (current === null) return "present";
-  if (current === "present" && required) return "absent";
+  if (!required) return null;
+  if (current === "present") return "absent";
+  if (current === "absent") return "excused";
   return null;
 }
 

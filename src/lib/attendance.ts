@@ -11,7 +11,7 @@ export function markKey(registrationId: string, sessionId: string) {
   return `${registrationId}:${sessionId}`;
 }
 
-// Every present or absent mark of a training, by markKey.
+// Every present, absent or excused mark of a training, by markKey.
 export async function loadAttendance(
   supabase: CoordinatorClient,
   trainingId: string,
@@ -20,9 +20,9 @@ export async function loadAttendance(
     .from("attendance")
     .select("registration_id, session_id, mark, sessions!inner(training_id)")
     .eq("sessions.training_id", trainingId)
-    .in("mark", ["present", "absent"]);
+    .in("mark", ["present", "absent", "excused"]);
   if (error) throw error;
-  const mark = z.enum(["present", "absent"]);
+  const mark = z.enum(["present", "absent", "excused"]);
   return Object.fromEntries(
     data.map((a) => [markKey(a.registration_id, a.session_id), mark.parse(a.mark)]),
   );

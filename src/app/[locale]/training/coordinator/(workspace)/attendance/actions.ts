@@ -6,7 +6,7 @@ import { z } from "zod";
 import { saveMarks } from "@/lib/attendance";
 import { requireAuth } from "@/lib/auth";
 
-const mark = z.enum(["present", "absent"]).nullable();
+const mark = z.enum(["present", "absent", "excused"]).nullable();
 const changes = z.array(z.object({ registrationId: z.uuid(), sessionId: z.uuid(), mark })).max(500);
 
 // Marks sent from a phone, possibly saved there while it was offline.

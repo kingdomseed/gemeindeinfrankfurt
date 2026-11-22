@@ -14,7 +14,7 @@ import { requireLocale } from "@/i18n/locale";
 import { Link as LocaleLink, redirect } from "@/i18n/navigation";
 import { loadAttendance, markKey } from "@/lib/attendance";
 import { loadCoordination } from "@/lib/coordinator";
-import { absenceCount, currentSession, isRequired, MAX_ABSENCES } from "@/lib/domain/attendance";
+import { absenceCounts, currentSession, isRequired, overLimit } from "@/lib/domain/attendance";
 import { loadStudyGroups } from "@/lib/groups";
 
 import { setAttendanceMark } from "./actions";
@@ -94,7 +94,8 @@ export default async function AttendanceOverviewPage({ params, searchParams }: P
                   {s.message_number}
                 </Table.ColumnHeader>
               ))}
-              <Table.ColumnHeader textAlign="end">{t("absences")}</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign="end">{t("unexcused")}</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign="end">{t("excusedCount")}</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -106,7 +107,8 @@ export default async function AttendanceOverviewPage({ params, searchParams }: P
                   return m ? [[s.id, m] as const] : [];
                 }),
               );
-              const absences = absenceCount(p.seat, chosen, own);
+              const counts = absenceCounts(p.seat, chosen, own);
+              const over = overLimit(counts);
               return (
                 <Table.Row key={p.id}>
                   <Table.Cell>
@@ -132,13 +134,15 @@ export default async function AttendanceOverviewPage({ params, searchParams }: P
                       />
                     </Table.Cell>
                   ))}
-                  <Table.Cell textAlign="end" fontVariantNumeric="tabular-nums">
-                    {absences > MAX_ABSENCES ? (
-                      <StatusTag tone="warning">{absences}</StatusTag>
-                    ) : (
-                      absences
-                    )}
-                  </Table.Cell>
+                  {(["unexcused", "excused"] as const).map((kind) => (
+                    <Table.Cell key={kind} textAlign="end" fontVariantNumeric="tabular-nums">
+                      {over && counts[kind] > 0 ? (
+                        <StatusTag tone="warning">{counts[kind]}</StatusTag>
+                      ) : (
+                        counts[kind]
+                      )}
+                    </Table.Cell>
+                  ))}
                 </Table.Row>
               );
             })}

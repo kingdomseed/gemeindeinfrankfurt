@@ -21,7 +21,10 @@ function readPending(key: string): Pending {
     return Object.fromEntries(
       Object.entries(parsed).filter(
         (entry): entry is [string, Mark | null] =>
-          entry[1] === "present" || entry[1] === "absent" || entry[1] === null,
+          entry[1] === "present" ||
+          entry[1] === "absent" ||
+          entry[1] === "excused" ||
+          entry[1] === null,
       ),
     );
   } catch {
@@ -55,8 +58,11 @@ export function AttendanceTaker(props: {
   const pendingRef = useRef<Pending>({});
   const { save, sessionId } = props;
 
+  // Other tabs on the same phone share the queue in storage, so every change
+  // is merged into what is stored rather than replacing it.
   const update = useCallback(
-    (next: Pending) => {
+    (change: (stored: Pending) => Pending) => {
+      const next = change({ ...readPending(storageKey), ...pendingRef.current });
       pendingRef.current = next;
       writePending(storageKey, next);
       setPending(next);
@@ -76,10 +82,9 @@ export function AttendanceTaker(props: {
       try {
         await save(changes);
         // Keep only what changed again while this was on its way.
-        const left = Object.fromEntries(
-          Object.entries(pendingRef.current).filter(([id, mark]) => sent[id] !== mark),
+        update((stored) =>
+          Object.fromEntries(Object.entries(stored).filter(([id, mark]) => sent[id] !== mark)),
         );
-        update(left);
         setFailed(false);
       } catch {
         setFailed(true);
@@ -102,13 +107,17 @@ export function AttendanceTaker(props: {
   const markOf = (id: string): Mark | null =>
     id in pending ? (pending[id] ?? null) : (props.marks[id] ?? null);
   const toggle = (id: string, mark: Mark) => {
-    update({ ...pendingRef.current, [id]: markOf(id) === mark ? null : mark });
+    const next = markOf(id) === mark ? null : mark;
+    update((stored) => ({ ...stored, [id]: next }));
     flush();
   };
 
   const required = props.people.filter((p) => p.required);
   const present = required.filter((p) => markOf(p.id) === "present").length;
-  const absent = required.filter((p) => markOf(p.id) === "absent").length;
+  const absent = required.filter((p) => {
+    const m = markOf(p.id);
+    return m === "absent" || m === "excused";
+  }).length;
   const waiting = Object.keys(pending).length;
   let syncText = t("allSaved");
   if (waiting > 0) syncText = failed ? t("offline", { count: waiting }) : t("saving");
@@ -143,6 +152,14 @@ export function AttendanceTaker(props: {
                     onClick={() => toggle(p.id, "present")}
                   >
                     {t("present")}
+                  </MarkButton>
+                  <MarkButton
+                    type="button"
+                    tone="excused"
+                    aria-pressed={mark === "excused"}
+                    onClick={() => toggle(p.id, "excused")}
+                  >
+                    {t("excused")}
                   </MarkButton>
                   <MarkButton
                     type="button"

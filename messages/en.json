@@ -534,8 +534,7 @@
       "group": "Group",
       "all": "All",
       "groupNumber": "Group {number}",
-      "legend": "Click a box to change it: empty, present, absent. Grey: not required for that message, but can still be marked present.",
-      "absences": "Absences",
+      "legend": "Click a box to change it: empty, present (P), absent (A), excused (E). Grey: not required for that message, but can still be marked present. Over the limit means any unexcused absence or more than two excused.",
       "message": "Message {number}",
       "partTimeNote": "A part-timer or live-training attendee is only marked absent for the messages they chose when they registered.",
       "present": "Present",
@@ -545,7 +544,8 @@
       "notRequiredShort": "not required",
       "short": {
         "present": "P",
-        "absent": "A"
+        "absent": "A",
+        "excused": "E"
       },
       "counts": "{present} present · {absent} absent · {open} open",
       "allSaved": "All marks saved",
@@ -555,7 +555,10 @@
       "prev": "Prev",
       "next": "Next",
       "previous": "Previous message",
-      "nextMessage": "Next message"
+      "nextMessage": "Next message",
+      "excused": "Excused",
+      "unexcused": "Unexcused",
+      "excusedCount": "Excused"
     }
   },
   "privacy": {
