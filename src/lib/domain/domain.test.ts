@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { earliestOpenEndDate } from "./announcements";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
+import { importedEvent } from "./event-import";
 import { eventWhen, startOfBerlinToday } from "./events";
 import { computeFees } from "./fees";
 import { buildCalendar } from "./ics";
@@ -353,5 +354,24 @@ describe("buildCalendar for events", () => {
     );
     expect(ics).not.toContain("DTEND");
     expect(ics).toContain("\r\nDESCRIPTION:Bring a Bible\r\n");
+  });
+});
+
+describe("importedEvent", () => {
+  const event = {
+    importKey: "dach-uni-konferenz-2026-12",
+    startsAt: "2026-12-04T00:00:00+01:00",
+    endsAt: "2026-12-06T00:00:00+01:00",
+    allDay: true,
+    link: "https://us.list-manage.com/12dexzTo7HF?e=abc123&c2id=xyz",
+    de: { title: "DACH Uni-Konferenz", location: "Gut Elim" },
+    en: { title: "DACH university conference", location: "Gut Elim" },
+    ru: { title: "Университетская конференция DACH", location: "Gut Elim" },
+  };
+  it("drops the subscriber id from links", () => {
+    expect(importedEvent.parse(event).link).toBe("https://us.list-manage.com/12dexzTo7HF?c2id=xyz");
+  });
+  it("needs a title in every language", () => {
+    expect(importedEvent.safeParse({ ...event, ru: { title: "" } }).success).toBe(false);
   });
 });
