@@ -20,7 +20,7 @@ export function ScheduleByDay({ sessions }: { sessions: Session[] }) {
         </Text>
       </Flex>
       <Stack gap="6" mt="3" fontVariantNumeric="tabular-nums">
-        {scheduleDays(sessions, locale).map((day) => (
+        {scheduleDays(sessions, locale, t("lordsDay")).map((day) => (
           <Box key={day.key}>
             <Heading
               as="h3"

@@ -52,7 +52,12 @@ export default async function RegistrationDetailRoute({ params }: Props) {
   }
 
   const training = await getTrainingById(reg.training_id);
-  const formProps = trainingFormProps(training, locale, (number) => th("message", { number }));
+  const formProps = trainingFormProps(
+    training,
+    locale,
+    (number) => th("message", { number }),
+    th("lordsDay"),
+  );
   return (
     <RegistrationDetailPage registration={reg} note={t("canChange")}>
       <PaymentPanel

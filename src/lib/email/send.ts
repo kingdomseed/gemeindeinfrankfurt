@@ -50,11 +50,12 @@ export async function sendConfirmation(opts: {
   waived: boolean;
 }) {
   const { locale, training, registration: r, token, waived } = opts;
-  const [t, tr, tc, tl] = await Promise.all([
+  const [t, tr, tc, tl, th] = await Promise.all([
     getTranslations({ locale, namespace: "email" }),
     getTranslations({ locale, namespace: "register" }),
     getTranslations({ locale, namespace: "calendar" }),
     getTranslations({ locale, namespace: "common.languages" }),
+    getTranslations({ locale, namespace: "home" }),
   ]);
   const fees = computeFees(
     {
@@ -93,7 +94,7 @@ export async function sendConfirmation(opts: {
   const messages = picksSessions(r.seat_type)
     ? tr("messagesChosen", { count: r.session_ids.length, total: sessionCount })
     : tr("messagesAll", { total: sessionCount });
-  const dates = trainingDates(training.sessions, locale);
+  const dates = trainingDates(training.sessions, locale, th("lordsDay"));
   const html = confirmationHtml({
     lang: locale,
     brand: title,

@@ -36,7 +36,9 @@ export function TrainingOverview({ training }: { training: TrainingWithSessions 
               <Link href="/training/register">{t("register")}</Link>
             </Button>
             <Text fontSize="sm" color="fg.muted">
-              {t("openUntil", { day: berlinDay(cutoffs.registrationClosesAt, locale) })}
+              {t("openUntil", {
+                day: berlinDay(cutoffs.registrationClosesAt, locale, t("lordsDay")),
+              })}
             </Text>
           </Flex>
         ) : (

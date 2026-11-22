@@ -28,7 +28,7 @@ export function ChangeCutoffs({ seatLockAt }: { seatLockAt: Date }) {
                 {t("changeSeat")}
               </Table.Cell>
               <Table.Cell fontVariantNumeric="tabular-nums">
-                {berlinDayTime(seatLockAt, locale)}
+                {berlinDayTime(seatLockAt, locale, t("lordsDay"))}
               </Table.Cell>
             </Table.Row>
             <Table.Row bg="transparent">
