@@ -2,10 +2,10 @@
 
 import { Button, chakra, Textarea } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { FormField } from "@/components/ui/form-field";
-import { languages } from "@/lib/domain/types";
+import { languages, type Language } from "@/lib/domain/types";
 
 import { ConfirmSendDialog } from "./ConfirmSendDialog";
 import { FormResult } from "./FormResult";
@@ -23,6 +23,8 @@ export function BeforeTrainingForm(props: {
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.send, {
     status: "idle",
   });
+  // The notes are held here, so an error does not clear them.
+  const [notes, setNotes] = useState<Record<Language, string>>({ de: "", en: "", ru: "" });
   return (
     <chakra.form
       id="before-training"
@@ -33,7 +35,17 @@ export function BeforeTrainingForm(props: {
     >
       {languages.map((l) => (
         <FormField key={l} label={t("noteIn", { language: tl(l) })}>
-          <Textarea name={`note_${l}`} rows={3} maxLength={10_000} lang={l} />
+          <Textarea
+            name={`note_${l}`}
+            rows={3}
+            maxLength={10_000}
+            lang={l}
+            value={notes[l]}
+            onChange={(e) => {
+              const value = e.currentTarget.value;
+              setNotes((n) => ({ ...n, [l]: value }));
+            }}
+          />
         </FormField>
       ))}
       <ConfirmSendDialog

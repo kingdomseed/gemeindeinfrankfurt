@@ -21,14 +21,6 @@ export type AudienceOption = {
   byLocale: Record<Language, number>;
 };
 
-function filled(form: HTMLFormElement, name: string) {
-  const field = form.elements.namedItem(name);
-  return (
-    (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) &&
-    field.value.trim() !== ""
-  );
-}
-
 // A message to everyone or a group, written in each language the
 // coordinators have. Readers whose language is missing get English.
 export function MessageForm(props: {
@@ -41,18 +33,20 @@ export function MessageForm(props: {
     status: "idle",
   });
   const [audience, setAudience] = useState(props.audiences[0]?.value ?? "everyone");
-  const [written, setWritten] = useState<ReadonlySet<Language>>(new Set());
+  // The draft is held here, so a test send or an error does not clear it.
+  const [draft, setDraft] = useState<Record<Language, { subject: string; body: string }>>({
+    de: { subject: "", body: "" },
+    en: { subject: "", body: "" },
+    ru: { subject: "", body: "" },
+  });
+  const written = new Set(
+    languages.filter((l) => draft[l].subject.trim() !== "" && draft[l].body.trim() !== ""),
+  );
   const chosen = props.audiences.find((a) => a.value === audience) ?? props.audiences[0];
   const count = chosen?.count ?? 0;
   const missing = new Set(chosen ? fallbackLanguages(chosen.byLocale, written) : []);
-
-  const onText = (l: Language, form: HTMLFormElement | null) => {
-    if (!form) return;
-    const next = new Set(written);
-    if (filled(form, `subject_${l}`) && filled(form, `body_${l}`)) next.add(l);
-    else next.delete(l);
-    setWritten(next);
-  };
+  const edit = (l: Language, field: "subject" | "body", value: string) =>
+    setDraft((d) => ({ ...d, [l]: { ...d[l], [field]: value } }));
 
   return (
     <chakra.form
@@ -88,7 +82,8 @@ export function MessageForm(props: {
               lang={l}
               maxLength={200}
               required={l === "en"}
-              onChange={(e) => onText(l, e.currentTarget.form)}
+              value={draft[l].subject}
+              onChange={(e) => edit(l, "subject", e.currentTarget.value)}
             />
           </FormField>
           <FormField label={t("body")} required={l === "en"}>
@@ -98,7 +93,8 @@ export function MessageForm(props: {
               rows={5}
               maxLength={10_000}
               required={l === "en"}
-              onChange={(e) => onText(l, e.currentTarget.form)}
+              value={draft[l].body}
+              onChange={(e) => edit(l, "body", e.currentTarget.value)}
             />
           </FormField>
           {missing.has(l) && chosen && (

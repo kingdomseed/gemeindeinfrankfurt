@@ -682,7 +682,7 @@
       "notYet": "Not yet",
       "nobody": "Nobody to send to.",
       "sentTo": "Sent to {count, plural, one {# person} other {# people}}.",
-      "sendFailed": "The emails could not be sent. Please try again later.",
+      "sendFailed": "{sent} of {total} emails went out; the rest could not be sent. Press send again to send the rest: those already sent today are not sent twice.",
       "englishNeeded": "Please write the English subject and message; everyone without their own language gets it.",
       "testSent": "Test sent to {email}, one email for each language you wrote.",
       "sentTitle": "Sent",

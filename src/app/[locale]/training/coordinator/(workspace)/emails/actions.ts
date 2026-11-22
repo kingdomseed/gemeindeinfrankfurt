@@ -33,15 +33,18 @@ async function deliver(
 ): Promise<FormState> {
   const t = await getTranslations("coordinator.emails");
   if (send.emails.length === 0) return { status: "error", message: t("nobody") };
-  try {
-    const count = await sendBatch(send.emails);
-    await recordSend(supabase, { ...send, count });
-    refresh();
-    return { status: "saved", message: t("sentTo", { count }) };
-  } catch (error) {
+  const { sent, error } = await sendBatch(send.emails);
+  // What went out is logged even when the rest failed, so the log stays true.
+  if (sent > 0) await recordSend(supabase, { ...send, count: sent });
+  refresh();
+  if (error) {
     console.error("Bulk email failed", error);
-    return { status: "error", message: t("sendFailed") };
+    return {
+      status: "error",
+      message: t("sendFailed", { sent, total: send.emails.length }),
+    };
   }
+  return { status: "saved", message: t("sentTo", { count: sent }) };
 }
 
 // Reminds everyone who still owes money what is open and where to pay.
@@ -112,13 +115,12 @@ export async function sendMessage(
     const emails = (await Promise.all(written.map((l) => coordinatorMessage(texts, to, l)))).filter(
       (e) => e !== null,
     );
-    try {
-      await sendBatch(emails);
-      return { status: "saved", message: t("testSent", { email: to }) };
-    } catch (error) {
+    const { error } = await sendBatch(emails);
+    if (error) {
       console.error("Test email failed", error);
-      return { status: "error", message: t("sendFailed") };
+      return { status: "error", message: t("sendFailed", { sent: 0, total: emails.length }) };
     }
+    return { status: "saved", message: t("testSent", { email: to }) };
   }
   const emails = (
     await Promise.all(

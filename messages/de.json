@@ -682,7 +682,7 @@
       "notYet": "Noch nicht",
       "nobody": "Niemand, an den gesendet werden kann.",
       "sentTo": "An {count, plural, one {# Person} other {# Personen}} gesendet.",
-      "sendFailed": "Die E-Mails konnten nicht gesendet werden. Bitte versuch es später noch einmal.",
+      "sendFailed": "{sent} von {total} E-Mails sind hinausgegangen; der Rest konnte nicht gesendet werden. Drück noch einmal auf Senden für den Rest: was heute schon gesendet wurde, geht nicht doppelt hinaus.",
       "englishNeeded": "Bitte schreib den englischen Betreff und die Nachricht; alle ohne eigene Sprache bekommen sie.",
       "testSent": "Test an {email} gesendet, eine E-Mail für jede Sprache, die du geschrieben hast.",
       "sentTitle": "Gesendet",
