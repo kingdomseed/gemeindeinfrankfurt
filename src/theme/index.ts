@@ -6,9 +6,15 @@ import { tokens } from "./tokens";
 
 const config = defineConfig({
   globalCss: {
-    // Native controls and scrollbars follow the colour mode too. The stable
-    // gutter keeps the centred layout still when a page is too short to scroll.
-    html: { colorPalette: "brand", colorScheme: "light", scrollbarGutter: "stable" },
+    // Native controls and scrollbars follow the colour mode too, and the
+    // scrollbar takes the page's own colours. The stable gutter keeps the
+    // centred layout still when a page is too short to scroll.
+    html: {
+      colorPalette: "brand",
+      colorScheme: "light",
+      scrollbarGutter: "stable",
+      scrollbarColor: "{colors.border.emphasized} {colors.bg}",
+    },
     "html.dark": { colorScheme: "dark" },
     body: { accentColor: "brand.solid" },
     "::selection": { bg: "brand.subtle", color: "fg" },
