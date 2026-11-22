@@ -14,6 +14,8 @@ export type TeamMember = {
   name: string;
   email: string;
   isAdmin: boolean;
+  // Serves in AV (Technik), so sees the webcast login.
+  servesAv: boolean;
   isYou: boolean;
   // Null until they have signed in once.
   lastSignInAt: string | null;
@@ -24,7 +26,10 @@ export type TeamMember = {
 // times only exist in Supabase Auth, which needs the service role.
 export async function loadTeam(supabase: CoordinatorClient): Promise<TeamMember[]> {
   const [{ data: rows, error }, { data: me }] = await Promise.all([
-    supabase.from("coordinators").select("user_id, display_name, is_admin").order("display_name"),
+    supabase
+      .from("coordinators")
+      .select("user_id, display_name, is_admin, serves_av")
+      .order("display_name"),
     supabase.auth.getUser(),
   ]);
   if (error) throw error;
@@ -38,6 +43,7 @@ export async function loadTeam(supabase: CoordinatorClient): Promise<TeamMember[
       name: r.display_name,
       email: user?.email ?? "",
       isAdmin: r.is_admin,
+      servesAv: r.serves_av,
       isYou: r.user_id === me.user?.id,
       lastSignInAt: user?.last_sign_in_at ?? null,
     };
@@ -77,6 +83,15 @@ export async function addCoordinator(name: string, email: string): Promise<void>
 // name stays on the history lines they wrote.
 export async function removeCoordinator(userId: string): Promise<void> {
   const { error } = await createAdminClient().from("coordinators").delete().eq("user_id", userId);
+  if (error) throw error;
+}
+
+// Says whether a coordinator serves in AV (Technik) and so sees the webcast login.
+export async function setServesAv(userId: string, servesAv: boolean): Promise<void> {
+  const { error } = await createAdminClient()
+    .from("coordinators")
+    .update({ serves_av: servesAv })
+    .eq("user_id", userId);
   if (error) throw error;
 }
 

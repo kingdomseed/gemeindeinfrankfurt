@@ -72,3 +72,39 @@ export const statusTagRecipe = defineRecipe({
   },
   defaultVariants: { tone: "neutral" },
 });
+
+// One attendance mark, a word or letter on its own tint once pressed.
+export const markRecipe = defineRecipe({
+  className: "attendance-mark",
+  base: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    px: "2",
+    borderWidth: "1px",
+    borderColor: "border.emphasized",
+    rounded: "sm",
+    bg: "bg",
+    color: "fg",
+    fontSize: "sm",
+    fontVariantNumeric: "tabular-nums",
+    cursor: "pointer",
+    focusVisibleRing: "outside",
+    _pressed: { fontWeight: "semibold", borderWidth: "2px" },
+    _disabled: { cursor: "default" },
+  },
+  variants: {
+    tone: {
+      present: { _pressed: { bg: "bg.success", color: "fg.success", borderColor: "fg.success" } },
+      absent: { _pressed: { bg: "bg.error", color: "fg.error", borderColor: "fg.error" } },
+      excused: { _pressed: { bg: "bg.warning", color: "fg.warning", borderColor: "fg.warning" } },
+      // A message someone did not have to come to.
+      optional: { bg: "bg.muted", color: "fg.muted", borderColor: "transparent" },
+    },
+    size: {
+      row: { minH: "11", flex: "1" },
+      box: { minW: "8", minH: "8" },
+    },
+  },
+  defaultVariants: { tone: "present", size: "row" },
+});

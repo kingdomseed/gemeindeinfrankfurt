@@ -300,7 +300,11 @@
       "overview": "Overview",
       "registrations": "Registrations",
       "outlines": "Outlines",
-      "setup": "Setup"
+      "setup": "Setup",
+      "groups": "Groups",
+      "testing": "Testing",
+      "services": "Services",
+      "attendance": "Attendance"
     },
     "registrationOpen": "registration open",
     "registrationClosed": "registration closed",
@@ -418,7 +422,147 @@
       "inviteHelp": "They get an email with a link. No password.",
       "invited": "Added. They have been sent a sign-in link.",
       "adminsOnly": "Only admins can add or remove coordinators.",
-      "removeNote": "Removing someone takes their access away at once. Their changes stay in the history with their name."
+      "removeNote": "Removing someone takes their access away at once. Their changes stay in the history with their name.",
+      "av": "AV",
+      "joinAv": "Add to AV",
+      "leaveAv": "Take out of AV",
+      "avChanged": "AV updated."
+    },
+    "groups": {
+      "title": "Study groups",
+      "summary": "{people, plural, one {# person} other {# people}} in {groups, plural, one {# group} other {# groups}} · {unassigned} not assigned",
+      "suggest": "Suggest groups",
+      "suggestAgain": "Suggest groups again",
+      "suggestAgainTitle": "Make the groups again?",
+      "suggestAgainBody": "The groups are made again from scratch. Moves made by hand and the planned tests are lost.",
+      "keepGroups": "Keep the groups",
+      "replaceGroups": "Make them again",
+      "nameTags": "Name tags",
+      "planTesting": "Plan testing",
+      "howSuggested": "Suggested by study group language, then locality, in groups of 8 to 10. Move anyone with the menu beside their name. Your changes are kept when new people register; they go to the smallest group in their language.",
+      "noGroups": "No study groups yet. Suggest groups to make them by study group language, then locality, in groups of 8 to 10. You can move anyone afterwards.",
+      "unassigned": "Not assigned",
+      "groupNumber": "Group {number}",
+      "people": "{count}",
+      "move": "Move",
+      "moveName": "Move {name}"
+    },
+    "nameTags": {
+      "title": "Name tags",
+      "lead": "{count, plural, one {# name tag} other {# name tags}}, one per seat",
+      "print": "Print name tags",
+      "howToPrint": "85 × 55 mm, ten to an A4 page. Print at 100 % (no fitting to the page) and cut along the dashed lines. A shared seat has both names on one tag."
+    },
+    "testing": {
+      "title": "Testing",
+      "planned": "{count, plural, =0 {No tests planned} one {# test planned} other {# tests planned}}",
+      "print": "Print schedule",
+      "lead": "Some messages start with a test. One study group is called up and tests in front of everyone. Pick the group for a message, or leave it at \"No test\". You can change it at the last minute.",
+      "noGroups": "Make the study groups first; then pick a group for each message here.",
+      "message": "Message {number}",
+      "testBefore": "Test before message {number}",
+      "noTest": "No test"
+    },
+    "services": {
+      "title": "Services",
+      "lead": "Who coordinates each service (Aufgaben) for this training.",
+      "listTitle": "Services and service coordinators",
+      "kinds": {
+        "tech": {
+          "name": "Tech",
+          "what": "Webcast, sound, Zoom"
+        },
+        "rules": {
+          "name": "Rules",
+          "what": "Rule slides before each message"
+        },
+        "hymns": {
+          "name": "Hymns",
+          "what": "Hymn numbers per language"
+        },
+        "verses": {
+          "name": "Verses",
+          "what": "Verse slides"
+        },
+        "questions": {
+          "name": "Questions",
+          "what": "Study group questions"
+        },
+        "attendance": {
+          "name": "Attendance",
+          "what": "Marks during each message"
+        },
+        "payments": {
+          "name": "Payments",
+          "what": "Mark donations and outlines received"
+        },
+        "name_tags": {
+          "name": "Name tags",
+          "what": "Print and hand out"
+        },
+        "groups": {
+          "name": "Groups",
+          "what": "Study groups and testing"
+        }
+      },
+      "leadFor": "Service coordinator for {service}",
+      "noOne": "No one yet",
+      "remove": "Remove",
+      "newService": "New service",
+      "add": "Add service",
+      "webcastTitle": "Webcast access",
+      "avOnly": "AV only",
+      "webcastHelp": "The login Lebensstrom sent for the LSM website, where the messages are played. It is never shown on the form, in emails or in the WhatsApp group.",
+      "website": "Website",
+      "userName": "User name",
+      "password": "Password",
+      "hidden": "Hidden",
+      "show": "Show",
+      "hide": "Hide",
+      "copy": "Copy",
+      "copied": "Copied",
+      "lastChanged": "Last changed by {name}, {date}. Every time the password is shown is logged.",
+      "updateLogin": "Update login",
+      "passwordKeep": "Leave empty to keep the current password.",
+      "saveLogin": "Save login",
+      "cancel": "Cancel",
+      "loginSaved": "Login saved.",
+      "notAv": "Only coordinators serving in AV (Technik) can see the webcast login. Ask {names} if you need it during a session.",
+      "notAvNobody": "Only coordinators serving in AV (Technik) can see the webcast login. An admin can add coordinators to AV on the coordinators page."
+    },
+    "attendance": {
+      "title": "Attendance",
+      "titleFor": "Attendance, message {number}",
+      "taken": "{taken} of {total} messages taken",
+      "takeFor": "Take attendance for message {number}",
+      "group": "Group",
+      "all": "All",
+      "groupNumber": "Group {number}",
+      "legend": "Click a box to change it: empty, present (P), absent (A), excused (E). Grey: not required for that message, but can still be marked present. Over the limit means any unexcused absence or more than two excused.",
+      "message": "Message {number}",
+      "partTimeNote": "A part-timer or live-training attendee is only marked absent for the messages they chose when they registered.",
+      "present": "Present",
+      "absent": "Absent",
+      "open": "Not marked",
+      "notRequired": "Not required for this message",
+      "notRequiredShort": "not required",
+      "short": {
+        "present": "P",
+        "absent": "A",
+        "excused": "E"
+      },
+      "counts": "{present} present · {absent} absent · {open} open",
+      "allSaved": "All marks saved",
+      "saving": "Saving…",
+      "offline": "Offline · {count, plural, one {# mark} other {# marks}} waiting",
+      "overview": "Attendance overview",
+      "prev": "Prev",
+      "next": "Next",
+      "previous": "Previous message",
+      "nextMessage": "Next message",
+      "excused": "Excused",
+      "unexcused": "Unexcused",
+      "excusedCount": "Excused"
     }
   },
   "privacy": {

@@ -13,6 +13,7 @@ import {
   loadTeam,
   removeCoordinator,
   sendSignInLink,
+  setServesAv,
 } from "@/lib/team";
 
 const newMember = z.object({
@@ -54,6 +55,19 @@ export async function removeTeamMember(_prev: FormState, form: FormData): Promis
   const { data: me } = await supabase.auth.getUser();
   if (me.user?.id === parsed.data.user_id) return { status: "error" };
   await removeCoordinator(parsed.data.user_id);
+  refresh();
+  return { status: "saved" };
+}
+
+const avChange = z.object({ user_id: z.uuid(), serves_av: z.enum(["true", "false"]) });
+
+// Admins only: adds a coordinator to AV (Technik) or takes them out of it.
+export async function changeAvService(_prev: FormState, form: FormData): Promise<FormState> {
+  const supabase = await requireAuth();
+  if (!(await isTeamAdmin(supabase))) return { status: "error" };
+  const parsed = avChange.safeParse(Object.fromEntries(form));
+  if (!parsed.success) return { status: "error" };
+  await setServesAv(parsed.data.user_id, parsed.data.serves_av === "true");
   refresh();
   return { status: "saved" };
 }

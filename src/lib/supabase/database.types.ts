@@ -51,6 +51,7 @@ export type Database = {
           created_at: string;
           display_name: string;
           is_admin: boolean;
+          serves_av: boolean;
           user_id: string;
         };
         ComputedFields: never;
@@ -58,12 +59,14 @@ export type Database = {
           created_at?: string;
           display_name: string;
           is_admin?: boolean;
+          serves_av?: boolean;
           user_id: string;
         };
         Update: {
           created_at?: string;
           display_name?: string;
           is_admin?: boolean;
+          serves_av?: boolean;
           user_id?: string;
         };
         Relationships: [];
@@ -409,6 +412,7 @@ export type Database = {
       services: {
         Row: {
           id: string;
+          kind: string | null;
           lead: string;
           name: string;
           sort_order: number;
@@ -417,6 +421,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           id?: string;
+          kind?: string | null;
           lead?: string;
           name: string;
           sort_order?: number;
@@ -424,6 +429,7 @@ export type Database = {
         };
         Update: {
           id?: string;
+          kind?: string | null;
           lead?: string;
           name?: string;
           sort_order?: number;
@@ -500,7 +506,7 @@ export type Database = {
           {
             foreignKeyName: "study_group_members_registration_id_fkey";
             columns: ["registration_id"];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: "registrations";
             referencedColumns: ["id"];
           },
@@ -580,7 +586,7 @@ export type Database = {
           {
             foreignKeyName: "test_slots_session_id_fkey";
             columns: ["session_id"];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: "sessions";
             referencedColumns: ["id"];
           },
@@ -641,6 +647,75 @@ export type Database = {
         };
         Relationships: [];
       };
+      webcast_login_views: {
+        Row: {
+          id: string;
+          training_id: string;
+          viewed_at: string;
+          viewer_id: string | null;
+          viewer_name: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          id?: string;
+          training_id: string;
+          viewed_at?: string;
+          viewer_id?: string | null;
+          viewer_name?: string;
+        };
+        Update: {
+          id?: string;
+          training_id?: string;
+          viewed_at?: string;
+          viewer_id?: string | null;
+          viewer_name?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "webcast_login_views_training_id_fkey";
+            columns: ["training_id"];
+            isOneToOne: false;
+            referencedRelation: "trainings";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      webcast_logins: {
+        Row: {
+          changed_at: string;
+          changed_by: string;
+          password: string;
+          training_id: string;
+          user_name: string;
+          website: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          changed_at?: string;
+          changed_by?: string;
+          password?: string;
+          training_id: string;
+          user_name?: string;
+          website?: string;
+        };
+        Update: {
+          changed_at?: string;
+          changed_by?: string;
+          password?: string;
+          training_id?: string;
+          user_name?: string;
+          website?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "webcast_logins_training_id_fkey";
+            columns: ["training_id"];
+            isOneToOne: true;
+            referencedRelation: "trainings";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -652,6 +727,8 @@ export type Database = {
       };
       is_coordinator: { Args: Record<PropertyKey, never>; Returns: boolean };
       purge_personal_data: { Args: { p_training: string }; Returns: undefined };
+      replace_study_groups: { Args: { p_groups: Json; p_training: string }; Returns: undefined };
+      serves_av: { Args: Record<PropertyKey, never>; Returns: boolean };
     };
     Enums: {
       attendance_mark: "present" | "absent" | "excused" | "not_registered";

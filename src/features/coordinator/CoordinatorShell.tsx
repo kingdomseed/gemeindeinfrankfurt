@@ -8,6 +8,7 @@ import { coordinatorSections } from "./sections";
 
 // The coordinators' workspace: which training, sign out, and the links
 // between its pages, above a wider column than the registrant's pages.
+// Printing leaves only the page itself, such as name tags.
 export function CoordinatorShell(props: {
   trainingTitle: string | null;
   signOut: () => Promise<void>;
@@ -16,7 +17,7 @@ export function CoordinatorShell(props: {
   const t = useTranslations("coordinator");
   return (
     <>
-      <Box borderBottomWidth="1px" borderColor="border">
+      <Box borderBottomWidth="1px" borderColor="border" _print={{ display: "none" }}>
         <Container maxW="6xl" px="4">
           <Flex wrap="wrap" align="center" justify="space-between" columnGap="4" pt="3">
             <Text fontSize="sm" color="fg.muted">
@@ -42,7 +43,7 @@ export function CoordinatorShell(props: {
           />
         </Container>
       </Box>
-      <Container as="main" maxW="6xl" px="4" pt="6" pb="16">
+      <Container as="main" maxW="6xl" px="4" pt="6" pb="16" _print={{ p: "0", maxW: "none" }}>
         {props.children}
       </Container>
     </>
