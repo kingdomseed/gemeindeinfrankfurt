@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
           { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
         ],
       },
+      // The announcements carry the meeting link; they stay out of search engines.
+      {
+        source: "/:locale/announcements",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+      },
     ]),
   // German pages of the old WordPress site. Its English pages (/en/...)
   // already match the new addresses.

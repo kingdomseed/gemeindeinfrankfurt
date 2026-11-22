@@ -488,6 +488,15 @@ export async function getUpcomingEvents(locale: Locale, limit: number): Promise<
   }));
 }
 
+// The Zoom link for the meetings. Only the announcements page, which search
+// engines don't index, reads it.
+export const getMeetingLink = cache(async (locale: Locale): Promise<string | null> => {
+  const { meetingLink } = z
+    .object({ meetingLink: z.union([z.url(), z.literal("")]).nullish() })
+    .parse(await readSiteSettings(locale));
+  return meetingLink || null;
+});
+
 export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettings> => {
   const settings = siteSettings.parse(await readSiteSettings(locale));
   return {

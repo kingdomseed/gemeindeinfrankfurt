@@ -33,4 +33,4 @@ The same task also adds the whole week as one **Announcement** draft (`/admin` �
 3. Keep the prayer requests, without names or anything else that identifies a person or family.
 4. Run `npm run announcements:import -- <file>.json` with `SITE_URL` and `PAYLOAD_API_KEY` set. A week already there is skipped.
 
-The rules above apply here too. The import refuses a Zoom link and drops Mailchimp's subscriber id from every link.
+The rules above apply here too. The import refuses a Zoom link and drops Mailchimp's subscriber id from every link. The meeting's Zoom link lives in one place, `/admin` → Site settings → Meeting link, and only the announcements page shows it; that page is kept out of search engines. If the email gives a new Zoom link, update it there.

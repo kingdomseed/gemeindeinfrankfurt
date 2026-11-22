@@ -2,6 +2,7 @@ import * as migration_20261113_154811_initial from "./20261113_154811_initial";
 import * as migration_20261120_070746_page_sections from "./20261120_070746_page_sections";
 import * as migration_20261122_185121_events from "./20261122_185121_events";
 import * as migration_20261122_192636_announcement_import_key from "./20261122_192636_announcement_import_key";
+import * as migration_20261122_195024_site_meeting_link from "./20261122_195024_site_meeting_link";
 
 export const migrations = [
   {
@@ -23,5 +24,10 @@ export const migrations = [
     up: migration_20261122_192636_announcement_import_key.up,
     down: migration_20261122_192636_announcement_import_key.down,
     name: "20261122_192636_announcement_import_key",
+  },
+  {
+    up: migration_20261122_195024_site_meeting_link.up,
+    down: migration_20261122_195024_site_meeting_link.down,
+    name: "20261122_195024_site_meeting_link",
   },
 ];

@@ -36,7 +36,9 @@
     "allAnnouncements": "All announcements",
     "announcementsTitle": "Announcements",
     "announcementsIntro": "The church's weekly announcements, newest first.",
-    "noAnnouncements": "There are no announcements yet."
+    "noAnnouncements": "There are no announcements yet.",
+    "meetingLinkHeading": "Join the meetings on Zoom",
+    "meetingLinkAction": "Open the Zoom link"
   },
   "home": {
     "noTraining": "Registration is not open yet",
