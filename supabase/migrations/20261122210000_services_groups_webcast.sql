@@ -86,6 +86,33 @@ alter table test_slots add constraint test_slots_session_key unique (session_id)
 create index study_groups_training_idx on study_groups (training_id, sort_order);
 create index test_slots_group_idx on test_slots (group_id);
 
+-- Replaces a training's study groups (and the tests planned for them) with
+-- new ones in one transaction. p_groups is [{"language": "de", "members":
+-- [registration ids]}, ...] in group order. Two coordinators pressing
+-- "Suggest groups" at once wait for each other instead of mixing their groups.
+create function replace_study_groups(p_training uuid, p_groups jsonb) returns void
+language plpgsql security invoker set search_path = public as $$
+declare
+  g jsonb;
+  n integer := 0;
+  new_id uuid;
+begin
+  perform pg_advisory_xact_lock(hashtext('study_groups:' || p_training::text));
+  delete from study_groups where training_id = p_training;
+  for g in select * from jsonb_array_elements(p_groups) loop
+    n := n + 1;
+    insert into study_groups (training_id, name, language, sort_order)
+    values (p_training, n::text, (g ->> 'language')::language_code, n)
+    returning id into new_id;
+    insert into study_group_members (group_id, registration_id)
+    select new_id, m::uuid from jsonb_array_elements_text(g -> 'members') as m;
+  end loop;
+end;
+$$;
+
+-- Other coordinators' screens follow group, test and service changes live.
+alter publication supabase_realtime add table study_groups, test_slots, services;
+
 -- Copy last training now keeps the services' kinds -------------------------
 
 create or replace function copy_training(p_source uuid, p_slug text, p_title jsonb, p_shift interval)

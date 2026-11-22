@@ -299,7 +299,8 @@
       "setup": "Setup",
       "groups": "Groups",
       "testing": "Testing",
-      "services": "Services"
+      "services": "Services",
+      "attendance": "Attendance"
     },
     "registrationOpen": "registration open",
     "registrationClosed": "registration closed",
@@ -524,6 +525,37 @@
       "loginSaved": "Login saved.",
       "notAv": "Only coordinators serving in AV (Technik) can see the webcast login. Ask {names} if you need it during a session.",
       "notAvNobody": "Only coordinators serving in AV (Technik) can see the webcast login. An admin can add coordinators to AV on the coordinators page."
+    },
+    "attendance": {
+      "title": "Attendance",
+      "titleFor": "Attendance, message {number}",
+      "taken": "{taken} of {total} messages taken",
+      "takeFor": "Take attendance for message {number}",
+      "group": "Group",
+      "all": "All",
+      "groupNumber": "Group {number}",
+      "legend": "Click a box to change it: empty, present, absent. Grey: not required for that message, but can still be marked present.",
+      "absences": "Absences",
+      "message": "Message {number}",
+      "partTimeNote": "A part-timer or live-training attendee is only marked absent for the messages they chose when they registered.",
+      "present": "Present",
+      "absent": "Absent",
+      "open": "Not marked",
+      "notRequired": "Not required for this message",
+      "notRequiredShort": "not required",
+      "short": {
+        "present": "P",
+        "absent": "A"
+      },
+      "counts": "{present} present · {absent} absent · {open} open",
+      "allSaved": "All marks saved",
+      "saving": "Saving…",
+      "offline": "Offline · {count, plural, one {# mark} other {# marks}} waiting",
+      "overview": "Attendance overview",
+      "prev": "Prev",
+      "next": "Next",
+      "previous": "Previous message",
+      "nextMessage": "Next message"
     }
   },
   "privacy": {

@@ -32,37 +32,17 @@ export async function loadStudyGroups(
 }
 
 // Throws away the training's groups (and the tests planned for them) and
-// saves the suggested ones.
+// saves the suggested ones, all at once.
 export async function replaceStudyGroups(
   supabase: CoordinatorClient,
   trainingId: string,
   suggested: readonly SuggestedGroup[],
 ) {
-  const removed = await supabase.from("study_groups").delete().eq("training_id", trainingId);
-  if (removed.error) throw removed.error;
-  if (suggested.length === 0) return;
-  const { data, error } = await supabase
-    .from("study_groups")
-    .insert(
-      suggested.map((g, i) => ({
-        training_id: trainingId,
-        name: String(i + 1),
-        language: g.language,
-        sort_order: i + 1,
-      })),
-    )
-    .select("id, sort_order");
+  const { error } = await supabase.rpc("replace_study_groups", {
+    p_training: trainingId,
+    p_groups: suggested.map((g) => ({ language: g.language, members: g.memberIds })),
+  });
   if (error) throw error;
-  const idByOrder = new Map(data.map((g) => [g.sort_order, g.id]));
-  const members = suggested.flatMap((g, i) =>
-    g.memberIds.map((registration_id) => ({
-      group_id: idByOrder.get(i + 1) ?? "",
-      registration_id,
-    })),
-  );
-  if (members.length === 0) return;
-  const added = await supabase.from("study_group_members").insert(members);
-  if (added.error) throw added.error;
 }
 
 // Puts a registration in a group, out of any other one.
@@ -81,7 +61,8 @@ export async function moveToGroup(
 }
 
 // Someone who registers after the groups were made joins the smallest group
-// in their language. Nothing happens while there are no groups.
+// in their language, or a new group when theirs has none yet. Nothing
+// happens while there are no groups at all.
 export async function placeInStudyGroup(registration: {
   id: string;
   trainingId: string;
@@ -99,10 +80,27 @@ export async function placeInStudyGroup(registration: {
     language: g.language,
     size: g.study_group_members.filter((m) => m.registrations.status === "active").length,
   }));
-  const group = smallestGroup(groups, registration.language);
-  if (!group) return;
+  if (groups.length === 0) return;
+  const groupId =
+    smallestGroup(groups, registration.language)?.id ??
+    (await addStudyGroup(registration.trainingId, registration.language, data));
   const added = await db
     .from("study_group_members")
-    .insert({ group_id: group.id, registration_id: registration.id });
+    .insert({ group_id: groupId, registration_id: registration.id });
   if (added.error) throw added.error;
+}
+
+async function addStudyGroup(
+  trainingId: string,
+  language: "de" | "en" | "ru",
+  existing: readonly { sort_order: number }[],
+) {
+  const next = Math.max(0, ...existing.map((g) => g.sort_order)) + 1;
+  const { data, error } = await createAdminClient()
+    .from("study_groups")
+    .insert({ training_id: trainingId, name: String(next), language, sort_order: next })
+    .select("id")
+    .single();
+  if (error) throw error;
+  return data.id;
 }

@@ -299,7 +299,8 @@
       "setup": "Einrichtung",
       "groups": "Gruppen",
       "testing": "Prüfung",
-      "services": "Aufgaben"
+      "services": "Aufgaben",
+      "attendance": "Anwesenheit"
     },
     "registrationOpen": "Anmeldung offen",
     "registrationClosed": "Anmeldung geschlossen",
@@ -524,6 +525,37 @@
       "loginSaved": "Zugang gespeichert.",
       "notAv": "Nur Koordinatoren in AV (Technik) sehen den Zugang zum Webcast. Frag {names}, wenn du ihn während einer Botschaft brauchst.",
       "notAvNobody": "Nur Koordinatoren in AV (Technik) sehen den Zugang zum Webcast. Ein Admin kann Koordinatoren auf der Seite Koordinatoren zu AV hinzufügen."
+    },
+    "attendance": {
+      "title": "Anwesenheit",
+      "titleFor": "Anwesenheit, Botschaft {number}",
+      "taken": "{taken} von {total} Botschaften erfasst",
+      "takeFor": "Anwesenheit für Botschaft {number} erfassen",
+      "group": "Gruppe",
+      "all": "Alle",
+      "groupNumber": "Gruppe {number}",
+      "legend": "Klicke auf ein Feld, um es zu ändern: leer, anwesend, abwesend. Grau: für diese Botschaft nicht nötig, kann aber trotzdem als anwesend eingetragen werden.",
+      "absences": "Fehlzeiten",
+      "message": "Botschaft {number}",
+      "partTimeNote": "Wer Teilzeit oder als Teilnehmer des Live-Trainings dabei ist, wird nur bei den Botschaften als abwesend gezählt, die bei der Anmeldung gewählt wurden.",
+      "present": "Anwesend",
+      "absent": "Abwesend",
+      "open": "Nicht eingetragen",
+      "notRequired": "Für diese Botschaft nicht nötig",
+      "notRequiredShort": "nicht nötig",
+      "short": {
+        "present": "A",
+        "absent": "F"
+      },
+      "counts": "{present} anwesend · {absent} abwesend · {open} offen",
+      "allSaved": "Alle Einträge gespeichert",
+      "saving": "Wird gespeichert…",
+      "offline": "Offline · {count, plural, one {# Eintrag wartet} other {# Einträge warten}}",
+      "overview": "Übersicht Anwesenheit",
+      "prev": "Zurück",
+      "next": "Weiter",
+      "previous": "Vorige Botschaft",
+      "nextMessage": "Nächste Botschaft"
     }
   },
   "privacy": {

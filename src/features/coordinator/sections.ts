@@ -4,6 +4,7 @@ export const coordinatorSections = [
   { key: "registrations", href: "/training/coordinator/registrations" },
   { key: "outlines", href: "/training/coordinator/outlines" },
   { key: "groups", href: "/training/coordinator/groups" },
+  { key: "attendance", href: "/training/coordinator/attendance" },
   { key: "testing", href: "/training/coordinator/testing" },
   { key: "services", href: "/training/coordinator/services" },
   { key: "setup", href: "/training/coordinator/setup" },
@@ -18,6 +19,12 @@ export function sectionHref(key: SectionKey) {
 // Pages reached from a section rather than from the section links.
 export const teamHref = "/training/coordinator/setup/team";
 export const nameTagsHref = "/training/coordinator/groups/name-tags";
+
+// Taking attendance for one message, on a phone.
+export function attendanceHref(messageNumber: number, group?: number | null) {
+  const path = `${sectionHref("attendance")}/${messageNumber}`;
+  return group ? `${path}?group=${group}` : path;
+}
 
 // The registrations page, opened on a filter or a search.
 export function registrationsHref(open?: { show?: "unpaid"; q?: string }) {
