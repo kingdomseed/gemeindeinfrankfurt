@@ -2,7 +2,7 @@ import { Box, Container, Stack } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 
 import { mainContentId } from "@/components/ui/skip-link";
-import type { PageContent, PageTeaser, SiteSettings } from "@/lib/cms";
+import type { PageBlock, PageContent, PageTeaser, SiteSettings } from "@/lib/cms";
 import { firstParagraph, withoutFirstParagraph } from "@/lib/domain/rich-text";
 
 import { ContactBox } from "./ContactBox";
@@ -22,9 +22,14 @@ export function HomePage(props: {
 }) {
   const t = useTranslations("site");
   const { page, settings, teasers } = props;
-  const intro = page.blocks.find((block) => block.type === "text");
-  const place = page.blocks.find((block) => block.type === "meetingPlace");
-  const others = page.blocks.flatMap((block) => {
+  // A page without sections shows its body, which is then its one text section.
+  const blocks: PageBlock[] =
+    page.blocks.length > 0 || !page.body
+      ? page.blocks
+      : [{ type: "text", id: "body", content: page.body }];
+  const intro = blocks.find((block) => block.type === "text");
+  const place = blocks.find((block) => block.type === "meetingPlace");
+  const others = blocks.flatMap((block) => {
     if (block.type === "meetingPlace") return [];
     if (block !== intro) return [block];
     const content = withoutFirstParagraph(block.content);
@@ -38,7 +43,7 @@ export function HomePage(props: {
         welcome={t("welcome")}
         action={visitors ? { href: visitors.href, label: t("visitUs") } : null}
       />
-      <HomeIntro title={page.title} text={firstParagraph(intro?.content ?? page.body)} />
+      <HomeIntro title={page.title} text={intro ? firstParagraph(intro.content) : ""} />
       {others.length > 0 && (
         <Container maxW="6xl" px="4" pb={{ base: "14", md: "22" }}>
           <Stack gap="10">
