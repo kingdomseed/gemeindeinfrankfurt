@@ -4,7 +4,7 @@ import { ImprintNotice } from "@/features/imprint/ImprintNotice";
 import { MainColumn } from "@/features/shell/MainColumn";
 import { requireLocale } from "@/i18n/locale";
 import { getSiteSettings } from "@/lib/cms";
-import { siteContacts } from "@/lib/site";
+import { imprintContact } from "@/lib/site";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/impressum">) {
   const locale = requireLocale((await params).locale);
@@ -16,14 +16,14 @@ export default async function ImprintPage({ params }: PageProps<"/[locale]/impre
   const locale = requireLocale((await params).locale);
   setRequestLocale(locale);
   const settings = await getSiteSettings(locale);
-  const [responsible] = siteContacts();
+  const responsible = imprintContact();
   return (
     <MainColumn>
       <ImprintNotice
         siteName={settings.siteName}
         address={settings.meetingAddress}
-        responsible={responsible?.name ?? null}
-        email={settings.contactEmail ?? responsible?.email ?? null}
+        responsible={responsible.name}
+        email={responsible.email ?? settings.contactEmail}
       />
     </MainColumn>
   );

@@ -6,6 +6,7 @@ import { canRegister } from "@/lib/domain/cutoffs";
 import { newEditToken } from "@/lib/domain/token";
 import type { Language } from "@/lib/domain/types";
 import { sendConfirmation } from "@/lib/email/send";
+import { placeInStudyGroup } from "@/lib/groups";
 import {
   hasPossibleDuplicate,
   parseRegistrationForm,
@@ -46,6 +47,15 @@ export async function register(
     .single();
   if (error) throw error;
   await replaceSessions(data.id, input);
+  // A missing group place is fixed by hand on the groups page; it must not
+  // stop the registration.
+  await placeInStudyGroup({
+    id: data.id,
+    trainingId: training.id,
+    language: input.group_language,
+  }).catch((placeError: unknown) => {
+    console.error("Could not place the registration in a study group", placeError);
+  });
 
   await sendConfirmation({ locale, training, registration: input, token, waived: false });
   return { status: "done", calendarUrl: calendarUrl(locale, token) };

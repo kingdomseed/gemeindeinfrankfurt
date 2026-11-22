@@ -26,6 +26,7 @@ export function RegistrationBar(props: { storageKey: string; dates: string; clos
       as="aside"
       aria-label={t("training")}
       bg="bg.muted"
+      _print={{ display: "none" }}
       borderBottomWidth="1px"
       fontSize={{ base: "sm", md: "md" }}
       css={{ [`html[${hiddenAttribute}] &`]: { display: "none" } }}

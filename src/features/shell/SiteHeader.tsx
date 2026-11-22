@@ -17,7 +17,7 @@ export function SiteHeader(props: { siteName: string; pages: readonly NavPage[] 
     label: page.title,
   }));
   return (
-    <Box as="header" borderBottomWidth="1px">
+    <Box as="header" borderBottomWidth="1px" _print={{ display: "none" }}>
       <Container maxW="6xl" px="4">
         <Grid
           templateColumns={{ base: "minmax(0, 1fr) auto", md: "minmax(0, 1fr) auto auto" }}

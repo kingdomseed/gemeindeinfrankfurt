@@ -425,7 +425,7 @@ describe("importedAnnouncement", () => {
   const week = {
     importKey: "ankuendigungen-2026-11-16",
     publishedAt: "2026-11-16T00:00:00+01:00",
-    showUntil: "2026-11-22T00:00:00+01:00",
+    showUntil: "2026-11-22",
     de: {
       title: "Ankündigungen 16.–22. November",
       markdown: "[Anmeldung](https://us.list-manage.com/abc?e=abc123&c2id=xyz)",
@@ -434,12 +434,20 @@ describe("importedAnnouncement", () => {
       title: "Announcements 16–22 November",
       markdown: "Sign up: https://example.org/a?e=abc123",
     },
-    ru: { title: "Объявления 16–22 ноября", markdown: "Текст" },
+    ru: { title: "Объявления 16–22 ноября", markdown: "Ссылка: http://example.org/b?e=abc123" },
   };
   it("drops the subscriber id from every link in the text", () => {
     const parsed = importedAnnouncement.parse(week);
     expect(parsed.de.markdown).toBe("[Anmeldung](https://us.list-manage.com/abc?c2id=xyz)");
     expect(parsed.en.markdown).toBe("Sign up: https://example.org/a");
+    expect(parsed.ru.markdown).toBe("Ссылка: http://example.org/b");
+  });
+  it("keeps the last day in the shape the home page compares against", () => {
+    const parsed = importedAnnouncement.parse(week);
+    expect(parsed.showUntil).toBe("2026-11-22T00:00:00.000Z");
+    expect(
+      parsed.showUntil && parsed.showUntil >= earliestOpenEndDate(new Date("2026-11-22T22:30:00Z")),
+    ).toBe(true);
   });
   it("refuses a Zoom link", () => {
     const withZoom = {

@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 
 import { Link as LocaleLink } from "@/i18n/navigation";
 
-import { coordinatorSections, registrationsHref } from "./sections";
+import { sectionHref, registrationsHref } from "./sections";
 import type { Summary } from "./summary";
 
 type Item = { key: string; text: string; action: string; href: string };
@@ -44,7 +44,7 @@ export function NeedsAttention({ summary }: { summary: Summary }) {
           needed: s.needed,
         }),
         action: t("attention.updateOrder"),
-        href: coordinatorSections[2].href,
+        href: sectionHref("outlines"),
       })),
   ];
   return (

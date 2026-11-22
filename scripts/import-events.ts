@@ -60,14 +60,15 @@ async function add(event: ImportedEvent): Promise<void> {
       body: JSON.stringify({ ...shared, ...event.de, _status: "draft" }),
     }),
   );
-  await Promise.all(
-    (["en", "ru"] as const).map((locale) =>
-      call(`${api}/${doc.id}?locale=${locale}&draft=true`, {
-        method: "PATCH",
-        body: JSON.stringify({ ...event[locale], _status: "draft" }),
-      }),
-    ),
-  );
+  // One locale at a time: two draft saves at once each start from the same
+  // version, and the later one drops the other's text.
+  const translate = (locale: "en" | "ru") =>
+    call(`${api}/${doc.id}?locale=${locale}&draft=true`, {
+      method: "PATCH",
+      body: JSON.stringify({ ...event[locale], _status: "draft" }),
+    });
+  await translate("en");
+  await translate("ru");
 }
 
 const file = process.argv.at(-1);

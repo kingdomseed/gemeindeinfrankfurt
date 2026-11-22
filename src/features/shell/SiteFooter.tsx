@@ -32,7 +32,7 @@ export function SiteFooter(props: { settings: SiteSettings; pages: readonly NavP
     { href: "/training", label: t("training") },
   ];
   return (
-    <Box as="footer" bg="bg.subtle" borderTopWidth="1px">
+    <Box as="footer" bg="bg.subtle" borderTopWidth="1px" _print={{ display: "none" }}>
       <Container maxW="6xl" px="4" pt={{ base: "10", md: "12" }} pb="4">
         <Grid
           templateColumns={{

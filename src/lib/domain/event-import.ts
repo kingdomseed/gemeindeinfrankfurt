@@ -37,7 +37,7 @@ export const importedEvents = z.array(importedEvent);
 
 // Drops the subscriber id from every link in a piece of Markdown.
 export function textWithoutTracking(markdown: string): string {
-  return markdown.replace(/https:\/\/[^\s)\]>"]+/g, (link) =>
+  return markdown.replace(/https?:\/\/[^\s)\]>"]+/g, (link) =>
     URL.canParse(link) ? withoutTracking(link) : link,
   );
 }
@@ -60,7 +60,12 @@ const announcementText = z.object({
 export const importedAnnouncement = z.object({
   importKey: z.string().regex(/^[a-z0-9-]+$/),
   publishedAt: z.iso.datetime({ offset: true }),
-  showUntil: z.iso.datetime({ offset: true }).optional(),
+  // The last day it shows, as a date. Stored as midnight UTC of that day, the
+  // way the admin's day picker stores it and `earliestOpenEndDate` reads it.
+  showUntil: z.iso
+    .date()
+    .transform((day) => `${day}T00:00:00.000Z`)
+    .optional(),
   de: announcementText,
   en: announcementText,
   ru: announcementText,
