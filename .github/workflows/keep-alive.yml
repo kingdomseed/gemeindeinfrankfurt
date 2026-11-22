@@ -1,0 +1,20 @@
+name: Keep database awake
+
+# Supabase pauses a free project after a week without activity. Opening the
+# training page once a day reads both the CMS tables and the training data
+# through Supabase's API, which counts as activity.
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open the training page
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://gemeindeinfrankfurt.de' }}
+        run: curl --fail --silent --show-error --max-time 60 --output /dev/null "$SITE_URL/de/training"
