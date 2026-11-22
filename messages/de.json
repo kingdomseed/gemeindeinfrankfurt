@@ -296,7 +296,10 @@
       "overview": "Übersicht",
       "registrations": "Anmeldungen",
       "outlines": "Gliederungen",
-      "setup": "Einrichtung"
+      "setup": "Einrichtung",
+      "groups": "Gruppen",
+      "testing": "Prüfung",
+      "services": "Aufgaben"
     },
     "registrationOpen": "Anmeldung offen",
     "registrationClosed": "Anmeldung geschlossen",
@@ -414,7 +417,113 @@
       "inviteHelp": "Die Person bekommt eine E-Mail mit einem Link. Kein Passwort.",
       "invited": "Hinzugefügt. Ein Anmeldelink wurde gesendet.",
       "adminsOnly": "Nur Admins können Koordinatoren hinzufügen oder entfernen.",
-      "removeNote": "Wer entfernt wird, verliert den Zugang sofort. Die Änderungen dieser Person bleiben mit ihrem Namen im Verlauf."
+      "removeNote": "Wer entfernt wird, verliert den Zugang sofort. Die Änderungen dieser Person bleiben mit ihrem Namen im Verlauf.",
+      "av": "AV",
+      "joinAv": "Zu AV hinzufügen",
+      "leaveAv": "Aus AV entfernen",
+      "avChanged": "AV geändert."
+    },
+    "groups": {
+      "title": "Studiengruppen",
+      "summary": "{people, plural, one {# Person} other {# Personen}} in {groups, plural, one {# Gruppe} other {# Gruppen}} · {unassigned} ohne Gruppe",
+      "suggest": "Gruppen vorschlagen",
+      "suggestAgain": "Gruppen neu vorschlagen",
+      "suggestAgainTitle": "Gruppen neu bilden?",
+      "suggestAgainBody": "Die Gruppen werden ganz neu gebildet. Was von Hand verschoben wurde und die geplanten Prüfungen gehen verloren.",
+      "keepGroups": "Gruppen behalten",
+      "replaceGroups": "Neu bilden",
+      "nameTags": "Namensschilder",
+      "planTesting": "Prüfungen planen",
+      "howSuggested": "Vorgeschlagen nach Sprache der Studiengruppe, dann nach Ort, in Gruppen von 8 bis 10. Verschiebe jemanden mit dem Menü neben dem Namen. Deine Änderungen bleiben, wenn sich neue Personen anmelden; sie kommen in die kleinste Gruppe ihrer Sprache.",
+      "noGroups": "Noch keine Studiengruppen. Lass Gruppen vorschlagen: nach Sprache der Studiengruppe, dann nach Ort, in Gruppen von 8 bis 10. Danach kannst du jeden verschieben.",
+      "unassigned": "Ohne Gruppe",
+      "groupNumber": "Gruppe {number}",
+      "people": "{count}",
+      "move": "Verschieben",
+      "moveName": "{name} verschieben"
+    },
+    "nameTags": {
+      "title": "Namensschilder",
+      "lead": "{count, plural, one {# Namensschild} other {# Namensschilder}}, eines pro Platz",
+      "print": "Namensschilder drucken",
+      "howToPrint": "85 × 55 mm, zehn auf einer A4-Seite. Mit 100 % drucken (nicht an die Seite anpassen) und an den gestrichelten Linien schneiden. Ein geteilter Platz hat beide Namen auf einem Schild."
+    },
+    "testing": {
+      "title": "Prüfung",
+      "planned": "{count, plural, =0 {Keine Prüfung geplant} one {# Prüfung geplant} other {# Prüfungen geplant}}",
+      "print": "Plan drucken",
+      "lead": "Manche Botschaften beginnen mit einer Prüfung. Eine Studiengruppe wird aufgerufen und vor allen geprüft. Wähle die Gruppe für eine Botschaft oder lass „Keine Prüfung“ stehen. Du kannst es noch in letzter Minute ändern.",
+      "noGroups": "Bilde zuerst die Studiengruppen; dann wählst du hier für jede Botschaft eine Gruppe.",
+      "message": "Botschaft {number}",
+      "testBefore": "Prüfung vor Botschaft {number}",
+      "noTest": "Keine Prüfung"
+    },
+    "services": {
+      "title": "Aufgaben",
+      "lead": "Wer jede Aufgabe für dieses Training koordiniert.",
+      "listTitle": "Aufgaben und ihre Koordinatoren",
+      "kinds": {
+        "tech": {
+          "name": "Technik",
+          "what": "Webcast, Ton, Zoom"
+        },
+        "rules": {
+          "name": "Regeln",
+          "what": "Folien mit den Regeln vor jeder Botschaft"
+        },
+        "hymns": {
+          "name": "Lieder",
+          "what": "Liednummern pro Sprache"
+        },
+        "verses": {
+          "name": "Versen",
+          "what": "Folien mit den Versen"
+        },
+        "questions": {
+          "name": "Fragen",
+          "what": "Fragen für die Studiengruppen"
+        },
+        "attendance": {
+          "name": "Anwesenheit",
+          "what": "Eintragen während jeder Botschaft"
+        },
+        "payments": {
+          "name": "Zahlungen",
+          "what": "Eingegangene Spenden und Gliederungen eintragen"
+        },
+        "name_tags": {
+          "name": "Namensschilder",
+          "what": "Drucken und austeilen"
+        },
+        "groups": {
+          "name": "Gruppen",
+          "what": "Studiengruppen und Prüfungen"
+        }
+      },
+      "leadFor": "Koordinator für {service}",
+      "noOne": "Noch niemand",
+      "remove": "Entfernen",
+      "newService": "Neue Aufgabe",
+      "add": "Aufgabe hinzufügen",
+      "webcastTitle": "Zugang zum Webcast",
+      "avOnly": "Nur AV",
+      "webcastHelp": "Der Zugang, den Lebensstrom für die LSM-Website geschickt hat, auf der die Botschaften abgespielt werden. Er erscheint nie im Formular, in E-Mails oder in der WhatsApp-Gruppe.",
+      "website": "Website",
+      "userName": "Benutzername",
+      "password": "Passwort",
+      "hidden": "Verborgen",
+      "show": "Anzeigen",
+      "hide": "Verbergen",
+      "copy": "Kopieren",
+      "copied": "Kopiert",
+      "lastChanged": "Zuletzt geändert von {name}, {date}. Jedes Anzeigen des Passworts wird festgehalten.",
+      "updateLogin": "Zugang ändern",
+      "passwordKeep": "Leer lassen, um das jetzige Passwort zu behalten.",
+      "saveLogin": "Zugang speichern",
+      "cancel": "Abbrechen",
+      "loginSaved": "Zugang gespeichert.",
+      "notAv": "Nur Koordinatoren in AV (Technik) sehen den Zugang zum Webcast. Frag {names}, wenn du ihn während einer Botschaft brauchst.",
+      "notAvNobody": "Nur Koordinatoren in AV (Technik) sehen den Zugang zum Webcast. Ein Admin kann Koordinatoren auf der Seite Koordinatoren zu AV hinzufügen."
     }
   },
   "privacy": {

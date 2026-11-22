@@ -24,7 +24,7 @@ export function SiteHeader(props: {
     { href: "/training", label: t("training") },
   ];
   return (
-    <Box as="header" borderBottomWidth="1px">
+    <Box as="header" borderBottomWidth="1px" _print={{ display: "none" }}>
       <Container maxW="5xl" px="4" pt="4">
         <Flex wrap="wrap" align="flex-start" justify="space-between" columnGap="6" rowGap="1">
           <Stack gap="0" py="1">

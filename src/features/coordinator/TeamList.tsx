@@ -13,17 +13,18 @@ import type { FormState } from "./types";
 type Action = (prev: FormState, form: FormData) => Promise<FormState>;
 
 // Everyone who can sign in, with a fresh sign-in link for each and, for
-// admins, a way to take someone's access away.
+// admins, a way to put someone in AV or take their access away.
 export function TeamList(props: {
   members: readonly TeamMember[];
-  canRemove: boolean;
-  actions: { resend: Action; remove: Action };
+  canManage: boolean;
+  actions: { resend: Action; remove: Action; av: Action };
 }) {
   const t = useTranslations("coordinator.team");
   const format = useFormatter();
   const idle: FormState = { status: "idle" };
   const [sent, resend, sending] = useActionState(props.actions.resend, idle);
   const [removed, remove, removing] = useActionState(props.actions.remove, idle);
+  const [avChanged, changeAv, changingAv] = useActionState(props.actions.av, idle);
   return (
     <Stack as="section" aria-labelledby="team-heading" gap="3">
       <Text as="h2" id="team-heading" fontSize="xl" fontWeight="semibold">
@@ -56,6 +57,7 @@ export function TeamList(props: {
             </Box>
             <HStack gap="2" wrap="wrap">
               {m.isAdmin && <StatusTag tone="brand">{t("admin")}</StatusTag>}
+              {m.servesAv && <StatusTag tone="neutral">{t("av")}</StatusTag>}
               {m.lastSignInAt ? (
                 <Text fontSize="sm" color="fg.muted">
                   {t("lastSignIn", {
@@ -73,7 +75,23 @@ export function TeamList(props: {
                   {t("sendLink")}
                 </Button>
               </form>
-              {props.canRemove && !m.isYou && (
+              {props.canManage && (
+                <form action={changeAv}>
+                  <input type="hidden" name="user_id" value={m.userId} />
+                  <input type="hidden" name="serves_av" value={String(!m.servesAv)} />
+                  <Button
+                    type="submit"
+                    size="xs"
+                    variant="ghost"
+                    color="fg"
+                    disabled={changingAv}
+                    aria-label={`${m.servesAv ? t("leaveAv") : t("joinAv")}: ${m.name}`}
+                  >
+                    {m.servesAv ? t("leaveAv") : t("joinAv")}
+                  </Button>
+                </form>
+              )}
+              {props.canManage && !m.isYou && (
                 <form action={remove}>
                   <input type="hidden" name="user_id" value={m.userId} />
                   <Button
@@ -94,6 +112,7 @@ export function TeamList(props: {
       </List.Root>
       <FormResult state={sent} saved={t("linkSent")} />
       <FormResult state={removed} saved={t("removed")} />
+      <FormResult state={avChanged} saved={t("avChanged")} />
     </Stack>
   );
 }

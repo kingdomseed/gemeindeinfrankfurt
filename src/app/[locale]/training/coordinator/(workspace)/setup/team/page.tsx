@@ -4,14 +4,14 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Notice } from "@/components/ui/notice";
 import { PageHeading } from "@/components/ui/page-heading";
 import { AddCoordinatorForm } from "@/features/coordinator/AddCoordinatorForm";
-import { coordinatorSections } from "@/features/coordinator/sections";
+import { sectionHref } from "@/features/coordinator/sections";
 import { TeamList } from "@/features/coordinator/TeamList";
 import { requireLocale } from "@/i18n/locale";
 import { Link as LocaleLink, redirect } from "@/i18n/navigation";
 import { loadCoordination } from "@/lib/coordinator";
 import { isTeamAdmin, loadTeam } from "@/lib/team";
 
-import { inviteCoordinator, removeTeamMember, resendSignInLink } from "./actions";
+import { changeAvService, inviteCoordinator, removeTeamMember, resendSignInLink } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -40,14 +40,14 @@ export default async function TeamPage({ params }: Props) {
     <Stack gap="10">
       <Stack gap="2">
         <Link asChild fontSize="sm" color="fg" textDecoration="underline" alignSelf="flex-start">
-          <LocaleLink href={coordinatorSections[3].href}>{t("backToSetup")}</LocaleLink>
+          <LocaleLink href={sectionHref("setup")}>{t("backToSetup")}</LocaleLink>
         </Link>
         <PageHeading title={t("title")} subtitle={t("lead", { count: team.length })} />
       </Stack>
       <TeamList
         members={team}
-        canRemove={admin}
-        actions={{ resend: resendSignInLink, remove: removeTeamMember }}
+        canManage={admin}
+        actions={{ resend: resendSignInLink, remove: removeTeamMember, av: changeAvService }}
       />
       {admin ? (
         <AddCoordinatorForm action={inviteCoordinator} />

@@ -8,7 +8,7 @@ export function SiteFooter({ siteName }: { siteName: string }) {
   const tc = useTranslations("common");
   const year = useNow().getFullYear();
   return (
-    <Box as="footer" borderTopWidth="1px">
+    <Box as="footer" borderTopWidth="1px" _print={{ display: "none" }}>
       <Container maxW="5xl" px="4" py="6">
         <Flex wrap="wrap" columnGap="6" rowGap="1" fontSize="sm" color="fg.muted">
           <Text>{t("copyright", { year, siteName })}</Text>
