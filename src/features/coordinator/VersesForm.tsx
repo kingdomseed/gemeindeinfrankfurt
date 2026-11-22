@@ -33,6 +33,9 @@ export function VersesForm(props: {
     setRows([...rows, { key: nextKey.current, ref: "", text: {} }]);
     nextKey.current += 1;
   };
+  // Inputs follow `rows`, so what was typed stays after the form is sent.
+  const change = (key: number, update: (row: Row) => Row) =>
+    setRows((all) => all.map((r) => (r.key === key ? update(r) : r)));
   return (
     <chakra.form action={formAction} display="flex" flexDirection="column" gap="4">
       {rows.map((row, i) => (
@@ -41,13 +44,26 @@ export function VersesForm(props: {
             {t("verseNumber", { number: i + 1 })}
           </Fieldset.Legend>
           <FormField label={t("reference")}>
-            <Input name="ref" defaultValue={row.ref} required maxLength={100} />
+            <Input
+              name="ref"
+              value={row.ref}
+              onChange={(e) => {
+                const ref = e.currentTarget.value;
+                change(row.key, (r) => ({ ...r, ref }));
+              }}
+              required
+              maxLength={100}
+            />
           </FormField>
           {languages.map((l) => (
             <FormField key={l} label={tl(l)}>
               <Textarea
                 name={`text_${l}`}
-                defaultValue={row.text[l] ?? ""}
+                value={row.text[l] ?? ""}
+                onChange={(e) => {
+                  const value = e.currentTarget.value;
+                  change(row.key, (r) => ({ ...r, text: { ...r.text, [l]: value } }));
+                }}
                 rows={3}
                 maxLength={4000}
                 lang={l}

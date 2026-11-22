@@ -13,17 +13,19 @@ export function SlideShow(props: { slides: readonly Slide[]; footer: string }) {
   const [index, setIndex] = useState(0);
   const stage = useRef<HTMLDivElement>(null);
   const count = props.slides.length;
-  const slide = props.slides[Math.min(index, count - 1)];
+  // A live update can remove slides; the screen then stays on the last one.
+  const current = Math.max(0, Math.min(index, count - 1));
+  const slide = props.slides[current];
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
         e.preventDefault();
-        setIndex((i) => Math.min(i + 1, count - 1));
+        setIndex((i) => Math.max(0, Math.min(i + 1, count - 1)));
       }
       if (e.key === "ArrowLeft" || e.key === "PageUp") {
         e.preventDefault();
-        setIndex((i) => Math.max(i - 1, 0));
+        setIndex((i) => Math.max(Math.min(i, count - 1) - 1, 0));
       }
     };
     window.addEventListener("keydown", onKey);
@@ -82,22 +84,22 @@ export function SlideShow(props: { slides: readonly Slide[]; footer: string }) {
       <Flex justify="space-between" align="center" gap="4" wrap="wrap" borderTopWidth="1px" pt="3">
         <Text fontSize="sm" color="fg.muted">
           {props.footer}
-          {count > 0 && ` · ${index + 1} / ${count}`}
+          {count > 0 && ` · ${current + 1} / ${count}`}
         </Text>
         <HStack gap="2">
           <Button
             variant="ghost"
             color="fg.muted"
-            disabled={index === 0}
-            onClick={() => setIndex(index - 1)}
+            disabled={current === 0}
+            onClick={() => setIndex(current - 1)}
           >
             {t("previous")}
           </Button>
           <Button
             variant="ghost"
             color="fg.muted"
-            disabled={index >= count - 1}
-            onClick={() => setIndex(index + 1)}
+            disabled={current >= count - 1}
+            onClick={() => setIndex(current + 1)}
           >
             {t("next")}
           </Button>

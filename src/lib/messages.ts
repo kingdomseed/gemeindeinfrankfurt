@@ -51,24 +51,16 @@ export async function loadMessages(
   }));
 }
 
-// Replaces a message's hymns with these, in this order.
+// Replaces a message's hymns with these, in this order, all at once.
 export async function saveHymns(
   supabase: CoordinatorClient,
   sessionId: string,
   hymns: readonly Hymn[],
 ) {
-  const removed = await supabase.from("message_hymns").delete().eq("session_id", sessionId);
-  if (removed.error) throw removed.error;
-  if (hymns.length === 0) return;
-  const { error } = await supabase.from("message_hymns").insert(
-    hymns.map((h, i) => ({
-      session_id: sessionId,
-      position: i + 1,
-      number_en: h.en,
-      number_de: h.de,
-      number_ru: h.ru,
-    })),
-  );
+  const { error } = await supabase.rpc("replace_message_hymns", {
+    p_session: sessionId,
+    p_hymns: hymns.map((h) => ({ en: h.en, de: h.de, ru: h.ru })),
+  });
   if (error) throw error;
 }
 

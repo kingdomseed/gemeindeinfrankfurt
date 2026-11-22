@@ -727,6 +727,7 @@ export type Database = {
       };
       is_coordinator: { Args: Record<PropertyKey, never>; Returns: boolean };
       purge_personal_data: { Args: { p_training: string }; Returns: undefined };
+      replace_message_hymns: { Args: { p_hymns: Json; p_session: string }; Returns: undefined };
       replace_study_groups: { Args: { p_groups: Json; p_training: string }; Returns: undefined };
       serves_av: { Args: Record<PropertyKey, never>; Returns: boolean };
     };

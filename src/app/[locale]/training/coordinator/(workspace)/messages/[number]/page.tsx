@@ -1,19 +1,11 @@
-import { Box, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
-import { PageHeading } from "@/components/ui/page-heading";
 import { PageMessage } from "@/components/ui/page-message";
-import { HymnsForm } from "@/features/coordinator/HymnsForm";
-import { HymnTable } from "@/features/coordinator/HymnTable";
-import { MessageEditor } from "@/features/coordinator/MessageEditor";
-import { MessageList } from "@/features/coordinator/MessageList";
-import { screenHref } from "@/features/coordinator/sections";
-import { VerseList } from "@/features/coordinator/VerseList";
-import { VersesForm } from "@/features/coordinator/VersesForm";
+import { MessageWorkspace } from "@/features/coordinator/MessageWorkspace";
 import { requireLocale } from "@/i18n/locale";
-import { Link as LocaleLink, redirect } from "@/i18n/navigation";
+import { redirect } from "@/i18n/navigation";
 import { loadCoordination } from "@/lib/coordinator";
 import { messageReadiness } from "@/lib/domain/messages";
 import { berlinDay, berlinDayTime } from "@/lib/domain/sessions";
@@ -68,88 +60,23 @@ export default async function MessagePage({ params }: Props) {
   const when = berlinDayTime(new Date(message.startsAt), locale, th("lordsDay"));
 
   return (
-    <Stack gap="8">
-      <Flex justify="space-between" align="flex-end" gap="4" wrap="wrap">
-        <PageHeading title={t("title")} subtitle={t("lead")} />
-        <Button asChild>
-          <LocaleLink href={screenHref(message.messageNumber)}>{t("openOnScreen")}</LocaleLink>
-        </Button>
-      </Flex>
-      <Flex wrap="wrap" gap="8" align="flex-start">
-        <Box as="nav" aria-label={t("listLabel")} flex="1 1 13.75rem" maxW={{ md: "17.5rem" }}>
-          <MessageList
-            current={message.messageNumber}
-            messages={messages.map((m) => ({
-              number: m.messageNumber,
-              day: berlinDay(new Date(m.startsAt), locale, th("lordsDay")),
-              readiness: messageReadiness(m.hymns, m.verses),
-            }))}
-          />
-        </Box>
-        <Stack flex="999 1 35rem" minW="0" gap="10">
-          <Stack gap="1">
-            <Heading as="h2" size="xl">
-              {t("message", { number: message.messageNumber })}
-            </Heading>
-            <Text color="fg.muted" fontVariantNumeric="tabular-nums">
-              {testGroup ? t("whenWithTest", { when, group: testGroup.number }) : when}
-            </Text>
-          </Stack>
-          <MessageEditor
-            key={message.sessionId}
-            number={message.messageNumber}
-            read={
-              <Stack gap="10">
-                <Stack as="section" gap="3">
-                  <Heading as="h3" size="md">
-                    {t("hymns")}
-                  </Heading>
-                  <HymnTable hymns={message.hymns} />
-                </Stack>
-                <Stack as="section" gap="3">
-                  <Heading as="h3" size="md">
-                    {t("verses")}
-                  </Heading>
-                  <Text fontSize="sm" color="fg.muted">
-                    {t("versesHelp")}
-                  </Text>
-                  <VerseList verses={message.verses} />
-                  <Button asChild variant="ghost" color="fg" alignSelf="flex-start">
-                    <LocaleLink href={screenHref(message.messageNumber)}>
-                      {t("previewSlides")}
-                    </LocaleLink>
-                  </Button>
-                </Stack>
-              </Stack>
-            }
-            edit={
-              <Stack gap="10">
-                <Stack as="section" gap="3">
-                  <Heading as="h3" size="md">
-                    {t("hymns")}
-                  </Heading>
-                  <HymnsForm
-                    initialHymns={message.hymns}
-                    action={saveMessageHymns.bind(null, message.sessionId)}
-                  />
-                </Stack>
-                <Stack as="section" gap="3">
-                  <Heading as="h3" size="md">
-                    {t("verses")}
-                  </Heading>
-                  <Text fontSize="sm" color="fg.muted">
-                    {t("versesHelp")}
-                  </Text>
-                  <VersesForm
-                    initialVerses={message.verses}
-                    action={saveMessageVerses.bind(null, message.sessionId)}
-                  />
-                </Stack>
-              </Stack>
-            }
-          />
-        </Stack>
-      </Flex>
-    </Stack>
+    <MessageWorkspace
+      messages={messages.map((m) => ({
+        number: m.messageNumber,
+        day: berlinDay(new Date(m.startsAt), locale, th("lordsDay")),
+        readiness: messageReadiness(m.hymns, m.verses),
+      }))}
+      message={{
+        sessionId: message.sessionId,
+        number: message.messageNumber,
+        when: testGroup ? t("whenWithTest", { when, group: testGroup.number }) : when,
+        hymns: message.hymns,
+        verses: message.verses,
+      }}
+      actions={{
+        saveHymns: saveMessageHymns.bind(null, message.sessionId),
+        saveVerses: saveMessageVerses.bind(null, message.sessionId),
+      }}
+    />
   );
 }

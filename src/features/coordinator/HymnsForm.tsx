@@ -31,6 +31,9 @@ export function HymnsForm(props: {
     setRows([...rows, { key: nextKey.current, en: "", de: "", ru: "" }]);
     nextKey.current += 1;
   };
+  // Inputs follow `rows`, so what was typed stays after the form is sent.
+  const change = (key: number, field: "en" | "de" | "ru", value: string) =>
+    setRows((all) => all.map((r) => (r.key === key ? { ...r, [field]: value } : r)));
   const columns = { base: "2rem repeat(3, minmax(0, 1fr)) auto" };
   return (
     <chakra.form action={formAction} display="flex" flexDirection="column" gap="3">
@@ -46,7 +49,8 @@ export function HymnsForm(props: {
           <Text fontVariantNumeric="tabular-nums">{i + 1}</Text>
           <Input
             name="en"
-            defaultValue={row.en}
+            value={row.en}
+            onChange={(e) => change(row.key, "en", e.currentTarget.value)}
             inputMode="numeric"
             required
             maxLength={20}
@@ -54,14 +58,16 @@ export function HymnsForm(props: {
           />
           <Input
             name="de"
-            defaultValue={row.de ?? ""}
+            value={row.de ?? ""}
+            onChange={(e) => change(row.key, "de", e.currentTarget.value)}
             inputMode="numeric"
             maxLength={20}
             aria-label={t("hymnNumber", { number: i + 1, language: tl("de") })}
           />
           <Input
             name="ru"
-            defaultValue={row.ru ?? ""}
+            value={row.ru ?? ""}
+            onChange={(e) => change(row.key, "ru", e.currentTarget.value)}
             inputMode="numeric"
             maxLength={20}
             aria-label={t("hymnNumber", { number: i + 1, language: tl("ru") })}
