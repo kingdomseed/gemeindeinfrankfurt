@@ -30,7 +30,9 @@
     "allAnnouncements": "Alle Ankündigungen",
     "announcementsTitle": "Ankündigungen",
     "announcementsIntro": "Die wöchentlichen Ankündigungen der Gemeinde, die neuesten zuerst.",
-    "noAnnouncements": "Es gibt noch keine Ankündigungen."
+    "noAnnouncements": "Es gibt noch keine Ankündigungen.",
+    "meetingLinkHeading": "An den Versammlungen über Zoom teilnehmen",
+    "meetingLinkAction": "Zoom-Link öffnen"
   },
   "home": {
     "noTraining": "Die Anmeldung ist noch nicht geöffnet",

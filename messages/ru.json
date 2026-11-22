@@ -30,7 +30,9 @@
     "allAnnouncements": "Все объявления",
     "announcementsTitle": "Объявления",
     "announcementsIntro": "Еженедельные объявления церкви, сначала самые новые.",
-    "noAnnouncements": "Объявлений пока нет."
+    "noAnnouncements": "Объявлений пока нет.",
+    "meetingLinkHeading": "Участвовать в собраниях через Zoom",
+    "meetingLinkAction": "Открыть ссылку Zoom"
   },
   "home": {
     "noTraining": "Регистрация ещё не открыта",
