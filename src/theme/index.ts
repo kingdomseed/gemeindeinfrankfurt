@@ -6,8 +6,9 @@ import { tokens } from "./tokens";
 
 const config = defineConfig({
   globalCss: {
-    // Native controls and scrollbars follow the colour mode too.
-    html: { colorPalette: "brand", colorScheme: "light" },
+    // Native controls and scrollbars follow the colour mode too. The stable
+    // gutter keeps the centred layout still when a page is too short to scroll.
+    html: { colorPalette: "brand", colorScheme: "light", scrollbarGutter: "stable" },
     "html.dark": { colorScheme: "dark" },
     body: { accentColor: "brand.solid" },
     "::selection": { bg: "brand.subtle", color: "fg" },
