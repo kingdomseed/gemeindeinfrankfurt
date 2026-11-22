@@ -34,16 +34,17 @@ async function deliver(
   const t = await getTranslations("coordinator.emails");
   if (send.emails.length === 0) return { status: "error", message: t("nobody") };
   const { sent, error } = await sendBatch(send.emails);
-  // What went out is logged even when the rest failed, so the log stays true.
-  if (sent > 0) await recordSend(supabase, { ...send, count: sent });
-  refresh();
   if (error) {
+    // Nothing is logged yet: pressing send again resends only what is missing
+    // (the batches are idempotent), and that send logs the whole delivery once.
     console.error("Bulk email failed", error);
     return {
       status: "error",
       message: t("sendFailed", { sent, total: send.emails.length }),
     };
   }
+  await recordSend(supabase, { ...send, count: sent });
+  refresh();
   return { status: "saved", message: t("sentTo", { count: sent }) };
 }
 
