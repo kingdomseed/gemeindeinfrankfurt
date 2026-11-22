@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/browser";
 
 // Re-renders the page when another coordinator changes a registration, a
-// group, a test, a service lead, an attendance mark or a message's hymns and
-// verses. Tables that carry the training's id are filtered by it; the others
+// group, a test, a service lead, an attendance mark, a message's hymns and
+// verses, or the report and its costs. Tables that carry the training's id are filtered by it; the others
 // only point to such a row.
 export function LiveRefresh({ trainingId }: { trainingId: string }) {
   const router = useRouter();
@@ -28,6 +28,16 @@ export function LiveRefresh({ trainingId }: { trainingId: string }) {
         refresh,
       )
       .on("postgres_changes", { event: "*", schema: "public", table: "services", filter }, refresh)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "training_reports", filter },
+        refresh,
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "reimbursements", filter },
+        refresh,
+      )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "study_group_members" },

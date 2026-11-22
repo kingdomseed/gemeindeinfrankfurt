@@ -40,3 +40,13 @@ create function auth.jwt() returns jsonb
   as $$ select coalesce(nullif(current_setting('request.jwt.claims', true), ''), '{}')::jsonb $$;
 
 create publication supabase_realtime;
+
+-- Storage keeps its buckets in a table of its own schema.
+create schema storage;
+create table storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean default false,
+  file_size_limit bigint,
+  allowed_mime_types text[]
+);

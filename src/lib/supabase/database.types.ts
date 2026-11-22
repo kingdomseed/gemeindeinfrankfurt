@@ -418,6 +418,8 @@ export type Database = {
           created_at: string;
           description: string;
           id: string;
+          paid_by: string;
+          paid_on: string | null;
           receipt_path: string | null;
           training_id: string;
         };
@@ -427,6 +429,8 @@ export type Database = {
           created_at?: string;
           description: string;
           id?: string;
+          paid_by?: string;
+          paid_on?: string | null;
           receipt_path?: string | null;
           training_id: string;
         };
@@ -435,6 +439,8 @@ export type Database = {
           created_at?: string;
           description?: string;
           id?: string;
+          paid_by?: string;
+          paid_on?: string | null;
           receipt_path?: string | null;
           training_id?: string;
         };
@@ -631,6 +637,54 @@ export type Database = {
           },
         ];
       };
+      training_reports: {
+        Row: {
+          absences_limited: boolean | null;
+          first_day: string | null;
+          in_person: boolean | null;
+          last_day: string | null;
+          name_tags: boolean | null;
+          notes: string;
+          seats_assigned: boolean | null;
+          tested: boolean | null;
+          training_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          absences_limited?: boolean | null;
+          first_day?: string | null;
+          in_person?: boolean | null;
+          last_day?: string | null;
+          name_tags?: boolean | null;
+          notes?: string;
+          seats_assigned?: boolean | null;
+          tested?: boolean | null;
+          training_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          absences_limited?: boolean | null;
+          first_day?: string | null;
+          in_person?: boolean | null;
+          last_day?: string | null;
+          name_tags?: boolean | null;
+          notes?: string;
+          seats_assigned?: boolean | null;
+          tested?: boolean | null;
+          training_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "training_reports_training_id_fkey";
+            columns: ["training_id"];
+            isOneToOne: true;
+            referencedRelation: "trainings";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       trainings: {
         Row: {
           created_at: string;
@@ -642,7 +696,6 @@ export type Database = {
           payee_iban: string;
           payee_name: string;
           payment_reference: string;
-          report_notes: string;
           rules: NonNullable<Json>;
           slug: string;
           title: NonNullable<Json>;
@@ -660,7 +713,6 @@ export type Database = {
           payee_iban?: string;
           payee_name?: string;
           payment_reference?: string;
-          report_notes?: string;
           rules?: NonNullable<Json>;
           slug: string;
           title: NonNullable<Json>;
@@ -677,7 +729,6 @@ export type Database = {
           payee_iban?: string;
           payee_name?: string;
           payment_reference?: string;
-          report_notes?: string;
           rules?: NonNullable<Json>;
           slug?: string;
           title?: NonNullable<Json>;
