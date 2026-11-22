@@ -1,4 +1,3 @@
-import { MainColumn } from "@/features/shell/MainColumn";
 import { TrainingContacts } from "@/features/shell/TrainingContacts";
 import { siteContacts } from "@/lib/site";
 
@@ -8,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default function TrainingLayout({ children }: LayoutProps<"/[locale]/training">) {
   return (
     <>
-      <MainColumn>{children}</MainColumn>
+      {children}
       <TrainingContacts contacts={siteContacts()} />
     </>
   );

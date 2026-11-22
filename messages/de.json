@@ -199,12 +199,10 @@
     "name": "Name",
     "seat": "Platz",
     "languages": "Sprachen",
-    "outlineCounts": "Benötigte Gliederungen",
     "ordered": "Bestellt",
     "extra": "Zusätzlich",
     "signOut": "Abmelden",
     "emailLabel": "E-Mail",
-    "save": "Speichern",
     "shortBy": "{count} fehlen",
     "seatShort": {
       "full_time": "Vollzeit",
@@ -285,7 +283,69 @@
     "cancelYes": "Ja, Anmeldung stornieren",
     "cancelKeep": "Anmeldung behalten",
     "cancelledNotice": "Diese Anmeldung ist storniert.",
-    "notFound": "Anmeldung nicht gefunden"
+    "notFound": "Anmeldung nicht gefunden",
+    "nav": {
+      "label": "Seiten der Koordination",
+      "overview": "Übersicht",
+      "registrations": "Anmeldungen",
+      "outlines": "Gliederungen"
+    },
+    "registrationOpen": "Anmeldung offen",
+    "registrationClosed": "Anmeldung geschlossen",
+    "deadlinesTitle": "Fristen",
+    "deadline": {
+      "outlineOrder": "Gliederungen bei Lebensstrom bestellen",
+      "sessionsLock": "Erste Botschaft, Sitzungen fest",
+      "registrationCloses": "Anmeldeschluss",
+      "reportDue": "Fragebogen und Spenden fällig"
+    },
+    "daysLeft": "{count, plural, =0 {Heute} one {Noch # Tag} other {Noch # Tage}}",
+    "passed": "Vorbei",
+    "outlinesNeededCount": "{count, plural, one {# Gliederung benötigt} other {# Gliederungen benötigt}}",
+    "endOfFirstDay": "Ende des ersten Tages",
+    "reportAfterLast": "7 Tage nach der letzten Botschaft",
+    "seatsAndPayments": "Plätze und Zahlungen",
+    "seatCount": {
+      "full_time": "{count} Vollzeit",
+      "part_time": "{count} Teilzeit",
+      "shared": "{count} geteilt",
+      "anaheim": "{count} Live-Training"
+    },
+    "paidOf": "{paid} von {owed} bezahlt",
+    "waivedCount": "{count} erlassen",
+    "owesNothingCount": "{count} Live-Training ohne Spende",
+    "outlinesPaidOf": "{paid} von {owed} Gliederungen",
+    "registrationCount": "{count, plural, one {# Anmeldung} other {# Anmeldungen}}",
+    "attention": {
+      "title": "Zu erledigen",
+      "none": "Gerade ist nichts zu erledigen.",
+      "unpaid": "{count, plural, one {# Anmeldung noch nicht bezahlt} other {# Anmeldungen noch nicht bezahlt}}",
+      "duplicates": "{count} mögliche Doppelanmeldungen (gleicher Name und gleiche E-Mail)",
+      "outlinesShort": "Gliederungen {language}: {ordered} bestellt, {needed} benötigt",
+      "show": "Anzeigen",
+      "review": "Prüfen",
+      "updateOrder": "Bestellung ändern"
+    },
+    "latestChanges": "Letzte Änderungen",
+    "newRegistration": "Neue Anmeldung: {name}, {seat}",
+    "registrationsLead": "{seats, plural, one {# Platz} other {# Plätze}} · {people, plural, one {# Person} other {# Personen}}",
+    "locality": "Ort",
+    "possibleDuplicate": "Mögliche Doppelanmeldung",
+    "outlinesLead": "Gedruckte Gliederungen, je {price}, bestellt bei Lebensstrom.",
+    "orderDue": "Bestellung fällig",
+    "orderExtras": "Bestelle ein paar mehr für späte Anmeldungen.",
+    "neededAndOrdered": "Benötigt und bestellt",
+    "firstOutline": "Erste Gliederung",
+    "secondOutline": "Zweite Gliederung",
+    "total": "Gesamt",
+    "saveOrder": "Bestellung speichern",
+    "orderSaved": "Bestellung gespeichert.",
+    "howCountWorks": "So wird gezählt",
+    "countRule": {
+      "first": "Jede Anmeldung braucht eine Gliederung in ihrer Gliederungssprache. Ein geteilter Platz zählt einmal.",
+      "second": "Eine zweite Gliederung in einer anderen Sprache zählt in dieser Sprache.",
+      "excluded": "Stornierte Anmeldungen und Live-Training-Plätze werden nicht gezählt."
+    }
   },
   "privacy": {
     "title": "Datenschutzerklärung",

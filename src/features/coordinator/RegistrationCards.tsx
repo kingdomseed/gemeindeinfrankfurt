@@ -24,7 +24,13 @@ export function RegistrationCards({ rows }: { rows: readonly RegistrationRow[] }
         >
           <RegistrationName row={row} />
           <Text fontSize="sm" color="fg.muted">
-            {t(`seatShort.${row.registration.seat_type}`)} · {displayLanguages(row.registration)}
+            {[
+              t(`seatShort.${row.registration.seat_type}`),
+              row.registration.localities?.name,
+              displayLanguages(row.registration),
+            ]
+              .filter(Boolean)
+              .join(" · ")}
             {" · "}
             {t("toPay")}: {formatEuro(openCents(row.registration, row.fees), locale)}
           </Text>

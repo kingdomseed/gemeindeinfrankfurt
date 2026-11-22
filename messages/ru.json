@@ -199,12 +199,10 @@
     "name": "Имя",
     "seat": "Место",
     "languages": "Языки",
-    "outlineCounts": "Нужно конспектов",
     "ordered": "Заказано",
     "extra": "Запас",
     "signOut": "Выйти",
     "emailLabel": "Эл. почта",
-    "save": "Сохранить",
     "shortBy": "не хватает: {count}",
     "seatShort": {
       "full_time": "Полное",
@@ -285,7 +283,69 @@
     "cancelYes": "Да, отменить регистрацию",
     "cancelKeep": "Оставить регистрацию",
     "cancelledNotice": "Эта регистрация отменена.",
-    "notFound": "Регистрация не найдена"
+    "notFound": "Регистрация не найдена",
+    "nav": {
+      "label": "Разделы координации",
+      "overview": "Обзор",
+      "registrations": "Регистрации",
+      "outlines": "Конспекты"
+    },
+    "registrationOpen": "регистрация открыта",
+    "registrationClosed": "регистрация закрыта",
+    "deadlinesTitle": "Сроки",
+    "deadline": {
+      "outlineOrder": "Заказ конспектов в Lebensstrom",
+      "sessionsLock": "Первое послание, выбор сессий закрыт",
+      "registrationCloses": "Конец регистрации",
+      "reportDue": "Анкета и пожертвования"
+    },
+    "daysLeft": "{count, plural, =0 {Сегодня} one {Остался # день} few {Осталось # дня} many {Осталось # дней} other {Осталось # дня}}",
+    "passed": "Прошло",
+    "outlinesNeededCount": "{count, plural, one {Нужен # конспект} few {Нужно # конспекта} many {Нужно # конспектов} other {Нужно # конспекта}}",
+    "endOfFirstDay": "Конец первого дня",
+    "reportAfterLast": "Через 7 дней после последнего послания",
+    "seatsAndPayments": "Места и оплата",
+    "seatCount": {
+      "full_time": "полный: {count}",
+      "part_time": "частичный: {count}",
+      "shared": "общий: {count}",
+      "anaheim": "живой тренинг: {count}"
+    },
+    "paidOf": "оплачено {paid} из {owed}",
+    "waivedCount": "освобождено: {count}",
+    "owesNothingCount": "живой тренинг без пожертвования: {count}",
+    "outlinesPaidOf": "{paid} из {owed} конспектов",
+    "registrationCount": "{count, plural, one {# регистрация} few {# регистрации} many {# регистраций} other {# регистрации}}",
+    "attention": {
+      "title": "Требует внимания",
+      "none": "Сейчас ничего не требует внимания.",
+      "unpaid": "{count, plural, one {# регистрация ещё не оплачена} few {# регистрации ещё не оплачены} many {# регистраций ещё не оплачены} other {# регистрации ещё не оплачены}}",
+      "duplicates": "Возможных повторов: {count} (то же имя и e-mail)",
+      "outlinesShort": "Конспекты, {language}: заказано {ordered}, нужно {needed}",
+      "show": "Показать",
+      "review": "Проверить",
+      "updateOrder": "Изменить заказ"
+    },
+    "latestChanges": "Последние изменения",
+    "newRegistration": "Новая регистрация: {name}, {seat}",
+    "registrationsLead": "Мест: {seats} · человек: {people}",
+    "locality": "Город",
+    "possibleDuplicate": "Возможный повтор",
+    "outlinesLead": "Печатные конспекты, {price} за штуку, заказываются в Lebensstrom.",
+    "orderDue": "Срок заказа",
+    "orderExtras": "Закажите несколько лишних для поздних регистраций.",
+    "neededAndOrdered": "Нужно и заказано",
+    "firstOutline": "Первый конспект",
+    "secondOutline": "Второй конспект",
+    "total": "Итого",
+    "saveOrder": "Сохранить заказ",
+    "orderSaved": "Заказ сохранён.",
+    "howCountWorks": "Как считается",
+    "countRule": {
+      "first": "Каждой регистрации нужен один конспект на языке конспекта. Общее место считается один раз.",
+      "second": "Второй конспект на другом языке считается в этом языке.",
+      "excluded": "Отменённые регистрации и места живого тренинга не считаются."
+    }
   },
   "privacy": {
     "title": "Политика конфиденциальности",

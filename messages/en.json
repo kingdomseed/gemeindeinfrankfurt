@@ -199,12 +199,10 @@
     "name": "Name",
     "seat": "Seat",
     "languages": "Languages",
-    "outlineCounts": "Outlines needed",
     "ordered": "Ordered",
     "extra": "Extra",
     "signOut": "Sign out",
     "emailLabel": "Email",
-    "save": "Save",
     "shortBy": "{count} missing",
     "seatShort": {
       "full_time": "Full-time",
@@ -285,7 +283,69 @@
     "cancelYes": "Yes, cancel registration",
     "cancelKeep": "Keep the registration",
     "cancelledNotice": "This registration is cancelled.",
-    "notFound": "Registration not found"
+    "notFound": "Registration not found",
+    "nav": {
+      "label": "Coordination pages",
+      "overview": "Overview",
+      "registrations": "Registrations",
+      "outlines": "Outlines"
+    },
+    "registrationOpen": "registration open",
+    "registrationClosed": "registration closed",
+    "deadlinesTitle": "Deadlines",
+    "deadline": {
+      "outlineOrder": "Outline order to Lebensstrom",
+      "sessionsLock": "First message, sessions lock",
+      "registrationCloses": "Registration closes",
+      "reportDue": "Questionnaire and fees due"
+    },
+    "daysLeft": "{count, plural, =0 {Today} one {# day left} other {# days left}}",
+    "passed": "Passed",
+    "outlinesNeededCount": "{count, plural, one {# outline needed} other {# outlines needed}}",
+    "endOfFirstDay": "End of the first day",
+    "reportAfterLast": "7 days after the last message",
+    "seatsAndPayments": "Seats and payments",
+    "seatCount": {
+      "full_time": "{count} full-time",
+      "part_time": "{count} part-time",
+      "shared": "{count} shared",
+      "anaheim": "{count} live training"
+    },
+    "paidOf": "{paid} of {owed} paid",
+    "waivedCount": "{count} waived",
+    "owesNothingCount": "{count} live training owe nothing",
+    "outlinesPaidOf": "{paid} of {owed} outlines",
+    "registrationCount": "{count, plural, one {# registration} other {# registrations}}",
+    "attention": {
+      "title": "Needs attention",
+      "none": "Nothing needs attention right now.",
+      "unpaid": "{count, plural, one {# registration still unpaid} other {# registrations still unpaid}}",
+      "duplicates": "{count} possible duplicates (same name and email)",
+      "outlinesShort": "{language} outlines: ordered {ordered}, need {needed}",
+      "show": "Show",
+      "review": "Review",
+      "updateOrder": "Update order"
+    },
+    "latestChanges": "Latest changes",
+    "newRegistration": "New registration: {name}, {seat}",
+    "registrationsLead": "{seats, plural, one {# seat} other {# seats}} · {people, plural, one {# person} other {# people}}",
+    "locality": "Locality",
+    "possibleDuplicate": "Possible duplicate",
+    "outlinesLead": "Printed outlines, {price} each, ordered from Lebensstrom.",
+    "orderDue": "Order due",
+    "orderExtras": "Order a few extras for late sign-ups.",
+    "neededAndOrdered": "Needed and ordered",
+    "firstOutline": "First outline",
+    "secondOutline": "Second outline",
+    "total": "Total",
+    "saveOrder": "Save order",
+    "orderSaved": "Order saved.",
+    "howCountWorks": "How the count works",
+    "countRule": {
+      "first": "Every registration needs one outline in its outline language. A shared seat counts once.",
+      "second": "A second outline in another language counts in that language.",
+      "excluded": "Cancelled registrations and live-training seats are not counted."
+    }
   },
   "privacy": {
     "title": "Privacy notice",
