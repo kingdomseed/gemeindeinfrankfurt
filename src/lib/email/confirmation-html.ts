@@ -10,9 +10,9 @@ const c = {
   ink: tokens.colors.ink.light.value,
   muted: tokens.colors.muted.light.value,
   line: tokens.colors.line.strongLight.value,
-  brand: tokens.colors.teal.light.value,
-  brandInk: tokens.colors.teal.inkLight.value,
-  brandSoft: tokens.colors.teal.softLight.value,
+  brand: tokens.colors.bronze.light.value,
+  brandInk: tokens.colors.bronze.inkLight.value,
+  brandSoft: tokens.colors.bronze.softLight.value,
 };
 // Single quotes, because the font list sits inside a style="…" attribute.
 const font = tokens.fonts.body.value.replaceAll('"', "'");

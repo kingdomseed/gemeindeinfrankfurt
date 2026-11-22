@@ -13,7 +13,7 @@ export const semanticTokens = defineSemanticTokens({
     bg: {
       DEFAULT: mode("paper.light", "paper.dark"),
       subtle: mode("surface.light", "surface.dark"),
-      muted: mode("surface.light", "surface.dark"),
+      muted: mode("surface.deepLight", "surface.deepDark"),
       panel: mode("paper.light", "paper.dark"),
       success: mode("status.successBgLight", "status.successBgDark"),
       warning: mode("status.warningBgLight", "status.warningBgDark"),
@@ -33,14 +33,14 @@ export const semanticTokens = defineSemanticTokens({
     },
     // A full colour palette, so `colorPalette="brand"` works on any component.
     brand: {
-      solid: mode("teal.light", "teal.dark"),
-      emphasized: mode("teal.lightHover", "teal.darkHover"),
-      contrast: mode("teal.inkLight", "teal.inkDark"),
-      fg: mode("teal.light", "teal.dark"),
-      muted: mode("teal.softLight", "teal.softDark"),
-      subtle: mode("teal.softLight", "teal.softDark"),
-      focusRing: mode("teal.light", "teal.dark"),
-      border: mode("teal.light", "teal.dark"),
+      solid: mode("bronze.light", "bronze.dark"),
+      emphasized: mode("bronze.lightHover", "bronze.darkHover"),
+      contrast: mode("bronze.inkLight", "bronze.inkDark"),
+      fg: mode("bronze.light", "bronze.dark"),
+      muted: mode("bronze.softLight", "bronze.softDark"),
+      subtle: mode("bronze.softLight", "bronze.softDark"),
+      focusRing: mode("bronze.light", "bronze.dark"),
+      border: mode("bronze.light", "bronze.dark"),
     },
     // For the one final, destructive step of a flow ("Yes, cancel
     // registration"). Text on the solid fill is the page colour: 6.3:1 light,

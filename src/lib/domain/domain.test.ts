@@ -8,7 +8,15 @@ import { computeFees } from "./fees";
 import { buildCalendar } from "./ics";
 import { openStreetMapUrl } from "./maps";
 import { countOutlines } from "./outlines";
-import { berlinDay, berlinDayTime, scheduleDays, sessionLabel, trainingDates } from "./sessions";
+import {
+  berlinDate,
+  berlinDay,
+  berlinDayTime,
+  scheduleDays,
+  sessionLabel,
+  trainingDates,
+  trainingDateSpan,
+} from "./sessions";
 import { sitemapEntries } from "./sitemap";
 import { hashToken, newEditToken } from "./token";
 import { picksSessions, seatTypes } from "./types";
@@ -211,6 +219,30 @@ describe("trainingDates", () => {
 
   it("is empty without sessions", () => {
     expect(trainingDates([], "en", "Lord's Day")).toBeNull();
+  });
+});
+
+describe("berlinDate", () => {
+  it("names the Frankfurt calendar day without the weekday", () => {
+    const lateEvening = new Date("2027-01-12T22:59:59Z");
+    expect(berlinDate(lateEvening, "en-GB")).toBe("12 January");
+    expect(berlinDate(lateEvening, "ru")).toBe("12 января");
+  });
+});
+
+describe("trainingDateSpan", () => {
+  const sessions = [
+    sessionAt("b", 12, "2027-01-24T14:00:00Z"),
+    sessionAt("a", 1, "2027-01-12T18:00:00Z"),
+  ];
+
+  it("spans the first to the last message day without weekdays", () => {
+    expect(trainingDateSpan(sessions, "en-GB")).toMatch(/^12\s?–\s?24 January 2027$/);
+    expect(trainingDateSpan(sessions, "de")).toMatch(/^12\.\s?–\s?24\. Januar 2027$/);
+  });
+
+  it("is empty without sessions", () => {
+    expect(trainingDateSpan([], "de")).toBeNull();
   });
 });
 

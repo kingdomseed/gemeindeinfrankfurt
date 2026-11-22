@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Link, Stack, Text } from "@chakra-ui/react";
+import { Box, Container, Grid, Link } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 
 import { Link as LocaleLink } from "@/i18n/navigation";
@@ -7,49 +7,43 @@ import type { NavPage } from "@/lib/cms";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SiteNav } from "./SiteNav";
 
-// Site name and tagline, the language switcher, and the main menu: the CMS
-// pages in menu order, then the video training.
-export function SiteHeader(props: {
-  siteName: string;
-  tagline: string;
-  pages: readonly NavPage[];
-}) {
+// Site name, the main menu (the CMS pages in menu order) and the language
+// switcher in one row. On phones the menu takes its own row under them.
+export function SiteHeader(props: { siteName: string; pages: readonly NavPage[] }) {
   const t = useTranslations("site");
   const tc = useTranslations("common");
-  const items = [
-    ...props.pages.map((page) => ({
-      href: page.isHome ? "/" : `/${page.slug}`,
-      label: page.title,
-    })),
-    { href: "/training", label: t("training") },
-  ];
+  const items = props.pages.map((page) => ({
+    href: page.isHome ? "/" : `/${page.slug}`,
+    label: page.title,
+  }));
   return (
     <Box as="header" borderBottomWidth="1px">
-      <Container maxW="5xl" px="4" pt="4">
-        <Flex wrap="wrap" align="flex-start" justify="space-between" columnGap="6" rowGap="1">
-          <Stack gap="0" py="1">
-            <Link
-              asChild
-              fontSize={{ base: "xl", md: "2xl" }}
-              fontWeight="semibold"
-              color="fg"
-              textDecoration="none"
-              letterSpacing="tight"
-            >
-              <LocaleLink href="/">{props.siteName}</LocaleLink>
-            </Link>
-            {props.tagline && (
-              <Text fontSize="sm" color="fg.muted">
-                {props.tagline}
-              </Text>
-            )}
-          </Stack>
-          {/* On phones the switcher wraps under the site name; line its first link up with it. */}
-          <Box ms={{ base: "-2", sm: "0" }}>
-            <LanguageSwitcher label={tc("languageNav")} />
-          </Box>
-        </Flex>
-        <SiteNav label={t("mainNav")} items={items} />
+      <Container maxW="6xl" px="4">
+        <Grid
+          templateColumns={{ base: "minmax(0, 1fr) auto", md: "minmax(0, 1fr) auto auto" }}
+          templateAreas={{ base: `"brand lang" "nav nav"`, md: `"brand nav lang"` }}
+          alignItems="center"
+          columnGap={{ base: "2", md: "5" }}
+          minH={{ md: "16" }}
+          pt={{ base: "2.5", md: "2" }}
+          pb={{ md: "2" }}
+        >
+          <Link
+            asChild
+            gridArea="brand"
+            justifySelf="start"
+            minH="11"
+            fontFamily="heading"
+            fontSize={{ base: "lg", md: "xl" }}
+            lineHeight="1.25"
+            color="fg"
+            textDecoration="none"
+          >
+            <LocaleLink href="/">{props.siteName}</LocaleLink>
+          </Link>
+          <SiteNav label={t("mainNav")} items={items} />
+          <LanguageSwitcher label={tc("languageNav")} />
+        </Grid>
       </Container>
     </Box>
   );

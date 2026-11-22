@@ -26,7 +26,13 @@
     "noEvents": "No events are announced at the moment.",
     "eventsTitle": "Events",
     "eventsIntro": "Conferences, special meetings and changes to the weekly schedule, as given in the church's announcements.",
-    "eventLink": "More information"
+    "eventLink": "More information",
+    "welcome": "Welcome to the church in Frankfurt",
+    "skipToContent": "Skip to content",
+    "footerPages": "Pages",
+    "registrationOpen": "Registration open until {day}",
+    "registerNow": "Register",
+    "dismissBanner": "Dismiss"
   },
   "home": {
     "noTraining": "Registration is not open yet",
