@@ -10,6 +10,7 @@ import { cmsCacheTag } from "@/cms/revalidate";
 import { locales, type Locale } from "@/i18n/routing";
 import { earliestOpenEndDate } from "@/lib/domain/announcements";
 import { startOfBerlinToday } from "@/lib/domain/events";
+import { firstParagraph } from "@/lib/domain/rich-text";
 import type { SitemapPage } from "@/lib/domain/sitemap";
 
 // Public pages and site settings from Payload, read through its Local API.
@@ -31,6 +32,15 @@ export type PageContent = {
   body: RichTextContent | null;
   blocks: PageBlock[];
   pageHrefs: Record<string, string>;
+};
+
+// What the homepage shows of another page: its opening paragraph, or its
+// statements when it has them.
+export type PageTeaser = {
+  href: string;
+  title: string;
+  excerpt: string;
+  statements: { id: string; heading: string; text: string; references: string }[];
 };
 
 export type Announcement = {
@@ -393,6 +403,24 @@ export async function getPageContent(id: number | string, locale: Locale): Promi
     blocks,
     pageHrefs: await getPageHrefs(locale),
   };
+}
+
+// Every page but the home page, in menu order, as the homepage presents it.
+export async function getPageTeasers(locale: Locale): Promise<PageTeaser[]> {
+  const pages = (await loadPages()).filter((page) => page.isHome !== true);
+  return Promise.all(
+    pages.map(async (page): Promise<PageTeaser> => {
+      const content = await getPageContent(page.id, locale);
+      const text = content.blocks.find((block) => block.type === "text");
+      const statements = content.blocks.find((block) => block.type === "statements");
+      return {
+        href: `/${inLocale(page.slug, locale)}`,
+        title: content.title,
+        excerpt: firstParagraph(text?.content ?? content.body),
+        statements: statements?.items ?? [],
+      };
+    }),
+  );
 }
 
 // Maps each page id to its address in this language, for links inside rich text.

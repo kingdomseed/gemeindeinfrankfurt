@@ -40,7 +40,13 @@
     "announcementsIntro": "The church's weekly announcements, newest first.",
     "noAnnouncements": "There are no announcements yet.",
     "meetingLinkHeading": "Join the meetings on Zoom",
-    "meetingLinkAction": "Open the Zoom link"
+    "meetingLinkAction": "Open the Zoom link",
+    "members": "Members",
+    "menu": "Menu",
+    "closeMenu": "Close",
+    "visitUs": "Visit us",
+    "readMore": "Read more",
+    "writeToUs": "Write to us"
   },
   "home": {
     "noTraining": "Registration is not open yet",

@@ -16,20 +16,20 @@ const linkStyle = {
   _hover: { color: "fg", textDecorationColor: "currentColor" },
 } as const;
 
-// The site's name and verse, where and how to reach the church, every page
-// (also those not in the main menu), and the legal links.
+// The site's name and verse, where and how to reach the church, the pages
+// for visitors and for members, and the legal links.
 export function SiteFooter(props: { settings: SiteSettings; pages: readonly NavPage[] }) {
   const t = useTranslations("site");
   const tc = useTranslations("common");
   const year = useNow().getFullYear();
   const { settings } = props;
-  const pages = [
-    ...props.pages.map((page) => ({
-      href: page.isHome ? "/" : `/${page.slug}`,
-      label: page.title,
-    })),
-    { href: "/events", label: t("eventsTitle") },
+  const pages = props.pages.map((page) => ({
+    href: page.isHome ? "/" : `/${page.slug}`,
+    label: page.title,
+  }));
+  const members = [
     { href: "/announcements", label: t("announcementsTitle") },
+    { href: "/events", label: t("eventsTitle") },
     { href: "/training", label: t("training") },
   ];
   return (
@@ -39,7 +39,7 @@ export function SiteFooter(props: { settings: SiteSettings; pages: readonly NavP
           templateColumns={{
             base: "1fr",
             sm: "repeat(2, minmax(0, 1fr))",
-            lg: "1.4fr 1fr 1fr 1fr",
+            lg: "1.3fr repeat(4, minmax(0, 1fr))",
           }}
           columnGap="10"
           rowGap="8"
@@ -76,20 +76,8 @@ export function SiteFooter(props: { settings: SiteSettings; pages: readonly NavP
               </Link>
             )}
           </Stack>
-          <Box as="nav" aria-labelledby="footer-pages">
-            <Heading as="h2" id="footer-pages" size="sm" fontFamily="body" mb="1">
-              {t("footerPages")}
-            </Heading>
-            <List.Root listStyle="none" gap="0">
-              {pages.map((page) => (
-                <List.Item key={page.href}>
-                  <Link asChild {...linkStyle} textDecoration="none">
-                    <LocaleLink href={page.href}>{page.label}</LocaleLink>
-                  </Link>
-                </List.Item>
-              ))}
-            </List.Root>
-          </Box>
+          <FooterLinks id="footer-pages" heading={t("footerPages")} links={pages} />
+          <FooterLinks id="footer-members" heading={t("members")} links={members} />
         </Grid>
         <Flex
           wrap="wrap"
@@ -113,6 +101,29 @@ export function SiteFooter(props: { settings: SiteSettings; pages: readonly NavP
           <ColorModeButton toDark={tc("darkMode")} toLight={tc("lightMode")} />
         </Flex>
       </Container>
+    </Box>
+  );
+}
+
+function FooterLinks(props: {
+  id: string;
+  heading: string;
+  links: readonly { href: string; label: string }[];
+}) {
+  return (
+    <Box as="nav" aria-labelledby={props.id}>
+      <Heading as="h2" id={props.id} size="sm" fontFamily="body" mb="1">
+        {props.heading}
+      </Heading>
+      <List.Root listStyle="none" gap="0">
+        {props.links.map((link) => (
+          <List.Item key={link.href}>
+            <Link asChild {...linkStyle} textDecoration="none">
+              <LocaleLink href={link.href}>{link.label}</LocaleLink>
+            </Link>
+          </List.Item>
+        ))}
+      </List.Root>
     </Box>
   );
 }

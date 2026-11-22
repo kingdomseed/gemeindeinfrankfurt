@@ -14,16 +14,7 @@ export function LanguageSwitcher({ label }: { label: string }) {
   const current = useLocale();
   const pathname = usePathname();
   return (
-    <HStack
-      as="nav"
-      aria-label={label}
-      gridArea="lang"
-      gap="0"
-      me={{ base: "-2", md: "-3" }}
-      ps={{ md: "3" }}
-      borderStartWidth={{ md: "1px" }}
-      fontSize="sm"
-    >
+    <HStack as="nav" aria-label={label} gap="0" me={{ md: "-3" }} fontSize="sm">
       {locales.map((l) => {
         const active = l === current;
         return (

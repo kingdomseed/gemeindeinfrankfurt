@@ -1,14 +1,14 @@
-import { Box, Container, Grid, Link } from "@chakra-ui/react";
+import { Box, Container, Link } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 
 import { Link as LocaleLink } from "@/i18n/navigation";
 import type { NavPage } from "@/lib/cms";
 
+import { HeaderMenu } from "./HeaderMenu";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { MainMenu } from "./MainMenu";
 
-// Site name, the main menu (the CMS pages in menu order) and the language
-// switcher in one row. On phones the menu takes its own row under them.
+// A bronze rule on top, the site name, and the menu: the CMS pages for
+// visitors, then "Mitglieder" with the pages for members of the church.
 export function SiteHeader(props: { siteName: string; pages: readonly NavPage[] }) {
   const t = useTranslations("site");
   const tc = useTranslations("common");
@@ -16,34 +16,47 @@ export function SiteHeader(props: { siteName: string; pages: readonly NavPage[] 
     href: page.isHome ? "/" : `/${page.slug}`,
     label: page.title,
   }));
+  const members = [
+    { href: "/announcements", label: t("announcementsTitle") },
+    { href: "/events", label: t("eventsTitle") },
+    { href: "/training", label: t("training") },
+  ];
   return (
-    <Box as="header" borderBottomWidth="1px" _print={{ display: "none" }}>
+    <Box
+      as="header"
+      bg="bg"
+      borderTopWidth="6px"
+      borderTopColor="brand.solid"
+      borderBottomWidth="1px"
+      _print={{ display: "none" }}
+    >
       <Container maxW="6xl" px="4">
-        <Grid
-          templateColumns={{ base: "minmax(0, 1fr) auto", md: "minmax(0, 1fr) auto auto" }}
-          templateAreas={{ base: `"brand lang" "nav nav"`, md: `"brand nav lang"` }}
-          alignItems="center"
-          columnGap={{ base: "2", md: "5" }}
-          minH={{ md: "16" }}
-          pt={{ base: "2.5", md: "2" }}
-          pb={{ md: "2" }}
-        >
-          <Link
-            asChild
-            gridArea="brand"
-            justifySelf="start"
-            minH="11"
-            fontFamily="heading"
-            fontSize={{ base: "lg", md: "xl" }}
-            lineHeight="1.25"
-            color="fg"
-            textDecoration="none"
-          >
-            <LocaleLink href="/">{props.siteName}</LocaleLink>
-          </Link>
-          <MainMenu label={t("mainNav")} items={items} />
-          <LanguageSwitcher label={tc("languageNav")} />
-        </Grid>
+        <HeaderMenu
+          brand={
+            <Link
+              asChild
+              minH="11"
+              minW="0"
+              fontFamily="heading"
+              fontSize={{ base: "lg", sm: "xl", md: "2xl" }}
+              lineHeight="1.2"
+              color="fg"
+              textDecoration="none"
+              _hover={{ color: "fg" }}
+            >
+              <LocaleLink href="/">{props.siteName}</LocaleLink>
+            </Link>
+          }
+          languages={<LanguageSwitcher label={tc("languageNav")} />}
+          items={items}
+          members={members}
+          labels={{
+            nav: t("mainNav"),
+            menu: t("menu"),
+            close: t("closeMenu"),
+            members: t("members"),
+          }}
+        />
       </Container>
     </Box>
   );

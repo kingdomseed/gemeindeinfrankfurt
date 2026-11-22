@@ -9,6 +9,12 @@ import { buildCalendar } from "./ics";
 import { openStreetMapUrl } from "./maps";
 import { countOutlines } from "./outlines";
 import {
+  firstParagraph,
+  fromCapitals,
+  splitFirstSentence,
+  withoutFirstParagraph,
+} from "./rich-text";
+import {
   berlinDate,
   berlinDay,
   berlinDayTime,
@@ -455,5 +461,54 @@ describe("importedAnnouncement", () => {
       ru: { title: "Объявления", markdown: "https://us02web.zoom.us/j/1" },
     };
     expect(importedAnnouncement.safeParse(withZoom).success).toBe(false);
+  });
+});
+
+function paragraph(text: string) {
+  return { type: "paragraph", children: [{ type: "text", text }] };
+}
+
+describe("rich text excerpts", () => {
+  const state = {
+    root: {
+      type: "root",
+      children: [
+        { type: "heading", children: [{ type: "text", text: "Title" }] },
+        paragraph(""),
+        paragraph("First one. Second one."),
+        { type: "horizontalrule" },
+        paragraph("Later."),
+      ],
+    },
+  };
+
+  it("finds the first non-empty paragraph", () => {
+    expect(firstParagraph(state)).toBe("First one. Second one.");
+    expect(firstParagraph({ root: { children: [] } })).toBe("");
+    expect(firstParagraph(null)).toBe("");
+  });
+
+  it("drops the first paragraph and keeps the rest", () => {
+    const rest = withoutFirstParagraph(state);
+    expect(firstParagraph(rest)).toBe("Later.");
+    const onlyOne = { root: { children: [paragraph("Only."), { type: "horizontalrule" }] } };
+    expect(withoutFirstParagraph(onlyOne)).toBeNull();
+  });
+
+  it("splits text after its first sentence", () => {
+    expect(splitFirstSentence("Not our name – our description. As such it includes.")).toEqual({
+      head: "Not our name – our description.",
+      rest: "As such it includes.",
+    });
+    expect(splitFirstSentence("One sentence only.")).toEqual({
+      head: "One sentence only.",
+      rest: "",
+    });
+  });
+
+  it("turns a heading in capitals into normal case", () => {
+    expect(fromCapitals("DIE BIBEL", true)).toBe("Die Bibel");
+    expect(fromCapitals("THE TRIUNE GOD", true)).toBe("The Triune God");
+    expect(fromCapitals("БИБЛИЯ И ВЕРА", false)).toBe("Библия и вера");
   });
 });
