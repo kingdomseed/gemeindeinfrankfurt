@@ -10,7 +10,9 @@
     "imprint": "Impressum",
     "languageNav": "Sprache",
     "timezone": "Alle Zeiten sind Frankfurter Zeit (MEZ).",
-    "questions": "Fragen?"
+    "questions": "Fragen?",
+    "darkMode": "Dunkles Design",
+    "lightMode": "Helles Design"
   },
   "site": {
     "training": "Video-Training",

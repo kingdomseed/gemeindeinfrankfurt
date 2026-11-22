@@ -10,7 +10,9 @@
     "imprint": "Выходные данные",
     "languageNav": "Язык",
     "timezone": "Всё время указано по Франкфурту (CET).",
-    "questions": "Вопросы?"
+    "questions": "Вопросы?",
+    "darkMode": "Тёмная тема",
+    "lightMode": "Светлая тема"
   },
   "site": {
     "training": "Видеотренинг",

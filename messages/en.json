@@ -10,7 +10,9 @@
     "imprint": "Imprint",
     "languageNav": "Language",
     "timezone": "All times are Frankfurt time (CET).",
-    "questions": "Questions?"
+    "questions": "Questions?",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode"
   },
   "site": {
     "training": "Video-Training",
