@@ -21,10 +21,14 @@ export function siteContacts(): Contact[] {
 }
 
 // The person the imprint names as representative and responsible for the
-// content, as IMPRINT="Name <email>". Unset, the imprint names nobody and
-// shows the contact email from the CMS site settings.
-export function imprintContact(): Contact | null {
-  return parseContacts(process.env.IMPRINT)[0] ?? null;
+// content, as IMPRINT="Name" or IMPRINT="Name <email>". Without an email the
+// imprint shows the contact email from the CMS site settings; unset, it
+// names nobody.
+export function imprintContact(): { name: string; email: string | null } | null {
+  const value = process.env.IMPRINT?.trim();
+  if (!value) return null;
+  const [contact] = parseContacts(value);
+  return contact ?? { name: value, email: null };
 }
 
 // The site's public address, without a trailing slash.
