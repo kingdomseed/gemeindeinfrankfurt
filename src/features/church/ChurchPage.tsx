@@ -1,44 +1,18 @@
-import { Box, Container, Flex, Stack } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 import { PageHeading } from "@/components/ui/page-heading";
+import { mainContentId } from "@/components/ui/skip-link";
 import type { PageContent, SiteSettings } from "@/lib/cms";
 
-import { ContactPanel } from "./ContactPanel";
 import { HeaderPhoto } from "./HeaderPhoto";
-import { PageBlocks } from "./PageBlocks";
-import { PageBody } from "./PageBody";
+import { PageColumns } from "./PageColumns";
 
-// A public church page: the header photo, then the page text with the
-// contact panel beside it on wide screens and below it on narrow ones.
+// A public church page: the header photo, then the page text and contact panel.
 export function ChurchPage({ page, settings }: { page: PageContent; settings: SiteSettings }) {
   return (
-    <>
+    <Box as="main" id={mainContentId} tabIndex={-1}>
       <HeaderPhoto />
-      <Container as="main" maxW="5xl" px="4" pt={{ base: "6", md: "10" }} pb="16">
-        <Flex
-          direction={{ base: "column", lg: "row" }}
-          align="flex-start"
-          gap={{ base: "10", lg: "12" }}
-        >
-          <Stack as="article" flex="1" minW="0" gap="8">
-            <PageHeading title={page.title} />
-            {page.blocks.length > 0 ? (
-              <PageBlocks
-                blocks={page.blocks}
-                pageHrefs={page.pageHrefs}
-                meetingAddress={settings.meetingAddress}
-              />
-            ) : (
-              page.body && (
-                <Box maxW="prose">
-                  <PageBody content={page.body} pageHrefs={page.pageHrefs} />
-                </Box>
-              )
-            )}
-          </Stack>
-          <ContactPanel settings={settings} />
-        </Flex>
-      </Container>
-    </>
+      <PageColumns heading={<PageHeading title={page.title} />} page={page} settings={settings} />
+    </Box>
   );
 }
