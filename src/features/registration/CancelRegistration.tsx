@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, chakra, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 
 import { focusOnMount } from "@/components/ui/focus";
@@ -8,26 +9,19 @@ import { Notice } from "@/components/ui/notice";
 
 import type { ActionState } from "./types";
 
-// "Cancel registration" on the edit page. The first press asks in place what
-// cancelling means; only the second, explicit answer sends the form.
+// "Cancel registration" on the registrant's edit page and the coordinator's
+// registration page; `audience` picks the wording. The first press asks in
+// place what cancelling means; only the second, explicit answer sends the form.
 export function CancelRegistration(props: {
   action: (prev: ActionState) => Promise<ActionState>;
-  labels: {
-    cancel: string;
-    intro: string;
-    confirm: string;
-    explain: string;
-    yes: string;
-    keep: string;
-  };
-  messages: Record<string, string>;
+  audience: "registrant" | "coordinator";
 }) {
   const [state, formAction, pending] = useActionState(props.action, { status: "idle" });
   const [asking, setAsking] = useState(false);
   // After "Keep my registration", focus goes back to the button that asked.
   const [answered, setAnswered] = useState(false);
-  const { labels } = props;
-  const message = props.messages[state.status];
+  const { labels, messages } = useCancelText(props.audience);
+  const message = messages[state.status];
   if (message) {
     return (
       <Notice tone="neutral" announce="status" focus>
@@ -90,4 +84,44 @@ export function CancelRegistration(props: {
       )}
     </Stack>
   );
+}
+
+type CancelText = {
+  labels: Record<"cancel" | "intro" | "confirm" | "explain" | "yes" | "keep", string>;
+  // Text for each status the action can answer with.
+  messages: Partial<Record<string, string>>;
+};
+
+function useCancelText(audience: "registrant" | "coordinator"): CancelText {
+  const te = useTranslations("edit");
+  const tc = useTranslations("coordinator");
+  const tr = useTranslations("register");
+  if (audience === "coordinator") {
+    return {
+      labels: {
+        cancel: tc("cancelTitle"),
+        intro: tc("cancelIntro"),
+        confirm: tc("cancelConfirm"),
+        explain: tc("cancelExplain"),
+        yes: tc("cancelYes"),
+        keep: tc("cancelKeep"),
+      },
+      messages: { cancelled: tc("cancelledNotice"), error: tc("error") },
+    };
+  }
+  return {
+    labels: {
+      cancel: te("cancel"),
+      intro: te("cancelIntro"),
+      confirm: te("cancelConfirm"),
+      explain: te("cancelExplain"),
+      yes: te("cancelYes"),
+      keep: te("cancelKeep"),
+    },
+    messages: {
+      cancelled: te("cancelled"),
+      locked: te("locked"),
+      error: tr("error"),
+    },
+  };
 }

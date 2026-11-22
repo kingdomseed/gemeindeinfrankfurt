@@ -8,9 +8,9 @@ import { FormField } from "@/components/ui/form-field";
 import { Notice } from "@/components/ui/notice";
 import { Panel } from "@/components/ui/panel";
 import { SelectField } from "@/components/ui/select-field";
-import type { RegistrationDetail } from "@/lib/coordinator";
 import { formatEuro, type FeeBreakdown } from "@/lib/domain/fees";
 
+import type { PaymentRecord } from "./payment-record";
 import { PaymentFields } from "./PaymentFields";
 import type { FormState } from "./types";
 
@@ -19,7 +19,7 @@ const notice = { idle: "error", error: "error", saved: "paymentSaved", stale: "s
 // The only place a payment is marked: one form for the donation, the outlines
 // and the donation waiver.
 export function PaymentPanel(props: {
-  registration: RegistrationDetail["registration"];
+  registration: PaymentRecord;
   fees: FeeBreakdown;
   action: (prev: FormState, form: FormData) => Promise<FormState>;
 }) {
