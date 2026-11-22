@@ -255,6 +255,31 @@ const readAnnouncements = cached(
   oneHour,
 );
 
+// Every published announcement, ended ones too, for the archive page.
+const readAnnouncementArchive = cached(
+  "cms-announcement-archive",
+  async (locale: Locale) => {
+    const { docs } = await (
+      await cms()
+    ).find({
+      collection: "announcements",
+      locale,
+      depth: 0,
+      limit: 500,
+      sort: "-publishedAt",
+      where: {
+        and: [
+          { _status: { equals: "published" } },
+          { publishedAt: { less_than_equal: new Date().toISOString() } },
+        ],
+      },
+      select: { title: true, body: true, publishedAt: true },
+    });
+    return docs;
+  },
+  oneHour,
+);
+
 const readUpcomingEvents = cached(
   "cms-upcoming-events",
   async (locale: Locale, limit: number) => {
@@ -362,13 +387,22 @@ export async function getPageContent(id: number | string, locale: Locale): Promi
   const blocks = await Promise.all(
     (page.layout ?? []).map((block, index) => toPageBlock(block, `block-${index}`, locale)),
   );
-  const pageHrefs = Object.fromEntries(
+  return {
+    title: page.title,
+    body: page.body ?? null,
+    blocks,
+    pageHrefs: await getPageHrefs(locale),
+  };
+}
+
+// Maps each page id to its address in this language, for links inside rich text.
+export async function getPageHrefs(locale: Locale): Promise<Record<string, string>> {
+  return Object.fromEntries(
     (await loadPages()).map((p) => [
       String(p.id),
       p.isHome === true ? `/${locale}` : `/${locale}/${inLocale(p.slug, locale)}`,
     ]),
   );
-  return { title: page.title, body: page.body ?? null, blocks, pageHrefs };
 }
 
 async function toPageBlock(
@@ -423,6 +457,16 @@ async function toPageBlock(
 // Published announcements that have started and not yet ended, newest first.
 export async function getAnnouncements(locale: Locale, limit: number): Promise<Announcement[]> {
   return storedAnnouncements.parse(await readAnnouncements(locale, limit)).map((doc) => ({
+    id: String(doc.id),
+    title: doc.title,
+    body: doc.body ?? null,
+    publishedAt: doc.publishedAt,
+  }));
+}
+
+// Every published announcement that has started, newest first.
+export async function getAnnouncementArchive(locale: Locale): Promise<Announcement[]> {
+  return storedAnnouncements.parse(await readAnnouncementArchive(locale)).map((doc) => ({
     id: String(doc.id),
     title: doc.title,
     body: doc.body ?? null,

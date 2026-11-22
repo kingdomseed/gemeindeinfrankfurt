@@ -26,7 +26,11 @@
     "noEvents": "Zurzeit sind keine Termine angekündigt.",
     "eventsTitle": "Termine",
     "eventsIntro": "Konferenzen, besondere Versammlungen und Änderungen im Wochenablauf, wie sie in den Ankündigungen der Gemeinde stehen.",
-    "eventLink": "Mehr Informationen"
+    "eventLink": "Mehr Informationen",
+    "allAnnouncements": "Alle Ankündigungen",
+    "announcementsTitle": "Ankündigungen",
+    "announcementsIntro": "Die wöchentlichen Ankündigungen der Gemeinde, die neuesten zuerst.",
+    "noAnnouncements": "Es gibt noch keine Ankündigungen."
   },
   "home": {
     "noTraining": "Die Anmeldung ist noch nicht geöffnet",

@@ -17,6 +17,7 @@
     "db:new": "supabase migration new",
     "seed:cms": "payload run src/cms/seed/index.ts",
     "events:import": "payload run scripts/import-events.ts",
+    "announcements:import": "payload run scripts/import-announcements.ts",
     "cms:importmap": "payload generate:importmap && oxlint --fix \"src/app/(payload)/admin/importMap.ts\" && oxfmt \"src/app/(payload)/admin/importMap.ts\"",
     "db:types": "scripts/db-types.sh",
     "prepare": "lefthook install || true",
