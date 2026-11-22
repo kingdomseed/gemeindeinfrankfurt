@@ -9,6 +9,14 @@ import { FormField } from "@/components/ui/form-field";
 import { FormResult } from "./FormResult";
 import type { FormState } from "./types";
 
+type Details = { notes: string; firstDay: string; lastDay: string };
+const fields = ["notes", "firstDay", "lastDay"] as const;
+const pick = (value: (field: keyof Details) => string): Details => ({
+  notes: value("notes"),
+  firstDay: value("firstDay"),
+  lastDay: value("lastDay"),
+});
+
 // The notes for Lebensstrom, and the actual first and last day when they
 // differ from the schedule.
 export function ReportDetailsForm(props: {
@@ -21,9 +29,20 @@ export function ReportDetailsForm(props: {
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.save, {
     status: "idle",
   });
-  const [notes, setNotes] = useState(props.initialNotes);
-  const [firstDay, setFirstDay] = useState(props.initialFirstDay ?? "");
-  const [lastDay, setLastDay] = useState(props.initialLastDay ?? "");
+  const saved: Details = {
+    notes: props.initialNotes,
+    firstDay: props.initialFirstDay ?? "",
+    lastDay: props.initialLastDay ?? "",
+  };
+  const [draft, setDraft] = useState(saved);
+  const [base, setBase] = useState(saved);
+  // Another coordinator saved: take their values for every field that is not
+  // being edited here, so a later save does not put back old text.
+  if (fields.some((f) => base[f] !== saved[f])) {
+    setDraft(pick((f) => (draft[f] === base[f] ? saved[f] : draft[f])));
+    setBase(saved);
+  }
+  const edit = (field: keyof Details, value: string) => setDraft((d) => ({ ...d, [field]: value }));
   return (
     <chakra.form action={formAction} display="flex" flexDirection="column" gap="4">
       <Grid templateColumns={{ base: "1fr", sm: "repeat(2, minmax(0, 1fr))" }} gap="4">
@@ -31,16 +50,16 @@ export function ReportDetailsForm(props: {
           <Input
             type="date"
             name="first_day"
-            value={firstDay}
-            onChange={(e) => setFirstDay(e.currentTarget.value)}
+            value={draft.firstDay}
+            onChange={(e) => edit("firstDay", e.currentTarget.value)}
           />
         </FormField>
         <FormField label={t("actualLastDay")} help={t("actualDayHelp")}>
           <Input
             type="date"
             name="last_day"
-            value={lastDay}
-            onChange={(e) => setLastDay(e.currentTarget.value)}
+            value={draft.lastDay}
+            onChange={(e) => edit("lastDay", e.currentTarget.value)}
           />
         </FormField>
       </Grid>
@@ -49,8 +68,8 @@ export function ReportDetailsForm(props: {
           name="notes"
           rows={4}
           maxLength={4000}
-          value={notes}
-          onChange={(e) => setNotes(e.currentTarget.value)}
+          value={draft.notes}
+          onChange={(e) => edit("notes", e.currentTarget.value)}
         />
       </FormField>
       <Button type="submit" variant="outline" color="fg" alignSelf="flex-start" loading={pending}>
