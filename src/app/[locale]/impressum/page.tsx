@@ -22,8 +22,8 @@ export default async function ImprintPage({ params }: PageProps<"/[locale]/impre
       <ImprintNotice
         siteName={settings.siteName}
         address={settings.meetingAddress}
-        responsible={responsible?.name ?? null}
-        email={responsible?.email ?? settings.contactEmail}
+        responsible={responsible.name}
+        email={responsible.email ?? settings.contactEmail}
       />
     </MainColumn>
   );

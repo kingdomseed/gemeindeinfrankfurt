@@ -20,13 +20,15 @@ export function siteContacts(): Contact[] {
   return parseContacts(process.env.CONTACTS);
 }
 
+// The church in Frankfurt's representative for its imprint. Another church
+// running this site sets its own with IMPRINT.
+const FRANKFURT_IMPRINT = "Cephas Lin";
+
 // The person the imprint names as representative and responsible for the
 // content, as IMPRINT="Name" or IMPRINT="Name <email>". Without an email the
-// imprint shows the contact email from the CMS site settings; unset, it
-// names nobody.
-export function imprintContact(): { name: string; email: string | null } | null {
-  const value = process.env.IMPRINT?.trim();
-  if (!value) return null;
+// imprint shows the contact email from the CMS site settings.
+export function imprintContact(): { name: string; email: string | null } {
+  const value = process.env.IMPRINT?.trim() || FRANKFURT_IMPRINT;
   const [contact] = parseContacts(value);
   return contact ?? { name: value, email: null };
 }
