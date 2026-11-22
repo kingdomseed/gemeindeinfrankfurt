@@ -13,6 +13,7 @@ search engines. Pages added in the CMS join the sitemap on their own.
 | Video training     | `/[locale]/training`                                              | Yes            |
 | Registration form  | `/[locale]/training/register`                                     | Yes            |
 | Privacy notice     | `/[locale]/privacy`                                               | Yes            |
+| Impressum          | `/[locale]/impressum`                                             | Yes            |
 | Training calendar  | `/[locale]/training/calendar.ics`                                 | No             |
 | Personal edit link | `/[locale]/training/r/[token]`                                    | No, blocked    |
 | Coordinator area   | `/[locale]/training/coordinator`, `/login`, `/registrations/[id]` | No, blocked    |

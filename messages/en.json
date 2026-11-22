@@ -298,7 +298,7 @@
     "basisTitle": "Legal basis",
     "basisBody": "Art. 6(1)(b) GDPR, because the data is needed to take part in the training you register for, and Art. 6(1)(f) GDPR for our legitimate interest in organising the training reliably.",
     "recipientsTitle": "Who can see it",
-    "recipientsBody": "Only the coordinators of this training. We use service providers who process data on our behalf under data processing agreements: Supabase (database, hosted in Frankfurt, Germany), our website host in the EU, and Resend (sending emails). Some of these providers are based in the United States; where data leaves the EU, it is protected by the safeguards the GDPR requires, such as the EU-U.S. Data Privacy Framework or standard contractual clauses.",
+    "recipientsBody": "Only the coordinators of this training. We use service providers who process data on our behalf under data processing agreements: Supabase (database, hosted in Ireland, EU), our website host in the EU, and Resend (sending emails). Some of these providers are based in the United States; where data leaves the EU, it is protected by the safeguards the GDPR requires, such as the EU-U.S. Data Privacy Framework or standard contractual clauses.",
     "retentionTitle": "How long we keep it",
     "retentionBody": "Names and contact details are deleted once the training's report has been filed and accepted. After that we keep only counts, without names.",
     "rightsTitle": "Your rights",
@@ -315,5 +315,13 @@
     "allMessages": "Add all messages to your calendar",
     "yourMessages": "Add your messages to your calendar",
     "emailLine": "Add your messages to your calendar: {url}"
+  },
+  "imprint": {
+    "title": "Imprint",
+    "providerTitle": "Information under § 5 DDG (German Digital Services Act)",
+    "representedBy": "Represented by: {name}",
+    "contactTitle": "Contact",
+    "email": "Email:",
+    "contentTitle": "Responsible for the content under § 18(2) MStV"
   }
 }
