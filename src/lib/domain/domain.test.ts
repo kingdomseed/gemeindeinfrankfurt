@@ -119,7 +119,9 @@ describe("edit token", () => {
 describe("sessionLabel", () => {
   it("shows Berlin time in the page's language", () => {
     const session = { id: "s1", message_number: 1, starts_at: "2026-12-26T08:00:00Z", ends_at: "" };
-    expect(sessionLabel(session, "en", "Message 1")).toBe("Message 1: Sat, Dec 26, 09:00 AM");
+    expect(sessionLabel(session, "en", "Message 1", "Lord's Day")).toBe(
+      "Message 1: Sat, Dec 26, 09:00 AM",
+    );
   });
 });
 
@@ -140,6 +142,7 @@ describe("scheduleDays", () => {
         sessionAt("c", 3, "2027-01-09T23:30:00Z"),
       ],
       "en-GB",
+      "Lord's Day",
     );
     expect(days.map((d) => d.key)).toEqual(["2027-01-09", "2027-01-10"]);
     expect(days[0]?.label).toBe("Saturday 9 January");
@@ -151,15 +154,21 @@ describe("scheduleDays", () => {
   });
 
   it("returns no days for an empty schedule", () => {
-    expect(scheduleDays([], "en")).toEqual([]);
+    expect(scheduleDays([], "en", "Lord's Day")).toEqual([]);
   });
 });
 
 describe("berlinDay and berlinDayTime", () => {
   it("names the day and time in Frankfurt in the reader's language", () => {
     const instant = new Date("2027-01-09T08:30:00Z");
-    expect(berlinDay(instant, "de")).toBe("Samstag, 9. Januar");
-    expect(berlinDayTime(instant, "en-GB")).toBe("Saturday 9 January at 09:30");
+    expect(berlinDay(instant, "de", "Tag des Herrn")).toBe("Samstag, 9. Januar");
+    expect(berlinDayTime(instant, "en-GB", "Lord's Day")).toBe("Saturday 9 January at 09:30");
+  });
+
+  it("calls Sunday the Lord's Day", () => {
+    const sunday = new Date("2027-01-17T08:45:00Z");
+    expect(berlinDay(sunday, "de", "Tag des Herrn")).toBe("Tag des Herrn, 17. Januar");
+    expect(berlinDayTime(sunday, "en-GB", "Lord's Day")).toBe("Lord's Day 17 January at 09:45");
   });
 });
 
@@ -192,13 +201,14 @@ describe("trainingDates", () => {
     const dates = trainingDates(
       [sessionAt("b", 12, "2027-01-17T13:00:00Z"), sessionAt("a", 1, "2027-01-09T08:30:00Z")],
       "en-GB",
+      "Lord's Day",
     );
     expect(dates).toContain("Saturday 9");
-    expect(dates).toContain("Sunday 17 January 2027");
+    expect(dates).toContain("Lord's Day 17 January 2027");
   });
 
   it("is empty without sessions", () => {
-    expect(trainingDates([], "en")).toBeNull();
+    expect(trainingDates([], "en", "Lord's Day")).toBeNull();
   });
 });
 

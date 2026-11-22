@@ -57,7 +57,8 @@
     "changeUntil": "Bis",
     "changeSeat": "Platzart und Botschaften, oder stornieren",
     "changeDetails": "Name, Kontaktdaten, Sprachen und Bemerkungen",
-    "anyTime": "Jederzeit während des Trainings"
+    "anyTime": "Jederzeit während des Trainings",
+    "lordsDay": "Tag des Herrn"
   },
   "register": {
     "title": "Anmeldeformular für das Video-Training",

@@ -44,7 +44,12 @@ export default async function EditPage({ params }: PageProps<"/[locale]/training
 
   const training = await getTrainingById(reg.training_id);
   const seatLocked = !canChangeSeatOrSessions(training.sessions);
-  const formProps = trainingFormProps(training, locale, (number) => th("message", { number }));
+  const formProps = trainingFormProps(
+    training,
+    locale,
+    (number) => th("message", { number }),
+    th("lordsDay"),
+  );
   const fees = feesForRegistration(reg, formProps.prices);
 
   return (
