@@ -1,9 +1,12 @@
 import type { CollectionConfig } from "payload";
 
+import { revalidateAfterChange, revalidateAfterDelete } from "@/cms/revalidate";
+
 // Short notices an editor can post at any time. One shows on the site from
 // its publish date until its optional end date, once it is published.
 export const Announcements: CollectionConfig = {
   slug: "announcements",
+  hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "publishedAt", "showUntil", "_status"],

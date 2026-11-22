@@ -7,5 +7,6 @@ Payload CMS 3 holds the church's public pages and site settings. Its admin is at
 - Read Payload's docs for any API you use (https://payloadcms.com/docs). Locales come from `src/i18n/routing.ts`; German is the default and fills in for missing translations.
 - May import Payload packages, `@/i18n/routing` and `@/lib/domain`, nothing else from the app (lint enforces this). Routes read content through `src/lib/cms.ts`, never from here.
 - `seed/` loads the pages from `archive/wordpress-2022/content` word for word, and Russian from `seed/ru/`. Keep the recovered wording as it is, typos included. `npm run seed:cms` updates the same pages when run again.
+- The public church pages are cached. Every collection or global they read needs the hooks from `revalidate.ts`, so an edit refreshes them, and every read in `src/lib/cms.ts` carries `cmsCacheTag`. Writes outside Next.js (the seed) pass `context: skipRevalidate`.
 - After adding an editor feature or admin component, run `npm run cms:importmap` and commit `src/app/(payload)/admin/importMap.ts`.
 - Payload creates its tables itself in development. In production it runs the migrations in `migrations/` on startup (`prodMigrations`). After changing a collection or global, run `npx payload migrate:create <name>` and commit the result. On a new database, run `npm run seed:cms` once after the first start.

@@ -1,16 +1,23 @@
 import "server-only";
 import config from "@payload-config";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
+import { unstable_cache } from "next/cache";
 import { getPayload } from "payload";
 import { cache } from "react";
 import { z } from "zod";
 
+import { cmsCacheTag } from "@/cms/revalidate";
 import { locales, type Locale } from "@/i18n/routing";
 import { earliestOpenEndDate } from "@/lib/domain/announcements";
 import type { SitemapPage } from "@/lib/domain/sitemap";
 
 // Public pages and site settings from Payload, read through its Local API.
 // Content comes from editors, so every document is parsed before it is used.
+//
+// Reads are kept in Next.js's data cache, so visitors never wait on the
+// database: a CMS edit refreshes them through the hooks in src/cms/revalidate.ts,
+// and they also expire once a day in case the database was changed directly.
+// The cache stores JSON, so documents are parsed after they come out of it.
 
 export type RichTextContent = SerializedEditorState;
 
@@ -146,14 +153,19 @@ const siteSettings = z.object({
 
 const cms = () => getPayload({ config });
 
-// The default language fills in for a page that has no text in this one,
-// as Payload's own fallback does for single-locale reads.
-function inLocale(value: z.infer<typeof inEveryLocale>, locale: Locale): string {
-  return value[locale] ?? value.de ?? "";
+const oneDay = 86_400;
+// Announcements start and end at set times, without anyone editing them.
+const oneHour = 3_600;
+
+function cached<Args extends unknown[], Result>(
+  key: string,
+  load: (...args: Args) => Promise<Result>,
+  revalidate = oneDay,
+) {
+  return unstable_cache(load, [key], { tags: [cmsCacheTag], revalidate });
 }
 
-// Every page with its title and slug in every language, in menu order.
-const loadPages = cache(async () => {
+const readPageIndex = cached("cms-page-index", async () => {
   const { docs } = await (
     await cms()
   ).find({
@@ -164,8 +176,75 @@ const loadPages = cache(async () => {
     sort: "navOrder",
     select: { title: true, slug: true, isHome: true },
   });
-  return pageIndex.parse(docs);
+  return docs;
 });
+
+const readPage = cached("cms-page", async (id: number | string, locale: Locale) =>
+  (await cms()).findByID({
+    collection: "pages",
+    id,
+    locale,
+    depth: 0,
+    select: { title: true, body: true, layout: true },
+  }),
+);
+
+const readAnnouncements = cached(
+  "cms-announcements",
+  async (locale: Locale, limit: number) => {
+    const now = new Date();
+    const { docs } = await (
+      await cms()
+    ).find({
+      collection: "announcements",
+      locale,
+      depth: 0,
+      limit,
+      sort: "-publishedAt",
+      where: {
+        and: [
+          { _status: { equals: "published" } },
+          { publishedAt: { less_than_equal: now.toISOString() } },
+          {
+            or: [
+              { showUntil: { exists: false } },
+              { showUntil: { greater_than_equal: earliestOpenEndDate(now) } },
+            ],
+          },
+        ],
+      },
+      select: { title: true, body: true, publishedAt: true },
+    });
+    return docs;
+  },
+  oneHour,
+);
+
+const readSiteSettings = cached("cms-site-settings", async (locale: Locale) =>
+  (await cms()).findGlobal({ slug: "site-settings", locale, depth: 0 }),
+);
+
+// The default language fills in for a page that has no text in this one,
+// as Payload's own fallback does for single-locale reads.
+function inLocale(value: z.infer<typeof inEveryLocale>, locale: Locale): string {
+  return value[locale] ?? value.de ?? "";
+}
+
+// Every page with its title and slug in every language, in menu order.
+const loadPages = cache(async () => pageIndex.parse(await readPageIndex()));
+
+// False when the database can't be reached, for example during a build
+// without one. Pages are then built on their first visit instead.
+export async function canReachCms(): Promise<boolean> {
+  try {
+    await loadPages();
+    return true;
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    console.warn(`CMS not reachable, church pages will be built on first visit: ${reason}`);
+    return false;
+  }
+}
 
 export async function getNavigation(locale: Locale): Promise<NavPage[]> {
   return (await loadPages()).map((page) => ({
@@ -204,16 +283,7 @@ export async function getHomePageId(): Promise<number | string | null> {
 }
 
 export async function getPageContent(id: number | string, locale: Locale): Promise<PageContent> {
-  const doc = await (
-    await cms()
-  ).findByID({
-    collection: "pages",
-    id,
-    locale,
-    depth: 0,
-    select: { title: true, body: true, layout: true },
-  });
-  const page = pageContent.parse(doc);
+  const page = pageContent.parse(await readPage(id, locale));
   const blocks = await Promise.all(
     (page.layout ?? []).map((block, index) => toPageBlock(block, `block-${index}`, locale)),
   );
@@ -269,30 +339,7 @@ async function toPageBlock(
 
 // Published announcements that have started and not yet ended, newest first.
 export async function getAnnouncements(locale: Locale, limit: number): Promise<Announcement[]> {
-  const now = new Date().toISOString();
-  const { docs } = await (
-    await cms()
-  ).find({
-    collection: "announcements",
-    locale,
-    depth: 0,
-    limit,
-    sort: "-publishedAt",
-    where: {
-      and: [
-        { _status: { equals: "published" } },
-        { publishedAt: { less_than_equal: now } },
-        {
-          or: [
-            { showUntil: { exists: false } },
-            { showUntil: { greater_than_equal: earliestOpenEndDate(new Date()) } },
-          ],
-        },
-      ],
-    },
-    select: { title: true, body: true, publishedAt: true },
-  });
-  return storedAnnouncements.parse(docs).map((doc) => ({
+  return storedAnnouncements.parse(await readAnnouncements(locale, limit)).map((doc) => ({
     id: String(doc.id),
     title: doc.title,
     body: doc.body ?? null,
@@ -301,8 +348,7 @@ export async function getAnnouncements(locale: Locale, limit: number): Promise<A
 }
 
 export const getSiteSettings = cache(async (locale: Locale): Promise<SiteSettings> => {
-  const doc = await (await cms()).findGlobal({ slug: "site-settings", locale, depth: 0 });
-  const settings = siteSettings.parse(doc);
+  const settings = siteSettings.parse(await readSiteSettings(locale));
   return {
     siteName: settings.siteName ?? "",
     tagline: settings.tagline ?? "",
