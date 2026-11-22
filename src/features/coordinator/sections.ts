@@ -5,6 +5,7 @@ export const coordinatorSections = [
   { key: "outlines", href: "/training/coordinator/outlines" },
   { key: "groups", href: "/training/coordinator/groups" },
   { key: "attendance", href: "/training/coordinator/attendance" },
+  { key: "messages", href: "/training/coordinator/messages" },
   { key: "testing", href: "/training/coordinator/testing" },
   { key: "services", href: "/training/coordinator/services" },
   { key: "setup", href: "/training/coordinator/setup" },
@@ -24,6 +25,14 @@ export const nameTagsHref = "/training/coordinator/groups/name-tags";
 export function attendanceHref(messageNumber: number, group?: number | null) {
   const path = `${sectionHref("attendance")}/${messageNumber}`;
   return group ? `${path}?group=${group}` : path;
+}
+
+// One message's hymns and verses, and its slides for the room's screen.
+export function messageHref(messageNumber: number) {
+  return `${sectionHref("messages")}/${messageNumber}`;
+}
+export function screenHref(messageNumber: number) {
+  return `${messageHref(messageNumber)}/screen`;
 }
 
 // The registrations page, opened on a filter or a search.
