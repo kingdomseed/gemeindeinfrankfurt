@@ -17,6 +17,11 @@ export function RegistrationName({ row }: { row: RegistrationRow }) {
       <Link asChild fontWeight="semibold" textDecoration="underline" color="fg">
         <LocaleLink href={detailHref(r.id)}>{displayName(r)}</LocaleLink>
       </Link>
+      {row.duplicate && (
+        <StatusTag tone="warning" ms="2">
+          {t("possibleDuplicate")}
+        </StatusTag>
+      )}
       {r.status === "cancelled" && (
         <StatusTag tone="error" ms="2">
           {t("cancelledTag")}

@@ -41,7 +41,15 @@ export function paymentTotals(
   return totals;
 }
 
-export type OutlineStock = { language: Language; needed: number; ordered: number; extra: number };
+export type OutlineStock = {
+  language: Language;
+  // Outlines in this language as a registration's first and as its second outline.
+  first: number;
+  second: number;
+  needed: number;
+  ordered: number;
+  extra: number;
+};
 
 // Outlines needed per language against what has been ordered. A negative
 // `extra` is a shortfall.
@@ -49,10 +57,24 @@ export function outlineStock(
   rows: readonly PaymentRow[],
   ordered: Partial<Record<Language, number>>,
 ): OutlineStock[] {
-  const needed = countOutlines([...rows]);
+  const first = countOutlines(rows.map((r) => ({ ...r, second_outline_language: null })));
+  const second = countOutlines(
+    rows.map((r) => ({
+      outline_language: r.second_outline_language,
+      second_outline_language: null,
+    })),
+  );
   return languages.map((language) => {
     const have = ordered[language] ?? 0;
-    return { language, needed: needed[language], ordered: have, extra: have - needed[language] };
+    const needed = first[language] + second[language];
+    return {
+      language,
+      first: first[language],
+      second: second[language],
+      needed,
+      ordered: have,
+      extra: have - needed,
+    };
   });
 }
 

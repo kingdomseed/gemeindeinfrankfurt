@@ -7,7 +7,7 @@ import { locales } from "@/i18n/routing";
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 // Fixed routes under /[locale] that would hide a CMS page with the same slug.
-const reservedSlugs = new Set(["training", "privacy", "impressum", "events"]);
+const reservedSlugs = new Set(["training", "privacy", "impressum", "events", "announcements"]);
 
 // True when another page already has this slug in any language. A visitor who
 // switches language keeps the slug in the address, so one slug must always
@@ -61,7 +61,7 @@ export const Pages: CollectionConfig = {
       admin: {
         position: "sidebar",
         description:
-          "Part of the address, e.g. fur-besucher. Lowercase letters, digits and hyphens; not training, privacy, impressum or events, and not the address of another page in any language.",
+          "Part of the address, e.g. fur-besucher. Lowercase letters, digits and hyphens; not training, privacy, impressum, events or announcements, and not the address of another page in any language.",
       },
       validate: validateSlug,
     },

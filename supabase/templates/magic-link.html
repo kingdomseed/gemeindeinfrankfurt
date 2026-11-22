@@ -1,68 +1,27 @@
 <!doctype html>
 <!--
-  Coordinator sign-in email (Supabase Auth "Magic link" template).
-  Supabase fills in the site URL, the token and the page to return to. The link goes to this site (/api/auth/confirm), never to the database host.
-  Styles are inline for email clients. Colours are the light values from
-  src/theme/tokens.ts (surface, paper, ink, muted, line, teal): keep them in step.
-  Supabase doesn't know the reader's language, so the email is in all three.
-  Applied to the live project through the Management API
-  (PATCH /v1/projects/{ref}/config/auth, mailer_templates_magic_link_content).
+  Coordinator sign-in email (Supabase Auth "Magic link" template), as saved on
+  the live project. Subject: "Dein Anmeldelink · Your sign-in link".
+  The button goes to this site's /api/auth/confirm, never to the database host.
+  Styles are inline for email clients; colours are the light theme tokens.
+  Supabase only uses a custom template when custom SMTP (Resend) is set, and
+  the template must be saved on its own, apart from the SMTP settings.
+  Applied through the Management API (PATCH /v1/projects/{ref}/config/auth,
+  mailer_templates_magic_link_content), not with `supabase config push`.
 -->
-<html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Anmeldung · Sign in · Вход</title>
-  </head>
-  <body
-    style="margin:0;background:#f1efe9;color:#1c2329;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:24px"
-  >
-    <div style="max-width:560px;margin:0 auto;padding:24px">
-      <div style="background:#fbfaf7;border-radius:8px;padding:32px">
-        <p style="margin:0 0 4px;font-weight:600">die Gemeinde in Frankfurt</p>
-        <p style="margin:0 0 28px;color:#55606a;font-size:14px;line-height:20px">
-          Videotraining · Koordination
-        </p>
-
-        <h1 style="margin:0 0 8px;font-size:22px;line-height:30px;font-weight:600">
-          Dein Anmeldelink
-        </h1>
-        <p style="margin:0 0 24px">
-          Tippe auf den Knopf, um dich im Koordinationsbereich anzumelden.
-        </p>
-        <p style="margin:0 0 24px">
-          <a
-            href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email&amp;next={{ .RedirectTo }}"
-            style="background:#115e59;color:#ffffff;border:1px solid #115e59;display:inline-block;padding:12px 28px;border-radius:4px;font-weight:600;text-decoration:none"
-            >Anmelden · Sign in · Войти</a
-          >
-        </p>
-
-        <p style="margin:0 0 4px;font-weight:600">Sign in to the coordinator area</p>
-        <p style="margin:0 0 16px;color:#55606a">
-          Tap the button above to sign in.
-        </p>
-        <p style="margin:0 0 4px;font-weight:600">Вход в раздел координаторов</p>
-        <p style="margin:0 0 24px;color:#55606a">
-          Нажмите на кнопку выше, чтобы войти.
-        </p>
-
-        <hr style="border:0;border-top:1px solid #d9d5cc;margin:0 0 16px" />
-        <p style="margin:0 0 8px;font-size:14px;line-height:20px;color:#55606a">
-          Der Link gilt eine Stunde und nur einmal. Wenn du ihn nicht angefordert hast, ignoriere
-          diese E-Mail.
-        </p>
-        <p style="margin:0 0 8px;font-size:14px;line-height:20px;color:#55606a">
-          The link works once and expires in one hour. If you didn't ask for it, ignore this email.
-        </p>
-        <p style="margin:0;font-size:14px;line-height:20px;color:#55606a">
-          Ссылка действует один раз в течение часа. Если вы её не запрашивали, просто удалите это
-          письмо.
-        </p>
-      </div>
-      <p style="margin:16px 0 0;text-align:center;font-size:13px;line-height:20px;color:#55606a">
-        <a href="https://gemeindeinfrankfurt.de" style="color:#55606a">gemeindeinfrankfurt.de</a>
-      </p>
-    </div>
-  </body>
-</html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;background:#f1efe9;color:#1c2329;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:24px">
+<div style="max-width:560px;margin:0 auto;padding:24px">
+<div style="background:#fbfaf7;border-radius:8px;padding:32px">
+<p style="margin:0 0 4px;font-weight:600">die Gemeinde in Frankfurt</p>
+<p style="margin:0 0 28px;font-size:14px;line-height:20px;color:#55606a">Christus in uns (Kol. 1:27)</p>
+<h1 style="margin:0 0 8px;font-size:22px;line-height:30px;font-weight:600">Anmeldung für Koordinatoren</h1>
+<p style="margin:0 0 24px">Klicke auf den Knopf, um dich im Koordinatorenbereich des Video-Trainings anzumelden.</p>
+<p style="margin:0 0 24px"><a href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email&amp;next={{ .RedirectTo }}" style="background:#115e59;color:#ffffff;border:1px solid #115e59;display:inline-block;padding:12px 28px;border-radius:4px;font-weight:600;text-decoration:none">Jetzt anmelden</a></p>
+<p style="margin:0 0 28px;font-size:14px;line-height:20px;color:#55606a">Der Link gilt eine Stunde und funktioniert nur einmal. Wenn du keine Anmeldung angefordert hast, kannst du diese E-Mail ignorieren.</p>
+<hr style="border:0;border-top:1px solid #d9d5cc;margin:0 0 24px">
+<p style="margin:0 0 8px;font-weight:600">Coordinator sign-in</p>
+<p style="margin:0 0 16px;font-size:14px;line-height:20px;color:#55606a">Use the button above to sign in to the video training coordinator area. The link works once and expires in one hour. If you didn't ask to sign in, you can ignore this email.</p>
+<hr style="border:0;border-top:1px solid #d9d5cc;margin:0 0 16px">
+<p style="margin:0;font-size:14px;line-height:20px;color:#55606a">Diese E-Mail wurde an {{ .Email }} gesendet · <a href="https://gemeindeinfrankfurt.de/de" style="color:#115e59">gemeindeinfrankfurt.de</a></p>
+</div></div></body></html>

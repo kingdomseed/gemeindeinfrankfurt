@@ -28,6 +28,7 @@ export function SiteFooter(props: { settings: SiteSettings; pages: readonly NavP
       label: page.title,
     })),
     { href: "/events", label: t("eventsTitle") },
+    { href: "/announcements", label: t("announcementsTitle") },
     { href: "/training", label: t("training") },
   ];
   return (

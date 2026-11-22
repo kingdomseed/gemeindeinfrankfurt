@@ -48,9 +48,9 @@ describe("outlineStock", () => {
   it("reports shortfalls as negative extra", () => {
     const stock = outlineStock([row, { ...row, second_outline_language: "en" }], { de: 1, ru: 2 });
     expect(stock).toEqual([
-      { language: "de", needed: 2, ordered: 1, extra: -1 },
-      { language: "en", needed: 1, ordered: 0, extra: -1 },
-      { language: "ru", needed: 0, ordered: 2, extra: 2 },
+      { language: "de", first: 2, second: 0, needed: 2, ordered: 1, extra: -1 },
+      { language: "en", first: 0, second: 1, needed: 1, ordered: 0, extra: -1 },
+      { language: "ru", first: 0, second: 0, needed: 0, ordered: 2, extra: 2 },
     ]);
   });
 });

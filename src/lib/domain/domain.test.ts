@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { earliestOpenEndDate } from "./announcements";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
-import { importedEvent } from "./event-import";
+import { importedAnnouncement, importedEvent } from "./event-import";
 import { eventWhen, startOfBerlinToday } from "./events";
 import { computeFees } from "./fees";
 import { buildCalendar } from "./ics";
@@ -418,5 +418,34 @@ describe("importedEvent", () => {
   });
   it("needs a title in every language", () => {
     expect(importedEvent.safeParse({ ...event, ru: { title: "" } }).success).toBe(false);
+  });
+});
+
+describe("importedAnnouncement", () => {
+  const week = {
+    importKey: "ankuendigungen-2026-11-16",
+    publishedAt: "2026-11-16T00:00:00+01:00",
+    showUntil: "2026-11-22T00:00:00+01:00",
+    de: {
+      title: "Ankündigungen 16.–22. November",
+      markdown: "[Anmeldung](https://us.list-manage.com/abc?e=abc123&c2id=xyz)",
+    },
+    en: {
+      title: "Announcements 16–22 November",
+      markdown: "Sign up: https://example.org/a?e=abc123",
+    },
+    ru: { title: "Объявления 16–22 ноября", markdown: "Текст" },
+  };
+  it("drops the subscriber id from every link in the text", () => {
+    const parsed = importedAnnouncement.parse(week);
+    expect(parsed.de.markdown).toBe("[Anmeldung](https://us.list-manage.com/abc?c2id=xyz)");
+    expect(parsed.en.markdown).toBe("Sign up: https://example.org/a");
+  });
+  it("refuses a Zoom link", () => {
+    const withZoom = {
+      ...week,
+      ru: { title: "Объявления", markdown: "https://us02web.zoom.us/j/1" },
+    };
+    expect(importedAnnouncement.safeParse(withZoom).success).toBe(false);
   });
 });

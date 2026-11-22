@@ -5,7 +5,7 @@ import { Link as LocaleLink } from "@/i18n/navigation";
 import type { NavPage } from "@/lib/cms";
 
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { SiteNav } from "./SiteNav";
+import { MainMenu } from "./MainMenu";
 
 // Site name, the main menu (the CMS pages in menu order) and the language
 // switcher in one row. On phones the menu takes its own row under them.
@@ -41,7 +41,7 @@ export function SiteHeader(props: { siteName: string; pages: readonly NavPage[] 
           >
             <LocaleLink href="/">{props.siteName}</LocaleLink>
           </Link>
-          <SiteNav label={t("mainNav")} items={items} />
+          <MainMenu label={t("mainNav")} items={items} />
           <LanguageSwitcher label={tc("languageNav")} />
         </Grid>
       </Container>
