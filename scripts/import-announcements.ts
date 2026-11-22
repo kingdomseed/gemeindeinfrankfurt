@@ -28,8 +28,9 @@ const headers = {
 };
 const editorConfig = await editorConfigFactory.default({ config: await config });
 
-const found = z.object({ totalDocs: z.number() });
-const created = z.object({ doc: z.object({ id: z.union([z.number(), z.string()]) }) });
+const id = z.union([z.number(), z.string()]);
+const found = z.object({ docs: z.array(z.object({ id, title: z.string().nullish() })) });
+const created = z.object({ doc: z.object({ id }) });
 
 async function call(url: string, init: RequestInit = {}): Promise<unknown> {
   const response = await fetch(url, { ...init, headers });
@@ -39,14 +40,18 @@ async function call(url: string, init: RequestInit = {}): Promise<unknown> {
   return response.json();
 }
 
-async function exists(importKey: string): Promise<boolean> {
+// The week's draft in one language, without falling back to German, so a
+// missing translation shows up as a missing title.
+async function find(importKey: string, locale: "en" | "ru") {
   const query = new URLSearchParams({
     "where[importKey][equals]": importKey,
+    locale,
+    "fallback-locale": "none",
     draft: "true",
     limit: "1",
     depth: "0",
   });
-  return found.parse(await call(`${api}?${query}`)).totalDocs > 0;
+  return found.parse(await call(`${api}?${query}`)).docs[0];
 }
 
 function localized(text: ImportedAnnouncement["de"]) {
@@ -57,7 +62,7 @@ function localized(text: ImportedAnnouncement["de"]) {
   };
 }
 
-async function add(week: ImportedAnnouncement): Promise<void> {
+async function create(week: ImportedAnnouncement) {
   const { doc } = created.parse(
     await call(`${api}?locale=de&draft=true`, {
       method: "POST",
@@ -69,24 +74,34 @@ async function add(week: ImportedAnnouncement): Promise<void> {
       }),
     }),
   );
-  await Promise.all(
-    (["en", "ru"] as const).map((locale) =>
-      call(`${api}/${doc.id}?locale=${locale}&draft=true`, {
-        method: "PATCH",
-        body: JSON.stringify(localized(week[locale])),
-      }),
-    ),
+  return doc.id;
+}
+
+// Adds the week, or finishes one an earlier run left without a translation.
+// A week that has all three languages is left alone.
+async function importWeek(week: ImportedAnnouncement): Promise<string> {
+  const [en, ru] = [await find(week.importKey, "en"), await find(week.importKey, "ru")];
+  const existing = en ?? ru;
+  const docId = existing?.id ?? (await create(week));
+  // One locale at a time: two draft saves at once each start from the same
+  // version, and the later one drops the other's text.
+  const missing = (["en", "ru"] as const).filter(
+    (locale) => !existing || !(locale === "en" ? en : ru)?.title,
   );
+  for (const locale of missing) {
+    // oxlint-disable-next-line no-await-in-loop -- parallel draft saves drop each other's text
+    await call(`${api}/${docId}?locale=${locale}&draft=true`, {
+      method: "PATCH",
+      body: JSON.stringify(localized(week[locale])),
+    });
+  }
+  if (!existing) return `added ${week.importKey} as a draft`;
+  if (missing.length > 0) return `finished ${week.importKey} (${missing.join(", ")})`;
+  return `skipped ${week.importKey} (already there)`;
 }
 
 const file = process.argv.at(-1);
 if (!file?.endsWith(".json")) throw new Error("Pass the path of a .json file of announcements.");
 const weeks = importedAnnouncements.parse(JSON.parse(await readFile(file, "utf8")));
-const results = await Promise.all(
-  weeks.map(async (week) => {
-    if (await exists(week.importKey)) return `skipped ${week.importKey} (already there)`;
-    await add(week);
-    return `added ${week.importKey} as a draft`;
-  }),
-);
+const results = await Promise.all(weeks.map(importWeek));
 process.stdout.write(`${results.join("\n")}\n`);

@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { PageHeading } from "@/components/ui/page-heading";
 import type { Announcement } from "@/lib/cms";
 
-import { AnnouncementCards } from "./AnnouncementList";
+import { AnnouncementCards } from "./AnnouncementCards";
 
 // The announcements page: every announcement so far, newest first.
 export function AnnouncementArchive(props: {
