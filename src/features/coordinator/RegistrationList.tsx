@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Flex, Heading, Input, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Stack, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -14,10 +14,15 @@ import type { RegistrationRow } from "./types";
 
 // Every registration, read only: search and filter, then cards on phones and a
 // table on wider screens. Payments are marked on the registration's own page.
-export function RegistrationList({ rows }: { rows: readonly RegistrationRow[] }) {
+export function RegistrationList(props: {
+  rows: readonly RegistrationRow[];
+  initialFilter: ListFilter;
+  initialQuery: string;
+}) {
+  const { rows } = props;
   const t = useTranslations("coordinator");
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<ListFilter>("all");
+  const [query, setQuery] = useState(props.initialQuery);
+  const [filter, setFilter] = useState<ListFilter>(props.initialFilter);
   const needle = query.trim().toLowerCase();
   const inFilter = (f: ListFilter) => rows.filter((r) => inListFilter(r.registration, r.fees, f));
   const shown = inFilter(filter).filter(
@@ -25,11 +30,8 @@ export function RegistrationList({ rows }: { rows: readonly RegistrationRow[] })
       needle === "" || `${displayName(r)} ${r.email}`.toLowerCase().includes(needle),
   );
   return (
-    <Stack as="section" aria-labelledby="registrations-heading" gap="4">
-      <Heading as="h2" id="registrations-heading" size="xl">
-        {t("registrations")}
-      </Heading>
-      <Box maxW="sm">
+    <Stack gap="4">
+      <Box maxW="md">
         <FormField label={t("search")}>
           <Input
             type="search"

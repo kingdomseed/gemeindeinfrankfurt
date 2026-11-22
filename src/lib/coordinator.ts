@@ -1,18 +1,22 @@
 import "server-only";
+import { cache } from "react";
 import { z } from "zod";
 
+import { getCoordinatorClient } from "@/lib/auth";
 import { localizedText } from "@/lib/data";
 import type { createClient } from "@/lib/supabase/server";
 
 type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 const REGISTRATION_COLUMNS =
-  "id, status, seat_type, first_name, last_name, partner_first_name, partner_last_name, email, group_language, outline_language, second_outline_language, waiver, fee_paid, outline_paid, registration_sessions(session_id)";
+  "id, created_at, status, seat_type, first_name, last_name, partner_first_name, partner_last_name, email, group_language, outline_language, second_outline_language, waiver, fee_paid, outline_paid, localities(name), registration_sessions(session_id)";
 
 async function newestTraining(supabase: CoordinatorClient) {
   const { data, error } = await supabase
     .from("trainings")
-    .select("id, title, fee_cents, outline_price_cents, sessions(id)")
+    .select(
+      "id, title, fee_cents, outline_price_cents, outline_order_deadline, sessions(id, message_number, starts_at, ends_at)",
+    )
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -50,6 +54,15 @@ export type CoordinatorDashboard = NonNullable<
   Awaited<ReturnType<typeof loadCoordinatorDashboard>>
 >;
 export type CoordinatorRegistration = CoordinatorDashboard["registrations"][number];
+
+// The signed-in coordinator's view of the newest training, once per request,
+// with the moment it was read so every countdown on the page agrees.
+// "signed-out" when nobody (or no coordinator) is signed in.
+export const loadCoordination = cache(async () => {
+  const supabase = await getCoordinatorClient();
+  if (!supabase) return "signed-out" as const;
+  return { supabase, data: await loadCoordinatorDashboard(supabase), now: new Date() };
+});
 
 export const eventKinds = [
   "fee_received",
@@ -117,3 +130,70 @@ export async function recordEvents(
   );
   if (error) throw error;
 }
+
+export type RecentEvent = RegistrationEvent & {
+  registration: { id: string; first_name: string; last_name: string };
+};
+
+// The latest history lines across a training's registrations, newest first.
+export async function loadRecentEvents(
+  supabase: CoordinatorClient,
+  trainingId: string,
+  limit = 8,
+): Promise<RecentEvent[]> {
+  const { data, error } = await supabase
+    .from("registration_events")
+    .select("id, kind, actor_name, created_at, registrations!inner(id, first_name, last_name)")
+    .eq("registrations.training_id", trainingId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  const recent = eventRow.extend({
+    registrations: z.object({ id: z.string(), first_name: z.string(), last_name: z.string() }),
+  });
+  return z
+    .array(recent)
+    .parse(data)
+    .map((e) => ({
+      id: e.id,
+      kind: e.kind,
+      actor_name: e.actor_name,
+      created_at: e.created_at,
+      registration: e.registrations,
+    }));
+}
+
+// Everything the setup page edits for one training.
+export async function loadTrainingSetup(supabase: CoordinatorClient, trainingId: string) {
+  const { data, error } = await supabase
+    .from("trainings")
+    .select(
+      "id, updated_at, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, outline_order_deadline, sessions(id, message_number, starts_at, ends_at, is_tested, registration_sessions(count)), localities(id, name, is_home, registrations(count))",
+    )
+    .eq("id", trainingId)
+    .order("message_number", { referencedTable: "sessions" })
+    .order("name", { referencedTable: "localities" })
+    .single();
+  if (error) throw error;
+  const count = z.array(z.object({ count: z.number() })).transform((c) => c[0]?.count ?? 0);
+  return {
+    ...data,
+    title: localizedText.parse(data.title),
+    sessions: data.sessions.map((s) => ({
+      id: s.id,
+      message_number: s.message_number,
+      starts_at: s.starts_at,
+      ends_at: s.ends_at,
+      is_tested: s.is_tested,
+      picked: count.parse(s.registration_sessions),
+    })),
+    localities: data.localities.map((l) => ({
+      id: l.id,
+      name: l.name,
+      is_home: l.is_home,
+      used: count.parse(l.registrations),
+    })),
+  };
+}
+
+export type TrainingSetup = Awaited<ReturnType<typeof loadTrainingSetup>>;
