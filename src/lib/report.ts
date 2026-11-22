@@ -25,11 +25,11 @@ export type ReportAnswers = {
 export type ReportQuestion = keyof ReportAnswers;
 
 const updates = {
-  tested: (a: boolean) => ({ report_tested: a }),
-  absencesLimited: (a: boolean) => ({ report_absences_limited: a }),
-  nameTags: (a: boolean) => ({ report_name_tags: a }),
-  seatsAssigned: (a: boolean) => ({ report_seats_assigned: a }),
-  inPerson: (a: boolean) => ({ report_in_person: a }),
+  tested: (a: boolean) => ({ tested: a }),
+  absencesLimited: (a: boolean) => ({ absences_limited: a }),
+  nameTags: (a: boolean) => ({ name_tags: a }),
+  seatsAssigned: (a: boolean) => ({ seats_assigned: a }),
+  inPerson: (a: boolean) => ({ in_person: a }),
 } satisfies Record<ReportQuestion, (a: boolean) => object>;
 
 export type Reimbursement = {
@@ -57,12 +57,17 @@ export async function loadReport(
   supabase: CoordinatorClient,
   trainingId: string,
 ): Promise<ReportData> {
-  const [training, costs, tests] = await Promise.all([
+  const [report, training, costs, tests] = await Promise.all([
+    supabase
+      .from("training_reports")
+      .select(
+        "tested, absences_limited, name_tags, seats_assigned, in_person, first_day, last_day, notes",
+      )
+      .eq("training_id", trainingId)
+      .maybeSingle(),
     supabase
       .from("trainings")
-      .select(
-        "report_tested, report_absences_limited, report_name_tags, report_seats_assigned, report_in_person, report_first_day, report_last_day, report_notes, localities(name, is_home, registrations(count))",
-      )
+      .select("localities(name, is_home, registrations(count))")
       .eq("id", trainingId)
       .single(),
     supabase
@@ -75,6 +80,7 @@ export async function loadReport(
       .select("id, sessions!inner(training_id)", { count: "exact", head: true })
       .eq("sessions.training_id", trainingId),
   ]);
+  if (report.error) throw report.error;
   if (training.error) throw training.error;
   if (costs.error) throw costs.error;
   if (tests.error) throw tests.error;
@@ -89,19 +95,19 @@ export async function loadReport(
     for (const link of data) if (link.path && link.signedUrl) links.set(link.path, link.signedUrl);
   }
 
-  const t = training.data;
+  const r = report.data;
   return {
     answers: {
-      tested: t.report_tested,
-      absencesLimited: t.report_absences_limited,
-      nameTags: t.report_name_tags,
-      seatsAssigned: t.report_seats_assigned,
-      inPerson: t.report_in_person,
+      tested: r?.tested ?? null,
+      absencesLimited: r?.absences_limited ?? null,
+      nameTags: r?.name_tags ?? null,
+      seatsAssigned: r?.seats_assigned ?? null,
+      inPerson: r?.in_person ?? null,
     },
-    notes: t.report_notes,
-    firstDay: t.report_first_day,
-    lastDay: t.report_last_day,
-    localities: t.localities
+    notes: r?.notes ?? "",
+    firstDay: r?.first_day ?? null,
+    lastDay: r?.last_day ?? null,
+    localities: training.data.localities
       .filter((l) => !l.is_home && (l.registrations[0]?.count ?? 0) > 0)
       .map((l) => l.name)
       .toSorted((a, b) => a.localeCompare(b)),
@@ -124,9 +130,8 @@ export async function saveAnswer(
   answer: boolean,
 ) {
   const { error } = await supabase
-    .from("trainings")
-    .update(updates[question](answer))
-    .eq("id", trainingId);
+    .from("training_reports")
+    .upsert({ training_id: trainingId, ...updates[question](answer) });
   if (error) throw error;
 }
 
@@ -135,14 +140,12 @@ export async function saveReportDetails(
   trainingId: string,
   details: { notes: string; firstDay: string | null; lastDay: string | null },
 ) {
-  const { error } = await supabase
-    .from("trainings")
-    .update({
-      report_notes: details.notes,
-      report_first_day: details.firstDay,
-      report_last_day: details.lastDay,
-    })
-    .eq("id", trainingId);
+  const { error } = await supabase.from("training_reports").upsert({
+    training_id: trainingId,
+    notes: details.notes,
+    first_day: details.firstDay,
+    last_day: details.lastDay,
+  });
   if (error) throw error;
 }
 

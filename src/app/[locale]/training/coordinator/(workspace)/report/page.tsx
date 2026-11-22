@@ -56,7 +56,9 @@ export default async function ReportPage({ params }: Props) {
     return "–";
   };
 
-  const due = view.lastEnd ? reportDue(new Date(view.lastEnd)) : null;
+  // The actual last day, when a coordinator gave one, counts from its evening.
+  const lastEnd = view.lastDay ? `${view.lastDay}T21:00:00Z` : view.lastEnd;
+  const due = lastEnd ? reportDue(new Date(lastEnd)) : null;
   const daysLeft = due ? Math.ceil((due.getTime() - now.getTime()) / 86_400_000) : 0;
   const n = view.numbers;
   const total = view.reimbursements.reduce((sum, c) => sum + c.amountCents, 0);
