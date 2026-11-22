@@ -201,7 +201,16 @@
     "changeButton": "Change or cancel your registration",
     "linkPrivate": "This link is only for this registration. Please do not forward it.",
     "footer": "Questions? Reply to this email. All times are Frankfurt time (CET).",
-    "transferTitle": "Please transfer {total}"
+    "transferTitle": "Please transfer {total}",
+    "hello": "Hello {name},",
+    "reminderSubject": "Payment reminder: {training}",
+    "reminderIntro": "for {training}, {total} is still open:",
+    "reminderAlreadyPaid": "If you have paid in the last few days, thank you, and please ignore this email.",
+    "beforeSubject": "Before the training: {training}",
+    "beforeIntro": "{training} begins soon ({dates}). Here is what you need to know.",
+    "yourMessages": "Your messages:",
+    "place": "Place: {venue}",
+    "rulesTitle": "Training rules:"
   },
   "coordinator": {
     "title": "Coordination",
@@ -313,7 +322,8 @@
       "testing": "Testing",
       "services": "Services",
       "attendance": "Attendance",
-      "messages": "Messages"
+      "messages": "Messages",
+      "emails": "Emails"
     },
     "registrationOpen": "registration open",
     "registrationClosed": "registration closed",
@@ -623,6 +633,67 @@
       "hymnIn": "Hymn {number} ({language})",
       "verseMissing": "The {language} text of this verse has not been entered yet.",
       "footer": "Message {number} · {day} · Screen: {language}"
+    },
+    "emails": {
+      "title": "Emails",
+      "lead": "Every email goes out in German, English or Russian, in the language each person used to register.",
+      "kindsTitle": "Emails for this training",
+      "kinds": {
+        "confirmation": {
+          "name": "Confirmation",
+          "what": "After each registration and each change"
+        },
+        "cancellation": {
+          "name": "Cancellation",
+          "what": "When a registration is cancelled"
+        },
+        "reminder": {
+          "name": "Payment reminder",
+          "what": "Amounts still open and the IBAN, to everyone unpaid"
+        },
+        "before": {
+          "name": "Before the training",
+          "what": "Schedule, place, rules, what to bring, the WhatsApp group"
+        }
+      },
+      "automatic": "Automatic",
+      "sentOn": "Sent {date} · {count}",
+      "dueOn": "Due {date}",
+      "beforeHelp": "Each person gets their own messages, the place and the training rules. Add how to join the WhatsApp group and what to bring. People whose language is missing get the English note.",
+      "noteIn": "Note in {language}",
+      "beforeConfirmTitle": "Send “Before the training” to {count, plural, one {# person} other {# people}}?",
+      "beforeConfirmBody": "Every registered person gets it now. An email cannot be called back.",
+      "reminderConfirmTitle": "Send the payment reminder to {count, plural, one {# person} other {# people}}?",
+      "reminderConfirmBody": "Everyone who still owes money gets what is open and the IBAN. An email cannot be called back.",
+      "messageTitle": "Write to everyone or a group",
+      "messageHelp": "For example a schedule change. Write each language you have; people whose language is missing get English.",
+      "to": "To",
+      "audienceOption": "{label} ({count})",
+      "everyone": "Everyone registered",
+      "unpaid": "Still unpaid",
+      "partTime": "Part-time seats",
+      "subject": "Subject",
+      "body": "Message",
+      "missingText": "No {language} text yet. {count, plural, one {# person} other {# people}} would get the English version.",
+      "messageConfirmTitle": "Send this message to {count, plural, one {# person} other {# people}}?",
+      "messageConfirmBody": "It goes out now. An email cannot be called back.",
+      "sendTo": "Send to {count}",
+      "sendTest": "Send me a test",
+      "notYet": "Not yet",
+      "nobody": "Nobody to send to.",
+      "sentTo": "Sent to {count, plural, one {# person} other {# people}}.",
+      "sendFailed": "{sent} of {total} emails went out; the rest could not be sent. Press send again to send the rest: those already sent today are not sent twice.",
+      "englishNeeded": "Please write the English subject and message; everyone without their own language gets it.",
+      "testSent": "Test sent to {email}, one email for each language you wrote.",
+      "sentTitle": "Sent",
+      "nothingSent": "Nothing sent from here yet.",
+      "sentLine": "{kind}: {subject} · by {by}",
+      "sentKind": {
+        "payment_reminder": "Payment reminder",
+        "before_training": "Before the training",
+        "message": "Message"
+      },
+      "people": "{count, plural, one {# person} other {# people}}"
     }
   },
   "privacy": {

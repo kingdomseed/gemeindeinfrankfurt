@@ -1,4 +1,6 @@
 import "server-only";
+import { createHash } from "node:crypto";
+
 import { getTranslations } from "next-intl/server";
 import { Resend } from "resend";
 
@@ -35,6 +37,38 @@ async function send(to: string, subject: string, text: string, html?: string) {
     ...(html ? { html } : {}),
   });
   if (error) throw new Error(`Email failed: ${error.message}`);
+}
+
+export type OutgoingEmail = { to: string; subject: string; text: string };
+
+// Sends many emails in as few requests as the provider allows (100 each).
+// Each request carries a key made from its emails, so sending the same
+// emails again within a day (a retry after a failure) does not send them
+// twice. Returns how many went out, and the error that stopped the rest.
+export async function sendBatch(
+  emails: readonly OutgoingEmail[],
+): Promise<{ sent: number; error: Error | null }> {
+  const resend = client();
+  if (!resend) {
+    console.warn(`[email skipped: RESEND_API_KEY not set] ${emails.length} emails`);
+    return { sent: 0, error: null };
+  }
+  const from = process.env.EMAIL_FROM;
+  if (!from) throw new Error("Missing environment variable EMAIL_FROM");
+  const replyTo = process.env.EMAIL_REPLY_TO;
+  let sent = 0;
+  for (let i = 0; i < emails.length; i += 100) {
+    const chunk = emails.slice(i, i + 100);
+    const idempotencyKey = createHash("sha256").update(JSON.stringify(chunk)).digest("hex");
+    // oxlint-disable-next-line no-await-in-loop, react-doctor/async-await-in-loop -- one request at a time stays under the provider's rate limit
+    const { error } = await resend.batch.send(
+      chunk.map((e) => ({ from, ...(replyTo ? { replyTo } : {}), ...e })),
+      { idempotencyKey },
+    );
+    if (error) return { sent, error: new Error(error.message) };
+    sent += chunk.length;
+  }
+  return { sent, error: null };
 }
 
 export function editUrl(locale: Language, token: string) {
