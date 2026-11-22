@@ -1,22 +1,19 @@
 import { SimpleGrid, Text, Textarea } from "@chakra-ui/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { FormField } from "@/components/ui/form-field";
 import { FormSection } from "@/components/ui/form-section";
 import { SelectField } from "@/components/ui/select-field";
 import { isLanguage, languages, type Language } from "@/lib/domain/types";
 
-export function LanguagesSection(props: {
-  groupLanguage: Language;
-  // Anaheim attendees already have their outlines, so they choose none.
-  needsOutline: boolean;
-  outline: Language;
-  second: Language | "";
-  onOutline: (l: Language) => void;
-  onSecond: (l: Language | "") => void;
-  comments?: string | undefined;
-}) {
+import { useRegistrationForm } from "./RegistrationFormContext";
+
+export function LanguagesSection() {
   const t = useTranslations("register");
+  const locale = useLocale();
+  const { state, actions, meta } = useRegistrationForm();
+  // Anaheim attendees already have their outlines, so they choose none.
+  const needsOutline = state.seatType !== "anaheim";
   const tl = useTranslations("common.languages");
   const options = (list: readonly Language[]) =>
     list.map((l) => (
@@ -29,19 +26,19 @@ export function LanguagesSection(props: {
       <SimpleGrid columns={{ base: 1, sm: 3 }} gap="4">
         <SelectField
           label={t("groupLanguage")}
-          field={{ name: "group_language", defaultValue: props.groupLanguage }}
+          field={{ name: "group_language", defaultValue: meta.defaults?.group_language ?? locale }}
         >
           {options(languages)}
         </SelectField>
-        {props.needsOutline && (
+        {needsOutline && (
           <>
             <SelectField
               label={t("outlineLanguage")}
               field={{
                 name: "outline_language",
-                value: props.outline,
+                value: state.outline,
                 onChange: (e) => {
-                  if (isLanguage(e.currentTarget.value)) props.onOutline(e.currentTarget.value);
+                  if (isLanguage(e.currentTarget.value)) actions.setOutline(e.currentTarget.value);
                 },
               }}
             >
@@ -51,22 +48,22 @@ export function LanguagesSection(props: {
               label={t("secondOutlineLanguage")}
               field={{
                 name: "second_outline_language",
-                value: props.second,
+                value: state.second,
                 onChange: (e) => {
                   const v = e.currentTarget.value;
-                  props.onSecond(isLanguage(v) ? v : "");
+                  actions.setSecond(isLanguage(v) ? v : "");
                 },
               }}
             >
               <option value="">{t("none")}</option>
-              {options(languages.filter((l) => l !== props.outline))}
+              {options(languages.filter((l) => l !== state.outline))}
             </SelectField>
           </>
         )}
       </SimpleGrid>
-      {props.needsOutline && <Text fontWeight="medium">{t("outlinesRule")}</Text>}
+      {needsOutline && <Text fontWeight="medium">{t("outlinesRule")}</Text>}
       <FormField label={t("comments")} optionalLabel={t("optional")}>
-        <Textarea name="comments" defaultValue={props.comments} rows={3} />
+        <Textarea name="comments" defaultValue={meta.defaults?.comments} rows={3} />
       </FormField>
     </FormSection>
   );

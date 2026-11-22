@@ -3,16 +3,13 @@ import { useTranslations } from "next-intl";
 
 import { FormSection } from "@/components/ui/form-section";
 
+import { useRegistrationForm } from "./RegistrationFormContext";
 import { TextField } from "./TextField";
-import type { PersonDefaults } from "./types";
 
-export function AboutYouSection(props: {
-  shared: boolean;
-  defaults?: PersonDefaults | undefined;
-  partnerLocked?: boolean | undefined;
-}) {
+export function AboutYouSection() {
   const t = useTranslations("register");
-  const d = props.defaults;
+  const { state, meta } = useRegistrationForm();
+  const d = meta.defaults;
   return (
     <FormSection legend={t("sectionAboutYou")}>
       <SimpleGrid columns={{ base: 1, sm: 2 }} gap="4">
@@ -30,7 +27,7 @@ export function AboutYouSection(props: {
           value={d?.last_name}
           required
         />
-        {props.shared && (
+        {state.seatType === "shared" && (
           <>
             <TextField
               name="partner_first_name"
@@ -38,7 +35,7 @@ export function AboutYouSection(props: {
               label={t("partnerFirstName")}
               value={d?.partner_first_name}
               required
-              disabled={props.partnerLocked}
+              disabled={meta.locked}
             />
             <TextField
               name="partner_last_name"
@@ -46,7 +43,7 @@ export function AboutYouSection(props: {
               label={t("partnerLastName")}
               value={d?.partner_last_name}
               required
-              disabled={props.partnerLocked}
+              disabled={meta.locked}
             />
           </>
         )}
