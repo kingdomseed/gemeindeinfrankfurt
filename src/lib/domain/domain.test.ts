@@ -291,19 +291,48 @@ describe("startOfBerlinToday", () => {
 describe("eventWhen", () => {
   const start = new Date("2026-12-27T08:45:00Z"); // Lord's Day, 09:45 in Frankfurt
   it("names Sunday the Lord's Day and gives the time", () => {
-    expect(eventWhen(start, null, "en-GB", "Lord's Day")).toBe("Lord's Day 27 December at 09:45");
+    expect(eventWhen({ startsAt: start, endsAt: null, allDay: false }, "en-GB", "Lord's Day")).toBe(
+      "Lord's Day 27 December at 09:45",
+    );
   });
   it("gives an end time on the same day", () => {
     const end = new Date("2026-12-27T11:00:00Z");
-    expect(eventWhen(start, end, "en-GB", "Lord's Day")).toBe(
+    expect(eventWhen({ startsAt: start, endsAt: end, allDay: false }, "en-GB", "Lord's Day")).toBe(
       "Lord's Day 27 December at 09:45–12:00",
     );
   });
   it("gives both days for an event over several days", () => {
     const friday = new Date("2026-12-25T18:00:00Z");
-    expect(eventWhen(friday, start, "de", "Tag des Herrn")).toBe(
-      "Freitag, 25. Dezember – Tag des Herrn, 27. Dezember",
+    expect(
+      eventWhen({ startsAt: friday, endsAt: start, allDay: false }, "de", "Tag des Herrn"),
+    ).toBe("Freitag, 25. Dezember – Tag des Herrn, 27. Dezember");
+  });
+});
+
+describe("whole-day events", () => {
+  const dec13 = new Date("2026-12-12T23:00:00Z"); // midnight in Frankfurt
+  it("shows the day without a time", () => {
+    expect(eventWhen({ startsAt: dec13, endsAt: null, allDay: true }, "de", "Tag des Herrn")).toBe(
+      "Tag des Herrn, 13. Dezember",
     );
+  });
+  it("covers every day through the last one in the calendar file", () => {
+    const ics = buildCalendar(
+      "Events",
+      [
+        {
+          uid: "e2",
+          title: "Conference",
+          startsAt: "2026-12-03T23:00:00Z",
+          endsAt: "2026-12-05T23:00:00Z",
+          location: "",
+          allDay: true,
+        },
+      ],
+      new Date("2026-11-22T12:00:00Z"),
+    );
+    expect(ics).toContain("\r\nDTSTART;VALUE=DATE:20261204\r\n");
+    expect(ics).toContain("\r\nDTEND;VALUE=DATE:20261207\r\n");
   });
 });
 

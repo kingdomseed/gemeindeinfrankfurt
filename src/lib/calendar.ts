@@ -50,8 +50,9 @@ export function eventsCalendar(
       title: e.title,
       startsAt: e.startsAt.toISOString(),
       endsAt: e.endsAt?.toISOString(),
+      allDay: e.allDay,
       location: e.location || meetingAddress,
-      description: e.details,
+      description: [e.details, e.link].filter(Boolean).join("\n\n"),
     })),
     new Date(),
   );

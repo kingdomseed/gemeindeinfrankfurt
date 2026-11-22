@@ -18,14 +18,17 @@ const berlinDayKey = new Intl.DateTimeFormat("en-CA", {
 // When an event takes place, in the reader's language and Frankfurt time:
 // "Saturday 9 January, 09:30", "Saturday 9 January, 09:30–12:00", or
 // "Friday 26 – Lord's Day 28 December" for an event over several days.
+// A whole-day event shows its days without times.
 export function eventWhen(
-  startsAt: Date,
-  endsAt: Date | null,
+  event: { startsAt: Date; endsAt: Date | null; allDay: boolean },
   locale: string,
   lordsDay: string,
 ): string {
+  const { startsAt, endsAt, allDay } = event;
+  const oneDay = !endsAt || berlinDayKey.format(startsAt) === berlinDayKey.format(endsAt);
+  if (allDay && oneDay) return berlinDay(startsAt, locale, lordsDay);
   if (!endsAt || endsAt <= startsAt) return berlinDayTime(startsAt, locale, lordsDay);
-  if (berlinDayKey.format(startsAt) === berlinDayKey.format(endsAt)) {
+  if (!allDay && oneDay) {
     const time = new Intl.DateTimeFormat(locale, {
       timeZone: "Europe/Berlin",
       hour: "2-digit",

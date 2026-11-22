@@ -1,6 +1,6 @@
 import * as migration_20261113_154811_initial from "./20261113_154811_initial";
 import * as migration_20261120_070746_page_sections from "./20261120_070746_page_sections";
-import * as migration_20261122_184510_events from "./20261122_184510_events";
+import * as migration_20261122_185121_events from "./20261122_185121_events";
 
 export const migrations = [
   {
@@ -14,8 +14,8 @@ export const migrations = [
     name: "20261120_070746_page_sections",
   },
   {
-    up: migration_20261122_184510_events.up,
-    down: migration_20261122_184510_events.down,
-    name: "20261122_184510_events",
+    up: migration_20261122_185121_events.up,
+    down: migration_20261122_185121_events.down,
+    name: "20261122_185121_events",
   },
 ];

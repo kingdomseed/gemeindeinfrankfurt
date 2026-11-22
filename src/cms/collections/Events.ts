@@ -1,6 +1,9 @@
-import type { CollectionConfig } from "payload";
+import type { CollectionConfig, TextFieldSingleValidation } from "payload";
 
 import { revalidateAfterChange, revalidateAfterDelete } from "@/cms/revalidate";
+
+const validateLink: TextFieldSingleValidation = (value) =>
+  !value || /^https:\/\/\S+$/.test(value) || "Use a full web address that starts with https://";
 
 // Dated events of the church, such as conferences, a baptism or a change of
 // meeting time. Published events show on the site until the day they end.
@@ -37,6 +40,15 @@ export const Events: CollectionConfig = {
       },
     },
     {
+      name: "allDay",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        position: "sidebar",
+        description: "No set time: the event takes the whole day, or the days from start to end.",
+      },
+    },
+    {
       name: "location",
       type: "text",
       localized: true,
@@ -47,6 +59,12 @@ export const Events: CollectionConfig = {
       type: "textarea",
       localized: true,
       admin: { description: "Optional. A few lines; line breaks are kept." },
+    },
+    {
+      name: "link",
+      type: "text",
+      validate: validateLink,
+      admin: { description: "Optional. A web address with more information or for registering." },
     },
     {
       name: "importKey",

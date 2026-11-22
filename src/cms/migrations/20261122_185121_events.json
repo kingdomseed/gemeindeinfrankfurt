@@ -1962,6 +1962,19 @@
           "primaryKey": false,
           "notNull": false
         },
+        "all_day": {
+          "name": "all_day",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "link": {
+          "name": "link",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "import_key": {
           "name": "import_key",
           "type": "varchar",
@@ -2198,6 +2211,19 @@
         "version_ends_at": {
           "name": "version_ends_at",
           "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_all_day": {
+          "name": "version_all_day",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "version_link": {
+          "name": "version_link",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -3383,6 +3409,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "306b06a3-bbd1-47a7-b4a0-14566c0de903",
+  "id": "3d0180c0-4f7b-4854-b49a-89071b350b95",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

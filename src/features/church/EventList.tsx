@@ -1,4 +1,4 @@
-import { Box, Heading, Stack, Text } from "@chakra-ui/react";
+import { Box, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
 
 import type { ChurchEvent } from "@/lib/cms";
@@ -7,6 +7,7 @@ import { eventWhen } from "@/lib/domain/events";
 // Events in date order, each with when, what and, if given, where.
 export function EventList({ items }: { items: readonly ChurchEvent[] }) {
   const t = useTranslations("home");
+  const ts = useTranslations("site");
   const locale = useLocale();
   return (
     <Stack as="ul" gap="3" listStyleType="none">
@@ -22,7 +23,7 @@ export function EventList({ items }: { items: readonly ChurchEvent[] }) {
         >
           <Text fontSize="sm" fontWeight="medium" color="brand.fg">
             <time dateTime={item.startsAt.toISOString()}>
-              {eventWhen(item.startsAt, item.endsAt, locale, t("lordsDay"))}
+              {eventWhen(item, locale, t("lordsDay"))}
             </time>
           </Text>
           <Heading as="h3" size="md" mt="1">
@@ -37,6 +38,11 @@ export function EventList({ items }: { items: readonly ChurchEvent[] }) {
             <Text mt="2" whiteSpace="pre-line">
               {item.details}
             </Text>
+          )}
+          {item.link && (
+            <Link href={item.link} color="brand.fg" textDecoration="underline" mt="2">
+              {ts("eventLink")}
+            </Link>
           )}
         </Box>
       ))}

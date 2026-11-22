@@ -45,8 +45,10 @@ export type ChurchEvent = {
   title: string;
   startsAt: Date;
   endsAt: Date | null;
+  allDay: boolean;
   location: string;
   details: string;
+  link: string;
 };
 
 // A section of a page, as an editor stacked it in the CMS.
@@ -163,8 +165,13 @@ const storedEvents = z.array(
     title: z.string(),
     startsAt: z.coerce.date(),
     endsAt: z.coerce.date().nullish(),
+    allDay: z.boolean().nullish(),
     location: z.string().nullish(),
     details: z.string().nullish(),
+    link: z
+      .url({ protocol: /^https$/ })
+      .nullish()
+      .catch(null),
   }),
 );
 
@@ -273,7 +280,15 @@ const readUpcomingEvents = cached(
           },
         ],
       },
-      select: { title: true, startsAt: true, endsAt: true, location: true, details: true },
+      select: {
+        title: true,
+        startsAt: true,
+        endsAt: true,
+        allDay: true,
+        location: true,
+        details: true,
+        link: true,
+      },
     });
     return docs;
   },
@@ -422,8 +437,10 @@ export async function getUpcomingEvents(locale: Locale, limit: number): Promise<
     title: doc.title,
     startsAt: doc.startsAt,
     endsAt: doc.endsAt ?? null,
+    allDay: doc.allDay === true,
     location: doc.location ?? "",
     details: doc.details ?? "",
+    link: doc.link ?? "",
   }));
 }
 

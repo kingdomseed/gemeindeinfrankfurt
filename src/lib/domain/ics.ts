@@ -8,6 +8,7 @@ export type CalendarEvent = {
   endsAt?: string | undefined; // left out when the event has no set end
   location: string;
   description?: string;
+  allDay?: boolean; // whole days in Frankfurt, from the start's day through the end's
 };
 
 // 20270109T083000Z
@@ -24,6 +25,31 @@ function escapeText(text: string): string {
     .replaceAll(";", "\\;")
     .replaceAll(",", "\\,")
     .replaceAll(/\r?\n/g, "\\n");
+}
+
+const berlinDate = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Europe/Berlin",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+// 20271226: the Frankfurt date of an instant, moved on by `addDays`.
+function icsDate(iso: string, addDays = 0): string {
+  const day = new Date(`${berlinDate.format(new Date(iso))}T00:00:00Z`);
+  day.setUTCDate(day.getUTCDate() + addDays);
+  return day.toISOString().slice(0, 10).replaceAll("-", "");
+}
+
+function eventTimes(e: CalendarEvent): string[] {
+  if (e.allDay) {
+    // A whole-day event ends on the day after its last day.
+    return [
+      `DTSTART;VALUE=DATE:${icsDate(e.startsAt)}`,
+      `DTEND;VALUE=DATE:${icsDate(e.endsAt ?? e.startsAt, 1)}`,
+    ];
+  }
+  return [`DTSTART:${icsTime(e.startsAt)}`, ...(e.endsAt ? [`DTEND:${icsTime(e.endsAt)}`] : [])];
 }
 
 // Lines longer than 75 octets continue on the next line after a space.
@@ -57,8 +83,7 @@ export function buildCalendar(name: string, events: readonly CalendarEvent[], no
       "BEGIN:VEVENT",
       `UID:${e.uid}`,
       `DTSTAMP:${stamp}`,
-      `DTSTART:${icsTime(e.startsAt)}`,
-      ...(e.endsAt ? [`DTEND:${icsTime(e.endsAt)}`] : []),
+      ...eventTimes(e),
       `SUMMARY:${escapeText(e.title)}`,
       ...(e.location ? [`LOCATION:${escapeText(e.location)}`] : []),
       ...(e.description ? [`DESCRIPTION:${escapeText(e.description)}`] : []),
