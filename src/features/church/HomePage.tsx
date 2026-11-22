@@ -23,6 +23,7 @@ export function HomePage(props: {
   const t = useTranslations("site");
   const { page, settings, teasers } = props;
   const intro = page.blocks.find((block) => block.type === "text");
+  const place = page.blocks.find((block) => block.type === "meetingPlace");
   const others = page.blocks.flatMap((block) => {
     if (block.type === "meetingPlace") return [];
     if (block !== intro) return [block];
@@ -52,7 +53,11 @@ export function HomePage(props: {
       {teasers.map((teaser, index) => (
         <TeaserBand key={teaser.href} teaser={teaser} index={index} />
       ))}
-      <PlaceBand address={settings.meetingAddress} tinted={teasers.length % 2 === 0} />
+      <PlaceBand
+        heading={(place?.heading ?? "").replace(/:\s*$/, "")}
+        address={settings.meetingAddress}
+        tinted={teasers.length % 2 === 0}
+      />
       <ContactBox settings={settings} />
     </Box>
   );

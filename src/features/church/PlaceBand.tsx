@@ -6,12 +6,13 @@ import { openStreetMapUrl } from "@/lib/domain/maps";
 import { PhotoBand } from "./PhotoBand";
 import { SectionHeading } from "./SectionHeading";
 
-// Where the church meets, beside a photo of the Nidda (Leonhard Lenz, CC0).
-export function PlaceBand(props: { address: string; tinted: boolean }) {
+// Where the church meets, under the home page's own heading for it, beside a
+// photo of the Nidda (Leonhard Lenz, CC0).
+export function PlaceBand(props: { heading: string; address: string; tinted: boolean }) {
   const t = useTranslations("site");
   return (
     <PhotoBand photo="/home-place.jpg" tinted={props.tinted} photoEnd={false} labelledBy="place">
-      <SectionHeading id="place">{t("meetingPlace")}</SectionHeading>
+      <SectionHeading id="place">{props.heading || t("meetingPlace")}</SectionHeading>
       <Text as="address" fontStyle="normal" fontSize="xl" whiteSpace="pre-line">
         {props.address}
       </Text>
