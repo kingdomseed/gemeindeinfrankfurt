@@ -1,6 +1,7 @@
 import { Box, Container, Flex, Grid, Heading, Link, List, Stack, Text } from "@chakra-ui/react";
 import { useNow, useTranslations } from "next-intl";
 
+import { ColorModeButton } from "@/components/ui/color-mode-button";
 import { Link as LocaleLink } from "@/i18n/navigation";
 import type { NavPage, SiteSettings } from "@/lib/cms";
 import { openStreetMapUrl } from "@/lib/domain/maps";
@@ -109,6 +110,7 @@ export function SiteFooter(props: { settings: SiteSettings; pages: readonly NavP
           <Link asChild {...linkStyle}>
             <LocaleLink href="/impressum">{tc("imprint")}</LocaleLink>
           </Link>
+          <ColorModeButton toDark={tc("darkMode")} toLight={tc("lightMode")} />
         </Flex>
       </Container>
     </Box>
