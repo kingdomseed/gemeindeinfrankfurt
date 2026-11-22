@@ -7,6 +7,7 @@ import { AnnouncementList } from "./AnnouncementList";
 import { MeetingPlace } from "./MeetingPlace";
 import { PageBody } from "./PageBody";
 import { StatementGrid } from "./StatementGrid";
+import { UpcomingEvents } from "./UpcomingEvents";
 
 // Draws the sections of a CMS page, in the order the editor stacked them.
 export function PageBlocks(props: {
@@ -37,6 +38,9 @@ export function PageBlocks(props: {
     if (block.type === "statements") return <StatementGrid key={block.id} items={block.items} />;
     if (block.type === "meetingPlace") {
       return <MeetingPlace key={block.id} heading={block.heading} address={props.meetingAddress} />;
+    }
+    if (block.type === "upcomingEvents") {
+      return <UpcomingEvents key={block.id} heading={block.heading} items={block.items} />;
     }
     return (
       <AnnouncementList

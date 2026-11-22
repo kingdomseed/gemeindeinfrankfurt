@@ -1,12 +1,13 @@
-// An iCalendar (RFC 5545) file, so registrants can put their messages into
-// Google Calendar, Apple Calendar or Outlook.
+// An iCalendar (RFC 5545) file, so registrants can put their messages, and
+// anyone the church's events, into Google Calendar, Apple Calendar or Outlook.
 
 export type CalendarEvent = {
   uid: string;
   title: string;
   startsAt: string; // ISO instant
-  endsAt: string;
+  endsAt?: string | undefined; // left out when the event has no set end
   location: string;
+  description?: string;
 };
 
 // 20270109T083000Z
@@ -57,9 +58,10 @@ export function buildCalendar(name: string, events: readonly CalendarEvent[], no
       `UID:${e.uid}`,
       `DTSTAMP:${stamp}`,
       `DTSTART:${icsTime(e.startsAt)}`,
-      `DTEND:${icsTime(e.endsAt)}`,
+      ...(e.endsAt ? [`DTEND:${icsTime(e.endsAt)}`] : []),
       `SUMMARY:${escapeText(e.title)}`,
       ...(e.location ? [`LOCATION:${escapeText(e.location)}`] : []),
+      ...(e.description ? [`DESCRIPTION:${escapeText(e.description)}`] : []),
       "END:VEVENT",
     ]),
     "END:VCALENDAR",

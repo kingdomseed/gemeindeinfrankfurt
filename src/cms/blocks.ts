@@ -73,10 +73,27 @@ export const AnnouncementsBlock: Block = {
   ],
 };
 
+export const UpcomingEventsBlock: Block = {
+  slug: "upcomingEvents",
+  labels: { singular: "Upcoming events", plural: "Upcoming events" },
+  fields: [
+    { name: "heading", type: "text" },
+    {
+      name: "limit",
+      type: "number",
+      defaultValue: 4,
+      min: 1,
+      max: 20,
+      admin: { description: "How many events to show, soonest first. Events come from Events." },
+    },
+  ],
+};
+
 export const pageBlocks = [
   TextBlock,
   FaqBlock,
   StatementsBlock,
   MeetingPlaceBlock,
   AnnouncementsBlock,
+  UpcomingEventsBlock,
 ];

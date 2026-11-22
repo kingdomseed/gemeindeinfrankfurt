@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { earliestOpenEndDate } from "./announcements";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
+import { eventWhen, startOfBerlinToday } from "./events";
 import { computeFees } from "./fees";
 import { buildCalendar } from "./ics";
 import { openStreetMapUrl } from "./maps";
@@ -270,5 +271,58 @@ describe("sitemapEntries", () => {
       ru: "https://example.org/ru",
       "x-default": "https://example.org/de",
     });
+  });
+});
+
+describe("startOfBerlinToday", () => {
+  it("is midnight in Frankfurt, in winter and in summer", () => {
+    expect(startOfBerlinToday(new Date("2026-12-24T23:30:00Z")).toISOString()).toBe(
+      "2026-12-24T23:00:00.000Z",
+    );
+    expect(startOfBerlinToday(new Date("2026-12-24T10:00:00Z")).toISOString()).toBe(
+      "2026-12-23T23:00:00.000Z",
+    );
+    expect(startOfBerlinToday(new Date("2027-07-01T12:00:00Z")).toISOString()).toBe(
+      "2027-06-30T22:00:00.000Z",
+    );
+  });
+});
+
+describe("eventWhen", () => {
+  const start = new Date("2026-12-27T08:45:00Z"); // Lord's Day, 09:45 in Frankfurt
+  it("names Sunday the Lord's Day and gives the time", () => {
+    expect(eventWhen(start, null, "en-GB", "Lord's Day")).toBe("Lord's Day 27 December at 09:45");
+  });
+  it("gives an end time on the same day", () => {
+    const end = new Date("2026-12-27T11:00:00Z");
+    expect(eventWhen(start, end, "en-GB", "Lord's Day")).toBe(
+      "Lord's Day 27 December at 09:45–12:00",
+    );
+  });
+  it("gives both days for an event over several days", () => {
+    const friday = new Date("2026-12-25T18:00:00Z");
+    expect(eventWhen(friday, start, "de", "Tag des Herrn")).toBe(
+      "Freitag, 25. Dezember – Tag des Herrn, 27. Dezember",
+    );
+  });
+});
+
+describe("buildCalendar for events", () => {
+  it("leaves out the end when there is none and keeps the details", () => {
+    const ics = buildCalendar(
+      "Events",
+      [
+        {
+          uid: "e1",
+          title: "Conference",
+          startsAt: "2026-12-25T18:00:00Z",
+          location: "",
+          description: "Bring a Bible",
+        },
+      ],
+      new Date("2026-11-22T12:00:00Z"),
+    );
+    expect(ics).not.toContain("DTEND");
+    expect(ics).toContain("\r\nDESCRIPTION:Bring a Bible\r\n");
   });
 });
