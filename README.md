@@ -44,7 +44,7 @@ Before stage 1 goes live, still to do:
 - [Next.js 16](https://nextjs.org) (App Router). Note that Next 16 renamed
   `middleware.ts` to `proxy.ts`; see `src/proxy.ts`.
 - [Supabase](https://supabase.com) for Postgres, coordinator auth (email links)
-  and Realtime. Host the project in the EU (Frankfurt) region.
+  and Realtime. Host the project in an EU region (production runs in Ireland, eu-west-1).
 - [Chakra UI v3](https://chakra-ui.com) for every UI component, themed in
   `src/theme/` (light and dark mode follow the device through `next-themes`).
 - [next-intl](https://next-intl.dev) for translations (`messages/*.json`).

@@ -298,7 +298,7 @@
     "basisTitle": "Rechtsgrundlage",
     "basisBody": "Art. 6 Abs. 1 lit. b DSGVO, weil die Daten für die Teilnahme am Training nötig sind, für das du dich anmeldest, und Art. 6 Abs. 1 lit. f DSGVO für unser berechtigtes Interesse, das Training zuverlässig zu organisieren.",
     "recipientsTitle": "Wer die Daten sieht",
-    "recipientsBody": "Nur die Koordinatoren dieses Trainings. Wir nutzen Dienstleister, die Daten in unserem Auftrag auf Grundlage von Auftragsverarbeitungsverträgen verarbeiten: Supabase (Datenbank, gehostet in Frankfurt), unseren Website-Host in der EU und Resend (E-Mail-Versand). Einige dieser Anbieter haben ihren Sitz in den USA; verlassen Daten die EU, sind sie durch die von der DSGVO verlangten Garantien geschützt, etwa das EU-US Data Privacy Framework oder Standardvertragsklauseln.",
+    "recipientsBody": "Nur die Koordinatoren dieses Trainings. Wir nutzen Dienstleister, die Daten in unserem Auftrag auf Grundlage von Auftragsverarbeitungsverträgen verarbeiten: Supabase (Datenbank, gehostet in Irland, EU), unseren Website-Host in der EU und Resend (E-Mail-Versand). Einige dieser Anbieter haben ihren Sitz in den USA; verlassen Daten die EU, sind sie durch die von der DSGVO verlangten Garantien geschützt, etwa das EU-US Data Privacy Framework oder Standardvertragsklauseln.",
     "retentionTitle": "Wie lange wir sie speichern",
     "retentionBody": "Namen und Kontaktdaten werden gelöscht, sobald der Bericht zum Training eingereicht und angenommen ist. Danach bleiben nur Zahlen ohne Namen.",
     "rightsTitle": "Deine Rechte",
