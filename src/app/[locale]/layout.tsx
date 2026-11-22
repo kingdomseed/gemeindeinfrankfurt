@@ -7,11 +7,16 @@ import { Provider } from "@/components/ui/provider";
 import { SiteShell } from "@/features/shell/SiteShell";
 import { requireLocale } from "@/i18n/locale";
 import { routing } from "@/i18n/routing";
-import { getNavigation, getSiteSettings } from "@/lib/cms";
+import { canReachCms, getNavigation, getSiteSettings } from "@/lib/cms";
 
-// The header, menu and footer come from the CMS on every request, so no page
-// under this layout is prerendered at build time.
-export const dynamic = "force-dynamic";
+// Church pages are built once in every language and served from the cache.
+// A CMS edit refreshes them at once; otherwise they are rebuilt at most once
+// an hour after a visit, so announcements appear and end on time.
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  return (await canReachCms()) ? routing.locales.map((locale) => ({ locale })) : [];
+}
 
 export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
   const { siteName } = await getSiteSettings(requireLocale((await params).locale));

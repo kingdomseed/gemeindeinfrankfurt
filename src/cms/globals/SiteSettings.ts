@@ -1,8 +1,11 @@
 import type { GlobalConfig } from "payload";
 
+import { revalidateGlobalAfterChange } from "@/cms/revalidate";
+
 // Header, contact panel and footer text shared by every public page.
 export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
+  hooks: { afterChange: [revalidateGlobalAfterChange] },
   fields: [
     { name: "siteName", type: "text", localized: true, required: true },
     { name: "tagline", type: "text", localized: true },

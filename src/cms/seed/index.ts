@@ -5,6 +5,7 @@ import config from "@payload-config";
 import { convertMarkdownToLexical, editorConfigFactory } from "@payloadcms/richtext-lexical";
 import { getPayload } from "payload";
 
+import { skipRevalidate } from "@/cms/revalidate";
 import { locales, type Locale } from "@/i18n/routing";
 import { openStreetMapUrl } from "@/lib/domain/maps";
 
@@ -141,9 +142,24 @@ async function seedPage(page: PageSeed) {
       isHome: page.isHome,
     };
     if (id === undefined) {
-      id = (await payload.create({ collection: "pages", locale, data, depth: 0 })).id;
+      id = (
+        await payload.create({
+          collection: "pages",
+          locale,
+          data,
+          depth: 0,
+          context: skipRevalidate,
+        })
+      ).id;
     } else {
-      await payload.update({ collection: "pages", id, locale, data, depth: 0 });
+      await payload.update({
+        collection: "pages",
+        id,
+        locale,
+        data,
+        depth: 0,
+        context: skipRevalidate,
+      });
     }
     payload.logger.info(`Seeded page ${locale}/${data.slug}`);
   });
@@ -159,6 +175,7 @@ async function seedSiteSettings() {
     await payload.updateGlobal({
       slug: "site-settings",
       locale,
+      context: skipRevalidate,
       data: {
         ...header[locale],
         contactHeading: contact?.heading ?? "",

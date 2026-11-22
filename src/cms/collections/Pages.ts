@@ -1,6 +1,7 @@
 import type { CollectionConfig, PayloadRequest, TextFieldSingleValidation } from "payload";
 
 import { pageBlocks } from "@/cms/blocks";
+import { revalidateAfterChange, revalidateAfterDelete } from "@/cms/revalidate";
 import { locales } from "@/i18n/routing";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -43,6 +44,7 @@ const validateSlug: TextFieldSingleValidation = async (value, { req, id }) => {
 // text; the page marked as home is shown at /[locale].
 export const Pages: CollectionConfig = {
   slug: "pages",
+  hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "slug", "navOrder", "isHome"],
