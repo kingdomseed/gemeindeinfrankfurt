@@ -9,6 +9,7 @@ import { z } from "zod";
 import { cmsCacheTag } from "@/cms/revalidate";
 import { locales, type Locale } from "@/i18n/routing";
 import { earliestOpenEndDate } from "@/lib/domain/announcements";
+import { startOfBerlinToday } from "@/lib/domain/events";
 import type { SitemapPage } from "@/lib/domain/sitemap";
 
 // Public pages and site settings from Payload, read through its Local API.
@@ -39,6 +40,17 @@ export type Announcement = {
   publishedAt: Date;
 };
 
+export type ChurchEvent = {
+  id: string;
+  title: string;
+  startsAt: Date;
+  endsAt: Date | null;
+  allDay: boolean;
+  location: string;
+  details: string;
+  link: string;
+};
+
 // A section of a page, as an editor stacked it in the CMS.
 export type PageBlock =
   | { type: "text"; id: string; content: RichTextContent }
@@ -53,7 +65,8 @@ export type PageBlock =
       items: { id: string; heading: string; text: string; references: string }[];
     }
   | { type: "meetingPlace"; id: string; heading: string }
-  | { type: "announcements"; id: string; heading: string; items: Announcement[] };
+  | { type: "announcements"; id: string; heading: string; items: Announcement[] }
+  | { type: "upcomingEvents"; id: string; heading: string; items: ChurchEvent[] };
 
 export type SiteSettings = {
   siteName: string;
@@ -123,6 +136,12 @@ const storedBlock = z.discriminatedUnion("blockType", [
     heading: z.string().nullish(),
     limit: z.number().nullish(),
   }),
+  z.object({
+    blockType: z.literal("upcomingEvents"),
+    id: rowId,
+    heading: z.string().nullish(),
+    limit: z.number().nullish(),
+  }),
 ]);
 
 const pageContent = z.object({
@@ -137,6 +156,22 @@ const storedAnnouncements = z.array(
     title: z.string(),
     body: editorState.nullish(),
     publishedAt: z.coerce.date(),
+  }),
+);
+
+const storedEvents = z.array(
+  z.object({
+    id: z.union([z.number(), z.string()]),
+    title: z.string(),
+    startsAt: z.coerce.date(),
+    endsAt: z.coerce.date().nullish(),
+    allDay: z.boolean().nullish(),
+    location: z.string().nullish(),
+    details: z.string().nullish(),
+    link: z
+      .url({ protocol: /^https$/ })
+      .nullish()
+      .catch(null),
   }),
 );
 
@@ -214,6 +249,46 @@ const readAnnouncements = cached(
         ],
       },
       select: { title: true, body: true, publishedAt: true },
+    });
+    return docs;
+  },
+  oneHour,
+);
+
+const readUpcomingEvents = cached(
+  "cms-upcoming-events",
+  async (locale: Locale, limit: number) => {
+    const since = startOfBerlinToday(new Date()).toISOString();
+    const { docs } = await (
+      await cms()
+    ).find({
+      collection: "events",
+      locale,
+      depth: 0,
+      limit,
+      sort: "startsAt",
+      where: {
+        and: [
+          { _status: { equals: "published" } },
+          {
+            or: [
+              { endsAt: { greater_than_equal: since } },
+              {
+                and: [{ endsAt: { exists: false } }, { startsAt: { greater_than_equal: since } }],
+              },
+            ],
+          },
+        ],
+      },
+      select: {
+        title: true,
+        startsAt: true,
+        endsAt: true,
+        allDay: true,
+        location: true,
+        details: true,
+        link: true,
+      },
     });
     return docs;
   },
@@ -329,6 +404,14 @@ async function toPageBlock(
   if (block.blockType === "meetingPlace") {
     return { type: "meetingPlace", id, heading: block.heading ?? "" };
   }
+  if (block.blockType === "upcomingEvents") {
+    return {
+      type: "upcomingEvents",
+      id,
+      heading: block.heading ?? "",
+      items: await getUpcomingEvents(locale, block.limit ?? 4),
+    };
+  }
   return {
     type: "announcements",
     id,
@@ -344,6 +427,20 @@ export async function getAnnouncements(locale: Locale, limit: number): Promise<A
     title: doc.title,
     body: doc.body ?? null,
     publishedAt: doc.publishedAt,
+  }));
+}
+
+// Published events that have not yet ended, soonest first.
+export async function getUpcomingEvents(locale: Locale, limit: number): Promise<ChurchEvent[]> {
+  return storedEvents.parse(await readUpcomingEvents(locale, limit)).map((doc) => ({
+    id: String(doc.id),
+    title: doc.title,
+    startsAt: doc.startsAt,
+    endsAt: doc.endsAt ?? null,
+    allDay: doc.allDay === true,
+    location: doc.location ?? "",
+    details: doc.details ?? "",
+    link: doc.link ?? "",
   }));
 }
 

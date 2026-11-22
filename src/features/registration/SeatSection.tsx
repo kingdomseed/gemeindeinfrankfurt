@@ -1,17 +1,17 @@
 import { Text } from "@chakra-ui/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { RadioChoices } from "@/components/ui/choice";
 import { FormSection } from "@/components/ui/form-section";
+import { formatEuro } from "@/lib/domain/fees";
 import { seatTypes, type SeatType } from "@/lib/domain/types";
 
-export function SeatSection(props: {
-  value: SeatType;
-  fee: string;
-  onChange: (s: SeatType) => void;
-  locked?: boolean | undefined;
-}) {
+import { useRegistrationForm } from "./RegistrationFormContext";
+
+export function SeatSection() {
   const t = useTranslations("register");
+  const locale = useLocale();
+  const { state, actions, meta } = useRegistrationForm();
   // Shared and Anaheim seats carry their own rule under the label.
   function help(s: SeatType) {
     if (s === "shared") return t("seatHelp.shared");
@@ -19,13 +19,13 @@ export function SeatSection(props: {
     return undefined;
   }
   return (
-    <FormSection legend={t("seatType")} disabled={props.locked}>
-      <Text mb="2">{t("seatRules", { fee: props.fee })}</Text>
+    <FormSection legend={t("seatType")} disabled={meta.locked}>
+      <Text mb="2">{t("seatRules", { fee: formatEuro(meta.feeCents, locale) })}</Text>
       <RadioChoices
         name="seat_type"
-        value={props.value}
-        disabled={props.locked}
-        onChange={props.onChange}
+        value={state.seatType}
+        disabled={meta.locked}
+        onChange={actions.setSeatType}
         options={seatTypes.map((s) => ({
           value: s,
           label: t(`seat.${s}`),

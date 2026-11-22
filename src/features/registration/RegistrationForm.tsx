@@ -1,16 +1,17 @@
 "use client";
 
 import { chakra } from "@chakra-ui/react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { useActionState, useState, useTransition, type SyntheticEvent } from "react";
 
-import { computeFees, formatEuro, type FeeBreakdown } from "@/lib/domain/fees";
+import { computeFees, type FeeBreakdown } from "@/lib/domain/fees";
 import { isLanguage, picksSessions, type Language, type SeatType } from "@/lib/domain/types";
 
 import { AboutYouSection } from "./AboutYouSection";
 import { ConfirmSection } from "./ConfirmSection";
 import { LanguagesSection } from "./LanguagesSection";
 import { Receipt } from "./Receipt";
+import { RegistrationFormContext } from "./RegistrationFormContext";
 import { SeatSection } from "./SeatSection";
 import { SessionsSection } from "./SessionsSection";
 import { SubmitArea } from "./SubmitArea";
@@ -33,14 +34,10 @@ type Props = {
   messages: Record<string, string>; // status -> text shown after submit
 };
 
-// Statuses that mean the action worked; everything else is shown as a problem.
-const successStatuses = new Set(["done", "saved"]);
-
 // The registration form on both the register and the edit page. It owns the
-// form state; each section only renders its fields.
+// form state and shares it with the sections through RegistrationFormContext.
 export function RegistrationForm(props: Props) {
   const locale = useLocale();
-  const t = useTranslations("register");
   const d = props.defaults;
 
   const [state, formAction, pending] = useActionState(props.action, { status: "idle" });
@@ -59,7 +56,6 @@ export function RegistrationForm(props: Props) {
   const [dismissedResult, setDismissedResult] = useState<ActionState | null>(null);
 
   const anaheim = seatType === "anaheim";
-  const euro = (cents: number) => formatEuro(cents, locale);
   const fees = computeFees(
     {
       seatType,
@@ -107,47 +103,34 @@ export function RegistrationForm(props: Props) {
   }
 
   return (
-    <chakra.form key={formKey} onSubmit={onSubmit} display="flex" flexDirection="column" gap="10">
-      <SeatSection
-        value={seatType}
-        fee={euro(props.prices.feeCents)}
-        onChange={setSeatType}
-        locked={props.seatLocked}
-      />
-      {picksSessions(seatType) && (
-        <SessionsSection
-          sessions={props.sessions}
-          hint={anaheim ? t("sessionsAnaheimHint") : t("sessionsPartHint")}
-          chosen={new Set(d?.session_ids)}
-          missing={sessionsMissing}
-          onPick={() => setSessionsMissing(false)}
-          locked={props.seatLocked}
+    <RegistrationFormContext
+      value={{
+        state: { seatType, outline, second },
+        actions: { setSeatType, setOutline, setSecond },
+        meta: { defaults: d, locked: Boolean(props.seatLocked), feeCents: props.prices.feeCents },
+      }}
+    >
+      <chakra.form key={formKey} onSubmit={onSubmit} display="flex" flexDirection="column" gap="10">
+        <SeatSection />
+        {picksSessions(seatType) && (
+          <SessionsSection
+            sessions={props.sessions}
+            missing={sessionsMissing}
+            onPick={() => setSessionsMissing(false)}
+          />
+        )}
+        <AboutYouSection />
+        <LanguagesSection />
+        <ConfirmSection />
+        <SubmitArea
+          status={state.status}
+          // Hidden while sending, so each answer mounts afresh and takes focus.
+          message={pending || state.status === "done" ? undefined : props.messages[state.status]}
+          pending={pending}
+          label={props.submitLabel}
         />
-      )}
-      <AboutYouSection
-        shared={seatType === "shared"}
-        defaults={d}
-        partnerLocked={props.seatLocked}
-      />
-      <LanguagesSection
-        groupLanguage={d?.group_language ?? locale}
-        needsOutline={!anaheim}
-        outline={outline}
-        second={second}
-        onOutline={setOutline}
-        onSecond={setSecond}
-        comments={d?.comments}
-      />
-      <ConfirmSection confirmed={Boolean(d)} />
-      <SubmitArea
-        // Hidden while sending, so each answer mounts afresh and takes focus.
-        message={pending || state.status === "done" ? undefined : props.messages[state.status]}
-        success={successStatuses.has(state.status)}
-        duplicate={state.status === "duplicate"}
-        pending={pending}
-        label={props.submitLabel}
-      />
-    </chakra.form>
+      </chakra.form>
+    </RegistrationFormContext>
   );
 }
 

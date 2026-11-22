@@ -19,7 +19,14 @@
     "contactHeading": "Контакты",
     "announcements": "Объявления",
     "meetingPlace": "Место собраний",
-    "openMap": "Посмотреть на карте (OpenStreetMap)"
+    "openMap": "Посмотреть на карте (OpenStreetMap)",
+    "upcomingEvents": "Ближайшие события",
+    "allEvents": "Все события",
+    "subscribeEvents": "Подписаться на события в своём календаре",
+    "noEvents": "Сейчас нет объявленных событий.",
+    "eventsTitle": "События",
+    "eventsIntro": "Конференции, особые собрания и изменения в расписании недели, как они указаны в объявлениях церкви.",
+    "eventLink": "Подробнее"
   },
   "home": {
     "noTraining": "Регистрация ещё не открыта",

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { PageMessage } from "@/components/ui/page-message";
 import { AddToCalendar } from "@/features/registration/AddToCalendar";
 import { CancelRegistration } from "@/features/registration/CancelRegistration";
-import { trainingFormProps } from "@/features/registration/form-props";
+import { registrationDefaults, trainingFormProps } from "@/features/registration/form-props";
 import { PaymentStatus } from "@/features/registration/PaymentStatus";
 import { RegistrationForm } from "@/features/registration/RegistrationForm";
 import { RegistrationPage } from "@/features/registration/RegistrationPage";
@@ -75,36 +75,15 @@ export default async function EditPage({ params }: PageProps<"/[locale]/training
       <RegistrationForm
         {...formProps}
         seatLocked={seatLocked}
-        defaults={{
-          seat_type: reg.seat_type,
-          session_ids: reg.registration_sessions.map((s) => s.session_id),
-          first_name: reg.first_name,
-          last_name: reg.last_name,
-          partner_first_name: reg.partner_first_name ?? "",
-          partner_last_name: reg.partner_last_name ?? "",
-          email: reg.email,
-          phone: reg.phone,
-          group_language: reg.group_language,
-          outline_language: reg.outline_language,
-          second_outline_language: reg.second_outline_language,
-          comments: reg.comments,
-        }}
+        defaults={registrationDefaults(reg)}
         submitLabel={t("save")}
         action={updateRegistration.bind(null, token, locale)}
         messages={{ saved: t("saved"), error: tr("error") }}
       />
       {!seatLocked && (
         <CancelRegistration
+          audience="registrant"
           action={cancelRegistration.bind(null, token, locale)}
-          labels={{
-            cancel: t("cancel"),
-            confirm: t("cancelConfirm"),
-            explain: t("cancelExplain"),
-            intro: t("cancelIntro"),
-            yes: t("cancelYes"),
-            keep: t("cancelKeep"),
-          }}
-          messages={{ cancelled: t("cancelled"), locked: t("locked"), error: tr("error") }}
         />
       )}
     </RegistrationPage>
