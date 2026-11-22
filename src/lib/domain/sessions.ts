@@ -118,3 +118,27 @@ export function trainingDates(
     }),
   );
 }
+
+// "12–24 January 2027": the same span without weekdays, for tight spaces such
+// as the registration banner. Null when there are no sessions.
+export function trainingDateSpan(sessions: Session[], locale: string): string | null {
+  const starts = sessions.map((s) => Date.parse(s.starts_at));
+  if (starts.length === 0) return null;
+  const format = new Intl.DateTimeFormat(locale, {
+    timeZone,
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  return joinParts(
+    format.formatRangeToParts(Math.min(...starts), Math.max(...starts)).map((p) => p.value),
+  );
+}
+
+// "12 January" on the Frankfurt calendar, without the weekday, so it reads
+// right after a preposition in every language ("до 12 января").
+export function berlinDate(instant: Date, locale: string): string {
+  return new Intl.DateTimeFormat(locale, { timeZone, day: "numeric", month: "long" }).format(
+    instant,
+  );
+}

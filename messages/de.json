@@ -30,7 +30,15 @@
     "allAnnouncements": "Alle Ankündigungen",
     "announcementsTitle": "Ankündigungen",
     "announcementsIntro": "Die wöchentlichen Ankündigungen der Gemeinde, die neuesten zuerst.",
-    "noAnnouncements": "Es gibt noch keine Ankündigungen."
+    "noAnnouncements": "Es gibt noch keine Ankündigungen.",
+    "welcome": "Willkommen in der Gemeinde in Frankfurt",
+    "skipToContent": "Zum Inhalt springen",
+    "footerPages": "Seiten",
+    "registrationOpen": "Anmeldung offen bis {day}",
+    "registerNow": "Anmelden",
+    "dismissBanner": "Hinweis schließen",
+    "meetingLinkHeading": "An den Versammlungen über Zoom teilnehmen",
+    "meetingLinkAction": "Zoom-Link öffnen"
   },
   "home": {
     "noTraining": "Die Anmeldung ist noch nicht geöffnet",

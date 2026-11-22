@@ -2,6 +2,7 @@ import { Box, Button, Container, Flex, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
+import { mainContentId } from "@/components/ui/skip-link";
 import { SiteNav } from "@/features/shell/SiteNav";
 
 import { coordinatorSections } from "./sections";
@@ -43,7 +44,16 @@ export function CoordinatorShell(props: {
           />
         </Container>
       </Box>
-      <Container as="main" maxW="6xl" px="4" pt="6" pb="16" _print={{ p: "0", maxW: "none" }}>
+      <Container
+        as="main"
+        id={mainContentId}
+        tabIndex={-1}
+        maxW="6xl"
+        px="4"
+        pt="6"
+        pb="16"
+        _print={{ p: "0", maxW: "none" }}
+      >
         {props.children}
       </Container>
     </>

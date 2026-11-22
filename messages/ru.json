@@ -30,7 +30,15 @@
     "allAnnouncements": "Все объявления",
     "announcementsTitle": "Объявления",
     "announcementsIntro": "Еженедельные объявления церкви, сначала самые новые.",
-    "noAnnouncements": "Объявлений пока нет."
+    "noAnnouncements": "Объявлений пока нет.",
+    "welcome": "Добро пожаловать в церковь во Франкфурте",
+    "skipToContent": "Перейти к содержанию",
+    "footerPages": "Страницы",
+    "registrationOpen": "Регистрация открыта до {day}",
+    "registerNow": "Зарегистрироваться",
+    "dismissBanner": "Скрыть",
+    "meetingLinkHeading": "Участвовать в собраниях через Zoom",
+    "meetingLinkAction": "Открыть ссылку Zoom"
   },
   "home": {
     "noTraining": "Регистрация ещё не открыта",

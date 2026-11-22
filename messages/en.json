@@ -30,7 +30,15 @@
     "allAnnouncements": "All announcements",
     "announcementsTitle": "Announcements",
     "announcementsIntro": "The church's weekly announcements, newest first.",
-    "noAnnouncements": "There are no announcements yet."
+    "noAnnouncements": "There are no announcements yet.",
+    "welcome": "Welcome to the church in Frankfurt",
+    "skipToContent": "Skip to content",
+    "footerPages": "Pages",
+    "registrationOpen": "Registration open until {day}",
+    "registerNow": "Register",
+    "dismissBanner": "Dismiss",
+    "meetingLinkHeading": "Join the meetings on Zoom",
+    "meetingLinkAction": "Open the Zoom link"
   },
   "home": {
     "noTraining": "Registration is not open yet",
