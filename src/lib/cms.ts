@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import { locales, type Locale } from "@/i18n/routing";
 import { earliestOpenEndDate } from "@/lib/domain/announcements";
+import type { SitemapPage } from "@/lib/domain/sitemap";
 
 // Public pages and site settings from Payload, read through its Local API.
 // Content comes from editors, so every document is parsed before it is used.
@@ -172,6 +173,11 @@ export async function getNavigation(locale: Locale): Promise<NavPage[]> {
     slug: inLocale(page.slug, locale),
     isHome: page.isHome === true,
   }));
+}
+
+// Every page's slug in each language, for sitemap.xml.
+export async function getPageSlugs(): Promise<SitemapPage[]> {
+  return (await loadPages()).map((page) => ({ isHome: page.isHome === true, slugs: page.slug }));
 }
 
 type PageMatch = { id: number | string; title: string; slug: string; isHome: boolean };

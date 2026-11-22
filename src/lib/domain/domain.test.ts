@@ -7,6 +7,7 @@ import { buildCalendar } from "./ics";
 import { openStreetMapUrl } from "./maps";
 import { countOutlines } from "./outlines";
 import { berlinDay, berlinDayTime, scheduleDays, sessionLabel, trainingDates } from "./sessions";
+import { sitemapEntries } from "./sitemap";
 import { hashToken, newEditToken } from "./token";
 import { picksSessions, seatTypes } from "./types";
 
@@ -224,5 +225,40 @@ describe("buildCalendar", () => {
     for (const line of ics.split("\r\n")) {
       expect(new TextEncoder().encode(line).length).toBeLessThanOrEqual(75);
     }
+  });
+});
+
+describe("sitemapEntries", () => {
+  const locales = ["de", "en", "ru"] as const;
+  const pages = [
+    { isHome: true, slugs: { de: "uber-uns", en: "about-us", ru: "o-nas" } },
+    { isHome: false, slugs: { de: "unser-glaube", en: "our-belief" } },
+  ];
+
+  it("lists every page in every language, with the home page at the language root", () => {
+    const urls = sitemapEntries("https://example.org/", locales, "de", pages, ["privacy"]).map(
+      (entry) => entry.url,
+    );
+    expect(urls).toEqual([
+      "https://example.org/de",
+      "https://example.org/en",
+      "https://example.org/ru",
+      "https://example.org/de/unser-glaube",
+      "https://example.org/en/our-belief",
+      "https://example.org/ru/unser-glaube",
+      "https://example.org/de/privacy",
+      "https://example.org/en/privacy",
+      "https://example.org/ru/privacy",
+    ]);
+  });
+
+  it("links each entry to the same page in every language and to the default language", () => {
+    const [, english] = sitemapEntries("https://example.org", locales, "de", pages, []);
+    expect(english?.languages).toEqual({
+      de: "https://example.org/de",
+      en: "https://example.org/en",
+      ru: "https://example.org/ru",
+      "x-default": "https://example.org/de",
+    });
   });
 });
