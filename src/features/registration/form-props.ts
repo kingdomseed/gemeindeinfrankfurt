@@ -10,6 +10,7 @@ export function trainingFormProps(
   training: TrainingWithSessions,
   locale: Language,
   messageWord: (number: number) => string,
+  lordsDay: string,
 ): {
   sessions: SessionOption[];
   prices: { feeCents: number; outlinePriceCents: number };
@@ -18,7 +19,7 @@ export function trainingFormProps(
   return {
     sessions: training.sessions.map((s) => ({
       id: s.id,
-      label: sessionLabel(s, locale, messageWord(s.message_number)),
+      label: sessionLabel(s, locale, messageWord(s.message_number), lordsDay),
     })),
     prices: { feeCents: training.fee_cents, outlinePriceCents: training.outline_price_cents },
     payment: {

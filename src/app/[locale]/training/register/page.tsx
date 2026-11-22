@@ -38,11 +38,16 @@ export default async function RegisterPage({ params }: PageProps<"/[locale]/trai
   return (
     <RegistrationPage
       title={t("title")}
-      dates={trainingDates(training.sessions, locale) ?? undefined}
+      dates={trainingDates(training.sessions, locale, th("lordsDay")) ?? undefined}
       aside={<AddToCalendar icsUrl={calendarUrl(locale)} label={tc("allMessages")} />}
     >
       <RegistrationForm
-        {...trainingFormProps(training, locale, (number) => th("message", { number }))}
+        {...trainingFormProps(
+          training,
+          locale,
+          (number) => th("message", { number }),
+          th("lordsDay"),
+        )}
         submitLabel={t("submit")}
         action={register.bind(null, locale)}
         messages={{

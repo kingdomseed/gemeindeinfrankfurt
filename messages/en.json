@@ -57,7 +57,8 @@
     "changeUntil": "Until",
     "changeSeat": "Seat type and messages, or cancel",
     "changeDetails": "Name, contact details, languages and comments",
-    "anyTime": "Any time during the training"
+    "anyTime": "Any time during the training",
+    "lordsDay": "Lord's Day"
   },
   "register": {
     "title": "Video Training Registration Form",
