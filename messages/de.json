@@ -19,7 +19,14 @@
     "contactHeading": "Kontakt",
     "announcements": "Ankündigungen",
     "meetingPlace": "Versammlungsort",
-    "openMap": "Auf der Karte ansehen (OpenStreetMap)"
+    "openMap": "Auf der Karte ansehen (OpenStreetMap)",
+    "upcomingEvents": "Kommende Termine",
+    "allEvents": "Alle Termine",
+    "subscribeEvents": "Termine im eigenen Kalender abonnieren",
+    "noEvents": "Zurzeit sind keine Termine angekündigt.",
+    "eventsTitle": "Termine",
+    "eventsIntro": "Konferenzen, besondere Versammlungen und Änderungen im Wochenablauf, wie sie in den Ankündigungen der Gemeinde stehen.",
+    "eventLink": "Mehr Informationen"
   },
   "home": {
     "noTraining": "Die Anmeldung ist noch nicht geöffnet",

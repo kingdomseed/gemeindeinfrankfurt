@@ -136,7 +136,12 @@ async function seedPage(page: PageSeed) {
       body: toRichText(file.body),
       layout: [
         ...toSeedBlocks(file.body).map(toLayoutBlock),
-        ...(page.isHome ? [{ blockType: "announcements" as const, limit: 3 }] : []),
+        ...(page.isHome
+          ? [
+              { blockType: "upcomingEvents" as const, limit: 4 },
+              { blockType: "announcements" as const, limit: 3 },
+            ]
+          : []),
       ],
       navOrder: page.navOrder,
       isHome: page.isHome,

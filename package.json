@@ -16,6 +16,7 @@
     "check": "npm run format:check && npm run typecheck && npm run lint && npm test && npm run doctor",
     "db:new": "supabase migration new",
     "seed:cms": "payload run src/cms/seed/index.ts",
+    "events:import": "payload run scripts/import-events.ts",
     "cms:importmap": "payload generate:importmap && oxlint --fix \"src/app/(payload)/admin/importMap.ts\" && oxfmt \"src/app/(payload)/admin/importMap.ts\"",
     "db:types": "scripts/db-types.sh",
     "prepare": "lefthook install || true",

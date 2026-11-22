@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { earliestOpenEndDate } from "./announcements";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
+import { importedEvent } from "./event-import";
+import { eventWhen, startOfBerlinToday } from "./events";
 import { computeFees } from "./fees";
 import { buildCalendar } from "./ics";
 import { openStreetMapUrl } from "./maps";
@@ -270,5 +272,119 @@ describe("sitemapEntries", () => {
       ru: "https://example.org/ru",
       "x-default": "https://example.org/de",
     });
+  });
+});
+
+describe("startOfBerlinToday", () => {
+  it("is midnight in Frankfurt, in winter and in summer", () => {
+    expect(startOfBerlinToday(new Date("2026-12-24T23:30:00Z")).toISOString()).toBe(
+      "2026-12-24T23:00:00.000Z",
+    );
+    expect(startOfBerlinToday(new Date("2026-12-24T10:00:00Z")).toISOString()).toBe(
+      "2026-12-23T23:00:00.000Z",
+    );
+    expect(startOfBerlinToday(new Date("2027-07-01T12:00:00Z")).toISOString()).toBe(
+      "2027-06-30T22:00:00.000Z",
+    );
+  });
+  it("is today's midnight on the evenings the clocks change", () => {
+    // 31 October 2027, 23:30 in Frankfurt, after the clocks went back.
+    expect(startOfBerlinToday(new Date("2027-10-31T22:30:00Z")).toISOString()).toBe(
+      "2027-10-30T22:00:00.000Z",
+    );
+    // 28 March 2027, 00:30 and 23:30 in Frankfurt, around the clocks going forward.
+    expect(startOfBerlinToday(new Date("2027-03-27T23:30:00Z")).toISOString()).toBe(
+      "2027-03-27T23:00:00.000Z",
+    );
+    expect(startOfBerlinToday(new Date("2027-03-28T21:30:00Z")).toISOString()).toBe(
+      "2027-03-27T23:00:00.000Z",
+    );
+  });
+});
+
+describe("eventWhen", () => {
+  const start = new Date("2026-12-27T08:45:00Z"); // Lord's Day, 09:45 in Frankfurt
+  it("names Sunday the Lord's Day and gives the time", () => {
+    expect(eventWhen({ startsAt: start, endsAt: null, allDay: false }, "en-GB", "Lord's Day")).toBe(
+      "Lord's Day 27 December at 09:45",
+    );
+  });
+  it("gives an end time on the same day", () => {
+    const end = new Date("2026-12-27T11:00:00Z");
+    expect(eventWhen({ startsAt: start, endsAt: end, allDay: false }, "en-GB", "Lord's Day")).toBe(
+      "Lord's Day 27 December at 09:45–12:00",
+    );
+  });
+  it("gives both days for an event over several days", () => {
+    const friday = new Date("2026-12-25T18:00:00Z");
+    expect(
+      eventWhen({ startsAt: friday, endsAt: start, allDay: false }, "de", "Tag des Herrn"),
+    ).toBe("Freitag, 25. Dezember – Tag des Herrn, 27. Dezember");
+  });
+});
+
+describe("whole-day events", () => {
+  const dec13 = new Date("2026-12-12T23:00:00Z"); // midnight in Frankfurt
+  it("shows the day without a time", () => {
+    expect(eventWhen({ startsAt: dec13, endsAt: null, allDay: true }, "de", "Tag des Herrn")).toBe(
+      "Tag des Herrn, 13. Dezember",
+    );
+  });
+  it("covers every day through the last one in the calendar file", () => {
+    const ics = buildCalendar(
+      "Events",
+      [
+        {
+          uid: "e2",
+          title: "Conference",
+          startsAt: "2026-12-03T23:00:00Z",
+          endsAt: "2026-12-05T23:00:00Z",
+          location: "",
+          allDay: true,
+        },
+      ],
+      new Date("2026-11-22T12:00:00Z"),
+    );
+    expect(ics).toContain("\r\nDTSTART;VALUE=DATE:20261204\r\n");
+    expect(ics).toContain("\r\nDTEND;VALUE=DATE:20261207\r\n");
+  });
+});
+
+describe("buildCalendar for events", () => {
+  it("leaves out the end when there is none and keeps the details", () => {
+    const ics = buildCalendar(
+      "Events",
+      [
+        {
+          uid: "e1",
+          title: "Conference",
+          startsAt: "2026-12-25T18:00:00Z",
+          location: "",
+          description: "Bring a Bible",
+        },
+      ],
+      new Date("2026-11-22T12:00:00Z"),
+    );
+    expect(ics).not.toContain("DTEND");
+    expect(ics).toContain("\r\nDESCRIPTION:Bring a Bible\r\n");
+  });
+});
+
+describe("importedEvent", () => {
+  const event = {
+    importKey: "dach-uni-konferenz-2026-12",
+    startsAt: "2026-12-04T00:00:00+01:00",
+    endsAt: "2026-12-06T00:00:00+01:00",
+    allDay: true,
+    link: "https://us.list-manage.com/12dexzTo7HF?e=abc123&c2id=xyz",
+    de: { title: "DACH Uni-Konferenz", location: "Gut Elim" },
+    en: { title: "DACH university conference", location: "Gut Elim" },
+    ru: { title: "Университетская конференция DACH", location: "Gut Elim" },
+  };
+  it("drops the subscriber id from links", () => {
+    expect(importedEvent.parse(event).link).toBe("https://us.list-manage.com/12dexzTo7HF?c2id=xyz");
+  });
+  it("needs a title in every language", () => {
+    expect(importedEvent.safeParse({ ...event, ru: { title: "" } }).success).toBe(false);
   });
 });

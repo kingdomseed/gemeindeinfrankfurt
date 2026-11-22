@@ -19,7 +19,14 @@
     "contactHeading": "Contact",
     "announcements": "Announcements",
     "meetingPlace": "Meeting place",
-    "openMap": "View on the map (OpenStreetMap)"
+    "openMap": "View on the map (OpenStreetMap)",
+    "upcomingEvents": "Upcoming events",
+    "allEvents": "All events",
+    "subscribeEvents": "Subscribe to the events in your own calendar",
+    "noEvents": "No events are announced at the moment.",
+    "eventsTitle": "Events",
+    "eventsIntro": "Conferences, special meetings and changes to the weekly schedule, as given in the church's announcements.",
+    "eventLink": "More information"
   },
   "home": {
     "noTraining": "Registration is not open yet",

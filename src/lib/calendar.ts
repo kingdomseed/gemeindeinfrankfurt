@@ -1,6 +1,7 @@
 import "server-only";
 import { getTranslations } from "next-intl/server";
 
+import type { ChurchEvent } from "@/lib/cms";
 import type { TrainingWithSessions } from "@/lib/data";
 import { buildCalendar } from "@/lib/domain/ics";
 import type { Language } from "@/lib/domain/types";
@@ -36,12 +37,38 @@ export async function trainingCalendar(
   );
 }
 
-export function calendarResponse(ics: string): Response {
+// The church's upcoming events, as a feed people can subscribe to.
+export function eventsCalendar(
+  name: string,
+  events: readonly ChurchEvent[],
+  meetingAddress: string,
+): string {
+  return buildCalendar(
+    name,
+    events.map((e) => ({
+      uid: `event-${e.id}@gemeindeinfrankfurt.de`,
+      title: e.title,
+      startsAt: e.startsAt.toISOString(),
+      endsAt: e.endsAt?.toISOString(),
+      allDay: e.allDay,
+      location: e.location || meetingAddress,
+      description: [e.details, e.link].filter(Boolean).join("\n\n"),
+    })),
+    new Date(),
+  );
+}
+
+// A registrant's file holds their own schedule and is never cached; the
+// events feed is public and may be.
+export function calendarResponse(
+  ics: string,
+  { filename = "video-training.ics", cacheControl = "private, no-store" } = {},
+): Response {
   return new Response(ics, {
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="video-training.ics"',
-      "Cache-Control": "private, no-store",
+      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Cache-Control": cacheControl,
     },
   });
 }

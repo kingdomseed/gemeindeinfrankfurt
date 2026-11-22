@@ -5,6 +5,7 @@ import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
 
 import { Announcements } from "@/cms/collections/Announcements";
+import { Events } from "@/cms/collections/Events";
 import { Pages } from "@/cms/collections/Pages";
 import { Users } from "@/cms/collections/Users";
 import { SiteSettings } from "@/cms/globals/SiteSettings";
@@ -23,7 +24,7 @@ export default buildConfig({
       importMapFile: path.resolve(process.cwd(), "src/app/(payload)/admin/importMap.ts"),
     },
   },
-  collections: [Users, Pages, Announcements],
+  collections: [Users, Pages, Announcements, Events],
   globals: [SiteSettings],
   editor: lexicalEditor({
     // No media or relationship collections exist, so their editor features have nothing to point at.
