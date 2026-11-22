@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { fromBerlinWallTime, parseEuroCents, toBerlinWallTime } from "./berlin-time";
 import {
   daysUntil,
   paymentCounts,
@@ -92,5 +93,47 @@ describe("possibleDuplicates", () => {
       { id: "c", first_name: "Anna", last_name: "Beispiel", email: "other@example.com" },
     ]);
     expect([...ids].toSorted()).toEqual(["a", "b"]);
+  });
+});
+
+describe("Berlin wall time", () => {
+  it("reads winter and summer instants as Frankfurt time", () => {
+    expect(toBerlinWallTime(new Date("2027-01-12T18:00:00Z"))).toEqual({
+      date: "2027-01-12",
+      time: "19:00",
+    });
+    expect(toBerlinWallTime(new Date("2027-07-01T07:30:00Z"))).toEqual({
+      date: "2027-07-01",
+      time: "09:30",
+    });
+  });
+
+  it("turns Frankfurt date and time back into the instant, either side of a clock change", () => {
+    expect(fromBerlinWallTime({ date: "2027-01-12", time: "19:00" })?.toISOString()).toBe(
+      "2027-01-12T18:00:00.000Z",
+    );
+    expect(fromBerlinWallTime({ date: "2027-03-28", time: "09:45" })?.toISOString()).toBe(
+      "2027-03-28T07:45:00.000Z",
+    );
+  });
+
+  it("rejects malformed and impossible times", () => {
+    expect(fromBerlinWallTime({ date: "2027-13-01", time: "10:00" })).toBeNull();
+    expect(fromBerlinWallTime({ date: "2027-01-12", time: "7pm" })).toBeNull();
+    expect(fromBerlinWallTime({ date: "2027-03-28", time: "02:30" })).toBeNull();
+  });
+});
+
+describe("parseEuroCents", () => {
+  it("accepts German and English decimal marks and a euro sign", () => {
+    expect(parseEuroCents("70")).toBe(7000);
+    expect(parseEuroCents("70,00")).toBe(7000);
+    expect(parseEuroCents("€ 5.5")).toBe(550);
+  });
+
+  it("rejects anything else", () => {
+    expect(parseEuroCents("")).toBeNull();
+    expect(parseEuroCents("-5")).toBeNull();
+    expect(parseEuroCents("1.000,00")).toBeNull();
   });
 });

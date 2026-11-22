@@ -162,3 +162,38 @@ export async function loadRecentEvents(
       registration: e.registrations,
     }));
 }
+
+// Everything the setup page edits for one training.
+export async function loadTrainingSetup(supabase: CoordinatorClient, trainingId: string) {
+  const { data, error } = await supabase
+    .from("trainings")
+    .select(
+      "id, updated_at, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, outline_order_deadline, sessions(id, message_number, starts_at, ends_at, is_tested, registration_sessions(count)), localities(id, name, is_home, registrations(count))",
+    )
+    .eq("id", trainingId)
+    .order("message_number", { referencedTable: "sessions" })
+    .order("name", { referencedTable: "localities" })
+    .single();
+  if (error) throw error;
+  const count = z.array(z.object({ count: z.number() })).transform((c) => c[0]?.count ?? 0);
+  return {
+    ...data,
+    title: localizedText.parse(data.title),
+    sessions: data.sessions.map((s) => ({
+      id: s.id,
+      message_number: s.message_number,
+      starts_at: s.starts_at,
+      ends_at: s.ends_at,
+      is_tested: s.is_tested,
+      picked: count.parse(s.registration_sessions),
+    })),
+    localities: data.localities.map((l) => ({
+      id: l.id,
+      name: l.name,
+      is_home: l.is_home,
+      used: count.parse(l.registrations),
+    })),
+  };
+}
+
+export type TrainingSetup = Awaited<ReturnType<typeof loadTrainingSetup>>;
