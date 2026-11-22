@@ -6,7 +6,9 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   // `next upgrade --agent` and the upgrade reminders follow security advisories.
-  experimental: { agentUpgrade: "security" },
+  // Invoice photos for the report are sent through a server action; the
+  // browser shrinks them first, so 4 MB leaves room.
+  experimental: { agentUpgrade: "security", serverActions: { bodySizeLimit: "4mb" } },
   // No page of this site may be framed by another site (clickjacking).
   headers: () =>
     Promise.resolve([

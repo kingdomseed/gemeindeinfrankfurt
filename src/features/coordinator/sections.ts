@@ -9,6 +9,7 @@ export const coordinatorSections = [
   { key: "testing", href: "/training/coordinator/testing" },
   { key: "services", href: "/training/coordinator/services" },
   { key: "emails", href: "/training/coordinator/emails" },
+  { key: "report", href: "/training/coordinator/report" },
   { key: "setup", href: "/training/coordinator/setup" },
 ] as const;
 

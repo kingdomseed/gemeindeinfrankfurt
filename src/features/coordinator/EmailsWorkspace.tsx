@@ -6,10 +6,10 @@ import { StatusTag } from "@/components/ui/status-tag";
 
 import { BeforeTrainingForm } from "./BeforeTrainingForm";
 import { EmailKindRow } from "./EmailKindRow";
-import { EmailSection } from "./EmailSection";
 import { MessageForm, type AudienceOption } from "./MessageForm";
 import { PaymentReminderButton } from "./PaymentReminderButton";
 import type { FormState } from "./types";
+import { WorkspaceSection } from "./WorkspaceSection";
 
 type Action = (prev: FormState, form: FormData) => Promise<FormState>;
 
@@ -30,7 +30,7 @@ export function EmailsWorkspace(props: {
     <Stack gap="10" maxW="3xl">
       <PageHeading title={t("title")} subtitle={t("lead")} />
 
-      <EmailSection title={t("kindsTitle")}>
+      <WorkspaceSection title={t("kindsTitle")}>
         <List.Root listStyle="none" borderTopWidth="1px">
           <EmailKindRow name={t("kinds.confirmation.name")} what={t("kinds.confirmation.what")}>
             <StatusTag>{t("automatic")}</StatusTag>
@@ -45,17 +45,17 @@ export function EmailsWorkspace(props: {
             {props.before && <StatusTag tone={props.before.tone}>{props.before.label}</StatusTag>}
           </EmailKindRow>
         </List.Root>
-      </EmailSection>
+      </WorkspaceSection>
 
-      <EmailSection title={t("kinds.before.name")} help={t("beforeHelp")}>
+      <WorkspaceSection title={t("kinds.before.name")} help={t("beforeHelp")}>
         <BeforeTrainingForm count={props.registered} send={props.actions.before} />
-      </EmailSection>
+      </WorkspaceSection>
 
-      <EmailSection title={t("messageTitle")} help={t("messageHelp")}>
+      <WorkspaceSection title={t("messageTitle")} help={t("messageHelp")}>
         <MessageForm audiences={props.audiences} send={props.actions.message} />
-      </EmailSection>
+      </WorkspaceSection>
 
-      <EmailSection title={t("sentTitle")}>
+      <WorkspaceSection title={t("sentTitle")}>
         {props.sent.length === 0 ? (
           <Text color="fg.muted">{t("nothingSent")}</Text>
         ) : (
@@ -87,7 +87,7 @@ export function EmailsWorkspace(props: {
             ))}
           </List.Root>
         )}
-      </EmailSection>
+      </WorkspaceSection>
     </Stack>
   );
 }
