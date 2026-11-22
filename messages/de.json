@@ -315,5 +315,13 @@
     "allMessages": "Alle Botschaften in den Kalender eintragen",
     "yourMessages": "Deine Botschaften in den Kalender eintragen",
     "emailLine": "Deine Botschaften für den Kalender: {url}"
+  },
+  "imprint": {
+    "title": "Impressum",
+    "providerTitle": "Angaben gemäß § 5 DDG",
+    "representedBy": "Vertreten durch: {name}",
+    "contactTitle": "Kontakt",
+    "email": "E-Mail:",
+    "contentTitle": "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV"
   }
 }

@@ -315,5 +315,13 @@
     "allMessages": "Add all messages to your calendar",
     "yourMessages": "Add your messages to your calendar",
     "emailLine": "Add your messages to your calendar: {url}"
+  },
+  "imprint": {
+    "title": "Imprint",
+    "providerTitle": "Information under § 5 DDG (German Digital Services Act)",
+    "representedBy": "Represented by: {name}",
+    "contactTitle": "Contact",
+    "email": "Email:",
+    "contentTitle": "Responsible for the content under § 18(2) MStV"
   }
 }

@@ -6,7 +6,7 @@ import { locales } from "@/i18n/routing";
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 // Fixed routes under /[locale] that would hide a CMS page with the same slug.
-const reservedSlugs = new Set(["training", "privacy"]);
+const reservedSlugs = new Set(["training", "privacy", "impressum"]);
 
 // True when another page already has this slug in any language. A visitor who
 // switches language keeps the slug in the address, so one slug must always

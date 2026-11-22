@@ -15,6 +15,9 @@ export function SiteFooter({ siteName }: { siteName: string }) {
           <Link asChild color="inherit" textDecoration="underline">
             <LocaleLink href="/privacy">{tc("privacy")}</LocaleLink>
           </Link>
+          <Link asChild color="inherit" textDecoration="underline">
+            <LocaleLink href="/impressum">{tc("imprint")}</LocaleLink>
+          </Link>
         </Flex>
       </Container>
     </Box>
