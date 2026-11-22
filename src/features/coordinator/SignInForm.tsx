@@ -17,12 +17,12 @@ export function SignInForm() {
   async function onSubmit(form: FormData) {
     const email = form.get("email");
     if (typeof email !== "string") return;
-    const next = `/${locale}/training/coordinator`;
     await createClient().auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: false, // coordinators are invited by an admin
-        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(next)}`,
+        // The email's link (supabase/templates/magic-link.html) passes this on to /api/auth/confirm.
+        emailRedirectTo: `${window.location.origin}/${locale}/training/coordinator`,
       },
     });
     setSent(true); // Same message either way, so the form doesn't reveal who is a coordinator.
