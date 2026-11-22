@@ -37,6 +37,32 @@ async function send(to: string, subject: string, text: string, html?: string) {
   if (error) throw new Error(`Email failed: ${error.message}`);
 }
 
+export type OutgoingEmail = { to: string; subject: string; text: string };
+
+// Sends many emails in as few requests as the provider allows (100 each).
+// Returns how many went out.
+export async function sendBatch(emails: readonly OutgoingEmail[]): Promise<number> {
+  const resend = client();
+  if (!resend) {
+    console.warn(`[email skipped: RESEND_API_KEY not set] ${emails.length} emails`);
+    return 0;
+  }
+  const from = process.env.EMAIL_FROM;
+  if (!from) throw new Error("Missing environment variable EMAIL_FROM");
+  const replyTo = process.env.EMAIL_REPLY_TO;
+  let sent = 0;
+  for (let i = 0; i < emails.length; i += 100) {
+    const chunk = emails.slice(i, i + 100);
+    // oxlint-disable-next-line no-await-in-loop, react-doctor/async-await-in-loop -- one request at a time stays under the provider's rate limit
+    const { error } = await resend.batch.send(
+      chunk.map((e) => ({ from, ...(replyTo ? { replyTo } : {}), ...e })),
+    );
+    if (error) throw new Error(`Email failed after ${sent} sent: ${error.message}`);
+    sent += chunk.length;
+  }
+  return sent;
+}
+
 export function editUrl(locale: Language, token: string) {
   return `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/training/r/${token}`;
 }

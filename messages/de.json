@@ -193,7 +193,16 @@
     "changeButton": "Anmeldung ändern oder absagen",
     "linkPrivate": "Dieser Link gilt nur für diese Anmeldung. Bitte leite ihn nicht weiter.",
     "footer": "Fragen? Antworte einfach auf diese E-Mail. Alle Zeiten sind Frankfurter Zeit (MEZ).",
-    "transferTitle": "Bitte überweise {total}"
+    "transferTitle": "Bitte überweise {total}",
+    "hello": "Hallo {name},",
+    "reminderSubject": "Zahlungserinnerung: {training}",
+    "reminderIntro": "für {training} sind noch {total} offen:",
+    "reminderAlreadyPaid": "Wenn du in den letzten Tagen bezahlt hast, danke, und bitte ignoriere diese E-Mail.",
+    "beforeSubject": "Vor dem Training: {training}",
+    "beforeIntro": "{training} beginnt bald ({dates}). Hier ist, was du wissen musst.",
+    "yourMessages": "Deine Botschaften:",
+    "place": "Ort: {venue}",
+    "rulesTitle": "Regeln des Trainings:"
   },
   "coordinator": {
     "title": "Koordination",
@@ -305,7 +314,8 @@
       "testing": "Prüfung",
       "services": "Aufgaben",
       "attendance": "Anwesenheit",
-      "messages": "Botschaften"
+      "messages": "Botschaften",
+      "emails": "E-Mails"
     },
     "registrationOpen": "Anmeldung offen",
     "registrationClosed": "Anmeldung geschlossen",
@@ -615,6 +625,67 @@
       "hymnIn": "Lied {number} ({language})",
       "verseMissing": "Der Text dieses Verses auf {language} ist noch nicht eingetragen.",
       "footer": "Botschaft {number} · {day} · Leinwand: {language}"
+    },
+    "emails": {
+      "title": "E-Mails",
+      "lead": "Jede E-Mail geht auf Deutsch, Englisch oder Russisch hinaus, in der Sprache, in der sich die Person angemeldet hat.",
+      "kindsTitle": "E-Mails für dieses Training",
+      "kinds": {
+        "confirmation": {
+          "name": "Bestätigung",
+          "what": "Nach jeder Anmeldung und jeder Änderung"
+        },
+        "cancellation": {
+          "name": "Stornierung",
+          "what": "Wenn eine Anmeldung storniert wird"
+        },
+        "reminder": {
+          "name": "Zahlungserinnerung",
+          "what": "Offene Beträge und die IBAN, an alle, die noch nicht bezahlt haben"
+        },
+        "before": {
+          "name": "Vor dem Training",
+          "what": "Zeitplan, Ort, Regeln, was mitzubringen ist, die WhatsApp-Gruppe"
+        }
+      },
+      "automatic": "Automatisch",
+      "sentOn": "Gesendet {date} · {count}",
+      "dueOn": "Fällig {date}",
+      "beforeHelp": "Jede Person bekommt ihre eigenen Botschaften, den Ort und die Regeln des Trainings. Ergänze, wie man der WhatsApp-Gruppe beitritt und was mitzubringen ist. Wer eine fehlende Sprache hat, bekommt die englische Notiz.",
+      "noteIn": "Notiz auf {language}",
+      "beforeConfirmTitle": "„Vor dem Training“ an {count, plural, one {# Person} other {# Personen}} senden?",
+      "beforeConfirmBody": "Alle Angemeldeten bekommen sie jetzt. Eine E-Mail lässt sich nicht zurückholen.",
+      "reminderConfirmTitle": "Zahlungserinnerung an {count, plural, one {# Person} other {# Personen}} senden?",
+      "reminderConfirmBody": "Alle, die noch etwas schulden, bekommen die offenen Beträge und die IBAN. Eine E-Mail lässt sich nicht zurückholen.",
+      "messageTitle": "An alle oder eine Gruppe schreiben",
+      "messageHelp": "Zum Beispiel eine Änderung im Zeitplan. Schreib jede Sprache, die du hast; wer eine fehlende Sprache hat, bekommt Englisch.",
+      "to": "An",
+      "audienceOption": "{label} ({count})",
+      "everyone": "Alle Angemeldeten",
+      "unpaid": "Noch nicht bezahlt",
+      "partTime": "Teilzeitplätze",
+      "subject": "Betreff",
+      "body": "Nachricht",
+      "missingText": "Noch kein Text auf {language}. {count, plural, one {# Person bekäme} other {# Personen bekämen}} die englische Fassung.",
+      "messageConfirmTitle": "Diese Nachricht an {count, plural, one {# Person} other {# Personen}} senden?",
+      "messageConfirmBody": "Sie geht jetzt hinaus. Eine E-Mail lässt sich nicht zurückholen.",
+      "sendTo": "An {count} senden",
+      "sendTest": "Test an mich senden",
+      "notYet": "Noch nicht",
+      "nobody": "Niemand, an den gesendet werden kann.",
+      "sentTo": "An {count, plural, one {# Person} other {# Personen}} gesendet.",
+      "sendFailed": "Die E-Mails konnten nicht gesendet werden. Bitte versuch es später noch einmal.",
+      "englishNeeded": "Bitte schreib den englischen Betreff und die Nachricht; alle ohne eigene Sprache bekommen sie.",
+      "testSent": "Test an {email} gesendet, eine E-Mail für jede Sprache, die du geschrieben hast.",
+      "sentTitle": "Gesendet",
+      "nothingSent": "Von hier wurde noch nichts gesendet.",
+      "sentLine": "{kind}: {subject} · von {by}",
+      "sentKind": {
+        "payment_reminder": "Zahlungserinnerung",
+        "before_training": "Vor dem Training",
+        "message": "Nachricht"
+      },
+      "people": "{count, plural, one {# Person} other {# Personen}}"
     }
   },
   "privacy": {

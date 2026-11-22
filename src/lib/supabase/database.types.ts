@@ -71,6 +71,45 @@ export type Database = {
         };
         Relationships: [];
       };
+      email_sends: {
+        Row: {
+          id: string;
+          kind: string;
+          recipient_count: number;
+          sent_at: string;
+          sent_by: string;
+          subject: string;
+          training_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          id?: string;
+          kind: string;
+          recipient_count: number;
+          sent_at?: string;
+          sent_by?: string;
+          subject?: string;
+          training_id: string;
+        };
+        Update: {
+          id?: string;
+          kind?: string;
+          recipient_count?: number;
+          sent_at?: string;
+          sent_by?: string;
+          subject?: string;
+          training_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "email_sends_training_id_fkey";
+            columns: ["training_id"];
+            isOneToOne: false;
+            referencedRelation: "trainings";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       localities: {
         Row: {
           id: string;
