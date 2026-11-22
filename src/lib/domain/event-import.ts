@@ -34,3 +34,38 @@ export const importedEvent = z.object({
 export type ImportedEvent = z.infer<typeof importedEvent>;
 
 export const importedEvents = z.array(importedEvent);
+
+// Drops the subscriber id from every link in a piece of Markdown.
+export function textWithoutTracking(markdown: string): string {
+  return markdown.replace(/https:\/\/[^\s)\]>"]+/g, (link) =>
+    URL.canParse(link) ? withoutTracking(link) : link,
+  );
+}
+
+const announcementText = z.object({
+  title: z.string().trim().min(1),
+  markdown: z
+    .string()
+    .trim()
+    .min(1)
+    .refine(
+      (markdown) => !/zoom\.us/i.test(markdown),
+      "Zoom links stay out of public announcements.",
+    )
+    .transform(textWithoutTracking),
+});
+
+// One week's announcement email, condensed to its key details in all three
+// languages, as the weekly import hands it to scripts/import-announcements.ts.
+export const importedAnnouncement = z.object({
+  importKey: z.string().regex(/^[a-z0-9-]+$/),
+  publishedAt: z.iso.datetime({ offset: true }),
+  showUntil: z.iso.datetime({ offset: true }).optional(),
+  de: announcementText,
+  en: announcementText,
+  ru: announcementText,
+});
+
+export type ImportedAnnouncement = z.infer<typeof importedAnnouncement>;
+
+export const importedAnnouncements = z.array(importedAnnouncement);

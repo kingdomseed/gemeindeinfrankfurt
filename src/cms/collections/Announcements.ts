@@ -36,5 +36,16 @@ export const Announcements: CollectionConfig = {
         description: "Optional. The announcement disappears after this day.",
       },
     },
+    {
+      name: "importKey",
+      type: "text",
+      index: true,
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        description:
+          "Set by the import of the weekly announcement email, so a week is not added twice.",
+      },
+    },
   ],
 };

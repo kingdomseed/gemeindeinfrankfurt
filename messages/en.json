@@ -26,7 +26,11 @@
     "noEvents": "No events are announced at the moment.",
     "eventsTitle": "Events",
     "eventsIntro": "Conferences, special meetings and changes to the weekly schedule, as given in the church's announcements.",
-    "eventLink": "More information"
+    "eventLink": "More information",
+    "allAnnouncements": "All announcements",
+    "announcementsTitle": "Announcements",
+    "announcementsIntro": "The church's weekly announcements, newest first.",
+    "noAnnouncements": "There are no announcements yet."
   },
   "home": {
     "noTraining": "Registration is not open yet",
