@@ -27,7 +27,7 @@ The same task also adds the whole week as one **Announcement** draft (`/admin` �
 
 1. From the same email, write a JSON array with one entry in the shape of `importedAnnouncement` (`src/lib/domain/event-import.ts`):
    - `importKey`: `ankuendigungen-` and the Monday of the week, such as `ankuendigungen-2026-11-30`. The week starts on the Monday after the send date; trust the send date over the subject, which is sometimes left from an earlier week.
-   - `publishedAt`: that Monday at midnight, Frankfurt time with the offset. `showUntil`: the following Lord's Day at midnight.
+   - `publishedAt`: that Monday at midnight, Frankfurt time with the offset. `showUntil`: the date of the following Lord's Day, such as `2026-12-06`; it shows through that whole day.
    - `de`, `en`, `ru`: a title such as "Ankündigungen 30. November – 6. Dezember 2026", and Markdown with three parts: **Wichtige Ankündigungen**, the week's meetings by day with the address, and **Gebetsanliegen**.
 2. Keep only the key details of each item: what, when, where, cost, deadline and the sign-up link. Leave out long prose, Bible and ministry quotes and **Wöchentlicher Genuss**.
 3. Keep the prayer requests, without names or anything else that identifies a person or family.
