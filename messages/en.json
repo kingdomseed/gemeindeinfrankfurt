@@ -46,7 +46,12 @@
     "closeMenu": "Close",
     "visitUs": "Visit us",
     "readMore": "Read more",
-    "writeToUs": "Write to us"
+    "writeToUs": "Write to us",
+    "latestAnnouncement": "Latest",
+    "earlierAnnouncements": "Earlier announcements",
+    "announcementMonths": "Announcements by month",
+    "weekCount": "{count, plural, one {# week} other {# weeks}}",
+    "moreHeadlines": "{count} more"
   },
   "home": {
     "noTraining": "Registration is not open yet",

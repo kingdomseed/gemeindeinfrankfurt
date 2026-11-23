@@ -46,7 +46,12 @@
     "closeMenu": "Закрыть",
     "visitUs": "Приходите к нам",
     "readMore": "Читать дальше",
-    "writeToUs": "Написать нам"
+    "writeToUs": "Написать нам",
+    "latestAnnouncement": "Последние",
+    "earlierAnnouncements": "Предыдущие объявления",
+    "announcementMonths": "Объявления по месяцам",
+    "weekCount": "{count, plural, one {# неделя} few {# недели} many {# недель} other {# недели}}",
+    "moreHeadlines": "ещё {count}"
   },
   "home": {
     "noTraining": "Регистрация ещё не открыта",
