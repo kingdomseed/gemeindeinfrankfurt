@@ -291,13 +291,13 @@ describe("sitemapEntries", () => {
       (entry) => entry.url,
     );
     expect(urls).toEqual([
-      "https://example.org/de",
+      "https://example.org/",
       "https://example.org/en",
       "https://example.org/ru",
-      "https://example.org/de/unser-glaube",
+      "https://example.org/unser-glaube",
       "https://example.org/en/our-belief",
       "https://example.org/ru/unser-glaube",
-      "https://example.org/de/privacy",
+      "https://example.org/privacy",
       "https://example.org/en/privacy",
       "https://example.org/ru/privacy",
     ]);
@@ -306,10 +306,10 @@ describe("sitemapEntries", () => {
   it("links each entry to the same page in every language and to the default language", () => {
     const [, english] = sitemapEntries("https://example.org", locales, "de", pages, []);
     expect(english?.languages).toEqual({
-      de: "https://example.org/de",
+      de: "https://example.org/",
       en: "https://example.org/en",
       ru: "https://example.org/ru",
-      "x-default": "https://example.org/de",
+      "x-default": "https://example.org/",
     });
   });
 });

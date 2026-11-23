@@ -18,12 +18,14 @@ export function sitemapEntries(
   fixedPaths: readonly string[],
 ): SitemapEntry[] {
   const base = siteUrl.replace(/\/+$/, "");
+  // The default language has no prefix: its home page is the bare domain.
+  const prefix = (locale: string) => (locale === defaultLocale ? "" : `/${locale}`);
   const addresses: ((locale: string) => string)[] = [
     ...pages.map((page) => (locale: string) => {
-      if (page.isHome) return `${base}/${locale}`;
-      return `${base}/${locale}/${page.slugs[locale] ?? page.slugs[defaultLocale] ?? ""}`;
+      if (page.isHome) return `${base}${prefix(locale) || "/"}`;
+      return `${base}${prefix(locale)}/${page.slugs[locale] ?? page.slugs[defaultLocale] ?? ""}`;
     }),
-    ...fixedPaths.map((path) => (locale: string) => `${base}/${locale}/${path}`),
+    ...fixedPaths.map((path) => (locale: string) => `${base}${prefix(locale)}/${path}`),
   ];
   return addresses.flatMap((address) => {
     const languages: Record<string, string> = { "x-default": address(defaultLocale) };

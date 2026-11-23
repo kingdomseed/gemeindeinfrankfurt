@@ -6,6 +6,8 @@ const origin = "https://training.example";
 
 describe("safeNext", () => {
   it.each([
+    "/training/coordinator",
+    "/training/coordinator/groups",
     "/de/training/coordinator",
     "/ru/training/coordinator/",
     "/en/training/coordinator/groups?x=1",
@@ -22,8 +24,10 @@ describe("safeNext", () => {
     "/de/training/register",
     "/de/coordinator",
     "/de/training/coordinatorx",
+    "/training/register",
+    "/fr/training/coordinator",
     "javascript:alert(1)",
   ])("falls back for %s", (next) => {
-    expect(safeNext(next, origin).href).toBe(`${origin}/de/training/coordinator`);
+    expect(safeNext(next, origin).href).toBe(`${origin}/training/coordinator`);
   });
 });

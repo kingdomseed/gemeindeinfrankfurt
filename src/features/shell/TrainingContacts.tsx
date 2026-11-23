@@ -8,8 +8,8 @@ export function TrainingContacts({ contacts }: { contacts: readonly Contact[] })
   const t = useTranslations("common");
   if (contacts.length === 0) return null;
   return (
-    <Container maxW="3xl" px="4" pb="8" _print={{ display: "none" }}>
-      <Text fontSize="sm" color="fg.muted">
+    <Container maxW="6xl" px="4" pb="8" _print={{ display: "none" }}>
+      <Text maxW="3xl" fontSize="sm" color="fg.muted">
         {t("questions")}{" "}
         {contacts.map((c, i) => (
           <span key={c.email}>
