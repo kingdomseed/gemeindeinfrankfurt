@@ -46,7 +46,12 @@
     "closeMenu": "Schließen",
     "visitUs": "Besuchen Sie uns",
     "readMore": "Weiterlesen",
-    "writeToUs": "E-Mail schreiben"
+    "writeToUs": "E-Mail schreiben",
+    "latestAnnouncement": "Aktuell",
+    "earlierAnnouncements": "Frühere Ankündigungen",
+    "announcementMonths": "Ankündigungen nach Monat",
+    "weekCount": "{count, plural, one {# Woche} other {# Wochen}}",
+    "moreHeadlines": "{count} weitere"
   },
   "home": {
     "noTraining": "Die Anmeldung ist noch nicht geöffnet",

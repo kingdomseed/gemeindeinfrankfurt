@@ -59,3 +59,25 @@ export function fromCapitals(text: string, eachWord: boolean): string {
   const pattern = eachWord ? /(^|\s)(\p{L})/gu : /^(\s*)(\p{L})/u;
   return lower.replace(pattern, (_, space: string, letter: string) => space + letter.toUpperCase());
 }
+
+function isBold(node: unknown): boolean {
+  return isRecord(node) && typeof node.format === "number" && (node.format & 1) === 1;
+}
+
+// The bold lead-ins of the paragraphs under the first heading ("**Retreat in
+// Gut Elim** 6.–8. March …"), which name the items of an announcement. Text
+// before any heading counts too; the scan stops at the second heading.
+export function firstSectionHeadlines(state: unknown): string[] {
+  const root = isRecord(state) ? state.root : undefined;
+  const headlines: string[] = [];
+  let headings = 0;
+  for (const node of childrenOf(root)) {
+    if (!isRecord(node)) continue;
+    if (node.type === "heading" && ++headings > 1) break;
+    if (node.type !== "paragraph") continue;
+    const first = childrenOf(node)[0];
+    const text = isBold(first) ? textOf(first).trim() : "";
+    if (text) headlines.push(text);
+  }
+  return headlines;
+}

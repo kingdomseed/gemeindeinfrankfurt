@@ -1,22 +1,30 @@
-import { Box, Link, Stack, Text } from "@chakra-ui/react";
+import { Box, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 
 import { PageHeading } from "@/components/ui/page-heading";
 import type { Announcement } from "@/lib/cms";
+import { groupByMonth } from "@/lib/domain/announcements";
 
-import { AnnouncementCards } from "./AnnouncementCards";
+import { AnnouncementMonth } from "./AnnouncementMonth";
+import { AnnouncementMonthNav } from "./AnnouncementMonthNav";
+import { LatestAnnouncement } from "./LatestAnnouncement";
 
-// The announcements page: the meeting link, then every announcement so far,
-// newest first.
+// The announcements page: the meeting link, the latest announcement in full,
+// then the earlier ones by month, each week folded down to its headlines.
 export function AnnouncementArchive(props: {
   items: readonly Announcement[];
   pageHrefs: Record<string, string>;
   meetingLink: string | null;
 }) {
   const t = useTranslations("site");
+  const [latest, ...earlier] = props.items;
+  const months = groupByMonth(earlier, (item) => item.publishedAt);
   return (
-    <Stack gap="6">
-      <PageHeading title={t("announcementsTitle")} subtitle={t("announcementsIntro")} />
+    <Stack gap="8">
+      <Stack gap="4">
+        <PageHeading title={t("announcementsTitle")} subtitle={t("announcementsIntro")} />
+        {months.length > 0 && <AnnouncementMonthNav months={months} />}
+      </Stack>
       {props.meetingLink && (
         <Box borderWidth="1px" rounded="l2" p="4" bg="bg.subtle">
           <Text fontWeight="semibold">{t("meetingLinkHeading")}</Text>
@@ -31,10 +39,25 @@ export function AnnouncementArchive(props: {
           </Link>
         </Box>
       )}
-      {props.items.length > 0 ? (
-        <AnnouncementCards items={props.items} pageHrefs={props.pageHrefs} />
+      {latest ? (
+        <LatestAnnouncement item={latest} pageHrefs={props.pageHrefs} />
       ) : (
         <Text>{t("noAnnouncements")}</Text>
+      )}
+      {months.length > 0 && (
+        <Stack as="section" aria-labelledby="earlier-announcements" gap="6">
+          <Heading as="h2" id="earlier-announcements" size="xl">
+            {t("earlierAnnouncements")}
+          </Heading>
+          {months.map((group) => (
+            <AnnouncementMonth
+              key={group.month}
+              month={group.month}
+              items={group.items}
+              pageHrefs={props.pageHrefs}
+            />
+          ))}
+        </Stack>
       )}
     </Stack>
   );

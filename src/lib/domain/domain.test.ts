@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { earliestOpenEndDate } from "./announcements";
+import { earliestOpenEndDate, groupByMonth } from "./announcements";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
 import { importedAnnouncement, importedEvent } from "./event-import";
 import { eventWhen, startOfBerlinToday } from "./events";
@@ -10,6 +10,7 @@ import { openStreetMapUrl } from "./maps";
 import { countOutlines } from "./outlines";
 import {
   firstParagraph,
+  firstSectionHeadlines,
   fromCapitals,
   splitFirstSentence,
   withoutFirstParagraph,
@@ -510,5 +511,48 @@ describe("rich text excerpts", () => {
     expect(fromCapitals("DIE BIBEL", true)).toBe("Die Bibel");
     expect(fromCapitals("THE TRIUNE GOD", true)).toBe("The Triune God");
     expect(fromCapitals("БИБЛИЯ И ВЕРА", false)).toBe("Библия и вера");
+  });
+});
+
+function bold(text: string) {
+  return { type: "text", format: 1, text };
+}
+
+function plain(text: string) {
+  return { type: "text", format: 0, text };
+}
+
+describe("announcement archive", () => {
+  it("groups items by their month in Frankfurt, keeping their order", () => {
+    const dates = [
+      "2026-11-16T00:00:00+01:00",
+      "2026-11-01T00:30:00+01:00",
+      "2026-10-31T23:30:00Z",
+    ];
+    const groups = groupByMonth(dates, (date) => new Date(date));
+    expect(groups).toEqual([{ month: "2026-11", items: [dates[0], dates[1], dates[2]] }]);
+    const later = groupByMonth(
+      ["2026-11-02T00:00:00+01:00", "2026-10-26T00:00:00+01:00"],
+      (d) => new Date(d),
+    );
+    expect(later.map((group) => group.month)).toEqual(["2026-11", "2026-10"]);
+  });
+
+  it("lists the bold lead-ins under the first heading", () => {
+    const state = {
+      root: {
+        children: [
+          { type: "heading", children: [plain("Important")] },
+          { type: "paragraph", children: [bold("Retreat "), plain(" 6–8 March")] },
+          { type: "paragraph", children: [plain("Not a headline")] },
+          { type: "list", children: [] },
+          { type: "paragraph", children: [bold("Gospel bus")] },
+          { type: "heading", children: [plain("This week")] },
+          { type: "paragraph", children: [bold("Tuesday")] },
+        ],
+      },
+    };
+    expect(firstSectionHeadlines(state)).toEqual(["Retreat", "Gospel bus"]);
+    expect(firstSectionHeadlines(null)).toEqual([]);
   });
 });
