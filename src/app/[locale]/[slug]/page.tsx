@@ -36,5 +36,5 @@ export default async function CmsPage({ params }: PageProps<"/[locale]/[slug]">)
     getPageContent(match.id, locale),
     getSiteSettings(locale),
   ]);
-  return <ChurchPage page={page} settings={settings} />;
+  return <ChurchPage slug={slug} page={page} settings={settings} />;
 }
