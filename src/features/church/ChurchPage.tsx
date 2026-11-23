@@ -8,10 +8,11 @@ import { HeaderPhoto } from "./HeaderPhoto";
 import { PageColumns } from "./PageColumns";
 
 // A public church page: the header photo, then the page text and contact panel.
-export function ChurchPage({ page, settings }: { page: PageContent; settings: SiteSettings }) {
+export function ChurchPage(props: { slug: string; page: PageContent; settings: SiteSettings }) {
+  const { page, settings } = props;
   return (
     <Box as="main" id={mainContentId} tabIndex={-1}>
-      <HeaderPhoto />
+      <HeaderPhoto slug={props.slug} />
       <PageColumns heading={<PageHeading title={page.title} />} page={page} settings={settings} />
     </Box>
   );
