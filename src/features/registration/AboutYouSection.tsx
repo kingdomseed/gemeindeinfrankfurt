@@ -18,14 +18,12 @@ export function AboutYouSection() {
           autoComplete="given-name"
           label={t("firstName")}
           value={d?.first_name}
-          required
         />
         <TextField
           name="last_name"
           autoComplete="family-name"
           label={t("lastName")}
           value={d?.last_name}
-          required
         />
         {state.seatType === "shared" && (
           <>
@@ -34,7 +32,6 @@ export function AboutYouSection() {
               autoComplete="off"
               label={t("partnerFirstName")}
               value={d?.partner_first_name}
-              required
               disabled={meta.locked}
             />
             <TextField
@@ -42,7 +39,6 @@ export function AboutYouSection() {
               autoComplete="off"
               label={t("partnerLastName")}
               value={d?.partner_last_name}
-              required
               disabled={meta.locked}
             />
           </>
@@ -53,7 +49,6 @@ export function AboutYouSection() {
           autoComplete="email"
           label={t("email")}
           value={d?.email}
-          required
         />
         <TextField
           name="phone"

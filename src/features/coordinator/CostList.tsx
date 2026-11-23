@@ -2,7 +2,7 @@ import { Box, Button, Flex, Image, Link, List, Stack, Text } from "@chakra-ui/re
 import { useTranslations } from "next-intl";
 
 import { AddPhotoForm } from "./AddPhotoForm";
-import type { FormState } from "./types";
+import type { FormAction } from "./types";
 
 export type CostRow = {
   id: string;
@@ -10,7 +10,7 @@ export type CostRow = {
   amount: string;
   meta: string;
   photoUrl: string | null;
-  addPhoto: (prev: FormState, form: FormData) => Promise<FormState>;
+  addPhoto: FormAction;
 };
 
 // The costs to reimburse with their invoice photos, and the total.

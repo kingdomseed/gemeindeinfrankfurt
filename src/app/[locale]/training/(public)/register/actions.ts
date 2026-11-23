@@ -1,5 +1,6 @@
 "use server";
 
+import type { ActionState } from "@/features/registration/types";
 import { calendarUrl } from "@/lib/calendar";
 import { getPublishedTraining } from "@/lib/data";
 import { canRegister } from "@/lib/domain/cutoffs";
@@ -15,16 +16,11 @@ import {
 } from "@/lib/registrations";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export type RegisterState = {
-  status: "idle" | "error" | "duplicate" | "closed" | "done";
-  calendarUrl?: string;
-};
-
 export async function register(
   locale: Language,
   _prev: { status: string },
   form: FormData,
-): Promise<RegisterState> {
+): Promise<ActionState> {
   const training = await getPublishedTraining();
   if (!training || !canRegister(training.sessions)) return { status: "closed" };
 

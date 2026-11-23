@@ -7,6 +7,8 @@ import type { RecentEvent } from "@/lib/coordinator";
 import { detailHref, displayName } from "./display";
 import type { RegistrationRow } from "./types";
 
+const shown = 8;
+
 type Change = { id: string; at: string; registrationId: string; text: string; actor: string };
 
 // New registrations and the latest history lines across the training, newest first.
@@ -14,7 +16,6 @@ export function LatestChanges(props: {
   rows: readonly RegistrationRow[];
   events: readonly RecentEvent[];
   now: Date;
-  limit?: number;
 }) {
   const t = useTranslations("coordinator");
   const format = useFormatter();
@@ -35,7 +36,7 @@ export function LatestChanges(props: {
     })),
   ]
     .toSorted((a, b) => Date.parse(b.at) - Date.parse(a.at))
-    .slice(0, props.limit ?? 8);
+    .slice(0, shown);
 
   return (
     <Stack as="section" aria-labelledby="changes-heading" gap="3">

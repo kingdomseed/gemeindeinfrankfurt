@@ -7,7 +7,7 @@ import { useActionState, useState } from "react";
 import { FormField } from "@/components/ui/form-field";
 
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 type Details = { notes: string; firstDay: string; lastDay: string };
 const fields = ["notes", "firstDay", "lastDay"] as const;
@@ -23,7 +23,7 @@ export function ReportDetailsForm(props: {
   initialNotes: string;
   initialFirstDay: string | null;
   initialLastDay: string | null;
-  save: (prev: FormState, form: FormData) => Promise<FormState>;
+  save: FormAction;
 }) {
   const t = useTranslations("coordinator.report");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.save, {

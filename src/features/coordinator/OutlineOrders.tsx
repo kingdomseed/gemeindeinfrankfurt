@@ -9,14 +9,14 @@ import { Notice } from "@/components/ui/notice";
 import type { OutlineStock } from "@/lib/domain/payments";
 
 import { OutlineExtraTag } from "./OutlineExtraTag";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 // Outlines needed per language, split into first and second outlines, with
 // one form to record how many were ordered.
 export function OutlineOrders(props: {
   trainingId: string;
   stock: readonly OutlineStock[];
-  saveOrder: (prev: FormState, form: FormData) => Promise<FormState>;
+  saveOrder: FormAction;
 }) {
   const t = useTranslations("coordinator");
   const tl = useTranslations("common.languages");

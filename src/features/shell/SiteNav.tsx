@@ -5,22 +5,13 @@ import { Flex, Link } from "@chakra-ui/react";
 import { Link as LocaleLink, usePathname } from "@/i18n/navigation";
 
 // `exact` marks an item that is current only on its own page, not on the pages below it.
-type NavItem = { href: string; label: string; exact?: boolean };
+type NavItem = { href: string; label: string; exact: boolean };
 
 function isCurrent(pathname: string, { href, exact }: NavItem) {
-  if (href === "/" || exact) return pathname === href;
-  return pathname === href || pathname.startsWith(`${href}/`);
+  return pathname === href || (!exact && pathname.startsWith(`${href}/`));
 }
 
-export function SiteNav({
-  label,
-  items,
-  size = "md",
-}: {
-  label: string;
-  items: readonly NavItem[];
-  size?: "sm" | "md";
-}) {
+export function SiteNav({ label, items }: { label: string; items: readonly NavItem[] }) {
   const pathname = usePathname();
   return (
     <Flex as="nav" aria-label={label} wrap="wrap" columnGap="1" mx="-2" mt="1">
@@ -32,7 +23,7 @@ export function SiteNav({
             asChild
             minH="11"
             px="2"
-            fontSize={size}
+            fontSize="sm"
             fontWeight="medium"
             color={current ? "fg" : "fg.muted"}
             textDecoration="none"

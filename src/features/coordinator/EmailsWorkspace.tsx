@@ -8,10 +8,8 @@ import { BeforeTrainingForm } from "./BeforeTrainingForm";
 import { EmailKindRow } from "./EmailKindRow";
 import { MessageForm, type AudienceOption } from "./MessageForm";
 import { PaymentReminderButton } from "./PaymentReminderButton";
-import type { FormState } from "./types";
+import type { FormAction } from "./types";
 import { WorkspaceSection } from "./WorkspaceSection";
-
-type Action = (prev: FormState, form: FormData) => Promise<FormState>;
 
 export type SentRow = { id: string; when: string; line: string; count: number };
 
@@ -23,7 +21,7 @@ export function EmailsWorkspace(props: {
   before: { tone: "success" | "warning" | "neutral"; label: string } | null;
   audiences: readonly AudienceOption[];
   sent: readonly SentRow[];
-  actions: { reminder: Action; before: Action; message: Action };
+  actions: { reminder: FormAction; before: FormAction; message: FormAction };
 }) {
   const t = useTranslations("coordinator.emails");
   return (

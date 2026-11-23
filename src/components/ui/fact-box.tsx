@@ -12,7 +12,7 @@ export function FactBox(props: {
   tone: "neutral" | "warning";
   label: string;
   value: string;
-  note?: string;
+  note: string;
 }) {
   const muted = props.tone === "neutral" ? "fg.muted" : undefined;
   return (
@@ -23,11 +23,9 @@ export function FactBox(props: {
       <Text fontSize="xl" fontVariantNumeric="tabular-nums">
         {props.value}
       </Text>
-      {props.note && (
-        <Text fontSize="sm" color={muted} fontVariantNumeric="tabular-nums">
-          {props.note}
-        </Text>
-      )}
+      <Text fontSize="sm" color={muted} fontVariantNumeric="tabular-nums">
+        {props.note}
+      </Text>
     </Box>
   );
 }

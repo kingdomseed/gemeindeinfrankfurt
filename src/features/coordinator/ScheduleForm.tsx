@@ -10,16 +10,13 @@ import type { TrainingSetup } from "@/lib/coordinator";
 import { toBerlinWallTime } from "@/lib/domain/berlin-time";
 
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 // Each message's date, start and end in Frankfurt time, and whether it is
 // tested. The registration form shows the schedule in all three languages
 // from these times. One action takes the submit button's `intent`: save,
 // add a message, or remove one.
-export function ScheduleForm(props: {
-  sessions: TrainingSetup["sessions"];
-  action: (prev: FormState, form: FormData) => Promise<FormState>;
-}) {
+export function ScheduleForm(props: { sessions: TrainingSetup["sessions"]; action: FormAction }) {
   const t = useTranslations("coordinator.setup");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.action, {
     status: "idle",

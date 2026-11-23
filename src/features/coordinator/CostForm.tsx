@@ -8,13 +8,13 @@ import { FormField } from "@/components/ui/form-field";
 
 import { FormResult } from "./FormResult";
 import { ReceiptInput } from "./ReceiptInput";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 const empty = { description: "", amount: "", paidBy: "", paidOn: "" };
 
 // Adds a cost to reimburse, with a photo of its invoice. The boxes keep
 // what was typed when something is wrong, and empty once the cost is added.
-export function CostForm(props: { add: (prev: FormState, form: FormData) => Promise<FormState> }) {
+export function CostForm(props: { add: FormAction }) {
   const t = useTranslations("coordinator.report");
   const [fields, setFields] = useState(empty);
   const [shrinking, setShrinking] = useState(false);

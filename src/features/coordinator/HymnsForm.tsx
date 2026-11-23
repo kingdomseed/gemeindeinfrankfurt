@@ -7,7 +7,7 @@ import { useActionState, useRef, useState } from "react";
 import type { Hymn } from "@/lib/domain/messages";
 
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 type Row = Hymn & { key: number };
 
@@ -16,7 +16,7 @@ type Row = Hymn & { key: number };
 export function HymnsForm(props: {
   // What is saved now; the form keeps its own copy while it is open.
   initialHymns: readonly Hymn[];
-  action: (prev: FormState, form: FormData) => Promise<FormState>;
+  action: FormAction;
 }) {
   const t = useTranslations("coordinator.messages");
   const tl = useTranslations("common.languages");

@@ -23,8 +23,16 @@ export type RegistrationDefaults = PersonDefaults & {
   comments: string;
 };
 
-// What a registration server action answers; the form maps status to text.
-export type ActionState = { status: string; calendarUrl?: string };
+// What the register and edit actions answer; the form maps status to text.
+// Only a new registration ends in "done", with the link to its own calendar.
+export type ActionState =
+  | { status: "idle" | "error" | "duplicate" | "closed" | "saved" }
+  | { status: "done"; calendarUrl: string };
+
+export type ActionStatus = ActionState["status"];
+
+// What cancelling a registration answers.
+export type CancelState = { status: "idle" | "error" | "cancelled" | "locked" };
 
 // What the receipt repeats back after a successful submit, taken from the form
 // as it was sent. `chosenSessions` is null for seats that attend every message.
