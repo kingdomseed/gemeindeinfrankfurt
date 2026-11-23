@@ -12,7 +12,7 @@ import { languages, type Language } from "@/lib/domain/types";
 
 import { ConfirmSendDialog } from "./ConfirmSendDialog";
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 export type AudienceOption = {
   value: string;
@@ -23,10 +23,7 @@ export type AudienceOption = {
 
 // A message to everyone or a group, written in each language the
 // coordinators have. Readers whose language is missing get English.
-export function MessageForm(props: {
-  audiences: readonly AudienceOption[];
-  send: (prev: FormState, form: FormData) => Promise<FormState>;
-}) {
+export function MessageForm(props: { audiences: readonly AudienceOption[]; send: FormAction }) {
   const t = useTranslations("coordinator.emails");
   const tl = useTranslations("common.languages");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.send, {

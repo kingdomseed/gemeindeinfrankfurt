@@ -35,7 +35,6 @@ export function CoordinatorShell(props: {
           </Flex>
           <SiteNav
             label={t("nav.label")}
-            size="sm"
             items={coordinatorSections.map((s) => ({
               href: s.href,
               label: t(`nav.${s.key}`),

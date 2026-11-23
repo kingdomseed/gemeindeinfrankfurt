@@ -6,13 +6,10 @@ import { useActionState } from "react";
 
 import { ConfirmSendDialog } from "./ConfirmSendDialog";
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 // Sends the payment reminder to everyone who still owes money, after asking.
-export function PaymentReminderButton(props: {
-  count: number;
-  send: (prev: FormState, form: FormData) => Promise<FormState>;
-}) {
+export function PaymentReminderButton(props: { count: number; send: FormAction }) {
   const t = useTranslations("coordinator.emails");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.send, {
     status: "idle",

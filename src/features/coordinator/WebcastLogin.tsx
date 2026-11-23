@@ -10,14 +10,14 @@ import type { WebcastLogin as Login } from "@/lib/services";
 
 import { FormResult } from "./FormResult";
 import { LoginRow } from "./LoginRow";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 // The Lebensstrom webcast login, for coordinators serving in AV. The password
 // stays hidden until someone presses Show, and each time is logged.
 export function WebcastLogin(props: {
   login: Login | null;
   reveal: () => Promise<string | null>;
-  save: (prev: FormState, form: FormData) => Promise<FormState>;
+  save: FormAction;
 }) {
   const t = useTranslations("coordinator.services");
   const format = useFormatter();

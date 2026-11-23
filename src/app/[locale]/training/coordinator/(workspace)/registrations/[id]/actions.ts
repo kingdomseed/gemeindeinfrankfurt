@@ -3,6 +3,8 @@
 import { refresh } from "next/cache";
 import { z } from "zod";
 
+import type { FormState } from "@/features/coordinator/types";
+import type { ActionState, CancelState } from "@/features/registration/types";
 import { requireAuth } from "@/lib/auth";
 import { recordEvents, type EventKind } from "@/lib/coordinator";
 import { getTrainingById } from "@/lib/data";
@@ -15,8 +17,6 @@ import {
   replaceSessions,
   toRow,
 } from "@/lib/registrations";
-
-type State = { status: "idle" | "saved" | "error" | "stale" };
 
 const id = z.uuid();
 const day = z.union([z.iso.date(), z.literal("").transform(() => null)]);
@@ -45,7 +45,11 @@ const berlinDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }
 // Only the payments the form showed are touched: a waived donation and a seat
 // without outlines keep what they had. A form rendered before someone else's
 // change is refused, so it cannot undo that change.
-export async function savePayment(rawId: string, _prev: State, form: FormData): Promise<State> {
+export async function savePayment(
+  rawId: string,
+  _prev: FormState,
+  form: FormData,
+): Promise<FormState> {
   const supabase = await requireAuth();
   const registrationId = id.parse(rawId);
   const parsed = payment.safeParse(Object.fromEntries(form));
@@ -146,7 +150,7 @@ export async function saveRegistration(
   rawId: string,
   _prev: { status: string },
   form: FormData,
-): Promise<State> {
+): Promise<ActionState> {
   const supabase = await requireAuth();
   const registrationId = id.parse(rawId);
   const { data: existing, error: readError } = await supabase
@@ -176,7 +180,7 @@ export async function saveRegistration(
 }
 
 // Cancels on the registrant's behalf and tells them by email.
-export async function cancelRegistration(rawId: string): Promise<{ status: string }> {
+export async function cancelRegistration(rawId: string): Promise<CancelState> {
   const supabase = await requireAuth();
   const registrationId = id.parse(rawId);
   const { data: existing, error: readError } = await supabase
@@ -205,7 +209,7 @@ export async function cancelRegistration(rawId: string): Promise<{ status: strin
 
 // Gives the registration a new edit link and emails it, in the language the
 // person registered in. The old link stops working.
-export async function sendEditLink(rawId: string): Promise<State> {
+export async function sendEditLink(rawId: string): Promise<FormState> {
   const supabase = await requireAuth();
   const registrationId = id.parse(rawId);
   const { data: existing, error: readError } = await supabase

@@ -17,6 +17,7 @@ import { SessionsSection } from "./SessionsSection";
 import { SubmitArea } from "./SubmitArea";
 import type {
   ActionState,
+  ActionStatus,
   PaymentDetails,
   RegistrationDefaults,
   SessionOption,
@@ -31,7 +32,8 @@ type Props = {
   seatLocked?: boolean;
   submitLabel: string;
   action: (prev: ActionState, form: FormData) => Promise<ActionState>;
-  messages: Record<string, string>; // status -> text shown after submit
+  // Text shown after a submit, for each status this form's action can answer.
+  messages: Partial<Record<ActionStatus, string>>;
 };
 
 // The registration form on both the register and the edit page. It owns the
@@ -40,7 +42,9 @@ export function RegistrationForm(props: Props) {
   const locale = useLocale();
   const d = props.defaults;
 
-  const [state, formAction, pending] = useActionState(props.action, { status: "idle" });
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(props.action, {
+    status: "idle",
+  });
   const [, startTransition] = useTransition();
   const [seatType, setSeatType] = useState<SeatType>(d?.seat_type ?? "full_time");
   const [outline, setOutline] = useState<Language>(d?.outline_language ?? locale);

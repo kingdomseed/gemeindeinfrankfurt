@@ -10,15 +10,12 @@ import type { TrainingSetup } from "@/lib/coordinator";
 import { toBerlinWallTime } from "@/lib/domain/berlin-time";
 
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 const euroInput = (cents: number) => (cents / 100).toFixed(2);
 
 // The training's name, money and payment details, and the outline deadline.
-export function TrainingDetailsForm(props: {
-  setup: TrainingSetup;
-  action: (prev: FormState, form: FormData) => Promise<FormState>;
-}) {
+export function TrainingDetailsForm(props: { setup: TrainingSetup; action: FormAction }) {
   const t = useTranslations("coordinator.setup");
   const tl = useTranslations("common.languages");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.action, {

@@ -11,18 +11,16 @@ import { MessageEditor } from "./MessageEditor";
 import { MessageList, type MessageListItem } from "./MessageList";
 import { MessageSection } from "./MessageSection";
 import { screenHref } from "./sections";
-import type { FormState } from "./types";
+import type { FormAction } from "./types";
 import { VerseList } from "./VerseList";
 import { VersesForm } from "./VersesForm";
-
-type Action = (prev: FormState, form: FormData) => Promise<FormState>;
 
 // The Messages page: every message beside one message's hymns and verses,
 // read only until someone presses Edit.
 export function MessageWorkspace(props: {
   messages: readonly MessageListItem[];
   message: { sessionId: string; number: number; when: string; hymns: Hymn[]; verses: Verse[] };
-  actions: { saveHymns: Action; saveVerses: Action };
+  actions: { saveHymns: FormAction; saveVerses: FormAction };
 }) {
   const t = useTranslations("coordinator.messages");
   const { message } = props;

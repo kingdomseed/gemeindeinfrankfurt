@@ -12,7 +12,7 @@ export function ConfirmSendDialog(props: {
   body: string;
   form: string;
   confirm: string;
-  disabled?: boolean;
+  disabled: boolean;
 }) {
   const t = useTranslations("coordinator.emails");
   return (

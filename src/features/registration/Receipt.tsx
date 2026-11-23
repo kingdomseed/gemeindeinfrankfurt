@@ -22,7 +22,7 @@ export function Receipt(props: {
   summary: SubmittedSummary;
   sessionCount: number;
   payment: PaymentDetails;
-  calendarUrl?: string | undefined;
+  calendarUrl: string;
   onRegisterAnother: () => void;
 }) {
   const t = useTranslations("register");
@@ -71,11 +71,9 @@ export function Receipt(props: {
         </Panel>
       )}
 
-      {props.calendarUrl && (
-        <Card>
-          <AddToCalendar icsUrl={props.calendarUrl} label={tc("yourMessages")} />
-        </Card>
-      )}
+      <Card>
+        <AddToCalendar icsUrl={props.calendarUrl} label={tc("yourMessages")} />
+      </Card>
 
       <Box as="section" aria-labelledby="summary-heading">
         <Heading as="h2" id="summary-heading" size="xl">

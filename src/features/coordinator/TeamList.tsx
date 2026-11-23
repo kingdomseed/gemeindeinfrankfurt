@@ -8,16 +8,14 @@ import { StatusTag } from "@/components/ui/status-tag";
 import type { TeamMember } from "@/lib/team";
 
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
-
-type Action = (prev: FormState, form: FormData) => Promise<FormState>;
+import type { FormAction, FormState } from "./types";
 
 // Everyone who can sign in, with a fresh sign-in link for each and, for
 // admins, a way to put someone in AV or take their access away.
 export function TeamList(props: {
   members: readonly TeamMember[];
   canManage: boolean;
-  actions: { resend: Action; remove: Action; av: Action };
+  actions: { resend: FormAction; remove: FormAction; av: FormAction };
 }) {
   const t = useTranslations("coordinator.team");
   const format = useFormatter();

@@ -15,3 +15,6 @@ export type FormState = {
   status: "idle" | "saved" | "error" | "stale";
   message?: string | undefined;
 };
+
+// A coordinator form's server action, as useActionState calls it.
+export type FormAction = (prev: FormState, form: FormData) => Promise<FormState>;

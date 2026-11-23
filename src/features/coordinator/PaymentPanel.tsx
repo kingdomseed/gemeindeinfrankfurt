@@ -12,7 +12,7 @@ import { formatEuro, type FeeBreakdown } from "@/lib/domain/fees";
 
 import type { PaymentRecord } from "./payment-record";
 import { PaymentFields } from "./PaymentFields";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 const notice = { idle: "error", error: "error", saved: "paymentSaved", stale: "stale" } as const;
 
@@ -21,7 +21,7 @@ const notice = { idle: "error", error: "error", saved: "paymentSaved", stale: "s
 export function PaymentPanel(props: {
   registration: PaymentRecord;
   fees: FeeBreakdown;
-  action: (prev: FormState, form: FormData) => Promise<FormState>;
+  action: FormAction;
 }) {
   const t = useTranslations("coordinator");
   const locale = useLocale();

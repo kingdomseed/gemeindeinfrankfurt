@@ -9,15 +9,12 @@ import { languages, type Language } from "@/lib/domain/types";
 
 import { ConfirmSendDialog } from "./ConfirmSendDialog";
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 // The "Before the training" email: the schedule, place and rules come from
 // the training; coordinators add how to join the WhatsApp group and what to
 // bring, in each language they have.
-export function BeforeTrainingForm(props: {
-  count: number;
-  send: (prev: FormState, form: FormData) => Promise<FormState>;
-}) {
+export function BeforeTrainingForm(props: { count: number; send: FormAction }) {
   const t = useTranslations("coordinator.emails");
   const tl = useTranslations("common.languages");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.send, {

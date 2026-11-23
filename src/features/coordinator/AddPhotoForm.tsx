@@ -6,13 +6,10 @@ import { useActionState, useState } from "react";
 
 import { FormResult } from "./FormResult";
 import { ReceiptInput } from "./ReceiptInput";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 // Adds the missing invoice photo to a cost.
-export function AddPhotoForm(props: {
-  label: string;
-  add: (prev: FormState, form: FormData) => Promise<FormState>;
-}) {
+export function AddPhotoForm(props: { label: string; add: FormAction }) {
   const t = useTranslations("coordinator.report");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.add, {
     status: "idle",

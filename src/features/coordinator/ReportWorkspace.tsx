@@ -11,11 +11,9 @@ import { Link as LocaleLink } from "@/i18n/navigation";
 import { CostForm } from "./CostForm";
 import { CostList, type CostRow } from "./CostList";
 import { ReportDetailsForm } from "./ReportDetailsForm";
-import type { FormState } from "./types";
+import type { FormAction } from "./types";
 import { WorkspaceSection } from "./WorkspaceSection";
 import { YesNoQuestion } from "./YesNoQuestion";
-
-type Action = (prev: FormState, form: FormData) => Promise<FormState>;
 
 export type ReportQuestionRow = {
   key: string;
@@ -34,14 +32,14 @@ export function ReportWorkspace(props: {
   stats: readonly { label: string; value: string; help?: string | undefined }[];
   localities: string | null;
   dates: { first: string; last: string };
-  details: { notes: string; firstDay: string | null; lastDay: string | null; save: Action };
+  details: { notes: string; firstDay: string | null; lastDay: string | null; save: FormAction };
   questions: readonly ReportQuestionRow[];
   messages: readonly { number: number; date: string; absent: number }[];
   overLimit: readonly { id: string; name: string; unexcused: number; excused: number }[];
   costs: {
     rows: readonly CostRow[];
     total: string;
-    add: Action;
+    add: FormAction;
     remove: (form: FormData) => Promise<void>;
   };
 }) {

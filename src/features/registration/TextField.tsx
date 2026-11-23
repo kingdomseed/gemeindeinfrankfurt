@@ -7,21 +7,19 @@ import { FormField } from "@/components/ui/form-field";
 export function TextField(props: {
   name: string;
   label: string;
-  value?: string | undefined;
-  type?: "text" | "email" | "tel";
+  value: string | undefined;
+  autoComplete: string;
+  type?: "email" | "tel";
+  // Phone is the one field a person may leave empty; every other one is required.
   optional?: boolean;
-  help?: string;
-  autoComplete?: string;
-  required?: boolean;
-  disabled?: boolean | undefined;
+  disabled?: boolean;
 }) {
   const t = useTranslations("register");
   return (
     <FormField
       label={props.label}
       optionalLabel={props.optional ? t("optional") : undefined}
-      help={props.help}
-      required={props.required}
+      required={!props.optional}
       disabled={props.disabled}
     >
       <Input

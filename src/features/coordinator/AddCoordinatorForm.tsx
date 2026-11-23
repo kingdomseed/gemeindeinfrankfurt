@@ -8,12 +8,10 @@ import { FormField } from "@/components/ui/form-field";
 import { Panel } from "@/components/ui/panel";
 
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 // Admins add a coordinator by name and email; they get a sign-in link, no password.
-export function AddCoordinatorForm(props: {
-  action: (prev: FormState, form: FormData) => Promise<FormState>;
-}) {
+export function AddCoordinatorForm(props: { action: FormAction }) {
   const t = useTranslations("coordinator.team");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.action, {
     status: "idle",

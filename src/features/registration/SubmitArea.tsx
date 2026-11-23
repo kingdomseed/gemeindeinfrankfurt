@@ -4,18 +4,17 @@ import { useTranslations } from "next-intl";
 import { CheckboxChoice } from "@/components/ui/choice";
 import { Notice } from "@/components/ui/notice";
 
-// Statuses that mean the action worked; everything else is shown as a problem.
-const successStatuses = new Set(["done", "saved"]);
+import type { ActionStatus } from "./types";
 
 // The answer to the last submit, next to the button where the person is looking.
 export function SubmitArea(props: {
-  status: string;
-  message?: string | undefined;
+  status: ActionStatus;
+  message: string | undefined;
   pending: boolean;
   label: string;
 }) {
   const t = useTranslations("register");
-  const success = successStatuses.has(props.status);
+  const success = props.status === "done" || props.status === "saved";
   return (
     <Stack gap="4" align="flex-start">
       {props.message && (

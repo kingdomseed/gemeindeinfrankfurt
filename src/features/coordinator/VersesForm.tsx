@@ -9,7 +9,7 @@ import type { Verse } from "@/lib/domain/messages";
 import { languages } from "@/lib/domain/types";
 
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 type Row = Verse & { key: number };
 
@@ -18,7 +18,7 @@ type Row = Verse & { key: number };
 export function VersesForm(props: {
   // What is saved now; the form keeps its own copy while it is open.
   initialVerses: readonly Verse[];
-  action: (prev: FormState, form: FormData) => Promise<FormState>;
+  action: FormAction;
 }) {
   const t = useTranslations("coordinator.messages");
   const tl = useTranslations("common.languages");

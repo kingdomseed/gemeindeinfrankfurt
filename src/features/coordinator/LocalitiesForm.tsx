@@ -9,13 +9,13 @@ import { FormSection } from "@/components/ui/form-section";
 import type { TrainingSetup } from "@/lib/coordinator";
 
 import { FormResult } from "./FormResult";
-import type { FormState } from "./types";
+import type { FormAction, FormState } from "./types";
 
 // Cities that register through Frankfurt and count in its report. A city
 // someone registered from cannot be removed.
 export function LocalitiesForm(props: {
   localities: TrainingSetup["localities"];
-  action: (prev: FormState, form: FormData) => Promise<FormState>;
+  action: FormAction;
 }) {
   const t = useTranslations("coordinator.setup");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.action, {
