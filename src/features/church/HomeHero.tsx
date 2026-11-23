@@ -1,27 +1,42 @@
 import { Box, Container, Heading, Image, Link, Text } from "@chakra-ui/react";
+import { useLocale, useTranslations } from "next-intl";
 import NextImage from "next/image";
 
 import { Link as LocaleLink } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
+
+type Credit = { author: string; licence: string; source: string; licenceUrl: string };
+
+// An open Bible in each site's language. German: Hanna Theresia Pitter,
+// Unsplash License; English: Leon Brooks, public domain. Only the Russian
+// photo's licence asks for a credit.
+const photos: Record<Locale, { src: string; credit: Credit | null }> = {
+  de: { src: "/hero-bible-de.jpg", credit: null },
+  en: { src: "/hero-bible.jpg", credit: null },
+  ru: {
+    src: "/hero-bible-ru.jpg",
+    credit: {
+      author: "Dmitry Makeev",
+      licence: "CC BY-SA 4.0",
+      source: "https://commons.wikimedia.org/wiki/File:Russian_bibles._1896_year._img_05.jpg",
+      licenceUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    },
+  },
+};
 
 // The verse and the welcome over a dimmed photo of an open Bible, with one
-// button to the page for visitors. The photo is public domain (Leon Brooks,
-// Wikimedia Commons), so it needs no credit.
+// button to the page for visitors.
 export function HomeHero(props: {
   verse: string;
   welcome: string;
   action: { href: string; label: string } | null;
 }) {
+  const t = useTranslations("site");
+  const photo = photos[useLocale()];
   return (
     <Box position="relative" overflow="hidden" bg="gray.900" color="white">
       <Image asChild position="absolute" inset="0" w="full" h="full" objectFit="cover">
-        <NextImage
-          src="/hero-bible.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          fetchPriority="high"
-          loading="eager"
-        />
+        <NextImage src={photo.src} alt="" fill sizes="100vw" fetchPriority="high" loading="eager" />
       </Image>
       <Box
         position="absolute"
@@ -76,6 +91,17 @@ export function HomeHero(props: {
           </Link>
         )}
       </Container>
+      {photo.credit && (
+        <Text position="absolute" right="3" bottom="2" fontSize="xs" color="whiteAlpha.800">
+          <Link href={photo.credit.source} color="inherit">
+            {t("photoBy", { author: photo.credit.author })}
+          </Link>
+          {", "}
+          <Link href={photo.credit.licenceUrl} color="inherit">
+            {photo.credit.licence}
+          </Link>
+        </Text>
+      )}
     </Box>
   );
 }
