@@ -7,7 +7,7 @@ import { cache } from "react";
 import { z } from "zod";
 
 import { cmsCacheTag } from "@/cms/revalidate";
-import { locales, type Locale } from "@/i18n/routing";
+import { localePath, locales, type Locale } from "@/i18n/routing";
 import { earliestOpenEndDate } from "@/lib/domain/announcements";
 import { startOfBerlinToday } from "@/lib/domain/events";
 import { firstParagraph } from "@/lib/domain/rich-text";
@@ -428,7 +428,7 @@ export async function getPageHrefs(locale: Locale): Promise<Record<string, strin
   return Object.fromEntries(
     (await loadPages()).map((p) => [
       String(p.id),
-      p.isHome === true ? `/${locale}` : `/${locale}/${inLocale(p.slug, locale)}`,
+      localePath(locale, p.isHome === true ? "/" : `/${inLocale(p.slug, locale)}`),
     ]),
   );
 }

@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { getTranslations } from "next-intl/server";
 import { Resend } from "resend";
 
+import { localePath } from "@/i18n/routing";
 import { calendarUrl } from "@/lib/calendar";
 import type { Training, TrainingWithSessions } from "@/lib/data";
 import { computeFees, formatEuro } from "@/lib/domain/fees";
@@ -72,7 +73,7 @@ export async function sendBatch(
 }
 
 export function editUrl(locale: Language, token: string) {
-  return `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/training/r/${token}`;
+  return `${process.env.NEXT_PUBLIC_SITE_URL}${localePath(locale, `/training/r/${token}`)}`;
 }
 
 export async function sendConfirmation(opts: {

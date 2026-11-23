@@ -20,17 +20,10 @@ const nextConfig: NextConfig = {
         ],
       },
       // The announcements carry the meeting link; they stay out of search engines.
-      {
-        source: "/:locale/announcements",
+      ...["/announcements", "/:locale/announcements"].map((source) => ({
+        source,
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
-      },
-    ]),
-  // German pages of the old WordPress site. Its English pages (/en/...)
-  // already match the new addresses.
-  redirects: () =>
-    Promise.resolve([
-      { source: "/fur-besucher", destination: "/de/fur-besucher", permanent: true },
-      { source: "/unser-glaube", destination: "/de/unser-glaube", permanent: true },
+      })),
     ]),
 };
 
