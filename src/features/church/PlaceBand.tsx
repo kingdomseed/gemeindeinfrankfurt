@@ -7,7 +7,7 @@ import { PhotoBand } from "./PhotoBand";
 import { SectionHeading } from "./SectionHeading";
 
 // Where the church meets, under the home page's own heading for it, beside a
-// photo of the Nidda (Leonhard Lenz, CC0).
+// photo of poppies (Karim Ben Van, Unsplash License).
 export function PlaceBand(props: { heading: string; address: string; tinted: boolean }) {
   const t = useTranslations("site");
   return (
