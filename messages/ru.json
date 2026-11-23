@@ -51,7 +51,8 @@
     "earlierAnnouncements": "Предыдущие объявления",
     "announcementMonths": "Объявления по месяцам",
     "weekCount": "{count, plural, one {# неделя} few {# недели} many {# недель} other {# недели}}",
-    "moreHeadlines": "ещё {count}"
+    "moreHeadlines": "ещё {count}",
+    "photoBy": "Фото: {author}"
   },
   "home": {
     "noTraining": "Регистрация ещё не открыта",

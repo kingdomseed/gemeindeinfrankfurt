@@ -51,7 +51,8 @@
     "earlierAnnouncements": "Earlier announcements",
     "announcementMonths": "Announcements by month",
     "weekCount": "{count, plural, one {# week} other {# weeks}}",
-    "moreHeadlines": "{count} more"
+    "moreHeadlines": "{count} more",
+    "photoBy": "Photo: {author}"
   },
   "home": {
     "noTraining": "Registration is not open yet",
