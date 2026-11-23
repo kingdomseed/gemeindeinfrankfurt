@@ -12,9 +12,9 @@ import { PageBlocks } from "./PageBlocks";
 import { PlaceBand } from "./PlaceBand";
 import { TeaserBand } from "./TeaserBand";
 
-// The homepage: hero, the church's own introduction, the home page's other
-// sections (such as events and announcements), a band for each other page,
-// the meeting place and an invitation to write.
+// The homepage, for visitors: hero, the church's own introduction and any
+// further text of the home page, a band for each other page, the meeting
+// place and an invitation to write.
 export function HomePage(props: {
   page: PageContent;
   teasers: readonly PageTeaser[];
@@ -30,7 +30,15 @@ export function HomePage(props: {
   const intro = blocks.find((block) => block.type === "text");
   const place = blocks.find((block) => block.type === "meetingPlace");
   const others = blocks.flatMap((block) => {
-    if (block.type === "meetingPlace") return [];
+    // Events and announcements are for members; they have their own pages
+    // under Mitglieder.
+    if (
+      block.type === "meetingPlace" ||
+      block.type === "upcomingEvents" ||
+      block.type === "announcements"
+    ) {
+      return [];
+    }
     if (block !== intro) return [block];
     const content = withoutFirstParagraph(block.content);
     return content ? [{ ...block, content }] : [];
