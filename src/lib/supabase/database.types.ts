@@ -942,7 +942,12 @@ export type Database = {
         };
         Returns: string;
       };
+      delete_empty_study_group: { Args: { p_group: string; p_training: string }; Returns: string };
       is_coordinator: { Args: Record<PropertyKey, never>; Returns: boolean };
+      move_study_group_member: {
+        Args: { p_group: string; p_registration: string };
+        Returns: undefined;
+      };
       purge_personal_data: { Args: { p_training: string }; Returns: undefined };
       replace_message_hymns: { Args: { p_hymns: Json; p_session: string }; Returns: undefined };
       replace_study_groups: { Args: { p_groups: Json; p_training: string }; Returns: undefined };

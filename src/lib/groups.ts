@@ -81,42 +81,31 @@ export async function updateStudyGroupLanguage(
   if (error) throw error;
 }
 
-// Deletes a study group only when it has no active assigned registrations.
-// Cancelled registrations still in study_group_members cascade-delete with the group.
+// Deletes a study group atomically only when it has no active assigned registrations.
 export async function deleteEmptyStudyGroup(
   supabase: CoordinatorClient,
   trainingId: string,
   groupId: string,
 ): Promise<{ deleted: true } | { deleted: false; reason: "not_empty" }> {
-  const { data: members, error: checkError } = await supabase
-    .from("study_group_members")
-    .select("registration_id, registrations!inner(status)")
-    .eq("group_id", groupId);
-  if (checkError) throw checkError;
-  if (members.some((m) => m.registrations.status === "active")) {
-    return { deleted: false, reason: "not_empty" };
-  }
-  const { error } = await supabase
-    .from("study_groups")
-    .delete()
-    .eq("id", groupId)
-    .eq("training_id", trainingId);
+  const { data, error } = await supabase.rpc("delete_empty_study_group", {
+    p_training: trainingId,
+    p_group: groupId,
+  });
   if (error) throw error;
+  if (data === "not_empty") return { deleted: false, reason: "not_empty" };
   return { deleted: true };
 }
 
-// Puts a registration in a group, out of any other one.
+// Puts a registration in a group atomically under the study-group lock.
 export async function moveToGroup(
   supabase: CoordinatorClient,
   registrationId: string,
   groupId: string,
 ) {
-  const { error } = await supabase
-    .from("study_group_members")
-    .upsert(
-      { group_id: groupId, registration_id: registrationId },
-      { onConflict: "registration_id" },
-    );
+  const { error } = await supabase.rpc("move_study_group_member", {
+    p_registration: registrationId,
+    p_group: groupId,
+  });
   if (error) throw error;
 }
 

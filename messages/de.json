@@ -507,6 +507,7 @@
       "groupLanguage": "Sprache für Gruppe {number}",
       "emptyGroup": "Jemanden hierher ziehen oder Verschieben nutzen.",
       "cannotRemoveNonEmpty": "Verschiebe erst alle Personen aus der Gruppe, bevor du sie entfernst.",
+      "moveFailed": "Die Person konnte nicht verschoben werden. Bitte versuche es noch einmal.",
       "nameTags": "Namensschilder",
       "planTesting": "Prüfungen planen",
       "howSuggested": "Vorgeschlagen mit eigenen Gruppen für externe Orte und sonst nach Sprache der Studiengruppe und Ort, in Gruppen von 8 bis 10. Ziehe Personen per Drag-and-drop zwischen Gruppen oder nutze Verschieben, und stelle die Gruppensprache direkt ein.",

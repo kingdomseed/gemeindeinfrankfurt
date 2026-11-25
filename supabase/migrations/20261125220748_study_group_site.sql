@@ -228,3 +228,88 @@ begin
   return 'saved';
 end;
 $$;
+
+-- Atomically locks the training's groups, verifies no active member is in
+-- p_group, and deletes it (cancelling any leftover cascade on cancelled rows).
+create or replace function delete_empty_study_group(
+  p_training uuid,
+  p_group uuid
+) returns text
+language plpgsql
+security invoker
+set search_path = public
+as $$
+declare
+  v_group_id uuid;
+begin
+  perform pg_advisory_xact_lock(hashtext('study_groups:' || p_training::text));
+
+  select id
+  into v_group_id
+  from study_groups
+  where id = p_group
+    and training_id = p_training
+  for update;
+
+  if not found then
+    return 'not_found';
+  end if;
+
+  if exists (
+    select 1
+    from study_group_members sgm
+    join registrations r on r.id = sgm.registration_id
+    where sgm.group_id = p_group
+      and r.status = 'active'
+  ) then
+    return 'not_empty';
+  end if;
+
+  delete from study_groups
+  where id = p_group
+    and training_id = p_training;
+
+  return 'deleted';
+end;
+$$;
+
+-- Moves a registration into a study group under the same training-wide lock
+-- used by delete_empty_study_group, replace_study_groups, and sync.
+create or replace function move_study_group_member(
+  p_registration uuid,
+  p_group uuid
+) returns void
+language plpgsql
+security invoker
+set search_path = public
+as $$
+declare
+  v_training uuid;
+begin
+  select training_id
+  into v_training
+  from study_groups
+  where id = p_group;
+
+  if not found then
+    raise exception 'Study group not found';
+  end if;
+
+  perform pg_advisory_xact_lock(hashtext('study_groups:' || v_training::text));
+
+  if not exists (select 1 from study_groups where id = p_group) then
+    raise exception 'Study group not found';
+  end if;
+
+  insert into study_group_members (group_id, registration_id)
+  values (p_group, p_registration)
+  on conflict (registration_id) do update set group_id = excluded.group_id;
+end;
+$$;
+
+revoke execute on function delete_empty_study_group(uuid, uuid) from public, anon;
+grant execute on function delete_empty_study_group(uuid, uuid) to authenticated, service_role;
+
+revoke execute on function move_study_group_member(uuid, uuid) from public, anon;
+grant execute on function move_study_group_member(uuid, uuid) to authenticated, service_role;
+

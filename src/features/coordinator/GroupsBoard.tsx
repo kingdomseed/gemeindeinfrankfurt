@@ -79,7 +79,7 @@ export function GroupsBoard(props: {
     fromGroupId: string | null;
   } | null>(null);
   const [overGroupId, setOverGroupId] = useState<string | null>(null);
-  const [errorKey, setErrorKey] = useState<"cannotRemoveNonEmpty" | null>(null);
+  const [errorKey, setErrorKey] = useState<"cannotRemoveNonEmpty" | "moveFailed" | null>(null);
 
   const label = (g: BoardGroup) => `${t("groupNumber", { number: g.number })} · ${tl(g.language)}`;
   const hasGroups = board.groups.length > 0;
@@ -87,14 +87,15 @@ export function GroupsBoard(props: {
 
   function performMove(registrationId: string, fromGroupId: string | null, toGroupId: string) {
     setErrorKey(null);
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       startTransition(async () => {
         try {
           addOptimisticMove({ registrationId, fromGroupId, toGroupId });
           await props.move(registrationId, toGroupId);
+        } catch {
+          setErrorKey("moveFailed");
+        } finally {
           resolve();
-        } catch (err) {
-          reject(err instanceof Error ? err : new Error(String(err)));
         }
       });
     });

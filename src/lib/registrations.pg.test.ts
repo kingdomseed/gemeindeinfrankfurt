@@ -438,5 +438,45 @@ describe.skipIf(!DB_URL)("registration lifecycle postgres RPCs", () => {
         `select coalesce(sg.site_id::text, 'null') || '|' || sg.language from study_group_members m join study_groups sg on sg.id = m.group_id where m.registration_id = '${mhRegId}';`,
       ]),
     ).toBe(`${mhSiteId}|en`);
+
+    // 10. Atomic move_study_group_member and delete_empty_study_group respect active membership under lock.
+    const emptyGroupId = psql(testDbUrl, [
+      "-c",
+      `insert into study_groups (training_id, name, language, sort_order) values ('${TRAINING_ID}', '99', 'en', 99) returning id;`,
+    ]);
+    const occupiedGroupId = psql(testDbUrl, [
+      "-c",
+      `select id from study_groups where training_id = '${TRAINING_ID}' and sort_order = 1;`,
+    ]);
+    expect(
+      psqlAs(
+        testDbUrl,
+        "authenticated",
+        `select delete_empty_study_group('${TRAINING_ID}', '${occupiedGroupId}');`,
+        COORD_USER_ID,
+      ),
+    ).toBe("not_empty");
+    psqlAs(
+      testDbUrl,
+      "authenticated",
+      `select move_study_group_member('${PEER_REG_1}', '${emptyGroupId}');`,
+      COORD_USER_ID,
+    );
+    expect(
+      psqlAs(
+        testDbUrl,
+        "authenticated",
+        `select delete_empty_study_group('${TRAINING_ID}', '${emptyGroupId}');`,
+        COORD_USER_ID,
+      ),
+    ).toBe("not_empty");
+    expect(
+      psqlAs(
+        testDbUrl,
+        "authenticated",
+        `select delete_empty_study_group('${TRAINING_ID}', '${occupiedGroupId}');`,
+        COORD_USER_ID,
+      ),
+    ).toBe("deleted");
   }, 30_000);
 });

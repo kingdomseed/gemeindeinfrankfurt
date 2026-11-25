@@ -507,6 +507,7 @@
       "groupLanguage": "Language for group {number}",
       "emptyGroup": "Drag someone here or use Move.",
       "cannotRemoveNonEmpty": "Move everyone out of a group before removing it.",
+      "moveFailed": "Could not move that person. Please try again.",
       "nameTags": "Name tags",
       "planTesting": "Plan testing",
       "howSuggested": "Suggested with separate sites in their own group and everyone else by study group language then locality, in groups of 8 to 10. Drag a name between groups or use Move, and change a group's language inline.",
