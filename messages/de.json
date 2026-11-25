@@ -609,7 +609,7 @@
       "group": "Gruppe",
       "all": "Alle",
       "groupNumber": "Gruppe {number}",
-      "legend": "Klicke auf ein Feld, um es zu ändern: leer, anwesend (A), abwesend (F), entschuldigt (E). Grau: für diese Botschaft nicht nötig, kann aber trotzdem als anwesend eingetragen werden. Über der Grenze heißt: eine unentschuldigte Abwesenheit oder mehr als zwei entschuldigte.",
+      "legend": "Klicke auf ein Feld für anwesend (A), abwesend (F), entschuldigt (E) oder Leeren, oder fokussiere es und tippe A, F, E oder Entf. Grau: für diese Botschaft nicht nötig, ein Klick schaltet anwesend um. Über der Grenze heißt: eine unentschuldigte Abwesenheit oder mehr als zwei entschuldigte.",
       "message": "Botschaft {number}",
       "partTimeNote": "Wer Teilzeit oder als Teilnehmer des Live-Trainings dabei ist, wird nur bei den Botschaften als abwesend gezählt, die bei der Anmeldung gewählt wurden.",
       "present": "Anwesend",
@@ -633,7 +633,8 @@
       "nextMessage": "Nächste Botschaft",
       "excused": "Entschuldigt",
       "unexcused": "Unentschuldigt",
-      "excusedCount": "Entschuldigt"
+      "excusedCount": "Entschuldigt",
+      "clearMark": "Leeren"
     },
     "messages": {
       "title": "Botschaften",

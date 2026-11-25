@@ -609,7 +609,7 @@
       "group": "Group",
       "all": "All",
       "groupNumber": "Group {number}",
-      "legend": "Click a box to change it: empty, present (P), absent (A), excused (E). Grey: not required for that message, but can still be marked present. Over the limit means any unexcused absence or more than two excused.",
+      "legend": "Pick a box to set present (P), absent (A), excused (E) or clear, or focus a box and type P, A, E or Delete. Grey: not required for that message, click to toggle present. Over the limit means any unexcused absence or more than two excused.",
       "message": "Message {number}",
       "partTimeNote": "A part-timer or live-training attendee is only marked absent for the messages they chose when they registered.",
       "present": "Present",
@@ -633,7 +633,8 @@
       "nextMessage": "Next message",
       "excused": "Excused",
       "unexcused": "Unexcused",
-      "excusedCount": "Excused"
+      "excusedCount": "Excused",
+      "clearMark": "Clear"
     },
     "messages": {
       "title": "Messages",
