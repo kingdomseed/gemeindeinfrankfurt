@@ -3,8 +3,9 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { ReportWorkspace } from "@/features/coordinator/ReportWorkspace";
 import { sectionHref } from "@/features/coordinator/sections";
 import { requireLocale } from "@/i18n/locale";
+import { calendarDayNoon } from "@/lib/domain/berlin-time";
+import { daysUntil } from "@/lib/domain/coordination";
 import { formatEuro } from "@/lib/domain/fees";
-import { reportDue } from "@/lib/domain/report";
 import { berlinDay } from "@/lib/domain/sessions";
 import { loadReportView, type ReportQuestion } from "@/lib/report";
 
@@ -42,17 +43,14 @@ export default async function ReportPage({ params }: Props) {
   const view = await loadReportView(supabase, data);
   const euro = (cents: number) => formatEuro(cents, locale);
   const day = (iso: string) => berlinDay(new Date(iso), locale, th("lordsDay"));
-  // A date column ("2027-01-09") is a calendar day, read at noon so no time zone moves it.
   const shownDay = (date: string | null, instant: string | null) => {
-    if (date) return day(`${date}T12:00:00Z`);
+    if (date) return berlinDay(calendarDayNoon(date), locale, th("lordsDay"));
     if (instant) return day(instant);
     return "–";
   };
 
-  // The actual last day, when a coordinator gave one, counts from its evening.
-  const lastEnd = view.lastDay ? `${view.lastDay}T21:00:00Z` : view.lastEnd;
-  const due = lastEnd ? reportDue(new Date(lastEnd)) : null;
-  const daysLeft = due ? Math.ceil((due.getTime() - now.getTime()) / 86_400_000) : 0;
+  const { due } = view;
+  const daysLeft = due ? daysUntil(due, now) : 0;
   const n = view.numbers;
   const total = view.reimbursements.reduce((sum, c) => sum + c.amountCents, 0);
 
@@ -124,7 +122,7 @@ export default async function ReportPage({ params }: Props) {
           meta: [
             c.paidBy && t("paidBy", { name: c.paidBy }),
             c.paidOn &&
-              format.dateTime(new Date(`${c.paidOn}T12:00:00Z`), {
+              format.dateTime(calendarDayNoon(c.paidOn), {
                 day: "numeric",
                 month: "short",
               }),

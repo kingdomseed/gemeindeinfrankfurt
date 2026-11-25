@@ -1,5 +1,6 @@
 import { endOfBerlinDay, firstSession } from "./cutoffs";
 import type { FeeBreakdown } from "./fees";
+import { reportDue } from "./report";
 import type { SeatType, Session } from "./types";
 
 const DAY_MS = 24 * 3600_000;
@@ -26,7 +27,7 @@ export function trainingDeadlines(
     outlineOrderDue: outlineOrderDeadline === null ? null : new Date(outlineOrderDeadline),
     sessionsLock: start,
     registrationCloses: endOfBerlinDay(start),
-    reportDue: endOfBerlinDay(new Date(Date.parse(last.starts_at) + 7 * DAY_MS)),
+    reportDue: reportDue(new Date(last.ends_at || last.starts_at)),
   };
 }
 

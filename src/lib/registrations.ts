@@ -12,6 +12,7 @@ import {
   type Training,
   type TrainingWithSessions,
 } from "@/lib/data";
+import { berlinDayKey } from "@/lib/domain/berlin-time";
 import { canCancel, canChangeSeatOrSessions, canRegister } from "@/lib/domain/cutoffs";
 import { resolveLocalityInput } from "@/lib/domain/locality";
 import { planPaymentUpdate } from "@/lib/domain/payments";
@@ -315,8 +316,6 @@ export type RegistrationLifecycleDeps<TClient = CoordinatorClient> = {
   store: RegistrationStore<TClient>;
 };
 
-// en-CA writes a date as YYYY-MM-DD.
-const berlinDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" });
 const saveResultSchema = z.enum(["saved", "stale", "not_found"]);
 const cancelResultSchema = z.enum(["cancelled", "not_found"]);
 const paymentResultSchema = z.enum(["saved", "stale", "not_found"]);
@@ -654,7 +653,7 @@ export function createRegistrationLifecycle<TClient = CoordinatorClient>(
           waiver: input.waiver,
           waiverReason: input.waiver_reason,
         },
-        berlinDay.format(deps.now()),
+        berlinDayKey(deps.now()),
       );
 
       const result = await store.savePayment({

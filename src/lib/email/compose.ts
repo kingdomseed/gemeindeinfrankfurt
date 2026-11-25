@@ -3,6 +3,7 @@ import { createTranslator } from "next-intl";
 
 import { localePath } from "@/i18n/routing";
 import type { Training, TrainingWithSessions } from "@/lib/data";
+import { BERLIN_TIME_ZONE } from "@/lib/domain/berlin-time";
 import { textFor, type EmailTexts } from "@/lib/domain/emails";
 import { computeFees, formatEuro } from "@/lib/domain/fees";
 import { sessionLabel, trainingDates } from "@/lib/domain/sessions";
@@ -44,7 +45,7 @@ const catalogs = { de, en, ru } satisfies Record<Language, typeof en>;
 
 function createLocaleTranslators(locale: Language) {
   const messages: typeof en = catalogs[locale];
-  const opts = { locale, messages, timeZone: "Europe/Berlin" } as const;
+  const opts = { locale, messages, timeZone: BERLIN_TIME_ZONE } as const;
   return {
     t: createTranslator({ ...opts, namespace: "email" }),
     tr: createTranslator({ ...opts, namespace: "register" }),

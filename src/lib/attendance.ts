@@ -2,12 +2,9 @@ import "server-only";
 import { z } from "zod";
 
 import type { CoordinatorClient } from "@/lib/auth";
-import type { Mark } from "@/lib/domain/attendance";
+import { attendanceMarkKey as markKey, type Mark } from "@/lib/domain/attendance";
 
-// "registrationId:sessionId" for one box of the attendance table.
-export function markKey(registrationId: string, sessionId: string) {
-  return `${registrationId}:${sessionId}`;
-}
+export { markKey };
 
 // Every present, absent or excused mark of a training, by markKey.
 export async function loadAttendance(

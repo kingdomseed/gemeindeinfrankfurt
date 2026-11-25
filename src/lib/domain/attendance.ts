@@ -2,6 +2,11 @@ import { picksSessions, type SeatType } from "./types";
 
 export type Mark = "present" | "absent" | "excused";
 
+// "registrationId:sessionId" for one box of the attendance table.
+export function attendanceMarkKey(registrationId: string, sessionId: string): string {
+  return `${registrationId}:${sessionId}`;
+}
+
 // Whether a seat has to come to a message: full-time and shared seats come to
 // all of them, part-timers and Anaheim attendees only to the ones they chose.
 export function isRequired(seat: SeatType, chosen: ReadonlySet<string>, sessionId: string) {
