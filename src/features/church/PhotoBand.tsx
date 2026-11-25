@@ -1,14 +1,15 @@
 import { Box, Container, Image, SimpleGrid, Stack } from "@chakra-ui/react";
-import NextImage from "next/image";
+import NextImage, { type StaticImageData } from "next/image";
 import type { ReactNode } from "react";
 
 // A section with a photo on one side and its text on the other, stacked on
 // phones with the photo first. Bands alternate tint and side down the page.
 export function PhotoBand(props: {
-  photo: string;
+  photo: StaticImageData;
   tinted: boolean;
   photoEnd: boolean;
   labelledBy: string;
+  loading?: "eager" | "lazy";
   children: ReactNode;
 }) {
   return (
@@ -25,10 +26,18 @@ export function PhotoBand(props: {
             aspectRatio="4 / 3"
             overflow="hidden"
             rounded="l3"
+            bg={props.tinted ? "bg" : "bg.subtle"}
             order={{ md: props.photoEnd ? 2 : 0 }}
           >
             <Image asChild objectFit="cover">
-              <NextImage src={props.photo} alt="" fill sizes="(min-width: 768px) 560px, 100vw" />
+              <NextImage
+                src={props.photo}
+                alt=""
+                fill
+                sizes="(min-width: 48em) 532px, calc(100vw - 2rem)"
+                loading={props.loading ?? "lazy"}
+                placeholder="blur"
+              />
             </Image>
           </Box>
           <Stack gap="4" align="flex-start">

@@ -42,7 +42,15 @@ export function CostList(props: {
                 rel="noreferrer"
                 aria-label={t("openPhoto", { cost: c.description })}
               >
-                <Image src={c.photoUrl} alt="" boxSize="14" objectFit="cover" rounded="sm" />
+                <Image
+                  src={c.photoUrl}
+                  alt=""
+                  boxSize="14"
+                  objectFit="cover"
+                  rounded="sm"
+                  loading="lazy"
+                  decoding="async"
+                />
               </Link>
             ) : (
               <Box
