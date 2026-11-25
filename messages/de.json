@@ -200,6 +200,7 @@
     "notFound": "Dieser Link ist ungültig",
     "save": "Änderungen speichern",
     "saved": "Gespeichert. Wir haben dir eine neue Bestätigung geschickt.",
+    "stale": "Nicht gespeichert. Diese Anmeldung wurde inzwischen geändert. Lade die Seite neu, um den aktuellen Stand zu sehen, oder speichere noch einmal, um deine Änderungen zu übernehmen.",
     "cancel": "Anmeldung stornieren",
     "cancelConfirm": "Möchtest du diese Anmeldung wirklich stornieren?",
     "cancelled": "Diese Anmeldung ist storniert.",

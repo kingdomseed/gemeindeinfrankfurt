@@ -2,8 +2,9 @@ import "server-only";
 import { cache } from "react";
 import { z } from "zod";
 
-import { currentCoordinatorName, getCoordinatorClient, type CoordinatorClient } from "@/lib/auth";
+import { getCoordinatorClient, type CoordinatorClient } from "@/lib/auth";
 import { localizedText } from "@/lib/data";
+import { registrationEventKinds, type RegistrationEventKind } from "@/lib/domain/types";
 
 const REGISTRATION_COLUMNS =
   "id, created_at, status, seat_type, first_name, last_name, partner_first_name, partner_last_name, email, other_locality, group_language, outline_language, second_outline_language, waiver, fee_paid, outline_paid, localities(name), training_sites(name), registration_sessions(session_id)";
@@ -61,23 +62,12 @@ export const loadCoordination = cache(async () => {
   return { supabase, data: await loadCoordinatorDashboard(supabase), now: new Date() };
 });
 
-export const eventKinds = [
-  "fee_received",
-  "fee_unmarked",
-  "outline_received",
-  "outline_unmarked",
-  "waiver_set",
-  "waiver_removed",
-  "payment_edited",
-  "edited",
-  "cancelled",
-  "link_sent",
-] as const;
-export type EventKind = (typeof eventKinds)[number];
+export const eventKinds = registrationEventKinds;
+export type EventKind = RegistrationEventKind;
 
 const eventRow = z.object({
   id: z.string(),
-  kind: z.enum(eventKinds),
+  kind: z.enum(registrationEventKinds),
   actor_name: z.string(),
   created_at: z.string(),
 });
@@ -104,24 +94,6 @@ export async function loadRegistrationDetail(supabase: CoordinatorClient, id: st
 }
 
 export type RegistrationDetail = NonNullable<Awaited<ReturnType<typeof loadRegistrationDetail>>>;
-
-// Adds lines to a registration's history under the signed-in coordinator's name.
-export async function recordEvents(
-  supabase: CoordinatorClient,
-  registrationId: string,
-  kinds: readonly EventKind[],
-) {
-  if (kinds.length === 0) return;
-  const actorName = await currentCoordinatorName(supabase);
-  const { error } = await supabase.from("registration_events").insert(
-    kinds.map((kind) => ({
-      registration_id: registrationId,
-      kind,
-      actor_name: actorName,
-    })),
-  );
-  if (error) throw error;
-}
 
 export type RecentEvent = RegistrationEvent & {
   registration: { id: string; first_name: string; last_name: string };

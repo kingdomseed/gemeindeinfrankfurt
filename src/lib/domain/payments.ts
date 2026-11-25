@@ -1,6 +1,13 @@
 import { computeFees, type FeeBreakdown, type FeePrices } from "./fees";
 import { countOutlines } from "./outlines";
-import { languages, type Language, type SeatType } from "./types";
+import {
+  languages,
+  type AssignableFeeWaiver,
+  type FeeWaiver,
+  type Language,
+  type RegistrationEventKind,
+  type SeatType,
+} from "./types";
 
 export type PaymentRow = {
   seat_type: SeatType;
@@ -108,4 +115,84 @@ export type PaymentMark = { paid: boolean; paidOn: string | null; transaction: s
 export function settledMark(mark: PaymentMark, today: string): PaymentMark {
   if (!mark.paid) return { paid: false, paidOn: null, transaction: "" };
   return { ...mark, paidOn: mark.paidOn ?? today };
+}
+
+export type PaymentEventKind = Extract<
+  RegistrationEventKind,
+  | "fee_received"
+  | "fee_unmarked"
+  | "outline_received"
+  | "outline_unmarked"
+  | "waiver_set"
+  | "waiver_removed"
+  | "payment_edited"
+>;
+
+export type PaymentSnapshot = {
+  waiver: FeeWaiver | null;
+  waiver_reason: string;
+  outline_language: Language | null;
+  fee_paid: boolean;
+  fee_paid_on: string | null;
+  fee_transaction: string;
+  outline_paid: boolean;
+  outline_paid_on: string | null;
+  outline_transaction: string;
+};
+
+export type PaymentUpdateInput = {
+  fee: PaymentMark;
+  outline: PaymentMark;
+  waiver: AssignableFeeWaiver | null;
+  waiverReason: string;
+};
+
+export type PaymentUpdatePlan = {
+  fee: PaymentMark | null;
+  outline: PaymentMark | null;
+  waiver: AssignableFeeWaiver | null;
+  waiverReason: string;
+  events: PaymentEventKind[];
+};
+
+// Computes the stored payment columns and audit events for a coordinator payment save.
+// A waived donation and a registration without outlines leave those columns untouched.
+export function planPaymentUpdate(
+  existing: PaymentSnapshot,
+  input: PaymentUpdateInput,
+  today: string,
+): PaymentUpdatePlan {
+  const fee = existing.waiver === null ? settledMark(input.fee, today) : null;
+  const outline = existing.outline_language === null ? null : settledMark(input.outline, today);
+  const waiverReason = input.waiver === null ? "" : input.waiverReason;
+  const events: PaymentEventKind[] = [];
+
+  if (fee && fee.paid !== existing.fee_paid) {
+    events.push(fee.paid ? "fee_received" : "fee_unmarked");
+  }
+  if (outline && outline.paid !== existing.outline_paid) {
+    events.push(outline.paid ? "outline_received" : "outline_unmarked");
+  }
+  if ((input.waiver === null) !== (existing.waiver === null)) {
+    events.push(input.waiver === null ? "waiver_removed" : "waiver_set");
+  }
+
+  const feeCorrected =
+    fee !== null &&
+    fee.paid === existing.fee_paid &&
+    (fee.paidOn !== existing.fee_paid_on || fee.transaction !== existing.fee_transaction);
+  const outlineCorrected =
+    outline !== null &&
+    outline.paid === existing.outline_paid &&
+    (outline.paidOn !== existing.outline_paid_on ||
+      outline.transaction !== existing.outline_transaction);
+  const waiverCorrected =
+    input.waiver !== null &&
+    existing.waiver !== null &&
+    (input.waiver !== existing.waiver || waiverReason !== existing.waiver_reason);
+  if (feeCorrected || outlineCorrected || waiverCorrected) {
+    events.push("payment_edited");
+  }
+
+  return { fee, outline, waiver: input.waiver, waiverReason, events };
 }

@@ -6,9 +6,11 @@ import {
   openCents,
   outlineStock,
   paymentTotals,
+  planPaymentUpdate,
   settledMark,
   type ListRow,
   type PaymentRow,
+  type PaymentSnapshot,
 } from "./payments";
 
 const prices = { feeCents: 7000, outlinePriceCents: 500 };
@@ -102,5 +104,170 @@ describe("settledMark", () => {
     expect(
       settledMark({ paid: false, paidOn: "2026-11-03", transaction: "TX1" }, "2026-11-20"),
     ).toEqual({ paid: false, paidOn: null, transaction: "" });
+  });
+});
+
+describe("planPaymentUpdate", () => {
+  const unpaidSnapshot: PaymentSnapshot = {
+    waiver: null,
+    waiver_reason: "",
+    outline_language: "de",
+    fee_paid: false,
+    fee_paid_on: null,
+    fee_transaction: "",
+    outline_paid: false,
+    outline_paid_on: null,
+    outline_transaction: "",
+  };
+
+  it("records fee and outline receipts with today's date when paidOn is omitted", () => {
+    const plan = planPaymentUpdate(
+      unpaidSnapshot,
+      {
+        fee: { paid: true, paidOn: null, transaction: "BANK-1" },
+        outline: { paid: true, paidOn: "2026-11-18", transaction: "OUT-1" },
+        waiver: null,
+        waiverReason: "ignored",
+      },
+      "2026-11-20",
+    );
+
+    expect(plan).toEqual({
+      fee: { paid: true, paidOn: "2026-11-20", transaction: "BANK-1" },
+      outline: { paid: true, paidOn: "2026-11-18", transaction: "OUT-1" },
+      waiver: null,
+      waiverReason: "",
+      events: ["fee_received", "outline_received"],
+    });
+  });
+
+  it("records unmarking fee and outlines and clears their dates/transactions", () => {
+    const plan = planPaymentUpdate(
+      {
+        ...unpaidSnapshot,
+        fee_paid: true,
+        fee_paid_on: "2026-11-15",
+        fee_transaction: "TX-FEE",
+        outline_paid: true,
+        outline_paid_on: "2026-11-16",
+        outline_transaction: "TX-OUT",
+      },
+      {
+        fee: { paid: false, paidOn: "2026-11-15", transaction: "TX-FEE" },
+        outline: { paid: false, paidOn: "2026-11-16", transaction: "TX-OUT" },
+        waiver: null,
+        waiverReason: "",
+      },
+      "2026-11-20",
+    );
+
+    expect(plan).toEqual({
+      fee: { paid: false, paidOn: null, transaction: "" },
+      outline: { paid: false, paidOn: null, transaction: "" },
+      waiver: null,
+      waiverReason: "",
+      events: ["fee_unmarked", "outline_unmarked"],
+    });
+  });
+
+  it("records payment_edited for metadata corrections and waiver kind/reason edits", () => {
+    const metadataEdit = planPaymentUpdate(
+      {
+        ...unpaidSnapshot,
+        fee_paid: true,
+        fee_paid_on: "2026-11-15",
+        fee_transaction: "OLD",
+      },
+      {
+        fee: { paid: true, paidOn: "2026-11-15", transaction: "NEW" },
+        outline: { paid: false, paidOn: null, transaction: "" },
+        waiver: null,
+        waiverReason: "",
+      },
+      "2026-11-20",
+    );
+    expect(metadataEdit.events).toEqual(["payment_edited"]);
+
+    const outlineMetadataEdit = planPaymentUpdate(
+      {
+        ...unpaidSnapshot,
+        outline_paid: true,
+        outline_paid_on: "2026-11-15",
+        outline_transaction: "OLD-OUT",
+      },
+      {
+        fee: { paid: false, paidOn: null, transaction: "" },
+        outline: { paid: true, paidOn: "2026-11-16", transaction: "OLD-OUT" },
+        waiver: null,
+        waiverReason: "",
+      },
+      "2026-11-20",
+    );
+    expect(outlineMetadataEdit.events).toEqual(["payment_edited"]);
+
+    const waiverKindAndReasonEdit = planPaymentUpdate(
+      {
+        ...unpaidSnapshot,
+        waiver: "hardship",
+        waiver_reason: "Student",
+      },
+      {
+        fee: { paid: true, paidOn: "2026-11-20", transaction: "SHOULD-IGNORE" },
+        outline: { paid: false, paidOn: null, transaction: "" },
+        waiver: "anaheim",
+        waiverReason: "Attended live",
+      },
+      "2026-11-20",
+    );
+    expect(waiverKindAndReasonEdit.fee).toBeNull();
+    expect(waiverKindAndReasonEdit.events).toEqual(["payment_edited"]);
+  });
+
+  it("handles waiver set/removed, preserves fee on waived seats, and omits outline when none ordered", () => {
+    const waived = planPaymentUpdate(
+      {
+        ...unpaidSnapshot,
+        outline_language: null,
+      },
+      {
+        fee: { paid: false, paidOn: null, transaction: "" },
+        outline: { paid: true, paidOn: "2026-11-20", transaction: "OUT-1" },
+        waiver: "hardship",
+        waiverReason: "Reduced income",
+      },
+      "2026-11-20",
+    );
+    expect(waived.outline).toBeNull();
+    expect(waived.events).toEqual(["waiver_set"]);
+
+    const removed = planPaymentUpdate(
+      {
+        ...unpaidSnapshot,
+        waiver: "hardship",
+        waiver_reason: "Temporary",
+      },
+      {
+        fee: { paid: true, paidOn: "2026-11-20", transaction: "SHOULD-NOT-APPLY" },
+        outline: { paid: false, paidOn: null, transaction: "" },
+        waiver: null,
+        waiverReason: "Stale reason",
+      },
+      "2026-11-20",
+    );
+    expect(removed.fee).toBeNull();
+    expect(removed.waiverReason).toBe("");
+    expect(removed.events).toEqual(["waiver_removed"]);
+
+    const noOp = planPaymentUpdate(
+      unpaidSnapshot,
+      {
+        fee: { paid: false, paidOn: null, transaction: "" },
+        outline: { paid: false, paidOn: null, transaction: "" },
+        waiver: null,
+        waiverReason: "",
+      },
+      "2026-11-20",
+    );
+    expect(noOp.events).toEqual([]);
   });
 });

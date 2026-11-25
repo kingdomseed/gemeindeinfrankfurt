@@ -14,6 +14,7 @@ end
 $$;
 
 create schema auth;
+grant usage on schema auth to anon, authenticated, service_role;
 create schema extensions;
 
 -- Supabase installs extensions in their own schema and puts it on the search
