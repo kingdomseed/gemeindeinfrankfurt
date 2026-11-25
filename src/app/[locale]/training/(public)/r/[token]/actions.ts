@@ -75,5 +75,6 @@ export async function cancelRegistration(token: string, locale: Language): Promi
     email: existing.email,
     firstName: existing.first_name,
   });
+  refresh();
   return { status: "cancelled" };
 }
