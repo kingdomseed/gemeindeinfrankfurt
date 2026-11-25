@@ -371,8 +371,6 @@
     "daysLeft": "{count, plural, =0 {Heute} one {Noch # Tag} other {Noch # Tage}}",
     "passed": "Vorbei",
     "outlinesNeededCount": "{count, plural, one {# Gliederung benötigt} other {# Gliederungen benötigt}}",
-    "endOfFirstDay": "Ende des ersten Tages",
-    "reportAfterLast": "7 Tage nach der letzten Botschaft",
     "seatsAndPayments": "Plätze und Zahlungen",
     "seatCount": {
       "full_time": "{count} Vollzeit",

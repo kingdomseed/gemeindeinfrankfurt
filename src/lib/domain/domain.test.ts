@@ -19,6 +19,8 @@ import {
   berlinDate,
   berlinDay,
   berlinDayTime,
+  berlinShortDay,
+  berlinShortDayTime,
   isBerlinWeekday,
   scheduleDays,
   sessionFormatDays,
@@ -264,6 +266,15 @@ describe("berlinDay and berlinDayTime", () => {
     const sunday = new Date("2027-01-17T08:45:00Z");
     expect(berlinDay(sunday, "de", "Tag des Herrn")).toBe("Tag des Herrn, 17. Januar");
     expect(berlinDayTime(sunday, "en-GB", "Lord's Day")).toBe("Lord's Day 17 January at 09:45");
+  });
+
+  it("formats compact single-line short dates while preserving Lord's Day", () => {
+    const tuesday = new Date("2026-12-01T15:00:00Z");
+    const sunday = new Date("2027-01-31T15:00:00Z");
+    expect(berlinShortDayTime(tuesday, "en", "Lord's Day")).toBe("Tue, Dec 1, 04:00 PM");
+    expect(berlinShortDayTime(tuesday, "de", "Tag des Herrn")).toBe("Di., 1. Dez., 16:00");
+    expect(berlinShortDay(sunday, "en", "Lord's Day")).toBe("Lord's Day, Jan 31");
+    expect(berlinShortDay(sunday, "ru", "День Господень")).toBe("День Господень, 31 янв.");
   });
 });
 

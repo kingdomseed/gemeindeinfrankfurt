@@ -168,6 +168,31 @@ export function berlinDayTime(instant: Date, locale: string, lordsDay: string): 
   );
 }
 
+// Concise single-line form for overview rows: "Lord's Day, Jan 31".
+export function berlinShortDay(instant: Date, locale: string, lordsDay: string): string {
+  return formatDay(
+    new Intl.DateTimeFormat(locale, { timeZone, weekday: "short", day: "numeric", month: "short" }),
+    instant,
+    lordsDay,
+  );
+}
+
+// Concise single-line form with time: "Tue, Dec 1, 04:00 PM".
+export function berlinShortDayTime(instant: Date, locale: string, lordsDay: string): string {
+  return formatDay(
+    new Intl.DateTimeFormat(locale, {
+      timeZone,
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    instant,
+    lordsDay,
+  );
+}
+
 // "Saturday 9 – Sunday 17 January 2027": first to last message day, in the
 // reader's language on the Frankfurt calendar. Null when there are no sessions.
 export function trainingDates(
