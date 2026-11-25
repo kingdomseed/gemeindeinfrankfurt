@@ -6,7 +6,7 @@ import type { ActionState, CancelState } from "@/features/registration/types";
 import { getTrainingById } from "@/lib/data";
 import { canCancel, canChangeSeatOrSessions } from "@/lib/domain/cutoffs";
 import type { Language } from "@/lib/domain/types";
-import { sendCancellation, sendConfirmation } from "@/lib/email/send";
+import { confirmationFromInput, sendCancellation, sendConfirmation } from "@/lib/email/send";
 import {
   findByToken,
   parseRegistrationForm,
@@ -52,9 +52,9 @@ export async function updateRegistration(
   await sendConfirmation({
     locale,
     training,
-    registration: input,
+    registration: confirmationFromInput(input, existing.waiver !== null),
+    registrationId: existing.id,
     token,
-    waived: existing.waiver !== null,
   });
   // The payment panel above the form is rendered on the server from the saved row.
   refresh();
@@ -77,6 +77,7 @@ export async function cancelRegistration(token: string, locale: Language): Promi
   await sendCancellation({
     locale,
     training,
+    registrationId: existing.id,
     email: existing.email,
     firstName: existing.first_name,
   });

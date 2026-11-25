@@ -13,7 +13,6 @@ import { newEditToken } from "@/lib/domain/token";
 import { sendCancellation, sendConfirmation } from "@/lib/email/send";
 import {
   parseRegistrationForm,
-  registrationSchema,
   replaceSessions,
   toRow,
   validateForTraining,
@@ -208,6 +207,7 @@ export async function cancelRegistration(rawId: string): Promise<CancelState> {
   await sendCancellation({
     locale: existing.locale,
     training: await getTrainingById(existing.training_id),
+    registrationId,
     email: existing.email,
     firstName: existing.first_name,
   });
@@ -227,22 +227,27 @@ export async function sendEditLink(rawId: string): Promise<FormState> {
     .maybeSingle();
   if (readError) throw readError;
   if (!existing || existing.status === "cancelled") return { status: "error" };
-  const registration = registrationSchema.safeParse({
-    ...existing,
-    partner_first_name: existing.partner_first_name ?? undefined,
-    partner_last_name: existing.partner_last_name ?? undefined,
-    session_ids: existing.registration_sessions.map((s) => s.session_id),
-  });
-  if (!registration.success) return { status: "error" };
 
   // The email goes first: if it fails, the old link keeps working.
   const { token, hash } = newEditToken();
   await sendConfirmation({
     locale: existing.locale,
     training: await getTrainingById(existing.training_id),
-    registration: registration.data,
+    registration: {
+      firstName: existing.first_name,
+      email: existing.email,
+      seatType: existing.seat_type,
+      localityId: existing.locality_id,
+      otherLocality: existing.other_locality,
+      siteId: existing.site_id,
+      groupLanguage: existing.group_language,
+      outlineLanguage: existing.outline_language,
+      secondOutlineLanguage: existing.second_outline_language,
+      sessionIds: existing.registration_sessions.map((s) => s.session_id),
+      waived: existing.waiver !== null,
+    },
+    registrationId,
     token,
-    waived: existing.waiver !== null,
   });
   const { error } = await supabase
     .from("registrations")
