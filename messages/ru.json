@@ -832,6 +832,37 @@
       "overLimitNote": "Превысили допустимое число пропусков: {count}.",
       "costsLine": "Чеков: {count}, всего {total}. Чеки приложены.",
       "noCosts": "Нет."
+    },
+    "presence": {
+      "viewing": "Также здесь: {names}",
+      "editing": "Сейчас редактирует: {names}"
+    },
+    "links": {
+      "title": "Общие ссылки для этого раздела",
+      "attach": "Прикрепить ссылку",
+      "cancel": "Закрыть",
+      "urlLabel": "Ссылка (Google Документ, Таблица, Презентация…)",
+      "urlPlaceholder": "https://docs.google.com/...",
+      "titleLabel": "Название",
+      "optional": "необязательно",
+      "add": "Добавить",
+      "remove": "Удалить",
+      "invalidUrl": "Введите полную ссылку, начинающуюся с https://.",
+      "kind": {
+        "google_doc": "Google Doc",
+        "google_sheet": "Google Sheet",
+        "google_slides": "Google Slides",
+        "google_drive": "Google Drive",
+        "link": "Ссылка"
+      }
+    },
+    "sync": {
+      "merged": "Обновлено с изменениями другого координатора. Ваши правки сохранены.",
+      "conflictTitle": "Другой координатор изменил те же поля",
+      "conflictBody": "Ваши правки сохранены, чтобы ничего не потерялось. Примите его версию или оставьте свою.",
+      "useTheirs": "Взять их версию",
+      "acceptAll": "Принять все их изменения",
+      "keepMine": "Оставить моё"
     }
   },
   "privacy": {

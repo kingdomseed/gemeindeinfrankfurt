@@ -2,18 +2,22 @@
 
 import { Flex, HStack, List, Stack, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useReducer, useRef, useTransition } from "react";
 
 import { MarkButton } from "@/components/ui/mark-button";
 import type { Mark } from "@/lib/domain/attendance";
+import {
+  attendanceSyncReducer,
+  initialAttendanceSync,
+  type PendingMarks,
+} from "@/lib/domain/attendance-sync";
 
 export type TakerPerson = { id: string; name: string; note: string; required: boolean };
 type Change = { registrationId: string; sessionId: string; mark: Mark | null };
-type Pending = Record<string, Mark | null>;
 
 const RETRY_MS = 10_000;
 
-function readPending(key: string): Pending {
+function readPending(key: string): PendingMarks {
   try {
     const raw = window.localStorage.getItem(key);
     const parsed: unknown = raw ? JSON.parse(raw) : {};
@@ -32,7 +36,7 @@ function readPending(key: string): Pending {
   }
 }
 
-function writePending(key: string, pending: Pending) {
+function writePending(key: string, pending: PendingMarks) {
   try {
     if (Object.keys(pending).length === 0) window.localStorage.removeItem(key);
     else window.localStorage.setItem(key, JSON.stringify(pending));
@@ -52,49 +56,39 @@ export function AttendanceTaker(props: {
 }) {
   const t = useTranslations("coordinator.attendance");
   const storageKey = `attendance:${props.sessionId}`;
-  const [pending, setPending] = useState<Pending>({});
-  const [failed, setFailed] = useState(false);
+  const [syncState, dispatch] = useReducer(attendanceSyncReducer, initialAttendanceSync);
   const [, startTransition] = useTransition();
-  const pendingRef = useRef<Pending>({});
+  const pendingRef = useRef<PendingMarks>({});
   const { save, sessionId } = props;
 
-  // Other tabs on the same phone share the queue in storage, so every change
-  // is merged into what is stored rather than replacing it.
-  const update = useCallback(
-    (change: (stored: Pending) => Pending) => {
-      const next = change({ ...readPending(storageKey), ...pendingRef.current });
-      pendingRef.current = next;
-      writePending(storageKey, next);
-      setPending(next);
-    },
-    [storageKey],
-  );
+  useEffect(() => {
+    writePending(storageKey, syncState.pending);
+    pendingRef.current = syncState.pending;
+  }, [storageKey, syncState.pending]);
 
   const flush = useCallback(() => {
-    const sent = pendingRef.current;
+    const sent = { ...readPending(storageKey), ...pendingRef.current };
     const changes = Object.entries(sent).map(([registrationId, mark]) => ({
       registrationId,
       sessionId,
       mark,
     }));
     if (changes.length === 0) return;
+    dispatch({ type: "flush_start" });
     startTransition(async () => {
       try {
         await save(changes);
-        // Keep only what changed again while this was on its way.
-        update((stored) =>
-          Object.fromEntries(Object.entries(stored).filter(([id, mark]) => sent[id] !== mark)),
-        );
-        setFailed(false);
+        dispatch({ type: "flush_succeeded", sent, stored: readPending(storageKey) });
       } catch {
-        setFailed(true);
+        dispatch({ type: "flush_failed" });
       }
     });
-  }, [save, sessionId, update]);
+  }, [save, sessionId, storageKey]);
 
   useEffect(() => {
-    pendingRef.current = readPending(storageKey);
-    setPending(pendingRef.current);
+    const stored = readPending(storageKey);
+    pendingRef.current = stored;
+    dispatch({ type: "hydrate", stored });
     flush();
     const retry = window.setInterval(flush, RETRY_MS);
     window.addEventListener("online", flush);
@@ -104,11 +98,15 @@ export function AttendanceTaker(props: {
     };
   }, [storageKey, flush]);
 
+  const { pending } = syncState;
   const markOf = (id: string): Mark | null =>
     id in pending ? (pending[id] ?? null) : (props.marks[id] ?? null);
   const toggle = (id: string, mark: Mark) => {
     const next = markOf(id) === mark ? null : mark;
-    update((stored) => ({ ...stored, [id]: next }));
+    const stored = readPending(storageKey);
+    pendingRef.current = { ...stored, ...pendingRef.current, [id]: next };
+    writePending(storageKey, pendingRef.current);
+    dispatch({ type: "toggle", id, next, stored });
     flush();
   };
 
@@ -120,7 +118,9 @@ export function AttendanceTaker(props: {
   }).length;
   const waiting = Object.keys(pending).length;
   let syncText = t("allSaved");
-  if (waiting > 0) syncText = failed ? t("offline", { count: waiting }) : t("saving");
+  if (waiting > 0) {
+    syncText = syncState.phase === "offline" ? t("offline", { count: waiting }) : t("saving");
+  }
 
   return (
     <Stack gap="3">
@@ -128,7 +128,10 @@ export function AttendanceTaker(props: {
         <Text fontSize="sm" aria-live="polite" fontVariantNumeric="tabular-nums">
           {t("counts", { present, absent, open: required.length - present - absent })}
         </Text>
-        <Text fontSize="sm" color={waiting > 0 && failed ? "fg.warning" : "fg.muted"}>
+        <Text
+          fontSize="sm"
+          color={waiting > 0 && syncState.phase === "offline" ? "fg.warning" : "fg.muted"}
+        >
           {syncText}
         </Text>
       </Flex>

@@ -55,6 +55,34 @@ export type CoordinatorDashboard = NonNullable<
 >;
 export type CoordinatorRegistration = CoordinatorDashboard["registrations"][number];
 
+export type CurrentCoordinator = {
+  userId: string;
+  displayName: string;
+  isAdmin: boolean;
+  servesAv: boolean;
+};
+
+// The signed-in coordinator's identity and role flags, for Presence and role UI.
+export async function loadCurrentCoordinator(
+  supabase: CoordinatorClient,
+): Promise<CurrentCoordinator | null> {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return null;
+  const { data, error } = await supabase
+    .from("coordinators")
+    .select("user_id, display_name, is_admin, serves_av")
+    .eq("user_id", auth.user.id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return {
+    userId: data.user_id,
+    displayName: data.display_name,
+    isAdmin: data.is_admin,
+    servesAv: data.serves_av,
+  };
+}
+
 // The signed-in coordinator's view of the newest training, once per request,
 // with the moment it was read so every countdown on the page agrees.
 // "signed-out" when nobody (or no coordinator) is signed in.

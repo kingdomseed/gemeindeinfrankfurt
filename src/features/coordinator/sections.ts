@@ -1,3 +1,7 @@
+import type { SectionKey } from "@/lib/domain/links";
+
+export type { SectionKey };
+
 // The coordinator pages in the order the section links show them.
 export const coordinatorSections = [
   { key: "overview", href: "/training/coordinator" },
@@ -11,12 +15,28 @@ export const coordinatorSections = [
   { key: "emails", href: "/training/coordinator/emails" },
   { key: "report", href: "/training/coordinator/report" },
   { key: "setup", href: "/training/coordinator/setup" },
-] as const;
-
-export type SectionKey = (typeof coordinatorSections)[number]["key"];
+] as const satisfies readonly { key: SectionKey; href: string }[];
 
 export function sectionHref(key: SectionKey) {
   return coordinatorSections.find((s) => s.key === key)?.href ?? coordinatorSections[0].href;
+}
+
+export function normalizeCoordinatorPath(pathname: string): string {
+  const stripped = pathname.replace(/^\/(de|en|ru)(?=\/|$)/, "").replace(/\/+$/, "");
+  return stripped || "/";
+}
+
+const fullScreenSuffixes = ["/screen", "/questionnaire", "/name-tags"];
+
+// Maps a coordinator URL path to its space section, or null on print/screen views.
+export function sectionFromPath(pathname: string): SectionKey | null {
+  const path = normalizeCoordinatorPath(pathname);
+  if (fullScreenSuffixes.some((suffix) => path.endsWith(suffix))) return null;
+  if (path === "/training/coordinator") return "overview";
+  for (const s of coordinatorSections) {
+    if (s.key !== "overview" && (path === s.href || path.startsWith(`${s.href}/`))) return s.key;
+  }
+  return null;
 }
 
 // Pages reached from a section rather than from the section links.

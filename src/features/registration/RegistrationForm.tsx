@@ -38,6 +38,7 @@ type Props = {
   prices: { feeCents: number; outlinePriceCents: number };
   payment: PaymentDetails;
   defaults?: RegistrationDefaults;
+  version?: string;
   seatLocked?: boolean;
   submitLabel: string;
   action: (prev: ActionState, form: FormData) => Promise<ActionState>;
@@ -176,6 +177,7 @@ export function RegistrationForm(props: Props) {
       }}
     >
       <chakra.form key={formKey} onSubmit={onSubmit} display="flex" flexDirection="column" gap="10">
+        {props.version && <input type="hidden" name="version" value={props.version} />}
         <SeatSection />
         {picksSessions(seatType) && (
           <SessionsSection

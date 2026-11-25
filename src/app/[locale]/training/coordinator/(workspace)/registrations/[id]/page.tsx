@@ -72,9 +72,10 @@ export default async function RegistrationDetailRoute({ params }: Props) {
       <RegistrationForm
         {...formProps}
         defaults={registrationDefaults(reg)}
+        version={reg.updated_at}
         submitLabel={t("saveChanges")}
         action={saveRegistration.bind(null, reg.id)}
-        messages={{ saved: t("saved"), error: t("error") }}
+        messages={{ saved: t("saved"), stale: t("stale"), error: t("error") }}
       />
       <SendEditLink action={sendEditLink.bind(null, reg.id)} />
       <CancelRegistration audience="coordinator" action={cancelRegistration.bind(null, reg.id)} />

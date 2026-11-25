@@ -7,6 +7,7 @@ export function CheckboxChoice(props: {
   value?: string;
   required?: boolean;
   disabled?: boolean | undefined;
+  checked?: boolean | undefined;
   defaultChecked?: boolean;
   invalid?: boolean;
   describedBy?: string | undefined;
@@ -26,6 +27,7 @@ export function CheckboxChoice(props: {
       py="2"
       gap="3"
       cursor="pointer"
+      {...(props.checked === undefined ? {} : { checked: props.checked })}
       {...(props.defaultChecked === undefined ? {} : { defaultChecked: props.defaultChecked })}
       {...(onCheckedChange && {
         onCheckedChange: (e: { checked: boolean | "indeterminate" }) =>

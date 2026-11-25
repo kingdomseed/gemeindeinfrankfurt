@@ -32,7 +32,13 @@ export function ReportWorkspace(props: {
   stats: readonly { label: string; value: string; help?: string | undefined }[];
   localities: string | null;
   dates: { first: string; last: string };
-  details: { notes: string; firstDay: string | null; lastDay: string | null; save: FormAction };
+  details: {
+    notes: string;
+    firstDay: string | null;
+    lastDay: string | null;
+    updatedAt: string;
+    save: FormAction;
+  };
   questions: readonly ReportQuestionRow[];
   messages: readonly { number: number; date: string; absent: number }[];
   overLimit: readonly { id: string; name: string; unexcused: number; excused: number }[];
@@ -98,6 +104,7 @@ export function ReportWorkspace(props: {
           initialNotes={props.details.notes}
           initialFirstDay={props.details.firstDay}
           initialLastDay={props.details.lastDay}
+          updatedAt={props.details.updatedAt}
           save={props.details.save}
         />
       </WorkspaceSection>

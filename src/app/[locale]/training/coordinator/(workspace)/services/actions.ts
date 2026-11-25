@@ -74,6 +74,8 @@ export async function updateWebcastLogin(
   form: FormData,
 ): Promise<FormState> {
   const supabase = await requireAuth();
+  const { data: av } = await supabase.rpc("serves_av");
+  if (av !== true) return { status: "error" };
   const parsed = login.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { status: "error" };
   await saveWebcastLogin(supabase, id.parse(rawTrainingId), {

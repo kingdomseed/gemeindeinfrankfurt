@@ -832,6 +832,37 @@
       "overLimitNote": "{count, plural, one {# Person war} other {# Personen waren}} über der Grenze für Abwesenheiten.",
       "costsLine": "{count, plural, one {# Beleg} other {# Belege}}, zusammen {total}. Belege liegen bei.",
       "noCosts": "Keine."
+    },
+    "presence": {
+      "viewing": "Ebenfalls hier: {names}",
+      "editing": "Bearbeitet gerade: {names}"
+    },
+    "links": {
+      "title": "Geteilte Links für diesen Bereich",
+      "attach": "Link anhängen",
+      "cancel": "Schließen",
+      "urlLabel": "Link (Google Doc, Sheet, Slides …)",
+      "urlPlaceholder": "https://docs.google.com/...",
+      "titleLabel": "Titel",
+      "optional": "optional",
+      "add": "Hinzufügen",
+      "remove": "Entfernen",
+      "invalidUrl": "Bitte gib einen vollständigen Link ein, der mit https:// beginnt.",
+      "kind": {
+        "google_doc": "Google Doc",
+        "google_sheet": "Google Sheet",
+        "google_slides": "Google Slides",
+        "google_drive": "Google Drive",
+        "link": "Link"
+      }
+    },
+    "sync": {
+      "merged": "Mit Änderungen eines anderen Koordinators aktualisiert. Deine eigenen Eingaben sind noch da.",
+      "conflictTitle": "Ein anderer Koordinator hat dieselben Felder geändert",
+      "conflictBody": "Deine Eingaben wurden behalten, damit nichts verloren geht. Übernimm ihre Version oder behalte deine.",
+      "useTheirs": "Deren Version",
+      "acceptAll": "Alle Änderungen übernehmen",
+      "keepMine": "Meine behalten"
     }
   },
   "privacy": {

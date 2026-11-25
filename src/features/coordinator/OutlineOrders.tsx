@@ -2,14 +2,28 @@
 
 import { Button, chakra, Heading, HStack, Input, Stack, Table } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
 
 import { ColumnHeader } from "@/components/ui/column-header";
 import { Notice } from "@/components/ui/notice";
+import { outlineOrdersFingerprint } from "@/lib/domain/list-sync";
 import type { OutlineStock } from "@/lib/domain/payments";
+import type { Language } from "@/lib/domain/types";
 
+import { ConflictBanner } from "./ConflictBanner";
 import { OutlineExtraTag } from "./OutlineExtraTag";
-import type { FormAction, FormState } from "./types";
+import type { FormAction } from "./types";
+import { useCollaborativeForm } from "./useCollaborativeForm";
+
+type OrderDraft = Record<Language, string>;
+
+function toOrderDraft(stock: readonly OutlineStock[]): { draft: OrderDraft; version: string } {
+  const counts: Record<Language, number> = { de: 0, en: 0, ru: 0 };
+  for (const s of stock) counts[s.language] = s.ordered;
+  return {
+    draft: { de: String(counts.de), en: String(counts.en), ru: String(counts.ru) },
+    version: outlineOrdersFingerprint(counts),
+  };
+}
 
 // Outlines needed per language, split into first and second outlines, with
 // one form to record how many were ordered.
@@ -20,17 +34,34 @@ export function OutlineOrders(props: {
 }) {
   const t = useTranslations("coordinator");
   const tl = useTranslations("common.languages");
-  const [state, formAction, pending] = useActionState<FormState, FormData>(props.saveOrder, {
-    status: "idle",
+  const initial = toOrderDraft(props.stock);
+  const collab = useCollaborativeForm({
+    server: initial.draft,
+    version: initial.version,
+    action: props.saveOrder,
   });
+
+  const liveOrdered = (lang: Language, fallback: number) => {
+    const parsed = Number.parseInt(collab.draft[lang], 10);
+    return Number.isNaN(parsed) ? fallback : parsed;
+  };
   const sum = (pick: (s: OutlineStock) => number) => props.stock.reduce((n, s) => n + pick(s), 0);
-  const totalExtra = sum((s) => s.extra);
+  const totalOrdered = sum((s) => liveOrdered(s.language, s.ordered));
+  const totalNeeded = sum((s) => s.needed);
+  const totalExtra = totalOrdered - totalNeeded;
+
+  const fieldLabels = {
+    de: tl("de"),
+    en: tl("en"),
+    ru: tl("ru"),
+  };
+
   return (
     <Stack as="section" aria-labelledby="order-heading" gap="3">
       <Heading as="h2" id="order-heading" size="xl">
         {t("neededAndOrdered")}
       </Heading>
-      <chakra.form action={formAction} display="flex" flexDirection="column" gap="4">
+      <chakra.form onSubmit={collab.submit} display="flex" flexDirection="column" gap="4">
         <input type="hidden" name="training_id" value={props.trainingId} />
         <Table.ScrollArea>
           <Table.Root size="sm" variant="line" fontVariantNumeric="tabular-nums">
@@ -45,32 +76,37 @@ export function OutlineOrders(props: {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {props.stock.map((s) => (
-                <Table.Row key={s.language} bg="transparent">
-                  <Table.Cell as="th" scope="row" fontWeight="normal">
-                    {tl(s.language)}
-                  </Table.Cell>
-                  <Table.Cell textAlign="end">{s.first}</Table.Cell>
-                  <Table.Cell textAlign="end">{s.second}</Table.Cell>
-                  <Table.Cell textAlign="end">{s.needed}</Table.Cell>
-                  <Table.Cell textAlign="end">
-                    <Input
-                      name={s.language}
-                      type="number"
-                      inputMode="numeric"
-                      min={0}
-                      defaultValue={s.ordered}
-                      aria-label={t("orderedFor", { language: tl(s.language) })}
-                      aria-invalid={s.extra < 0 || undefined}
-                      w="20"
-                      textAlign="end"
-                    />
-                  </Table.Cell>
-                  <Table.Cell>
-                    <OutlineExtraTag extra={s.extra} />
-                  </Table.Cell>
-                </Table.Row>
-              ))}
+              {props.stock.map((s) => {
+                const ordered = liveOrdered(s.language, s.ordered);
+                const extra = ordered - s.needed;
+                return (
+                  <Table.Row key={s.language} bg="transparent">
+                    <Table.Cell as="th" scope="row" fontWeight="normal">
+                      {tl(s.language)}
+                    </Table.Cell>
+                    <Table.Cell textAlign="end">{s.first}</Table.Cell>
+                    <Table.Cell textAlign="end">{s.second}</Table.Cell>
+                    <Table.Cell textAlign="end">{s.needed}</Table.Cell>
+                    <Table.Cell textAlign="end">
+                      <Input
+                        name={s.language}
+                        type="number"
+                        inputMode="numeric"
+                        min={0}
+                        value={collab.draft[s.language]}
+                        onChange={(e) => collab.edit(s.language, e.currentTarget.value)}
+                        aria-label={t("orderedFor", { language: tl(s.language) })}
+                        aria-invalid={extra < 0 || undefined}
+                        w="20"
+                        textAlign="end"
+                      />
+                    </Table.Cell>
+                    <Table.Cell>
+                      <OutlineExtraTag extra={extra} />
+                    </Table.Cell>
+                  </Table.Row>
+                );
+              })}
             </Table.Body>
             <Table.Footer>
               <Table.Row bg="transparent" fontWeight="semibold">
@@ -79,8 +115,8 @@ export function OutlineOrders(props: {
                 </Table.Cell>
                 <Table.Cell textAlign="end">{sum((s) => s.first)}</Table.Cell>
                 <Table.Cell textAlign="end">{sum((s) => s.second)}</Table.Cell>
-                <Table.Cell textAlign="end">{sum((s) => s.needed)}</Table.Cell>
-                <Table.Cell textAlign="end">{sum((s) => s.ordered)}</Table.Cell>
+                <Table.Cell textAlign="end">{totalNeeded}</Table.Cell>
+                <Table.Cell textAlign="end">{totalOrdered}</Table.Cell>
                 <Table.Cell>
                   {totalExtra < 0 ? t("shortBy", { count: -totalExtra }) : `+${totalExtra}`}
                 </Table.Cell>
@@ -88,19 +124,28 @@ export function OutlineOrders(props: {
             </Table.Footer>
           </Table.Root>
         </Table.ScrollArea>
+        <ConflictBanner
+          status={collab.state.status}
+          conflicts={collab.state.conflicts}
+          fieldLabels={fieldLabels}
+          serverValues={collab.state.server}
+          onUseServerField={collab.takeServerField}
+          onAcceptAllServer={collab.acceptAllServer}
+          onKeepLocal={collab.keepLocal}
+        />
         <HStack gap="3" wrap="wrap">
-          <Button type="submit" loading={pending}>
+          <Button type="submit" loading={collab.pending}>
             {t("saveOrder")}
           </Button>
         </HStack>
-        {state.status === "saved" && (
+        {collab.state.status === "saved" && (
           <Notice tone="success" announce="status">
             {t("orderSaved")}
           </Notice>
         )}
-        {state.status === "error" && (
+        {collab.state.status === "error" && (
           <Notice tone="error" announce="alert">
-            {t("error")}
+            {collab.state.errorMessage ?? t("error")}
           </Notice>
         )}
       </chakra.form>

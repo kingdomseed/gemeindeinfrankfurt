@@ -62,9 +62,15 @@ export async function saveDetails(
       lastDay: form.get("last_day") ?? "",
     });
   if (!details.success) return { status: "error" };
-  await saveReportDetails(supabase, id.parse(rawTrainingId), details.data);
+  const version = form.get("version");
+  const saved = await saveReportDetails(
+    supabase,
+    id.parse(rawTrainingId),
+    details.data,
+    typeof version === "string" ? version : undefined,
+  );
   refresh();
-  return { status: "saved" };
+  return saved ? { status: "saved" } : { status: "stale" };
 }
 
 export async function addCost(
