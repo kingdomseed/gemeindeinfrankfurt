@@ -161,6 +161,33 @@ describe("sessionLabel", () => {
       "Message 1: Sat, Dec 26, 09:00 AM",
     );
   });
+
+  it("shows start and end time ranges across locales and calls Sunday Lord's Day", () => {
+    const tuesday = {
+      id: "s1",
+      message_number: 1,
+      starts_at: "2027-01-12T18:00:00Z",
+      ends_at: "2027-01-12T20:30:00Z",
+    };
+    const sunday = {
+      id: "s5",
+      message_number: 5,
+      starts_at: "2027-01-17T08:45:00Z",
+      ends_at: "2027-01-17T11:15:00Z",
+    };
+    expect(sessionLabel(tuesday, "en", "Message 1", "Lord's Day")).toBe(
+      "Message 1: Tue, Jan 12, 7:00 – 9:30 PM",
+    );
+    expect(sessionLabel(sunday, "en", "Message 5", "Lord's Day")).toBe(
+      "Message 5: Lord's Day, Jan 17, 9:45 AM – 12:15 PM",
+    );
+    expect(sessionLabel(sunday, "de", "Botschaft 5", "Tag des Herrn")).toBe(
+      "Botschaft 5: Tag des Herrn, 17. Jan., 09:45–12:15 Uhr",
+    );
+    expect(sessionLabel(sunday, "ru", "Весть 5", "День Господень")).toBe(
+      "Весть 5: День Господень, 17 янв., 09:45–12:15",
+    );
+  });
 });
 
 const sessionAt = (id: string, n: number, startsAt: string) => ({
@@ -189,6 +216,36 @@ describe("scheduleDays", () => {
       { id: "b", number: 2, time: "11:15" },
     ]);
     expect(days[1]?.sessions.map((s) => s.number)).toEqual([3]);
+  });
+
+  it("formats start and end time ranges across locales when ends_at is present", () => {
+    const tuesday = {
+      id: "s1",
+      message_number: 1,
+      starts_at: "2027-01-12T18:00:00Z",
+      ends_at: "2027-01-12T20:30:00Z",
+    };
+    const sunday = {
+      id: "s5",
+      message_number: 5,
+      starts_at: "2027-01-17T08:45:00Z",
+      ends_at: "2027-01-17T11:15:00Z",
+    };
+    const enDays = scheduleDays([tuesday, sunday], "en", "Lord's Day");
+    expect(enDays[0]?.sessions[0]?.time).toBe("7:00 – 9:30 PM");
+    expect(enDays[1]?.label.startsWith("Lord's Day")).toBe(true);
+    expect(enDays[1]?.sessions[0]?.time).toBe("9:45 AM – 12:15 PM");
+
+    const deDays = scheduleDays([tuesday, sunday], "de", "Tag des Herrn");
+    expect(deDays[0]?.sessions[0]?.time).toBe("19:00–21:30 Uhr");
+    expect(deDays[1]?.sessions[0]?.time).toBe("09:45–12:15 Uhr");
+
+    const ruDays = scheduleDays([tuesday, sunday], "ru", "День Господень");
+    expect(ruDays[0]?.sessions[0]?.time).toBe("19:00–21:30");
+    expect(ruDays[1]?.sessions[0]?.time).toBe("09:45–12:15");
+
+    const gbDays = scheduleDays([tuesday], "en-GB", "Lord's Day");
+    expect(gbDays[0]?.sessions[0]?.time).toBe("19:00–21:30");
   });
 
   it("returns no days for an empty schedule", () => {

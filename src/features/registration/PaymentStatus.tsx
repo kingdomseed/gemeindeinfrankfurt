@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, Span, Text } from "@chakra-ui/react";
+import { Heading, HStack, Span, Stack, Text } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { Panel } from "@/components/ui/panel";
@@ -9,7 +9,7 @@ import { PaymentLine } from "./PaymentLine";
 import type { PaymentDetails } from "./types";
 
 // On the edit page: what was owed, what the coordinators have ticked as
-// received, and what is still to pay.
+// received, and instructions for anything still unpaid.
 export function PaymentStatus(props: {
   fees: FeeBreakdown;
   feePaid: boolean;
@@ -21,8 +21,10 @@ export function PaymentStatus(props: {
   const locale = useLocale();
   const euro = (cents: number) => formatEuro(cents, locale);
   const { fees } = props;
-  const open =
-    (props.feePaid ? 0 : fees.trainingCents) + (props.outlinePaid ? 0 : fees.outlineCents);
+  const feeOpen = !props.feePaid && fees.trainingCents > 0;
+  const outlineOpen = !props.outlinePaid && fees.outlineCents > 0;
+  const hasOpen = feeOpen || outlineOpen;
+  const bothOpen = feeOpen && outlineOpen;
   const line = (label: string, paid: boolean) => (
     <HStack wrap="wrap" gap="2">
       <Span>{label}</Span>
@@ -36,7 +38,7 @@ export function PaymentStatus(props: {
       <Heading as="h2" id="payment-heading" size="lg">
         {t("paymentTitle")}
       </Heading>
-      <Box as="dl">
+      <Stack as="dl" gap="2">
         {fees.trainingCents > 0 && (
           <PaymentLine label={line(tr("trainingFee"), props.feePaid)}>
             {euro(fees.trainingCents)}
@@ -49,13 +51,13 @@ export function PaymentStatus(props: {
             {euro(fees.outlineCents)}
           </PaymentLine>
         )}
-        <PaymentLine label={t("stillToPay")} total>
-          {euro(open)}
-        </PaymentLine>
-      </Box>
-      {open > 0 && (
+      </Stack>
+      {hasOpen && (
         <Text fontSize="sm">
-          {t("payTo", { iban: props.payment.iban, reference: props.payment.reference })}
+          {t(bothOpen ? "paySeparateTo" : "payTo", {
+            iban: props.payment.iban,
+            reference: props.payment.reference,
+          })}
         </Text>
       )}
     </Panel>

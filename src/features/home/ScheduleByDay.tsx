@@ -37,8 +37,10 @@ export function ScheduleByDay({ sessions }: { sessions: readonly TrainingSession
                 <List.Item
                   key={s.id}
                   display="flex"
+                  flexWrap="wrap"
                   justifyContent="space-between"
-                  gap="4"
+                  columnGap="4"
+                  rowGap="1"
                   py="2"
                   borderBottomWidth="1px"
                 >

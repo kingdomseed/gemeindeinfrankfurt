@@ -25,6 +25,7 @@ export type ConfirmationEmail = {
   details: readonly { label: string; value: string }[];
   transfer: {
     title: string;
+    note?: string;
     lines: readonly { label: string; value: string }[];
     account: readonly { label: string; value: string }[];
   } | null;
@@ -61,8 +62,8 @@ function button(label: string, url: string, solid: boolean): string {
 export function confirmationHtml(e: ConfirmationEmail): string {
   const transfer = e.transfer
     ? `<div style="background:${c.brandSoft};border-radius:12px;padding:20px;margin:0 0 24px">
-<p style="margin:0 0 12px;font-size:18px;font-weight:600">${escape(e.transfer.title)}</p>
-<table role="presentation" style="width:100%;border-collapse:collapse">${e.transfer.lines
+<p style="margin:0 0 ${e.transfer.note ? "4px" : "12px"};font-size:18px;font-weight:600">${escape(e.transfer.title)}</p>
+${e.transfer.note ? `<p style="margin:0 0 12px;font-size:14px;line-height:20px;color:${c.muted}">${escape(e.transfer.note)}</p>` : ""}<table role="presentation" style="width:100%;border-collapse:collapse">${e.transfer.lines
         .map(
           (l) =>
             `<tr><td style="padding:3px 0">${escape(l.label)}</td><td style="padding:3px 0;text-align:right">${escape(l.value)}</td></tr>`,

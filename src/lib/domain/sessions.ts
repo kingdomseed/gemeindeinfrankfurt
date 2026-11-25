@@ -30,9 +30,17 @@ export function isBerlinWeekday(instant: Date | number): boolean {
 }
 
 // V8's format() turns the narrow no-break space before "AM" into a plain
-// space, but formatToParts() keeps it; match format() so labels stay the same.
+// space, and formatRangeToParts() may emit thin spaces (\u2009); normalize both.
 function joinParts(values: string[]): string {
-  return values.join("").replaceAll("\u202f", " ");
+  return values.join("").replaceAll(/[\u2009\u202f]/g, " ");
+}
+
+function validEnd(startsAt: string, endsAt: string): Date | null {
+  if (!endsAt) return null;
+  const startMs = Date.parse(startsAt);
+  const endMs = Date.parse(endsAt);
+  if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) return null;
+  return new Date(endMs);
 }
 
 function formatDay(format: Intl.DateTimeFormat, instant: Date, lordsDay: string): string {
@@ -43,20 +51,35 @@ function formatDay(format: Intl.DateTimeFormat, instant: Date, lordsDay: string)
   );
 }
 
+function formatDayRange(
+  format: Intl.DateTimeFormat,
+  start: Date | number,
+  end: Date | number,
+  lordsDay: string,
+): string {
+  return joinParts(
+    format.formatRangeToParts(start, end).map((part) => {
+      if (part.type !== "weekday") return part.value;
+      return isLordsDay(part.source === "endRange" ? end : start) ? lordsDay : part.value;
+    }),
+  );
+}
+
 // Session labels in every language come from the same timestamps.
 export function sessionLabel(s: Session, locale: string, messageWord: string, lordsDay: string) {
-  const when = formatDay(
-    new Intl.DateTimeFormat(locale, {
-      timeZone,
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-    new Date(s.starts_at),
-    lordsDay,
-  );
+  const format = new Intl.DateTimeFormat(locale, {
+    timeZone,
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const start = new Date(s.starts_at);
+  const end = validEnd(s.starts_at, s.ends_at);
+  const when = end
+    ? formatDayRange(format, start, end, lordsDay)
+    : formatDay(format, start, lordsDay);
   return `${messageWord}: ${when}`;
 }
 
@@ -76,12 +99,15 @@ export function scheduleDays(
   const days = new Map<string, ScheduleDay>();
   for (const s of sessions.toSorted((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at))) {
     const at = new Date(s.starts_at);
+    const end = validEnd(s.starts_at, s.ends_at);
     const key = berlinDayKey(at);
     const day = days.get(key) ?? { key, label: berlinDay(at, locale, lordsDay), sessions: [] };
     day.sessions.push({
       id: s.id,
       number: s.message_number,
-      time: time.format(at),
+      time: end
+        ? joinParts(time.formatRangeToParts(at, end).map((part) => part.value))
+        : time.format(at),
       ...(s.is_online !== undefined ? { isOnline: s.is_online } : {}),
     });
     days.set(key, day);
@@ -160,12 +186,7 @@ export function trainingDates(
     month: "long",
     year: "numeric",
   });
-  return joinParts(
-    format.formatRangeToParts(first, last).map((part) => {
-      if (part.type !== "weekday") return part.value;
-      return isLordsDay(part.source === "endRange" ? last : first) ? lordsDay : part.value;
-    }),
-  );
+  return formatDayRange(format, first, last, lordsDay);
 }
 
 // "12–24 January 2027": the same span without weekdays, for tight spaces such
