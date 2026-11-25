@@ -91,7 +91,13 @@
     "changeSeat": "Seat type and messages, or cancel",
     "changeDetails": "Name, contact details, languages and comments",
     "anyTime": "Any time during the training",
-    "lordsDay": "Lord's Day"
+    "lordsDay": "Lord's Day",
+    "formatTitle": "Format",
+    "formatWeekdaysTitle": "Weekdays (including Friday)",
+    "formatWeekdaysBody": "Messages are played together online. You receive the Zoom link through the private WhatsApp group after you register.",
+    "formatWeekendsTitle": "Weekends (Saturday and Lord's Day)",
+    "formatWeekendsBody": "Everyone attends in person in {sites}. You choose your location on the registration form.",
+    "formatWeekendsBodyNoSites": "Everyone attends in person."
   },
   "register": {
     "title": "Video Training Registration Form",

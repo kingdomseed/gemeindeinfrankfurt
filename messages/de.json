@@ -91,7 +91,13 @@
     "changeSeat": "Platzart und Botschaften, oder stornieren",
     "changeDetails": "Name, Kontaktdaten, Sprachen und Bemerkungen",
     "anyTime": "Jederzeit während des Trainings",
-    "lordsDay": "Tag des Herrn"
+    "lordsDay": "Tag des Herrn",
+    "formatTitle": "Ablauf",
+    "formatWeekdaysTitle": "Wochentags (einschließlich Freitag)",
+    "formatWeekdaysBody": "Die Botschaften werden gemeinsam online angesehen. Den Zoom-Link erhältst du nach der Anmeldung über die private WhatsApp-Gruppe.",
+    "formatWeekendsTitle": "Am Wochenende (Samstag und Tag des Herrn)",
+    "formatWeekendsBody": "Alle nehmen vor Ort teil, in {sites}. Du wählst deinen Teilnahmeort im Anmeldeformular.",
+    "formatWeekendsBodyNoSites": "Alle nehmen vor Ort teil."
   },
   "register": {
     "title": "Anmeldeformular für das Video-Training",

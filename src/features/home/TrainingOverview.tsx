@@ -10,11 +10,12 @@ import { formatEuro } from "@/lib/domain/fees";
 import { berlinDay } from "@/lib/domain/sessions";
 
 import { ChangeCutoffs } from "./ChangeCutoffs";
+import { FormatExplained } from "./FormatExplained";
 import { ScheduleByDay } from "./ScheduleByDay";
 import { SeatsExplained } from "./SeatsExplained";
 
 // The landing page: title, fee and how long registration is open, then the
-// schedule, the seat types and what can be changed later.
+// format, schedule, the seat types and what can be changed later.
 export function TrainingOverview({ training }: { training: TrainingWithSessions }) {
   const t = useTranslations("home");
   const tr = useTranslations("register");
@@ -48,6 +49,7 @@ export function TrainingOverview({ training }: { training: TrainingWithSessions 
       <Notice tone="neutral">
         <Span fontWeight="medium">{t("freeSeatsTitle")}</Span> {t("freeSeats")}
       </Notice>
+      <FormatExplained siteNames={training.sites.map((s) => s.name)} />
       <ScheduleByDay sessions={training.sessions} />
       <SeatsExplained />
       {cutoffs && <ChangeCutoffs seatLockAt={cutoffs.seatAndSessionsLockAt} />}
