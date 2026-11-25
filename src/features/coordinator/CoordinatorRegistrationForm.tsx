@@ -358,6 +358,7 @@ export function CoordinatorRegistrationForm(props: {
     server,
     version: props.version,
     action: props.action,
+    coupledGroups: [["outline_language", "second_outline_language"]],
   });
 
   const seatType: SeatType = isSeatType(collab.draft.seat_type)

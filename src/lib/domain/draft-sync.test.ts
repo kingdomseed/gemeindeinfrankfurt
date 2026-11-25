@@ -179,4 +179,33 @@ describe("draftSyncReducer", () => {
     expect(conflict.conflicts).toEqual(["notes"]);
     expect(conflict.status).toBe("conflict");
   });
+
+  it("blocks invalid coupled-field merges and resolves them together", () => {
+    const o0 = { outline_language: "de", second_outline_language: "" };
+    let state = initialDraftSync(o0, "v1", [["outline_language", "second_outline_language"]]);
+    state = draftSyncReducer(state, {
+      type: "edit",
+      field: "second_outline_language",
+      value: "en",
+    });
+    state = draftSyncReducer(state, {
+      type: "server_updated",
+      next: { outline_language: "en", second_outline_language: "" },
+      version: "v2",
+    });
+
+    expect(state.draft).toEqual({ outline_language: "de", second_outline_language: "en" });
+    expect(state.conflicts).toEqual(["outline_language", "second_outline_language"]);
+    expect(state.baseVersion).toBe("v1");
+    expect(state.status).toBe("conflict");
+
+    const resolved = draftSyncReducer(state, {
+      type: "use_server_field",
+      field: "outline_language",
+    });
+    expect(resolved.draft).toEqual({ outline_language: "en", second_outline_language: "" });
+    expect(resolved.conflicts).toEqual([]);
+    expect(resolved.baseVersion).toBe("v2");
+    expect(resolved.status).toBe("clean");
+  });
 });

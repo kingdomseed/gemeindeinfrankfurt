@@ -14,6 +14,7 @@ export type DraftSyncState<T extends Record<string, string>> = {
   baseVersion: string;
   serverVersion: string;
   pendingFromVersion: string | null;
+  coupledGroups: readonly (readonly (keyof T)[])[];
   conflicts: (keyof T)[];
   mergedFields: (keyof T)[];
   status: DraftSyncStatus;
@@ -42,6 +43,7 @@ function sameValues<T extends Record<string, string>>(a: T, b: T): boolean {
 export function initialDraftSync<T extends Record<string, string>>(
   server: T,
   version: string,
+  coupledGroups: readonly (readonly (keyof T)[])[] = [],
 ): DraftSyncState<T> {
   return {
     base: { ...server },
@@ -50,6 +52,7 @@ export function initialDraftSync<T extends Record<string, string>>(
     baseVersion: version,
     serverVersion: version,
     pendingFromVersion: null,
+    coupledGroups,
     conflicts: [],
     mergedFields: [],
     status: "clean",
@@ -89,8 +92,24 @@ function handleServerUpdated<T extends Record<string, string>>(
   const draft = { ...state.draft };
   const conflictSet = new Set(state.conflicts);
   const mergedFields: (keyof T)[] = [];
+  const coupledBlocked = new Set<keyof T>();
+
+  for (const group of state.coupledGroups) {
+    const anyLocal = group.some((k) => state.draft[k] !== state.base[k]);
+    const anyRemote = group.some((k) => next[k] !== state.server[k]);
+    const anyDiff = group.some((k) => state.draft[k] !== next[k]);
+    if (anyLocal && anyRemote && anyDiff) {
+      for (const k of group) {
+        if (state.draft[k] !== next[k]) {
+          coupledBlocked.add(k);
+          conflictSet.add(k);
+        }
+      }
+    }
+  }
 
   for (const k of keysOf(state.server)) {
+    if (coupledBlocked.has(k)) continue;
     const serverChanged = next[k] !== state.server[k];
     const locallyEdited = state.draft[k] !== state.base[k];
     if (!locallyEdited) {
@@ -145,9 +164,15 @@ export function draftSyncReducer<T extends Record<string, string>>(
       return handleServerUpdated(state, action.next, action.version);
     case "use_server_field": {
       const { field } = action;
-      const draft = { ...state.draft, [field]: state.server[field] };
-      const base = { ...state.base, [field]: state.server[field] };
-      const conflicts = state.conflicts.filter((f) => f !== field);
+      const group = state.coupledGroups.find((g) => g.includes(field)) ?? [field];
+      const draft = { ...state.draft };
+      const base = { ...state.base };
+      const resolved = new Set(group);
+      for (const k of group) {
+        draft[k] = state.server[k];
+        base[k] = state.server[k];
+      }
+      const conflicts = state.conflicts.filter((f) => !resolved.has(f));
       const baseVersion = conflicts.length === 0 ? state.serverVersion : state.baseVersion;
       const dirty = !sameValues(draft, state.server);
       let status: DraftSyncStatus = "clean";
@@ -206,6 +231,7 @@ export function draftSyncReducer<T extends Record<string, string>>(
           baseVersion: state.pendingFromVersion,
           serverVersion: state.pendingFromVersion,
           pendingFromVersion: null,
+          coupledGroups: state.coupledGroups,
           conflicts: [],
           mergedFields: [],
           status: "saved",
@@ -221,6 +247,7 @@ export function draftSyncReducer<T extends Record<string, string>>(
         baseVersion: version,
         serverVersion: version,
         pendingFromVersion: null,
+        coupledGroups: state.coupledGroups,
         conflicts: [],
         mergedFields: [],
         status: sameValues(draft, action.saved) ? "saved" : "dirty",
