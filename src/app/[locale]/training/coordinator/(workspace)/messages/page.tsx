@@ -1,11 +1,12 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { PageMessage } from "@/components/ui/page-message";
 import { messageHref } from "@/features/coordinator/sections";
 import { requireLocale } from "@/i18n/locale";
 import { redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
 import { currentSession } from "@/lib/domain/attendance";
+
+import { requireActiveWorkspace } from "../workspace";
 
 export const dynamic = "force-dynamic";
 
@@ -19,15 +20,10 @@ export async function generateMetadata({ params }: Props) {
 
 // Opens the message that is on now or next.
 export default async function MessagesPage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
-  const session = coordination.data
-    ? currentSession(coordination.data.training.sessions, coordination.now)
-    : null;
+  const ws = await requireActiveWorkspace((await params).locale);
+  if (!ws.ok) return ws.fallback;
+  const { locale, data, now } = ws.workspace;
+  const session = currentSession(data.training.sessions, now);
   if (!session) {
     const th = await getTranslations("home");
     return <PageMessage title={th("noTraining")} />;

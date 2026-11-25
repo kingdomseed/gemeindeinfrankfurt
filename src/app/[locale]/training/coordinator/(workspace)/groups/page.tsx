@@ -1,18 +1,17 @@
 import { Button, Flex, HStack, SimpleGrid, Stack } from "@chakra-ui/react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { Notice } from "@/components/ui/notice";
 import { PageHeading } from "@/components/ui/page-heading";
-import { PageMessage } from "@/components/ui/page-message";
 import { groupBoard } from "@/features/coordinator/group-board";
 import { nameTagsHref, sectionHref } from "@/features/coordinator/sections";
 import { StudyGroupCard } from "@/features/coordinator/StudyGroupCard";
 import { SuggestGroupsButton } from "@/features/coordinator/SuggestGroupsButton";
 import { requireLocale } from "@/i18n/locale";
-import { Link as LocaleLink, redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
+import { Link as LocaleLink } from "@/i18n/navigation";
 import { loadStudyGroups } from "@/lib/groups";
 
+import { requireActiveWorkspace } from "../workspace";
 import { moveToStudyGroup, suggestStudyGroups } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -26,19 +25,13 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function GroupsPage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
-  const [t, th, tl] = await Promise.all([
+  const ws = await requireActiveWorkspace((await params).locale);
+  if (!ws.ok) return ws.fallback;
+  const { data, supabase } = ws.workspace;
+  const [t, tl] = await Promise.all([
     getTranslations("coordinator.groups"),
-    getTranslations("home"),
     getTranslations("common.languages"),
   ]);
-  const { data, supabase } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
 
   const board = groupBoard(data.registrations, await loadStudyGroups(supabase, data.training.id));
   const label = (g: (typeof board.groups)[number]) =>

@@ -13,7 +13,6 @@ import {
 } from "react";
 
 import { usePathname } from "@/i18n/navigation";
-import type { CurrentCoordinator } from "@/lib/coordinator";
 import { peersOnPath, type PresencePeer } from "@/lib/domain/presence";
 import { createClient, isSubscribed } from "@/lib/supabase/browser";
 
@@ -68,9 +67,11 @@ function createRefreshScheduler(refresh: () => void, delayMs: number) {
   };
 }
 
+type LiveUser = { userId: string; displayName: string };
+
 function LiveSync(props: {
   trainingId: string;
-  currentUser: CurrentCoordinator | null;
+  currentUser: LiveUser | null;
   children: ReactNode;
 }) {
   const { trainingId, currentUser } = props;
@@ -192,7 +193,7 @@ function LiveSync(props: {
 // and broadcasts ephemeral Presence (who is viewing/editing each page) without locks.
 export function LiveWorkspace(props: {
   trainingId: string | null;
-  currentUser: CurrentCoordinator | null;
+  currentUser: LiveUser | null;
   children: ReactNode;
 }) {
   if (!props.trainingId) return props.children;

@@ -1,15 +1,13 @@
-import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
-import { PageMessage } from "@/components/ui/page-message";
 import { EmailsWorkspace } from "@/features/coordinator/EmailsWorkspace";
 import { requireLocale } from "@/i18n/locale";
-import { redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
 import { beforeTrainingDue, countByLocale, inAudience, type Audience } from "@/lib/domain/emails";
 import { berlinDay } from "@/lib/domain/sessions";
 import { loadRecipients, loadSentEmails } from "@/lib/emails";
 import { loadStudyGroups } from "@/lib/groups";
 
+import { requireActiveWorkspace } from "../workspace";
 import { sendBeforeTraining, sendMessage, sendPaymentReminder } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -23,12 +21,9 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function EmailsPage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
+  const ws = await requireActiveWorkspace((await params).locale);
+  if (!ws.ok) return ws.fallback;
+  const { locale, data, supabase, now } = ws.workspace;
   const [t, tg, th, tl, format] = await Promise.all([
     getTranslations("coordinator.emails"),
     getTranslations("coordinator.groups"),
@@ -36,8 +31,6 @@ export default async function EmailsPage({ params }: Props) {
     getTranslations("common.languages"),
     getFormatter(),
   ]);
-  const { data, supabase, now } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
   const { training } = data;
 
   const [recipients, sent, groups] = await Promise.all([

@@ -1,5 +1,6 @@
 import "server-only";
 import { loadAttendance, markKey } from "@/lib/attendance";
+import type { CoordinatorClient } from "@/lib/auth";
 import type { CoordinatorDashboard } from "@/lib/coordinator";
 import { absenceCounts, overLimit } from "@/lib/domain/attendance";
 import {
@@ -10,9 +11,6 @@ import {
   type ReportNumbers,
 } from "@/lib/domain/report";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 const BUCKET = "receipts";
 

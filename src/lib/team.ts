@@ -1,13 +1,11 @@
 import "server-only";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
+import { loadCurrentCoordinator, type CoordinatorClient } from "@/lib/auth";
 import type { Language } from "@/lib/domain/types";
 import { siteUrl } from "@/lib/site";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { supabaseAnonKey, supabaseUrl } from "@/lib/supabase/env";
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 export type TeamMember = {
   userId: string;
@@ -52,13 +50,7 @@ export async function loadTeam(supabase: CoordinatorClient): Promise<TeamMember[
 
 // Whether the signed-in coordinator may add and remove coordinators.
 export async function isTeamAdmin(supabase: CoordinatorClient): Promise<boolean> {
-  const { data: me } = await supabase.auth.getUser();
-  const { data } = await supabase
-    .from("coordinators")
-    .select("is_admin")
-    .eq("user_id", me.user?.id ?? "")
-    .maybeSingle();
-  return data?.is_admin === true;
+  return (await loadCurrentCoordinator(supabase))?.isAdmin === true;
 }
 
 // Gives an email address coordinator access: creates the sign-in account if

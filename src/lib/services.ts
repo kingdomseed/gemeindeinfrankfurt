@@ -1,9 +1,7 @@
 import "server-only";
 import { z } from "zod";
 
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
+import { currentCoordinatorName, type CoordinatorClient } from "@/lib/auth";
 
 export const serviceKinds = [
   "tech",
@@ -81,16 +79,6 @@ export async function loadServices(supabase: CoordinatorClient, trainingId: stri
 
 export type ServicesPage = Awaited<ReturnType<typeof loadServices>>;
 
-async function myName(supabase: CoordinatorClient) {
-  const { data: auth } = await supabase.auth.getUser();
-  const { data } = await supabase
-    .from("coordinators")
-    .select("display_name")
-    .eq("user_id", auth.user?.id ?? "")
-    .maybeSingle();
-  return data?.display_name ?? "";
-}
-
 // Shows the webcast password to an AV coordinator and logs that it was shown.
 // Null when the signed-in coordinator does not serve in AV or nothing is stored.
 export async function revealWebcastPassword(
@@ -104,9 +92,10 @@ export async function revealWebcastPassword(
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
-  const logged = await supabase
-    .from("webcast_login_views")
-    .insert({ training_id: trainingId, viewer_name: await myName(supabase) });
+  const logged = await supabase.from("webcast_login_views").insert({
+    training_id: trainingId,
+    viewer_name: await currentCoordinatorName(supabase),
+  });
   if (logged.error) throw logged.error;
   return data.password;
 }
@@ -123,7 +112,7 @@ export async function saveWebcastLogin(
     website: login.website,
     user_name: login.userName,
     ...(login.password ? { password: login.password } : {}),
-    changed_by: await myName(supabase),
+    changed_by: await currentCoordinatorName(supabase),
     changed_at: new Date().toISOString(),
   });
   if (error) throw error;

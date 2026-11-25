@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
 import { requireAuth } from "@/lib/auth";
-import { parseEuroCents } from "@/lib/domain/report";
+import { parseEuroCents } from "@/lib/domain/fees";
 import {
   addReimbursement,
   attachReceipt,

@@ -4,12 +4,12 @@ import { Button, chakra, Heading, Input, Text } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { FormField } from "@/components/ui/form-field";
-import { Notice } from "@/components/ui/notice";
 import { Panel } from "@/components/ui/panel";
 import { SelectField } from "@/components/ui/select-field";
 import { formatEuro, type FeeBreakdown } from "@/lib/domain/fees";
 
 import { ConflictBanner } from "./ConflictBanner";
+import { FormResult } from "./FormResult";
 import type { PaymentRecord } from "./payment-record";
 import { PaymentFields } from "./PaymentFields";
 import type { FormAction } from "./types";
@@ -132,24 +132,8 @@ export function PaymentPanel(props: {
         <Text fontSize="sm" color="fg.muted">
           {t("paymentHelp")}
         </Text>
-        <ConflictBanner
-          status={collab.state.status}
-          conflicts={collab.state.conflicts}
-          fieldLabels={fieldLabels}
-          serverValues={collab.state.server}
-          onAcceptAllServer={collab.acceptAllServer}
-          onKeepLocal={collab.keepLocal}
-        />
-        {collab.state.status === "saved" && (
-          <Notice tone="success" announce="status" focus>
-            {t("paymentSaved")}
-          </Notice>
-        )}
-        {collab.state.status === "error" && (
-          <Notice tone="warning" announce="alert" focus>
-            {collab.state.errorMessage ?? t("error")}
-          </Notice>
-        )}
+        <ConflictBanner {...collab.bannerProps} fieldLabels={fieldLabels} />
+        <FormResult state={collab.result} saved={t("paymentSaved")} focus errorTone="warning" />
         <Button type="submit" alignSelf="flex-start" px="6" disabled={collab.pending}>
           {t("savePayment")}
         </Button>

@@ -1,16 +1,16 @@
 import { Flex, Link, Stack, Text } from "@chakra-ui/react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { PageHeading } from "@/components/ui/page-heading";
-import { PageMessage } from "@/components/ui/page-message";
 import { PrintButton } from "@/components/ui/print-button";
 import { groupBoard } from "@/features/coordinator/group-board";
 import { NameTagSheet } from "@/features/coordinator/NameTagSheet";
 import { sectionHref } from "@/features/coordinator/sections";
 import { requireLocale } from "@/i18n/locale";
-import { Link as LocaleLink, redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
+import { Link as LocaleLink } from "@/i18n/navigation";
 import { loadStudyGroups } from "@/lib/groups";
+
+import { requireActiveWorkspace } from "../../workspace";
 
 export const dynamic = "force-dynamic";
 
@@ -26,20 +26,14 @@ const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompar
 
 // One tag per seat, both names on a shared seat, in group order.
 export default async function NameTagsPage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
-  const [t, tg, tc, th] = await Promise.all([
+  const ws = await requireActiveWorkspace((await params).locale);
+  if (!ws.ok) return ws.fallback;
+  const { data, supabase } = ws.workspace;
+  const [t, tg, tc] = await Promise.all([
     getTranslations("coordinator.nameTags"),
     getTranslations("coordinator.groups"),
     getTranslations("coordinator"),
-    getTranslations("home"),
   ]);
-  const { data, supabase } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
 
   const board = groupBoard(data.registrations, await loadStudyGroups(supabase, data.training.id));
   const tags = [

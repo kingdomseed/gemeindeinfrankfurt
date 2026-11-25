@@ -1,32 +1,27 @@
-import { setRequestLocale } from "next-intl/server";
-
 import { CoordinatorShell } from "@/features/coordinator/CoordinatorShell";
 import { LiveWorkspace } from "@/features/coordinator/LiveWorkspace";
-import { requireLocale } from "@/i18n/locale";
-import { redirect } from "@/i18n/navigation";
-import { loadCoordination, loadCurrentCoordinator } from "@/lib/coordinator";
+import { loadCurrentCoordinator } from "@/lib/auth";
 import { loadTrainingLinks } from "@/lib/links";
 
 import { addSpaceLink, removeSpaceLink, signOut } from "./actions";
+import { requireWorkspaceSession } from "./workspace";
 
 // Every coordinator page sits in this shell; signed-out visitors go to the sign-in page.
 export default async function CoordinatorWorkspaceLayout({
   children,
   params,
 }: LayoutProps<"/[locale]/training/coordinator">) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
-  const training = coordination.data?.training;
+  const { locale, supabase, data } = await requireWorkspaceSession((await params).locale);
+  const training = data?.training;
   const [currentUser, links] = await Promise.all([
-    loadCurrentCoordinator(coordination.supabase),
-    training ? loadTrainingLinks(coordination.supabase, training.id) : [],
+    loadCurrentCoordinator(supabase),
+    training ? loadTrainingLinks(supabase, training.id) : [],
   ]);
+  const liveUser = currentUser
+    ? { userId: currentUser.userId, displayName: currentUser.displayName }
+    : null;
   return (
-    <LiveWorkspace trainingId={training?.id ?? null} currentUser={currentUser}>
+    <LiveWorkspace trainingId={training?.id ?? null} currentUser={liveUser}>
       <CoordinatorShell
         trainingTitle={training?.title[locale] ?? null}
         links={links}

@@ -36,3 +36,12 @@ export function computeFees(input: FeeInput, prices: FeePrices): FeeBreakdown {
 export function formatEuro(cents: number, locale: string): string {
   return new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(cents / 100);
 }
+
+// An amount typed in euros, "19,90", "19.90", "320" or "€ 70", in cents. Null
+// when it is not an amount.
+export function parseEuroCents(value: string): number | null {
+  const match = /^(\d{1,6})(?:[.,](\d{1,2}))?$/.exec(value.trim().replace(/\s|€/g, ""));
+  if (!match) return null;
+  const [, euros = "0", cents = ""] = match;
+  return Number(euros) * 100 + Number(cents.padEnd(2, "0"));
+}

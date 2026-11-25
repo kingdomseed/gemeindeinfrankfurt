@@ -1,17 +1,15 @@
 import { Heading, HStack, Stack } from "@chakra-ui/react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { Notice } from "@/components/ui/notice";
 import { PageHeading } from "@/components/ui/page-heading";
-import { PageMessage } from "@/components/ui/page-message";
 import { StatusTag } from "@/components/ui/status-tag";
 import { ServiceList } from "@/features/coordinator/ServiceList";
 import { WebcastLogin } from "@/features/coordinator/WebcastLogin";
 import { requireLocale } from "@/i18n/locale";
-import { redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
 import { loadServices } from "@/lib/services";
 
+import { requireActiveWorkspace } from "../workspace";
 import {
   addService,
   removeService,
@@ -31,18 +29,10 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function ServicesPage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
-  const [t, th] = await Promise.all([
-    getTranslations("coordinator.services"),
-    getTranslations("home"),
-  ]);
-  const { data, supabase } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
+  const ws = await requireActiveWorkspace((await params).locale);
+  if (!ws.ok) return ws.fallback;
+  const { locale, data, supabase } = ws.workspace;
+  const t = await getTranslations("coordinator.services");
 
   const trainingId = data.training.id;
   const page = await loadServices(supabase, trainingId);

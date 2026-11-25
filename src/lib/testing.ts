@@ -1,7 +1,5 @@
 import "server-only";
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
+import type { CoordinatorClient } from "@/lib/auth";
 
 export type TestRow = {
   sessionId: string;

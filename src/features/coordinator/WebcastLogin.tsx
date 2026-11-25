@@ -12,6 +12,8 @@ import { FormResult } from "./FormResult";
 import { LoginRow } from "./LoginRow";
 import type { FormAction, FormState } from "./types";
 
+type ViewState = { mode: "hidden" } | { mode: "revealed"; password: string } | { mode: "editing" };
+
 // The Lebensstrom webcast login, for coordinators serving in AV. The password
 // stays hidden until someone presses Show, and each time is logged.
 export function WebcastLogin(props: {
@@ -21,16 +23,14 @@ export function WebcastLogin(props: {
 }) {
   const t = useTranslations("coordinator.services");
   const format = useFormatter();
-  const [password, setPassword] = useState<string | null>(null);
   const [revealing, startReveal] = useTransition();
-  const [editing, setEditing] = useState(props.login === null);
+  const [view, setView] = useState<ViewState>(() =>
+    props.login === null ? { mode: "editing" } : { mode: "hidden" },
+  );
   const [state, save, saving] = useActionState<FormState, FormData>(
     async (prev, form) => {
       const result = await props.save(prev, form);
-      if (result.status === "saved") {
-        setEditing(false);
-        setPassword(null);
-      }
+      if (result.status === "saved") setView({ mode: "hidden" });
       return result;
     },
     { status: "idle" },
@@ -40,7 +40,7 @@ export function WebcastLogin(props: {
   return (
     <Stack gap="3" bg="bg.subtle" rounded="xl" p="5">
       <Text fontSize="sm">{t("webcastHelp")}</Text>
-      {login && !editing && (
+      {login && view.mode !== "editing" && (
         <>
           <Box as="dl">
             <LoginRow label={t("website")}>{login.website}</LoginRow>
@@ -54,7 +54,7 @@ export function WebcastLogin(props: {
             </LoginRow>
             <LoginRow label={t("password")} last>
               <HStack gap="3" wrap="wrap">
-                {password === null ? (
+                {view.mode === "hidden" ? (
                   <>
                     <Text fontFamily="mono" aria-label={t("hidden")}>
                       ••••••••••
@@ -66,7 +66,8 @@ export function WebcastLogin(props: {
                       loading={revealing}
                       onClick={() =>
                         startReveal(async () => {
-                          setPassword(await props.reveal());
+                          const password = await props.reveal();
+                          if (password !== null) setView({ mode: "revealed", password });
                         })
                       }
                     >
@@ -76,10 +77,15 @@ export function WebcastLogin(props: {
                 ) : (
                   <>
                     <Text fontFamily="mono" translate="no">
-                      {password}
+                      {view.password}
                     </Text>
-                    <CopyButton value={password} label={t("copy")} copiedLabel={t("copied")} />
-                    <Button variant="outline" size="xs" minH="8" onClick={() => setPassword(null)}>
+                    <CopyButton value={view.password} label={t("copy")} copiedLabel={t("copied")} />
+                    <Button
+                      variant="outline"
+                      size="xs"
+                      minH="8"
+                      onClick={() => setView({ mode: "hidden" })}
+                    >
                       {t("hide")}
                     </Button>
                   </>
@@ -97,13 +103,13 @@ export function WebcastLogin(props: {
             variant="outline"
             color="fg"
             alignSelf="flex-start"
-            onClick={() => setEditing(true)}
+            onClick={() => setView({ mode: "editing" })}
           >
             {t("updateLogin")}
           </Button>
         </>
       )}
-      {editing && (
+      {view.mode === "editing" && (
         <chakra.form action={save} display="flex" flexDirection="column" gap="3" maxW="md">
           <FormField label={t("website")}>
             <Input
@@ -139,7 +145,7 @@ export function WebcastLogin(props: {
               {t("saveLogin")}
             </Button>
             {login && (
-              <Button variant="ghost" color="fg" onClick={() => setEditing(false)}>
+              <Button variant="ghost" color="fg" onClick={() => setView({ mode: "hidden" })}>
                 {t("cancel")}
               </Button>
             )}

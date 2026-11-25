@@ -1,22 +1,21 @@
 import { Button, Flex, Heading, Link, Stack, Text } from "@chakra-ui/react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
-import { PageMessage } from "@/components/ui/page-message";
 import { attendanceRoster } from "@/features/coordinator/attendance-roster";
 import { AttendanceTaker } from "@/features/coordinator/AttendanceTaker";
 import { groupBoard } from "@/features/coordinator/group-board";
 import { GroupFilter } from "@/features/coordinator/GroupFilter";
 import { attendanceHref, sectionHref } from "@/features/coordinator/sections";
 import { requireLocale } from "@/i18n/locale";
-import { Link as LocaleLink, redirect } from "@/i18n/navigation";
+import { Link as LocaleLink } from "@/i18n/navigation";
 import { loadAttendance, markKey } from "@/lib/attendance";
-import { loadCoordination } from "@/lib/coordinator";
 import { isRequired } from "@/lib/domain/attendance";
 import { berlinDayTime } from "@/lib/domain/sessions";
 import { loadStudyGroups } from "@/lib/groups";
 
+import { requireActiveWorkspace } from "../../workspace";
 import { saveAttendance } from "../actions";
 import { groupParam } from "../group-param";
 
@@ -38,21 +37,16 @@ export async function generateMetadata({ params }: Props) {
 // Taking attendance during one message, made for a phone.
 export default async function TakeAttendancePage({ params, searchParams }: Props) {
   const { locale: raw, number: rawNumber } = await params;
-  const locale = requireLocale(raw);
-  setRequestLocale(locale);
+  const ws = await requireActiveWorkspace(raw);
   const number = messageNumber.safeParse(rawNumber);
   if (!number.success) notFound();
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
+  if (!ws.ok) return ws.fallback;
+  const { locale, data, supabase } = ws.workspace;
   const [t, tc, th] = await Promise.all([
     getTranslations("coordinator.attendance"),
     getTranslations("coordinator"),
     getTranslations("home"),
   ]);
-  const { data, supabase } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
 
   const sessions = data.training.sessions.toSorted((a, b) => a.message_number - b.message_number);
   const index = sessions.findIndex((s) => s.message_number === number.data);

@@ -1,11 +1,9 @@
 import "server-only";
+import { currentCoordinatorName, type CoordinatorClient } from "@/lib/auth";
 import type { AudienceMember } from "@/lib/domain/emails";
 import type { FeePrices } from "@/lib/domain/fees";
 import { feesForRegistration, openCents } from "@/lib/domain/payments";
 import type { Language, SeatType } from "@/lib/domain/types";
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 // One active registration as an email recipient. Only the server sees this.
 export type Recipient = AudienceMember & {
@@ -91,22 +89,11 @@ export async function loadSentEmails(
   );
 }
 
-// The signed-in coordinator's name and email address.
-export async function signedInCoordinator(supabase: CoordinatorClient) {
-  const { data: auth } = await supabase.auth.getUser();
-  const { data } = await supabase
-    .from("coordinators")
-    .select("display_name")
-    .eq("user_id", auth.user?.id ?? "")
-    .maybeSingle();
-  return { name: data?.display_name ?? "", email: auth.user?.email ?? null };
-}
-
 export async function recordSend(
   supabase: CoordinatorClient,
   send: { trainingId: string; kind: EmailKind; subject: string; count: number },
 ) {
-  const { name } = await signedInCoordinator(supabase);
+  const name = await currentCoordinatorName(supabase);
   const { error } = await supabase.from("email_sends").insert({
     training_id: send.trainingId,
     kind: send.kind,

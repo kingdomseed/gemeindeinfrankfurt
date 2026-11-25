@@ -78,15 +78,6 @@ export function reportDue(lastEnd: Date): Date {
   return new Date(lastEnd.getTime() + REPORT_DAYS * 24 * 60 * 60 * 1000);
 }
 
-// An amount typed in euros, "19,90", "19.90" or "320", in cents. Null when
-// it is not an amount.
-export function parseEuroCents(value: string): number | null {
-  const match = /^(\d{1,6})(?:[.,](\d{1,2}))?$/.exec(value.trim().replace(/\s|€/g, ""));
-  if (!match) return null;
-  const [, euros = "0", cents = ""] = match;
-  return Number(euros) * 100 + Number(cents.padEnd(2, "0"));
-}
-
 export type ReportLocalityRow = {
   status: "active" | "cancelled";
   other_locality: string;

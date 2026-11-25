@@ -1,18 +1,16 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
-import { PageMessage } from "@/components/ui/page-message";
 import { MessageWorkspace } from "@/features/coordinator/MessageWorkspace";
 import { requireLocale } from "@/i18n/locale";
-import { redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
 import { messageReadiness } from "@/lib/domain/messages";
 import { berlinDay, berlinDayTime } from "@/lib/domain/sessions";
 import { loadStudyGroups } from "@/lib/groups";
 import { loadMessages } from "@/lib/messages";
 import { loadTestSchedule } from "@/lib/testing";
 
+import { requireActiveWorkspace } from "../../workspace";
 import { saveMessageHymns, saveMessageVerses } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -33,22 +31,14 @@ export async function generateMetadata({ params }: Props) {
 // One message's hymns and verses, beside the list of all messages.
 export default async function MessagePage({ params }: Props) {
   const { locale: raw, number: rawNumber } = await params;
-  const locale = requireLocale(raw);
-  setRequestLocale(locale);
+  const ws = await requireActiveWorkspace(raw);
   const number = messageNumber.safeParse(rawNumber);
   if (!number.success) notFound();
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
-  const [t, th] = await Promise.all([
+  if (!ws.ok) return ws.fallback;
+  const { locale, data, supabase } = ws.workspace;
+  const [t, th, messages, schedule, groups] = await Promise.all([
     getTranslations("coordinator.messages"),
     getTranslations("home"),
-  ]);
-  const { data, supabase } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
-
-  const [messages, schedule, groups] = await Promise.all([
     loadMessages(supabase, data.training.id),
     loadTestSchedule(supabase, data.training.id),
     loadStudyGroups(supabase, data.training.id),
