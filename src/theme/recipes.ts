@@ -27,6 +27,9 @@ export const recipes = {
   card: cardRecipe,
   notice: noticeRecipe,
   statusTag: statusTagRecipe,
+  container: defineRecipe({
+    base: { px: { base: "5", md: "8", lg: "12" } },
+  }),
 };
 
 export const slotRecipes = {

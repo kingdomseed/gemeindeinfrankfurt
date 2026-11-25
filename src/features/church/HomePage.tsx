@@ -53,7 +53,7 @@ export function HomePage(props: {
       />
       <HomeIntro title={page.title} text={intro ? firstParagraph(intro.content) : ""} />
       {others.length > 0 && (
-        <Container maxW="6xl" px="4" pb={{ base: "14", md: "22" }}>
+        <Container maxW="6xl" pb={{ base: "14", md: "22" }}>
           <Stack gap="10">
             <PageBlocks
               blocks={others}

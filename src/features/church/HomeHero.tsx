@@ -59,7 +59,6 @@ export function HomeHero(props: {
       <Container
         position="relative"
         maxW="6xl"
-        px="4"
         minH={{ base: "md", md: "min(72vh, 600px)" }}
         py={{ base: "14", md: "18" }}
         display="flex"

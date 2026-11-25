@@ -34,7 +34,7 @@ export function SiteFooter(props: { settings: SiteSettings; pages: readonly NavP
   ];
   return (
     <Box as="footer" bg="bg.subtle" borderTopWidth="1px" _print={{ display: "none" }}>
-      <Container maxW="6xl" px="4" pt={{ base: "10", md: "12" }} pb="4">
+      <Container maxW="6xl" pt={{ base: "10", md: "12" }} pb="4">
         <Grid
           templateColumns={{
             base: "1fr",

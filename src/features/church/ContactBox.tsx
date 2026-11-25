@@ -10,13 +10,7 @@ import { SectionHeading } from "./SectionHeading";
 export function ContactBox({ settings }: { settings: SiteSettings }) {
   const t = useTranslations("site");
   return (
-    <Container
-      as="section"
-      aria-labelledby="contact"
-      maxW="6xl"
-      px="4"
-      py={{ base: "14", md: "22" }}
-    >
+    <Container as="section" aria-labelledby="contact" maxW="6xl" py={{ base: "14", md: "22" }}>
       <Flex
         bg="bg.muted"
         rounded="2xl"

@@ -31,7 +31,7 @@ export function RegistrationBar(props: { storageKey: string; dates: string; clos
       fontSize={{ base: "sm", md: "md" }}
       css={{ [`html[${hiddenAttribute}] &`]: { display: "none" } }}
     >
-      <Container maxW="6xl" px="4">
+      <Container maxW="6xl">
         <Flex wrap={{ base: "wrap", md: "nowrap" }} align="center" columnGap="4" py="1.5">
           <Text flex="1" minW="0" flexBasis={{ base: "calc(100% - 3.25rem)", md: "auto" }}>
             <Text as="strong" fontWeight="semibold">

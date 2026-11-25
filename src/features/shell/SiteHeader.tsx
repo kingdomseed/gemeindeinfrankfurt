@@ -30,7 +30,7 @@ export function SiteHeader(props: { siteName: string; pages: readonly NavPage[] 
       borderBottomWidth="1px"
       _print={{ display: "none" }}
     >
-      <Container maxW="6xl" px="4">
+      <Container maxW="6xl">
         <HeaderMenu
           brand={
             <Link

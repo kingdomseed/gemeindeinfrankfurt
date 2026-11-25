@@ -26,7 +26,7 @@ export function CoordinatorShell(props: {
   return (
     <>
       <Box borderBottomWidth="1px" borderColor="border" _print={{ display: "none" }}>
-        <Container maxW="6xl" px="4">
+        <Container maxW="6xl">
           <Flex wrap="wrap" align="center" justify="space-between" columnGap="4" rowGap="2" pt="3">
             <Flex wrap="wrap" align="center" gap="3">
               <Text fontSize="sm" color="fg.muted">
@@ -58,7 +58,6 @@ export function CoordinatorShell(props: {
         id={mainContentId}
         tabIndex={-1}
         maxW="6xl"
-        px="4"
         pt="6"
         pb="16"
         _print={{ p: "0", maxW: "none" }}
