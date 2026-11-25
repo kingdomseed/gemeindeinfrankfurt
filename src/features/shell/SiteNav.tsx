@@ -1,6 +1,7 @@
 "use client";
 
 import { Flex, Link } from "@chakra-ui/react";
+import { useEffect, useRef } from "react";
 
 import { Link as LocaleLink, usePathname } from "@/i18n/navigation";
 
@@ -13,25 +14,68 @@ function isCurrent(pathname: string, { href, exact }: NavItem) {
 
 export function SiteNav({ label, items }: { label: string; items: readonly NavItem[] }) {
   const pathname = usePathname();
+  const currentHref = items.find((item) => isCurrent(pathname, item))?.href;
+  const navRef = useRef<HTMLDivElement>(null);
+  const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
+
+  useEffect(() => {
+    const nav = navRef.current;
+    const link = currentHref ? linkRefs.current.get(currentHref) : undefined;
+    if (!nav || !link) return;
+    const navRect = nav.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    if (linkRect.left < navRect.left) {
+      nav.scrollLeft -= navRect.left - linkRect.left + 16;
+    } else if (linkRect.right > navRect.right) {
+      nav.scrollLeft += linkRect.right - navRect.right + 16;
+    }
+  }, [currentHref]);
+
   return (
-    <Flex as="nav" aria-label={label} wrap="wrap" columnGap="1" mx="-2" mt="1">
+    <Flex
+      ref={navRef}
+      as="nav"
+      aria-label={label}
+      flexWrap="nowrap"
+      overflowX="auto"
+      columnGap="1"
+      mx={{ base: "-4", md: "-2" }}
+      px={{ base: "4", md: "0" }}
+      mb="-1px"
+      scrollbarWidth="none"
+      overscrollBehaviorX="contain"
+      css={{ "&::-webkit-scrollbar": { display: "none" } }}
+    >
       {items.map((item) => {
-        const current = isCurrent(pathname, item);
+        const current = item.href === currentHref;
         return (
           <Link
             key={item.href}
             asChild
+            flexShrink={0}
+            whiteSpace="nowrap"
+            display="inline-flex"
+            alignItems="center"
             minH="11"
-            px="2"
+            px="2.5"
             fontSize="sm"
             fontWeight="medium"
+            touchAction="manipulation"
+            userSelect="none"
             color={current ? "fg" : "fg.muted"}
             textDecoration="none"
             borderBottomWidth="2px"
             borderColor={current ? "brand.solid" : "transparent"}
             _hover={{ color: "fg", borderColor: current ? "brand.solid" : "border.emphasized" }}
           >
-            <LocaleLink href={item.href} aria-current={current ? "page" : undefined}>
+            <LocaleLink
+              ref={(el) => {
+                if (el) linkRefs.current.set(item.href, el);
+                else linkRefs.current.delete(item.href);
+              }}
+              href={item.href}
+              aria-current={current ? "page" : undefined}
+            >
               {item.label}
             </LocaleLink>
           </Link>

@@ -25,6 +25,7 @@ export function PresenceBar() {
       display="flex"
       flexWrap="wrap"
       gap="2"
+      pb="1.5"
       aria-live="polite"
       _print={{ display: "none" }}
     >
