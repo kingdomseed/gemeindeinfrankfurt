@@ -54,8 +54,9 @@ export async function isTeamAdmin(supabase: CoordinatorClient): Promise<boolean>
 }
 
 // Gives an email address coordinator access: creates the sign-in account if
-// there is none yet, then the coordinators row.
-export async function addCoordinator(name: string, email: string): Promise<void> {
+// there is none yet, then the coordinators row. Preserves existing admin status
+// when re-inviting with `isAdmin = false`.
+export async function addCoordinator(name: string, email: string, isAdmin = false): Promise<void> {
   const admin = createAdminClient();
   const created = await admin.auth.admin.createUser({ email, email_confirm: true });
   let userId = created.data.user?.id;
@@ -67,7 +68,10 @@ export async function addCoordinator(name: string, email: string): Promise<void>
   if (!userId) throw created.error ?? new Error("Could not create the sign-in account");
   const { error } = await admin
     .from("coordinators")
-    .upsert({ user_id: userId, display_name: name }, { onConflict: "user_id" });
+    .upsert(
+      { user_id: userId, display_name: name, ...(isAdmin ? { is_admin: true } : {}) },
+      { onConflict: "user_id" },
+    );
   if (error) throw error;
 }
 
@@ -75,6 +79,15 @@ export async function addCoordinator(name: string, email: string): Promise<void>
 // name stays on the history lines they wrote.
 export async function removeCoordinator(userId: string): Promise<void> {
   const { error } = await createAdminClient().from("coordinators").delete().eq("user_id", userId);
+  if (error) throw error;
+}
+
+// Grants or revokes admin access (ability to manage coordinators).
+export async function setAdmin(userId: string, isAdmin: boolean): Promise<void> {
+  const { error } = await createAdminClient()
+    .from("coordinators")
+    .update({ is_admin: isAdmin })
+    .eq("user_id", userId);
   if (error) throw error;
 }
 

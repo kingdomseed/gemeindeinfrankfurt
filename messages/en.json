@@ -484,7 +484,13 @@
       "av": "AV",
       "joinAv": "Add to AV",
       "leaveAv": "Remove from AV",
-      "avChanged": "AV updated."
+      "avChanged": "AV updated.",
+      "signedIn": "Signed in",
+      "actions": "Actions",
+      "makeAdmin": "Make admin",
+      "removeAdmin": "Remove admin",
+      "adminChanged": "Admin access updated.",
+      "inviteAdmin": "Make admin (can add, remove, and manage coordinators)"
     },
     "groups": {
       "title": "Study groups",
