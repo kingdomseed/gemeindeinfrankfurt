@@ -27,6 +27,7 @@ export function TextField(props: {
         type={props.type ?? "text"}
         defaultValue={props.value}
         autoComplete={props.autoComplete}
+        spellCheck={props.type === "email" ? false : undefined}
       />
     </FormField>
   );

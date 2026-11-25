@@ -17,6 +17,8 @@ const config = defineConfig({
     },
     "html.dark": { colorScheme: "dark" },
     body: { accentColor: "brand.solid" },
+    "a, button, input, select, textarea, label": { touchAction: "manipulation" },
+    "h1[id], h2[id], h3[id]": { scrollMarginTop: "2rem" },
     "::selection": { bg: "brand.subtle", color: "fg" },
     a: { textUnderlineOffset: "0.2em" },
   },

@@ -10,15 +10,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Website of the church in Frankfurt: its public pages (managed in Payload CMS at `/admin`) and, under `/[locale]/training`, the registration and coordination site for its local video training. Next.js App Router, Payload CMS, Supabase, Chakra UI v3, next-intl (de, en, ru). Training requirements are in `docs/business-requirements.md`; the old site's wording is in `archive/wordpress-2022/`.
 
-## Design lives on the canvas
+## Design lives in code
 
-Screens are designed on the Video Training Screens canvas (https://claude.ai/artifact/GuEZjnT8Ct6D2NrNVxZQSt), one artboard per screen, built with the Video Training design system. Design changes start there; this repo implements them.
-
-- Read the artboard for a screen before changing that screen (Artifact tool, `read` with the board's path, such as `project/Register.dc.html`).
-- The canvas file `project/vt-theme.css` uses the same names as the semantic tokens in `src/theme/` (`--brand-solid` is `brand.solid`). A change there is a change to `src/theme/`.
-- The canvas is HTML and English only. Rebuild a board with Chakra, the layers below and `messages/{de,en,ru}.json`; don't copy its markup.
-- Where a board and `docs/business-requirements.md` disagree, the requirements win. Say so, so the board gets fixed.
-- In a PR, name the boards it implements.
+Design tokens, components, and screen layouts live in `src/theme/`, `src/components/ui/`, `src/features/`, and reference snapshots in `docs/design/`. Build and update screens directly with Chakra UI v3, the layers below, and `messages/{de,en,ru}.json`. Where any design note and `docs/business-requirements.md` disagree, the requirements win.
 
 ## Skills: read before you write
 

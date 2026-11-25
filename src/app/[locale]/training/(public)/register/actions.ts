@@ -1,5 +1,7 @@
 "use server";
 
+import { checkBotId } from "botid/server";
+
 import type { ActionState } from "@/features/registration/types";
 import { calendarUrl } from "@/lib/calendar";
 import { getPublishedTraining } from "@/lib/data";
@@ -21,6 +23,9 @@ export async function register(
   _prev: { status: string },
   form: FormData,
 ): Promise<ActionState> {
+  const verification = await checkBotId();
+  if (verification.isBot) return { status: "error" };
+
   const training = await getPublishedTraining();
   if (!training || !canRegister(training.sessions)) return { status: "closed" };
 

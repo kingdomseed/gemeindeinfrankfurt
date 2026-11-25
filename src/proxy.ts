@@ -15,6 +15,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Payload's admin panel (/admin) and every /api route stay outside locale routing.
-  matcher: "/((?!api|admin|_next|_vercel|.*\\..*).*)",
+  // Payload's admin panel (/admin), every /api route, and Vercel BotID's proxy
+  // endpoints stay outside locale routing.
+  matcher: "/((?!api|admin|_next|_vercel|149e9513-01fa-4fb0-aad4-566afd725d1b|.*\\..*).*)",
 };
