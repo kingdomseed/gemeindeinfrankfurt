@@ -2,7 +2,7 @@
 
 import { Button, chakra, Input } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 import { FormField } from "@/components/ui/form-field";
 import { Notice } from "@/components/ui/notice";
@@ -13,19 +13,22 @@ export function SignInForm() {
   const t = useTranslations("coordinator");
   const locale = useLocale();
   const [sent, setSent] = useState(false);
+  const [pending, startTransition] = useTransition();
 
-  async function onSubmit(form: FormData) {
+  function onSubmit(form: FormData) {
     const email = form.get("email");
     if (typeof email !== "string") return;
-    await createClient().auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: false, // coordinators are invited by an admin
-        // The email's link (supabase/templates/magic-link.html) passes this on to /api/auth/confirm.
-        emailRedirectTo: `${window.location.origin}/${locale}/training/coordinator`,
-      },
+    startTransition(async () => {
+      await createClient().auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false, // coordinators are invited by an admin
+          // The email's link (supabase/templates/magic-link.html) passes this on to /api/auth/confirm.
+          emailRedirectTo: `${window.location.origin}/${locale}/training/coordinator`,
+        },
+      });
+      setSent(true); // Same message either way, so the form doesn't reveal who is a coordinator.
     });
-    setSent(true); // Same message either way, so the form doesn't reveal who is a coordinator.
   }
 
   if (sent) {
@@ -44,9 +47,9 @@ export function SignInForm() {
       gap="4"
     >
       <FormField label={t("emailLabel")} required>
-        <Input name="email" type="email" autoComplete="email" />
+        <Input name="email" type="email" autoComplete="email" spellCheck={false} />
       </FormField>
-      <Button type="submit" px="6">
+      <Button type="submit" px="6" loading={pending}>
         {t("sendLink")}
       </Button>
     </chakra.form>

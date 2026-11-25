@@ -46,7 +46,9 @@ export function WebcastLogin(props: {
             <LoginRow label={t("website")}>{login.website}</LoginRow>
             <LoginRow label={t("userName")}>
               <HStack gap="3" wrap="wrap">
-                <Text fontFamily="mono">{login.userName}</Text>
+                <Text fontFamily="mono" translate="no">
+                  {login.userName}
+                </Text>
                 <CopyButton value={login.userName} label={t("copy")} copiedLabel={t("copied")} />
               </HStack>
             </LoginRow>
@@ -73,7 +75,9 @@ export function WebcastLogin(props: {
                   </>
                 ) : (
                   <>
-                    <Text fontFamily="mono">{password}</Text>
+                    <Text fontFamily="mono" translate="no">
+                      {password}
+                    </Text>
                     <CopyButton value={password} label={t("copy")} copiedLabel={t("copied")} />
                     <Button variant="outline" size="xs" minH="8" onClick={() => setPassword(null)}>
                       {t("hide")}
@@ -108,6 +112,7 @@ export function WebcastLogin(props: {
               defaultValue={login?.website}
               required
               maxLength={500}
+              spellCheck={false}
             />
           </FormField>
           <FormField label={t("userName")}>
@@ -117,6 +122,7 @@ export function WebcastLogin(props: {
               required
               maxLength={200}
               autoComplete="off"
+              spellCheck={false}
             />
           </FormField>
           <FormField label={t("password")} help={login ? t("passwordKeep") : undefined}>

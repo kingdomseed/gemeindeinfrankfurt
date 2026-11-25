@@ -22,7 +22,7 @@ export function TransferDetails({ payment }: { payment: PaymentDetails }) {
       <DetailItem label={t("payee")}>{payment.payee}</DetailItem>
       <DetailItem label={t("iban")}>
         <HStack wrap="wrap" columnGap="3">
-          <Span fontFamily="mono" fontVariantNumeric="tabular-nums" userSelect="all">
+          <Span fontFamily="mono" fontVariantNumeric="tabular-nums" userSelect="all" translate="no">
             {payment.iban}
           </Span>
           <CopyButton value={payment.iban.replaceAll(/\s/g, "")} {...copy} />

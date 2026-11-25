@@ -87,6 +87,13 @@ export function RegistrationForm(props: Props) {
     startTransition(() => formAction(form));
   }
 
+  function changeOutline(next: Language) {
+    setOutline(next);
+    // Keep the second outline clear once the primary language matches it, so
+    // the receipt and form stay in sync and never charge for two outlines.
+    if (next === second) setSecond("");
+  }
+
   function registerAnother() {
     setDismissedResult(state);
     // Seat type and languages often carry over within a family, so they stay.
@@ -110,7 +117,7 @@ export function RegistrationForm(props: Props) {
     <RegistrationFormContext
       value={{
         state: { seatType, outline, second },
-        actions: { setSeatType, setOutline, setSecond },
+        actions: { setSeatType, setOutline: changeOutline, setSecond },
         meta: { defaults: d, locked: Boolean(props.seatLocked), feeCents: props.prices.feeCents },
       }}
     >

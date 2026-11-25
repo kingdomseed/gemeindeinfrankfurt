@@ -33,7 +33,7 @@ export function AddCoordinatorForm(props: { action: FormAction }) {
             <Input name="name" autoComplete="off" />
           </FormField>
           <FormField label={t("email")} required>
-            <Input name="email" type="email" autoComplete="off" />
+            <Input name="email" type="email" autoComplete="off" spellCheck={false} />
           </FormField>
         </SimpleGrid>
         <Button type="submit" alignSelf="flex-start" loading={pending}>

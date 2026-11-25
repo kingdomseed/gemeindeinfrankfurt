@@ -56,7 +56,12 @@ export function TrainingDetailsForm(props: { setup: TrainingSetup; action: FormA
             <Input name="payee_name" defaultValue={s.payee_name} />
           </FormField>
           <FormField label={t("iban")} required>
-            <Input name="payee_iban" fontFamily="mono" defaultValue={s.payee_iban} />
+            <Input
+              name="payee_iban"
+              fontFamily="mono"
+              spellCheck={false}
+              defaultValue={s.payee_iban}
+            />
           </FormField>
           <FormField label={t("reference")} required>
             <Input name="payment_reference" defaultValue={s.payment_reference} />
