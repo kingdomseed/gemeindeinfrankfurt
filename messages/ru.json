@@ -371,8 +371,6 @@
     "daysLeft": "{count, plural, =0 {Сегодня} one {Остался # день} few {Осталось # дня} many {Осталось # дней} other {Осталось # дня}}",
     "passed": "Прошло",
     "outlinesNeededCount": "{count, plural, one {Нужен # конспект} few {Нужно # конспекта} many {Нужно # конспектов} other {Нужно # конспекта}}",
-    "endOfFirstDay": "Конец первого дня",
-    "reportAfterLast": "Через 7 дней после последнего послания",
     "seatsAndPayments": "Места и оплата",
     "seatCount": {
       "full_time": "полный: {count}",
