@@ -2,6 +2,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmailsWorkspace } from "@/features/coordinator/EmailsWorkspace";
 import { requireLocale } from "@/i18n/locale";
+import { BERLIN_TIME_ZONE } from "@/lib/domain/berlin-time";
 import { beforeTrainingDue, countByLocale, inAudience, type Audience } from "@/lib/domain/emails";
 import { berlinDay } from "@/lib/domain/sessions";
 import { loadRecipients, loadSentEmails } from "@/lib/emails";
@@ -43,7 +44,7 @@ export default async function EmailsPage({ params }: Props) {
   ]);
   const when = (iso: string) =>
     format.dateTime(new Date(iso), {
-      timeZone: "Europe/Berlin",
+      timeZone: BERLIN_TIME_ZONE,
       day: "numeric",
       month: "short",
       hour: "2-digit",

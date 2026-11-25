@@ -1,8 +1,10 @@
 // Coordinators type dates and times as Frankfurt wall-clock time; the
 // database stores instants. These convert between the two.
 
+export const BERLIN_TIME_ZONE = "Europe/Berlin" as const;
+
 const parts = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Europe/Berlin",
+  timeZone: BERLIN_TIME_ZONE,
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
@@ -10,6 +12,73 @@ const parts = new Intl.DateTimeFormat("en-CA", {
   minute: "2-digit",
   hourCycle: "h23",
 });
+
+const dayKeyFormat = new Intl.DateTimeFormat("en-CA", {
+  timeZone: BERLIN_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+const monthKeyFormat = new Intl.DateTimeFormat("en-CA", {
+  timeZone: BERLIN_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+});
+
+const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+// The Frankfurt calendar date ("YYYY-MM-DD") of an instant.
+export function berlinDayKey(instant: Date | number): string {
+  return dayKeyFormat.format(instant);
+}
+
+// The Frankfurt calendar month ("YYYY-MM") of an instant.
+export function berlinMonthKey(instant: Date | number): string {
+  return monthKeyFormat.format(instant);
+}
+
+// Moves a calendar date ("YYYY-MM-DD") by `days` without timezone drift.
+export function addCalendarDays(isoDate: string, days: number): string {
+  const m = ISO_DATE.exec(isoDate);
+  if (!m) throw new RangeError(`Invalid calendar date: ${isoDate}`);
+  const year = Number(m[1]);
+  const month = Number(m[2]);
+  const day = Number(m[3]);
+  const d = new Date(Date.UTC(year, month - 1, day));
+  if (d.getUTCFullYear() !== year || d.getUTCMonth() !== month - 1 || d.getUTCDate() !== day) {
+    throw new RangeError(`Invalid calendar date: ${isoDate}`);
+  }
+  d.setUTCDate(day + days);
+  return d.toISOString().slice(0, 10);
+}
+
+// A calendar date column ("2027-01-09") read at noon UTC so no timezone shifts its day.
+export function calendarDayNoon(isoDate: string): Date {
+  return new Date(`${addCalendarDays(isoDate, 0)}T12:00:00Z`);
+}
+
+// 00:00:00.000 on `isoDate` in Frankfurt.
+export function startOfBerlinDate(isoDate: string): Date {
+  const start = fromBerlinWallTime({ date: addCalendarDays(isoDate, 0), time: "00:00" });
+  if (!start) throw new RangeError(`Invalid Berlin date: ${isoDate}`);
+  return start;
+}
+
+// 23:59:59.999 on `isoDate` in Frankfurt.
+export function endOfBerlinDate(isoDate: string): Date {
+  return new Date(startOfBerlinDate(addCalendarDays(isoDate, 1)).getTime() - 1);
+}
+
+// 00:00:00.000 on the same calendar day in Frankfurt.
+export function startOfBerlinDay(instant: Date): Date {
+  return startOfBerlinDate(berlinDayKey(instant));
+}
+
+// 23:59:59.999 on the same calendar day in Frankfurt.
+export function endOfBerlinDay(instant: Date): Date {
+  return endOfBerlinDate(berlinDayKey(instant));
+}
 
 export type BerlinWallTime = { date: string; time: string }; // "2027-01-12", "19:00"
 

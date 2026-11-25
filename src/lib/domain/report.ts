@@ -1,9 +1,28 @@
-import { absenceCounts, isRequired, overLimit, type Mark } from "./attendance";
+import { absenceCounts, attendanceMarkKey, isRequired, overLimit, type Mark } from "./attendance";
+import { addCalendarDays, berlinDayKey, endOfBerlinDate } from "./berlin-time";
 import type { FeePrices } from "./fees";
 import { feesForRegistration, type PaymentRow } from "./payments";
-import type { SeatType } from "./types";
+import type { SeatType, Session } from "./types";
+
+export type ReportAnswers = {
+  tested: boolean | null;
+  absencesLimited: boolean | null;
+  nameTags: boolean | null;
+  seatsAssigned: boolean | null;
+  inPerson: boolean | null;
+};
+export type ReportQuestion = keyof ReportAnswers;
 
 export type ReportRegistration = PaymentRow & { status: "active" | "cancelled" };
+
+export type ReportRegistrationInput = ReportRegistration & {
+  id: string;
+  first_name: string;
+  last_name: string;
+  partner_first_name: string | null;
+  partner_last_name: string | null;
+  registration_sessions: readonly { session_id: string }[];
+};
 
 export type ReportNumbers = {
   seats: number;
@@ -70,12 +89,106 @@ export function absencesWithinLimit(people: readonly AttendancePerson[]): boolea
   return people.every((p) => !overLimit(absenceCounts(p.seat, p.chosen, p.marks)));
 }
 
-// The questionnaire, the fees and the reimbursements are due this many days
-// after the last message.
+// The questionnaire, the fees and the reimbursements are due by the end of the
+// day `REPORT_DAYS` calendar days after the last training day (Europe/Berlin).
 export const REPORT_DAYS = 7;
 
-export function reportDue(lastEnd: Date): Date {
-  return new Date(lastEnd.getTime() + REPORT_DAYS * 24 * 60 * 60 * 1000);
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+export function reportDue(lastDayOrInstant: Date | string): Date {
+  const lastDate =
+    typeof lastDayOrInstant === "string" && ISO_DATE.test(lastDayOrInstant)
+      ? lastDayOrInstant
+      : berlinDayKey(
+          typeof lastDayOrInstant === "string" ? new Date(lastDayOrInstant) : lastDayOrInstant,
+        );
+  return endOfBerlinDate(addCalendarDays(lastDate, REPORT_DAYS));
+}
+
+export type ReportProjection = {
+  numbers: ReportNumbers;
+  resolved: Record<ReportQuestion, { value: boolean; suggested: boolean }>;
+  messages: { number: number; startsAt: string; absent: number }[];
+  overLimit: { id: string; name: string; unexcused: number; excused: number }[];
+  firstStart: string | null;
+  lastEnd: string | null;
+  due: Date | null;
+};
+
+const byTime = (a: string, b: string) => Date.parse(a) - Date.parse(b);
+
+// Pure projection for the Lebensstrom report and printed German questionnaire.
+export function buildReportView(input: {
+  prices: FeePrices;
+  sessions: readonly Session[];
+  registrations: readonly ReportRegistrationInput[];
+  marks: Readonly<Record<string, Mark>>;
+  answers: ReportAnswers;
+  testsPlanned: number;
+  lastDay: string | null;
+}): ReportProjection {
+  const sessions = input.sessions.toSorted((a, b) => a.message_number - b.message_number);
+  const active = input.registrations.filter((r) => r.status === "active");
+  const people = active.map((r) => ({
+    registration: r,
+    seat: r.seat_type,
+    chosen: new Set(r.registration_sessions.map((s) => s.session_id)),
+    marks: new Map(
+      sessions.flatMap((s) => {
+        const m = input.marks[attendanceMarkKey(r.id, s.id)];
+        return m ? [[s.id, m] as const] : [];
+      }),
+    ),
+  }));
+  const suggestions: Record<ReportQuestion, boolean> = {
+    tested: input.testsPlanned > 0,
+    absencesLimited: absencesWithinLimit(people),
+    nameTags: true,
+    seatsAssigned: true,
+    inPerson: true,
+  };
+  const resolve = (q: ReportQuestion) => {
+    const own = input.answers[q];
+    return own === null
+      ? { value: suggestions[q], suggested: true }
+      : { value: own, suggested: false };
+  };
+  const starts = sessions.map((s) => s.starts_at).toSorted(byTime);
+  const ends = sessions.map((s) => s.ends_at).toSorted(byTime);
+  const firstStart = starts[0] ?? null;
+  const lastEnd = ends.at(-1) ?? null;
+  const dueAnchor = input.lastDay ?? lastEnd;
+
+  return {
+    numbers: reportNumbers(input.registrations, input.prices),
+    resolved: {
+      tested: resolve("tested"),
+      absencesLimited: resolve("absencesLimited"),
+      nameTags: resolve("nameTags"),
+      seatsAssigned: resolve("seatsAssigned"),
+      inPerson: resolve("inPerson"),
+    },
+    messages: sessions.map((s) => ({
+      number: s.message_number,
+      startsAt: s.starts_at,
+      absent: absentAt(people, s.id),
+    })),
+    overLimit: people.flatMap((p) => {
+      const counts = absenceCounts(p.seat, p.chosen, p.marks);
+      if (!overLimit(counts)) return [];
+      const r = p.registration;
+      const name = [
+        `${r.first_name} ${r.last_name}`,
+        r.partner_first_name && `${r.partner_first_name} ${r.partner_last_name ?? ""}`.trim(),
+      ]
+        .filter(Boolean)
+        .join(" · ");
+      return [{ id: r.id, name, ...counts }];
+    }),
+    firstStart,
+    lastEnd,
+    due: dueAnchor ? reportDue(dueAnchor) : null,
+  };
 }
 
 export type ReportLocalityRow = {

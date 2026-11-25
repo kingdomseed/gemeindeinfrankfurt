@@ -1,6 +1,8 @@
 // An iCalendar (RFC 5545) file, so registrants can put their messages, and
 // anyone the church's events, into Google Calendar, Apple Calendar or Outlook.
 
+import { addCalendarDays, berlinDayKey } from "./berlin-time";
+
 export type CalendarEvent = {
   uid: string;
   title: string;
@@ -27,18 +29,9 @@ function escapeText(text: string): string {
     .replaceAll(/\r?\n/g, "\\n");
 }
 
-const berlinDate = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Europe/Berlin",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
 // 20271226: the Frankfurt date of an instant, moved on by `addDays`.
 function icsDate(iso: string, addDays = 0): string {
-  const day = new Date(`${berlinDate.format(new Date(iso))}T00:00:00Z`);
-  day.setUTCDate(day.getUTCDate() + addDays);
-  return day.toISOString().slice(0, 10).replaceAll("-", "");
+  return addCalendarDays(berlinDayKey(new Date(iso)), addDays).replaceAll("-", "");
 }
 
 function eventTimes(e: CalendarEvent): string[] {

@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Questionnaire } from "@/features/coordinator/Questionnaire";
 import { sectionHref } from "@/features/coordinator/sections";
 import { requireLocale } from "@/i18n/locale";
+import { BERLIN_TIME_ZONE, calendarDayNoon } from "@/lib/domain/berlin-time";
 import { formatEuro } from "@/lib/domain/fees";
 import { loadReportView } from "@/lib/report";
 
@@ -22,15 +23,14 @@ export async function generateMetadata({ params }: Props) {
 const FORM_LOCALE = "de";
 
 const germanDate = new Intl.DateTimeFormat("de-DE", {
-  timeZone: "Europe/Berlin",
+  timeZone: BERLIN_TIME_ZONE,
   day: "2-digit",
   month: "2-digit",
   year: "numeric",
 });
 
 const date = (iso: string | null) => (iso ? germanDate.format(new Date(iso)) : "–");
-// A date column ("2027-01-09") is a calendar day, read at noon so no time zone moves it.
-const calendar = (d: string | null) => (d ? date(`${d}T12:00:00Z`) : null);
+const calendar = (d: string | null) => (d ? germanDate.format(calendarDayNoon(d)) : null);
 
 export default async function QuestionnairePage({ params }: Props) {
   const ws = await requireActiveWorkspace((await params).locale);

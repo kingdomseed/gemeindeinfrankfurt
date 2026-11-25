@@ -1,6 +1,5 @@
+import { BERLIN_TIME_ZONE as timeZone, berlinDayKey } from "./berlin-time";
 import type { Session } from "./types";
-
-const timeZone = "Europe/Berlin";
 
 // The church calls Sunday the Lord's Day, so every date the site shows names
 // Sunday with the caller's translated `lordsDay` instead of the weekday.
@@ -67,13 +66,6 @@ export type ScheduleDay = {
   sessions: { id: string; number: number; time: string; isOnline?: boolean | undefined }[];
 };
 
-const dayKey = new Intl.DateTimeFormat("en-CA", {
-  timeZone,
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
 // The schedule as days in Frankfurt time, each with its messages in order.
 export function scheduleDays(
   sessions: readonly (Session & { is_online?: boolean | undefined })[],
@@ -84,7 +76,7 @@ export function scheduleDays(
   const days = new Map<string, ScheduleDay>();
   for (const s of sessions.toSorted((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at))) {
     const at = new Date(s.starts_at);
-    const key = dayKey.format(at);
+    const key = berlinDayKey(at);
     const day = days.get(key) ?? { key, label: berlinDay(at, locale, lordsDay), sessions: [] };
     day.sessions.push({
       id: s.id,
