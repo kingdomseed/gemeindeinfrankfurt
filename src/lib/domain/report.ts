@@ -86,3 +86,31 @@ export function parseEuroCents(value: string): number | null {
   const [, euros = "0", cents = ""] = match;
   return Number(euros) * 100 + Number(cents.padEnd(2, "0"));
 }
+
+export type ReportLocalityRow = {
+  status: "active" | "cancelled";
+  other_locality: string;
+  localities: { name: string; is_home: boolean } | null;
+};
+
+// Neighboring cities with at least one active registration, deduplicated
+// case-insensitively and excluding the home locality.
+export function reportedLocalities(rows: readonly ReportLocalityRow[], homeName = ""): string[] {
+  const homeKey = homeName.trim().toLowerCase();
+  const seen = new Map<string, string>();
+  for (const row of rows) {
+    if (row.status !== "active") continue;
+    if (row.localities) {
+      if (row.localities.is_home) continue;
+      const key = row.localities.name.toLowerCase();
+      if (!seen.has(key)) seen.set(key, row.localities.name);
+      continue;
+    }
+    const other = row.other_locality.trim();
+    if (!other) continue;
+    const key = other.toLowerCase();
+    if (homeKey && key === homeKey) continue;
+    if (!seen.has(key)) seen.set(key, other);
+  }
+  return [...seen.values()].toSorted((a, b) => a.localeCompare(b, "de"));
+}

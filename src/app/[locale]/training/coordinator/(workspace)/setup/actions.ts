@@ -192,3 +192,60 @@ export async function saveLocalities(
   refresh();
   return { status: "saved" };
 }
+
+// Adds an attendance site, or removes an unused one when more than one remains.
+export async function saveTrainingSites(
+  rawTrainingId: string,
+  _prev: FormState,
+  form: FormData,
+): Promise<FormState> {
+  const supabase = await requireAuth();
+  const trainingId = id.parse(rawTrainingId);
+  const action = localityIntent.safeParse(form.get("intent"));
+  if (!action.success) return { status: "error" };
+
+  if (action.data === "add") {
+    const name = text(100).safeParse(form.get("name"));
+    if (!name.success) return { status: "error" };
+    const { data: existing, error: readError } = await supabase
+      .from("training_sites")
+      .select("sort_order")
+      .eq("training_id", trainingId)
+      .order("sort_order", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (readError) throw readError;
+    const { error } = await supabase.from("training_sites").insert({
+      training_id: trainingId,
+      name: name.data,
+      sort_order: (existing?.sort_order ?? 0) + 1,
+    });
+    if (error) return { status: "error" };
+    refresh();
+    return { status: "saved" };
+  }
+
+  const removeId = action.data.slice("remove:".length);
+  const [{ count: used, error: countError }, { count: total, error: totalError }] =
+    await Promise.all([
+      supabase
+        .from("registrations")
+        .select("id", { count: "exact", head: true })
+        .eq("site_id", removeId),
+      supabase
+        .from("training_sites")
+        .select("id", { count: "exact", head: true })
+        .eq("training_id", trainingId),
+    ]);
+  if (countError) throw countError;
+  if (totalError) throw totalError;
+  if ((used ?? 0) > 0 || (total ?? 0) <= 1) return { status: "error" };
+  const { error } = await supabase
+    .from("training_sites")
+    .delete()
+    .eq("id", removeId)
+    .eq("training_id", trainingId);
+  if (error) throw error;
+  refresh();
+  return { status: "saved" };
+}

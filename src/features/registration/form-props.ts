@@ -1,6 +1,6 @@
 import type { TrainingWithSessions } from "@/lib/data";
 import { sessionLabel } from "@/lib/domain/sessions";
-import type { Language } from "@/lib/domain/types";
+import type { Language, LocalityOption, SiteOption } from "@/lib/domain/types";
 
 import type { PaymentDetails, RegistrationDefaults, SessionOption } from "./types";
 
@@ -13,6 +13,8 @@ export function trainingFormProps(
   lordsDay: string,
 ): {
   sessions: SessionOption[];
+  localities: LocalityOption[];
+  sites: SiteOption[];
   prices: { feeCents: number; outlinePriceCents: number };
   payment: PaymentDetails;
 } {
@@ -21,6 +23,8 @@ export function trainingFormProps(
       id: s.id,
       label: sessionLabel(s, locale, messageWord(s.message_number), lordsDay),
     })),
+    localities: training.localities,
+    sites: training.sites,
     prices: { feeCents: training.fee_cents, outlinePriceCents: training.outline_price_cents },
     payment: {
       payee: training.payee_name,
@@ -51,6 +55,9 @@ export function registrationDefaults(reg: StoredRegistration): RegistrationDefau
     partner_last_name: reg.partner_last_name ?? "",
     email: reg.email,
     phone: reg.phone,
+    locality_id: reg.locality_id,
+    other_locality: reg.other_locality,
+    site_id: reg.site_id,
     group_language: reg.group_language,
     outline_language: reg.outline_language,
     second_outline_language: reg.second_outline_language,

@@ -16,6 +16,7 @@ import {
   registrationSchema,
   replaceSessions,
   toRow,
+  validateForTraining,
 } from "@/lib/registrations";
 
 const id = z.uuid();
@@ -163,10 +164,9 @@ export async function saveRegistration(
 
   const parsed = parseRegistrationForm(form);
   if (!parsed.success) return { status: "error" };
-  const input = parsed.data;
   const training = await getTrainingById(existing.training_id);
-  const allowed = new Set(training.sessions.map((s) => s.id));
-  if (!input.session_ids.every((s) => allowed.has(s))) return { status: "error" };
+  const input = validateForTraining(parsed.data, training);
+  if (!input) return { status: "error" };
 
   const { error } = await supabase
     .from("registrations")

@@ -2,7 +2,8 @@ import "server-only";
 import type { QueryData } from "@supabase/supabase-js";
 import { z } from "zod";
 
-import type { Language, Session } from "@/lib/domain/types";
+import { sortLocalities } from "@/lib/domain/locality";
+import type { Language, LocalityOption, Session, SiteOption } from "@/lib/domain/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type Training = {
@@ -18,10 +19,14 @@ export type Training = {
   rules: { [L in Language]?: string | undefined };
 };
 
-export type TrainingWithSessions = Training & { sessions: Session[] };
+export type TrainingWithSessions = Training & {
+  sessions: Session[];
+  localities: LocalityOption[];
+  sites: SiteOption[];
+};
 
 const TRAINING_COLUMNS =
-  "id, slug, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, rules, sessions(id, message_number, starts_at, ends_at)";
+  "id, slug, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, rules, sessions(id, message_number, starts_at, ends_at), localities(id, name, is_home), training_sites(id, name, sort_order)";
 
 const trainingQuery = () => createAdminClient().from("trainings").select(TRAINING_COLUMNS);
 type TrainingRow = QueryData<ReturnType<typeof trainingQuery>>[number];
@@ -49,10 +54,15 @@ export async function getTrainingById(id: string): Promise<TrainingWithSessions>
 }
 
 function toTraining(row: TrainingRow): TrainingWithSessions {
+  const { training_sites, localities, sessions, ...rest } = row;
   return {
-    ...row,
+    ...rest,
     title: localizedText.parse(row.title),
     rules: localizedRules.parse(row.rules),
-    sessions: row.sessions.toSorted((a, b) => a.message_number - b.message_number),
+    sessions: sessions.toSorted((a, b) => a.message_number - b.message_number),
+    localities: sortLocalities(localities),
+    sites: training_sites
+      .toSorted((a, b) => a.sort_order - b.sort_order || a.name.localeCompare(b.name, "de"))
+      .map(({ id, name }) => ({ id, name })),
   };
 }

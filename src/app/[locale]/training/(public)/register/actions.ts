@@ -15,6 +15,7 @@ import {
   parseRegistrationForm,
   replaceSessions,
   toRow,
+  validateForTraining,
 } from "@/lib/registrations";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -31,10 +32,8 @@ export async function register(
 
   const parsed = parseRegistrationForm(form);
   if (!parsed.success) return { status: "error" };
-  const input = parsed.data;
-
-  const allowed = new Set(training.sessions.map((s) => s.id));
-  if (!input.session_ids.every((id) => allowed.has(id))) return { status: "error" };
+  const input = validateForTraining(parsed.data, training);
+  if (!input) return { status: "error" };
 
   if (form.get("confirm_duplicate") !== "on" && (await hasPossibleDuplicate(training.id, input))) {
     return { status: "duplicate" };

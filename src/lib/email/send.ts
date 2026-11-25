@@ -102,10 +102,15 @@ export async function sendConfirmation(opts: {
     { feeCents: training.fee_cents, outlinePriceCents: training.outline_price_cents },
   );
   const title = training.title[locale];
+  const localityName =
+    training.localities.find((l) => l.id === r.locality_id)?.name ?? (r.other_locality || null);
+  const siteName = training.sites.find((s) => s.id === r.site_id)?.name ?? null;
   const body = [
     t("confirmationIntro", { name: r.first_name }),
     "",
     `${title}: ${tr(`seat.${r.seat_type}`)}`,
+    ...(localityName ? [`${tr("summaryLocality")}: ${localityName}`] : []),
+    ...(siteName ? [`${tr("summarySite")}: ${siteName}`] : []),
     // Anaheim attendees owe nothing, so they get no payment lines.
     ...(fees.trainingCents + fees.outlineCents > 0
       ? [
@@ -136,6 +141,8 @@ export async function sendConfirmation(opts: {
     heading: t("confirmationIntro", { name: r.first_name }),
     intro: dates ? `${title} · ${dates}` : title,
     details: [
+      ...(localityName ? [{ label: tr("summaryLocality"), value: localityName }] : []),
+      ...(siteName ? [{ label: tr("summarySite"), value: siteName }] : []),
       { label: tr("summarySeat"), value: `${tr(`seat.${r.seat_type}`)}, ${messages}` },
       { label: tr("summaryGroup"), value: tl(r.group_language) },
       ...(r.outline_language
