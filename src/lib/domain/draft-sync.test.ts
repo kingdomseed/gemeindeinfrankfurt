@@ -120,4 +120,43 @@ describe("draftSyncReducer", () => {
     expect(ok.baseVersion).toBe("v2");
     expect(isDraftDirty(ok)).toBe(false);
   });
+
+  it("preserves edits typed while a save is pending", () => {
+    let state = initialDraftSync(s0, "v1");
+    state = draftSyncReducer(state, { type: "edit", field: "notes", value: "Saving..." });
+    const snapshot = { ...state.draft };
+    state = draftSyncReducer(state, { type: "save_start" });
+    state = draftSyncReducer(state, { type: "edit", field: "notes", value: "Saving... plus more" });
+    state = draftSyncReducer(state, { type: "edit", field: "firstDay", value: "2027-01-11" });
+
+    const ok = draftSyncReducer(state, { type: "save_ok", saved: snapshot, version: "v2" });
+    expect(ok.base).toEqual(snapshot);
+    expect(ok.server).toEqual(snapshot);
+    expect(ok.draft.notes).toBe("Saving... plus more");
+    expect(ok.draft.firstDay).toBe("2027-01-11");
+    expect(ok.status).toBe("dirty");
+    expect(ok.baseVersion).toBe("v2");
+    expect(isDraftDirty(ok)).toBe(true);
+  });
+
+  it("keeps newer serverVersion and clears conflicts when save_ok omits version", () => {
+    let state = initialDraftSync(s0, "v1");
+    state = draftSyncReducer(state, { type: "edit", field: "notes", value: "Saving" });
+    const snapshot = { ...state.draft };
+    state = draftSyncReducer(state, { type: "save_start" });
+    state = draftSyncReducer(state, {
+      type: "server_updated",
+      next: { ...s0, firstDay: "2027-01-10", notes: "Remote" },
+      version: "v2",
+    });
+    state = draftSyncReducer(state, { type: "edit", field: "lastDay", value: "2027-01-25" });
+
+    const ok = draftSyncReducer(state, { type: "save_ok", saved: snapshot });
+    expect(ok.baseVersion).toBe("v2");
+    expect(ok.serverVersion).toBe("v2");
+    expect(ok.conflicts).toEqual([]);
+    expect(ok.draft.notes).toBe("Saving");
+    expect(ok.draft.lastDay).toBe("2027-01-25");
+    expect(ok.status).toBe("dirty");
+  });
 });

@@ -79,7 +79,7 @@ export function useCollaborativeForm<T extends Record<string, string>>(opts: {
     startTransition(async () => {
       const result: FormState = await opts.action({ status: "idle" }, form);
       if (result.status === "saved") {
-        dispatch({ type: "save_ok", saved: snapshot, version: state.baseVersion });
+        dispatch({ type: "save_ok", saved: snapshot });
       } else if (result.status === "stale") {
         dispatch({ type: "save_stale" });
       } else {

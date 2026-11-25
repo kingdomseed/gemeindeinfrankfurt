@@ -11,10 +11,8 @@ const attendRules = ["seat", "nameTag", "absences", "testing", "leaving"] as con
 
 // The attendance and training-material rules, word for word from the
 // training's rules, and the two confirmations Lebensstrom requires.
-export function ConfirmSection() {
+export function ConfirmRules(props: { confirmed: boolean }) {
   const t = useTranslations("register");
-  // A stored registration has already confirmed both.
-  const confirmed = Boolean(useRegistrationForm().meta.defaults);
   return (
     <FormSection legend={t("sectionConfirm")}>
       <Card>
@@ -33,16 +31,22 @@ export function ConfirmSection() {
         </List.Root>
       </Card>
       <Stack gap="1">
-        <CheckboxChoice name="confirmed_adult" required defaultChecked={confirmed}>
+        <CheckboxChoice name="confirmed_adult" required defaultChecked={props.confirmed}>
           {t("confirmAdult")}
           <Text as="span" display="block" mt="0.5" fontSize="sm" color="fg.muted">
             {t("confirmAdultHelp")}
           </Text>
         </CheckboxChoice>
-        <CheckboxChoice name="accepted_rules" required defaultChecked={confirmed}>
+        <CheckboxChoice name="accepted_rules" required defaultChecked={props.confirmed}>
           {t("acceptRules")}
         </CheckboxChoice>
       </Stack>
     </FormSection>
   );
+}
+
+export function ConfirmSection() {
+  // A stored registration has already confirmed both.
+  const confirmed = Boolean(useRegistrationForm().meta.defaults);
+  return <ConfirmRules confirmed={confirmed} />;
 }

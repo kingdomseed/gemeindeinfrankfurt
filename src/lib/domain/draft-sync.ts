@@ -26,7 +26,7 @@ export type DraftSyncAction<T extends Record<string, string>> =
   | { type: "accept_all_server" }
   | { type: "keep_local" }
   | { type: "save_start" }
-  | { type: "save_ok"; saved: T; version: string }
+  | { type: "save_ok"; saved: T; version?: string }
   | { type: "save_stale" }
   | { type: "save_error"; message: string | null };
 
@@ -178,18 +178,26 @@ export function draftSyncReducer<T extends Record<string, string>>(
     }
     case "save_start":
       return { ...state, status: "saving", errorMessage: null };
-    case "save_ok":
+    case "save_ok": {
+      const version = action.version ?? state.serverVersion;
+      const draft = { ...action.saved };
+      for (const field of keysOf(state.draft)) {
+        if (state.draft[field] !== action.saved[field]) {
+          draft[field] = state.draft[field];
+        }
+      }
       return {
         base: { ...action.saved },
         server: { ...action.saved },
-        draft: { ...action.saved },
-        baseVersion: action.version,
-        serverVersion: action.version,
+        draft,
+        baseVersion: version,
+        serverVersion: version,
         conflicts: [],
         mergedFields: [],
-        status: "saved",
+        status: sameValues(draft, action.saved) ? "saved" : "dirty",
         errorMessage: null,
       };
+    }
     case "save_stale":
       return { ...state, status: "conflict", mergedFields: [], errorMessage: null };
     case "save_error":

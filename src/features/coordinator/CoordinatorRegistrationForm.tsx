@@ -8,6 +8,7 @@ import { CheckboxChoice, RadioChoices } from "@/components/ui/choice";
 import { FormField } from "@/components/ui/form-field";
 import { FormSection } from "@/components/ui/form-section";
 import { SelectField } from "@/components/ui/select-field";
+import { ConfirmRules } from "@/features/registration/ConfirmSection";
 import type { RegistrationDefaults, SessionOption } from "@/features/registration/types";
 import { formatEuro } from "@/lib/domain/fees";
 import {
@@ -322,6 +323,7 @@ function LanguagesFields(props: {
           </>
         )}
       </SimpleGrid>
+      {needsOutline && <Text fontWeight="medium">{tr("outlinesRule")}</Text>}
       <FormField label={tr("comments")} optionalLabel={tr("optional")}>
         <Textarea
           name="comments"
@@ -434,9 +436,6 @@ export function CoordinatorRegistrationForm(props: {
 
   return (
     <chakra.form onSubmit={onSubmit} display="flex" flexDirection="column" gap="10">
-      <input type="hidden" name="confirmed_adult" value="on" />
-      <input type="hidden" name="accepted_rules" value="on" />
-
       <FormSection legend={tr("seatType")}>
         <Text mb="2">{tr("seatRules", { fee: formatEuro(props.feeCents, locale) })}</Text>
         <RadioChoices
@@ -494,6 +493,8 @@ export function CoordinatorRegistrationForm(props: {
         onEdit={collab.edit}
         onOutlineChange={onOutlineChange}
       />
+
+      <ConfirmRules confirmed />
 
       <ConflictBanner
         {...collab.bannerProps}
