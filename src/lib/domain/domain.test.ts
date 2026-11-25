@@ -19,7 +19,9 @@ import {
   berlinDate,
   berlinDay,
   berlinDayTime,
+  isBerlinWeekday,
   scheduleDays,
+  sessionFormatDays,
   sessionLabel,
   trainingDates,
   trainingDateSpan,
@@ -573,5 +575,50 @@ describe("announcement archive", () => {
     };
     expect(firstSectionHeadlines(state)).toEqual(["Retreat", "Gospel bus"]);
     expect(firstSectionHeadlines(null)).toEqual([]);
+  });
+});
+
+describe("isBerlinWeekday & sessionFormatDays", () => {
+  it("treats Monday through Friday in Berlin as weekdays and Saturday/Sunday as weekend", () => {
+    // Friday 23:30 UTC is already Saturday 00:30 in Berlin (CET).
+    expect(isBerlinWeekday(new Date("2027-01-15T18:00:00Z"))).toBe(true);
+    expect(isBerlinWeekday(new Date("2027-01-15T23:30:00Z"))).toBe(false);
+    // Sunday 23:30 UTC is already Monday 00:30 in Berlin.
+    expect(isBerlinWeekday(new Date("2027-01-17T08:45:00Z"))).toBe(false);
+    expect(isBerlinWeekday(new Date("2027-01-17T23:30:00Z"))).toBe(true);
+  });
+
+  it("groups distinct online and in-person weekdays in Mon–Sun order across locales", () => {
+    const sample = [
+      { starts_at: "2027-01-17T08:45:00Z", is_online: false }, // Lord's Day
+      { starts_at: "2027-01-15T18:00:00Z", is_online: true }, // Friday
+      { starts_at: "2027-01-16T08:30:00Z", is_online: false }, // Saturday
+      { starts_at: "2027-01-12T18:00:00Z", is_online: true }, // Tuesday
+      { starts_at: "2027-01-19T18:00:00Z", is_online: true }, // Tuesday again
+    ];
+    expect(sessionFormatDays(sample, "en-GB", "Lord's Day")).toEqual({
+      onlineDays: ["Tuesday", "Friday"],
+      inPersonDays: ["Saturday", "Lord's Day"],
+    });
+    expect(sessionFormatDays(sample, "de", "Tag des Herrn")).toEqual({
+      onlineDays: ["Dienstag", "Freitag"],
+      inPersonDays: ["Samstag", "Tag des Herrn"],
+    });
+    expect(sessionFormatDays(sample, "ru", "День Господень")).toEqual({
+      onlineDays: ["вторник", "пятница"],
+      inPersonDays: ["суббота", "День Господень"],
+    });
+  });
+
+  it("reflects coordinator overrides when a weekday session is toggled in-person", () => {
+    const sample = [
+      { starts_at: "2027-01-12T18:00:00Z", is_online: true }, // Tuesday
+      { starts_at: "2027-01-15T18:00:00Z", is_online: false }, // Friday switched to in-person
+      { starts_at: "2027-01-16T08:30:00Z", is_online: false }, // Saturday
+    ];
+    expect(sessionFormatDays(sample, "en-GB", "Lord's Day")).toEqual({
+      onlineDays: ["Tuesday"],
+      inPersonDays: ["Friday", "Saturday"],
+    });
   });
 });

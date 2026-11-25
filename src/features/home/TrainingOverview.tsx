@@ -49,7 +49,7 @@ export function TrainingOverview({ training }: { training: TrainingWithSessions 
       <Notice tone="neutral">
         <Span fontWeight="medium">{t("freeSeatsTitle")}</Span> {t("freeSeats")}
       </Notice>
-      <FormatExplained siteNames={training.sites.map((s) => s.name)} />
+      <FormatExplained sessions={training.sessions} siteNames={training.sites.map((s) => s.name)} />
       <ScheduleByDay sessions={training.sessions} />
       <SeatsExplained />
       {cutoffs && <ChangeCutoffs seatLockAt={cutoffs.seatAndSessionsLockAt} />}

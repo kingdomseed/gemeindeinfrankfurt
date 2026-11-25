@@ -93,11 +93,11 @@
     "anyTime": "В любой момент до конца тренинга",
     "lordsDay": "День Господень",
     "formatTitle": "Формат",
-    "formatWeekdaysTitle": "По будням (включая пятницу)",
-    "formatWeekdaysBody": "Вести просматриваются вместе онлайн. Ссылки на Zoom будут отправлены в закрытой группе WhatsApp до начала тренинга.",
-    "formatWeekendsTitle": "По выходным (суббота и День Господень)",
-    "formatWeekendsBody": "Все участвуют очно: {sites}. Место участия вы выбираете в форме регистрации.",
-    "formatWeekendsBodyNoSites": "Все участвуют очно."
+    "formatOnlineBody": "Вести просматриваются вместе онлайн. Ссылки на Zoom будут отправлены в закрытой группе WhatsApp до начала тренинга.",
+    "formatInPersonBody": "Все участвуют очно: {sites}. Место участия вы выбираете в форме регистрации.",
+    "formatInPersonBodyNoSites": "Все участвуют очно.",
+    "sessionOnline": "Онлайн",
+    "sessionInPerson": "Очно"
   },
   "register": {
     "title": "Регистрация на видеотренинг",
@@ -434,6 +434,7 @@
       "date": "Дата",
       "start": "Начало",
       "end": "Конец",
+      "online": "Онлайн",
       "tested": "С проверкой",
       "actions": "Действия",
       "remove": "Удалить",

@@ -26,6 +26,7 @@ function toScheduleDraft(sessions: readonly SessionRow[]): Record<string, string
     out[`start_${s.id}`] = start.time;
     out[`end_${s.id}`] = end.time;
     out[`tested_${s.id}`] = s.is_tested ? "on" : "";
+    out[`online_${s.id}`] = s.is_online ? "on" : "";
   }
   return out;
 }
@@ -49,6 +50,7 @@ function ScheduleEditor(props: { sessions: readonly SessionRow[]; action: FormAc
     fieldLabels[`start_${s.id}`] = `${prefix} · ${t("start")}`;
     fieldLabels[`end_${s.id}`] = `${prefix} · ${t("end")}`;
     fieldLabels[`tested_${s.id}`] = `${prefix} · ${t("tested")}`;
+    fieldLabels[`online_${s.id}`] = `${prefix} · ${t("online")}`;
   }
 
   return (
@@ -75,6 +77,7 @@ function ScheduleEditor(props: { sessions: readonly SessionRow[]; action: FormAc
                   <ColumnHeader>{t("date")}</ColumnHeader>
                   <ColumnHeader>{t("start")}</ColumnHeader>
                   <ColumnHeader>{t("end")}</ColumnHeader>
+                  <ColumnHeader>{t("online")}</ColumnHeader>
                   <ColumnHeader>{t("tested")}</ColumnHeader>
                   <ColumnHeader>
                     <chakra.span srOnly>{t("actions")}</chakra.span>
@@ -88,6 +91,7 @@ function ScheduleEditor(props: { sessions: readonly SessionRow[]; action: FormAc
                   const dateKey = `date_${s.id}`;
                   const startKey = `start_${s.id}`;
                   const endKey = `end_${s.id}`;
+                  const onlineKey = `online_${s.id}`;
                   const testedKey = `tested_${s.id}`;
                   return (
                     <Table.Row key={s.id} bg="transparent">
@@ -123,6 +127,19 @@ function ScheduleEditor(props: { sessions: readonly SessionRow[]; action: FormAc
                           aria-label={label(t("end"))}
                           w="28"
                         />
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Checkbox.Root
+                          name={onlineKey}
+                          checked={collab.draft[onlineKey] === "on"}
+                          onCheckedChange={(e) =>
+                            collab.edit(onlineKey, e.checked === true ? "on" : "")
+                          }
+                        >
+                          <Checkbox.HiddenInput />
+                          <Checkbox.Control />
+                          <Checkbox.Label srOnly>{label(t("online"))}</Checkbox.Label>
+                        </Checkbox.Root>
                       </Table.Cell>
                       <Table.Cell>
                         <Checkbox.Root

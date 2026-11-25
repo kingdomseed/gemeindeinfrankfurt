@@ -9,6 +9,7 @@ import { requireAuth } from "@/lib/auth";
 import { fromBerlinWallTime } from "@/lib/domain/berlin-time";
 import { parseEuroCents } from "@/lib/domain/fees";
 import { scheduleFingerprint } from "@/lib/domain/list-sync";
+import { isBerlinWeekday } from "@/lib/domain/sessions";
 
 const id = z.uuid();
 const text = (max: number) => z.string().trim().min(1).max(max);
@@ -101,7 +102,7 @@ export async function saveSchedule(
   const { data: sessions, error } = await supabase
     .from("sessions")
     .select(
-      "id, message_number, starts_at, ends_at, is_tested, registration_sessions(count), attendance(count)",
+      "id, message_number, starts_at, ends_at, is_tested, is_online, registration_sessions(count), attendance(count)",
     )
     .eq("training_id", trainingId)
     .order("message_number");
@@ -116,6 +117,7 @@ export async function saveSchedule(
       message_number: (last?.message_number ?? 0) + 1,
       starts_at: new Date(start).toISOString(),
       ends_at: new Date(end).toISOString(),
+      is_online: isBerlinWeekday(start),
     });
     if (insertError) throw insertError;
     refresh();
@@ -155,6 +157,7 @@ export async function saveSchedule(
       starts_at: start.toISOString(),
       ends_at: end.toISOString(),
       is_tested: form.get(`tested_${s.id}`) === "on",
+      is_online: form.get(`online_${s.id}`) === "on",
     });
   }
   const results = await Promise.all(

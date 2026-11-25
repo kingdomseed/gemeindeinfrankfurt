@@ -93,11 +93,11 @@
     "anyTime": "Any time during the training",
     "lordsDay": "Lord's Day",
     "formatTitle": "Format",
-    "formatWeekdaysTitle": "Weekdays (including Friday)",
-    "formatWeekdaysBody": "Messages are played together online. Zoom links are sent out in the private WhatsApp group before the training starts.",
-    "formatWeekendsTitle": "Weekends (Saturday and Lord's Day)",
-    "formatWeekendsBody": "Everyone attends in person in {sites}. You choose your location on the registration form.",
-    "formatWeekendsBodyNoSites": "Everyone attends in person."
+    "formatOnlineBody": "Messages are played together online. Zoom links are sent out in the private WhatsApp group before the training starts.",
+    "formatInPersonBody": "Everyone attends in person in {sites}. You choose your location on the registration form.",
+    "formatInPersonBodyNoSites": "Everyone attends in person.",
+    "sessionOnline": "Online",
+    "sessionInPerson": "In person"
   },
   "register": {
     "title": "Video Training Registration Form",
@@ -434,6 +434,7 @@
       "date": "Date",
       "start": "Start",
       "end": "End",
+      "online": "Online",
       "tested": "Tested",
       "actions": "Actions",
       "remove": "Remove",

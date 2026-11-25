@@ -47,10 +47,22 @@ export function versesFingerprint(verses: readonly Verse[]): string {
 }
 
 export function scheduleFingerprint(
-  sessions: readonly { id: string; starts_at: string; ends_at: string; is_tested: boolean }[],
+  sessions: readonly {
+    id: string;
+    starts_at: string;
+    ends_at: string;
+    is_tested: boolean;
+    is_online: boolean;
+  }[],
 ): string {
   return JSON.stringify(
-    sessions.map((s) => [s.id, Date.parse(s.starts_at), Date.parse(s.ends_at), s.is_tested]),
+    sessions.map((s) => [
+      s.id,
+      Date.parse(s.starts_at),
+      Date.parse(s.ends_at),
+      s.is_tested,
+      s.is_online,
+    ]),
   );
 }
 

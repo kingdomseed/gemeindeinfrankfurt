@@ -6,8 +6,28 @@ const timeZone = "Europe/Berlin";
 // Sunday with the caller's translated `lordsDay` instead of the weekday.
 const berlinWeekday = new Intl.DateTimeFormat("en-US", { timeZone, weekday: "short" });
 
+const isoWeekdayOrder: Readonly<Record<string, number>> = {
+  Mon: 1,
+  Tue: 2,
+  Wed: 3,
+  Thu: 4,
+  Fri: 5,
+  Sat: 6,
+  Sun: 7,
+};
+
+function berlinWeekdayNumber(instant: Date | number): number {
+  return isoWeekdayOrder[berlinWeekday.format(instant)] ?? 7;
+}
+
 function isLordsDay(instant: Date | number): boolean {
   return berlinWeekday.format(instant) === "Sun";
+}
+
+// Mon–Fri on the Frankfurt calendar default to online sessions; Sat and Lord's Day default to in person.
+export function isBerlinWeekday(instant: Date | number): boolean {
+  const day = berlinWeekdayNumber(instant);
+  return day >= 1 && day <= 5;
 }
 
 // V8's format() turns the narrow no-break space before "AM" into a plain
@@ -44,7 +64,7 @@ export function sessionLabel(s: Session, locale: string, messageWord: string, lo
 export type ScheduleDay = {
   key: string; // YYYY-MM-DD in Frankfurt
   label: string;
-  sessions: { id: string; number: number; time: string }[];
+  sessions: { id: string; number: number; time: string; isOnline?: boolean | undefined }[];
 };
 
 const dayKey = new Intl.DateTimeFormat("en-CA", {
@@ -55,17 +75,54 @@ const dayKey = new Intl.DateTimeFormat("en-CA", {
 });
 
 // The schedule as days in Frankfurt time, each with its messages in order.
-export function scheduleDays(sessions: Session[], locale: string, lordsDay: string): ScheduleDay[] {
+export function scheduleDays(
+  sessions: readonly (Session & { is_online?: boolean | undefined })[],
+  locale: string,
+  lordsDay: string,
+): ScheduleDay[] {
   const time = new Intl.DateTimeFormat(locale, { timeZone, hour: "2-digit", minute: "2-digit" });
   const days = new Map<string, ScheduleDay>();
   for (const s of sessions.toSorted((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at))) {
     const at = new Date(s.starts_at);
     const key = dayKey.format(at);
     const day = days.get(key) ?? { key, label: berlinDay(at, locale, lordsDay), sessions: [] };
-    day.sessions.push({ id: s.id, number: s.message_number, time: time.format(at) });
+    day.sessions.push({
+      id: s.id,
+      number: s.message_number,
+      time: time.format(at),
+      ...(s.is_online !== undefined ? { isOnline: s.is_online } : {}),
+    });
     days.set(key, day);
   }
   return [...days.values()];
+}
+
+function orderedWeekdayNames(map: Map<number, string>): string[] {
+  return [...map.entries()].toSorted(([a], [b]) => a - b).map(([, name]) => name);
+}
+
+// Distinct weekdays (Mon–Sun order) for online vs. in-person sessions, using the
+// reader's language and `lordsDay` for Sunday.
+export function sessionFormatDays(
+  sessions: readonly { starts_at: string; is_online: boolean }[],
+  locale: string,
+  lordsDay: string,
+): { onlineDays: string[]; inPersonDays: string[] } {
+  const online = new Map<number, string>();
+  const inPerson = new Map<number, string>();
+  const weekdayName = new Intl.DateTimeFormat(locale, { timeZone, weekday: "long" });
+  for (const s of sessions) {
+    const at = new Date(s.starts_at);
+    const num = berlinWeekdayNumber(at);
+    const target = s.is_online ? online : inPerson;
+    if (!target.has(num)) {
+      target.set(num, num === 7 ? lordsDay : weekdayName.format(at));
+    }
+  }
+  return {
+    onlineDays: orderedWeekdayNames(online),
+    inPersonDays: orderedWeekdayNames(inPerson),
+  };
 }
 
 // "Saturday 9 January" in the reader's language, on the Frankfurt calendar.
