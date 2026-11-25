@@ -17,6 +17,7 @@ function RoleCheckbox(props: {
   checked: boolean;
   disabled: boolean;
   label: string;
+  ariaLabel: string;
   srOnly?: boolean;
   onChange: (checked: boolean) => void;
 }) {
@@ -27,7 +28,7 @@ function RoleCheckbox(props: {
       onCheckedChange={(e) => props.onChange(e.checked === true)}
       cursor={props.disabled ? "not-allowed" : "pointer"}
     >
-      <Checkbox.HiddenInput />
+      <Checkbox.HiddenInput aria-label={props.ariaLabel} />
       <Checkbox.Control />
       <Checkbox.Label srOnly={props.srOnly} fontWeight="normal">
         {props.label}
@@ -105,6 +106,7 @@ export function TeamList(props: {
         checked={m.isAdmin}
         disabled={pending || m.isYou}
         label={showLabel ? t("admin") : actionLabel}
+        ariaLabel={actionLabel}
         srOnly={!showLabel}
         onChange={(checked) => toggleRole("admin", m.userId, "is_admin", checked)}
       />
@@ -126,6 +128,7 @@ export function TeamList(props: {
         checked={m.servesAv}
         disabled={pending}
         label={showLabel ? t("av") : actionLabel}
+        ariaLabel={actionLabel}
         srOnly={!showLabel}
         onChange={(checked) => toggleRole("av", m.userId, "serves_av", checked)}
       />
