@@ -74,6 +74,8 @@ function LiveSync(props: {
   children: ReactNode;
 }) {
   const { trainingId, currentUser } = props;
+  const userId = currentUser?.userId ?? null;
+  const displayName = currentUser?.displayName ?? null;
   const router = useRouter();
   const currentPath = normalizeCoordinatorPath(usePathname());
   const currentSection = sectionFromPath(currentPath);
@@ -93,68 +95,84 @@ function LiveSync(props: {
   }, []);
 
   useEffect(() => {
+    const ac = new AbortController();
+    const { signal } = ac;
     const supabase = createClient();
     const { schedule: scheduleRefresh, cancel: cancelRefresh } = createRefreshScheduler(
       () => router.refresh(),
       250,
     );
+    let activeChannel: ReturnType<typeof supabase.channel> | null = null;
 
-    const filter = `training_id=eq.${trainingId}`;
-    let channel = supabase.channel(
-      `coordination:${trainingId}`,
-      currentUser ? { config: { presence: { key: currentUser.userId } } } : undefined,
-    );
+    async function connect() {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.access_token && !signal.aborted) {
+        await supabase.realtime.setAuth(data.session.access_token);
+      }
+      if (signal.aborted) return;
 
-    for (const table of SCOPED_TABLES) {
+      const filter = `training_id=eq.${trainingId}`;
+      let channel = supabase.channel(
+        `coordination:${trainingId}`,
+        userId ? { config: { presence: { key: userId } } } : undefined,
+      );
+
+      for (const table of SCOPED_TABLES) {
+        channel = channel.on(
+          "postgres_changes",
+          { event: "*", schema: "public", table, filter },
+          scheduleRefresh,
+        );
+      }
       channel = channel.on(
         "postgres_changes",
-        { event: "*", schema: "public", table, filter },
+        { event: "*", schema: "public", table: "trainings", filter: `id=eq.${trainingId}` },
         scheduleRefresh,
       );
-    }
-    channel = channel.on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "trainings", filter: `id=eq.${trainingId}` },
-      scheduleRefresh,
-    );
-    for (const table of GLOBAL_TABLES) {
-      channel = channel.on(
-        "postgres_changes",
-        { event: "*", schema: "public", table },
-        scheduleRefresh,
-      );
-    }
+      for (const table of GLOBAL_TABLES) {
+        channel = channel.on(
+          "postgres_changes",
+          { event: "*", schema: "public", table },
+          scheduleRefresh,
+        );
+      }
 
-    const pushPresence = () => {
-      if (!currentUser) return;
-      void channel.track({
-        userId: currentUser.userId,
-        name: currentUser.displayName,
-        path: locationRef.current.path,
-        section: locationRef.current.section,
-        editing: editingIdsRef.current.size > 0,
+      const pushPresence = () => {
+        if (!userId || !displayName) return;
+        void channel.track({
+          userId,
+          name: displayName,
+          path: locationRef.current.path,
+          section: locationRef.current.section,
+          editing: editingIdsRef.current.size > 0,
+        });
+      };
+      trackRef.current = pushPresence;
+
+      if (userId) {
+        channel = channel.on("presence", { event: "sync" }, () => {
+          if (!signal.aborted) setRawPresence(channel.presenceState());
+        });
+      }
+
+      activeChannel = channel;
+      channel.subscribe((status) => {
+        if (!signal.aborted && isSubscribed(status)) pushPresence();
       });
-    };
-    trackRef.current = pushPresence;
-
-    if (currentUser) {
-      channel = channel.on("presence", { event: "sync" }, () => {
-        setRawPresence(channel.presenceState());
-      });
     }
 
-    channel.subscribe((status) => {
-      if (isSubscribed(status)) pushPresence();
-    });
+    void connect();
 
     return () => {
+      ac.abort();
       trackRef.current = null;
       cancelRefresh();
-      if (currentUser) void channel.untrack();
-      void channel.unsubscribe();
-      void supabase.removeChannel(channel);
+      if (activeChannel) {
+        if (userId) void activeChannel.untrack();
+        void supabase.removeChannel(activeChannel);
+      }
     };
-  }, [router, trainingId, currentUser]);
+  }, [router, trainingId, userId, displayName]);
 
   useEffect(() => {
     locationRef.current = { path: currentPath, section: currentSection };
@@ -162,8 +180,8 @@ function LiveSync(props: {
   }, [currentPath, currentSection]);
 
   const peersOnPage = useMemo(
-    () => (currentUser ? peersOnPath(rawPresence, currentUser.userId, currentPath) : []),
-    [rawPresence, currentUser, currentPath],
+    () => (userId ? peersOnPath(rawPresence, userId, currentPath) : []),
+    [rawPresence, userId, currentPath],
   );
   const value = useMemo(() => ({ peersOnPage, setEditing }), [peersOnPage, setEditing]);
 
