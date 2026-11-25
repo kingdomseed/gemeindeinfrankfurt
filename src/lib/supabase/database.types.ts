@@ -582,6 +582,7 @@ export type Database = {
           language: Database["public"]["Enums"]["language_code"];
           locality_id: string | null;
           name: string;
+          site_id: string | null;
           sort_order: number;
           training_id: string;
         };
@@ -591,6 +592,7 @@ export type Database = {
           language: Database["public"]["Enums"]["language_code"];
           locality_id?: string | null;
           name: string;
+          site_id?: string | null;
           sort_order?: number;
           training_id: string;
         };
@@ -599,6 +601,7 @@ export type Database = {
           language?: Database["public"]["Enums"]["language_code"];
           locality_id?: string | null;
           name?: string;
+          site_id?: string | null;
           sort_order?: number;
           training_id?: string;
         };
@@ -608,6 +611,13 @@ export type Database = {
             columns: ["locality_id"];
             isOneToOne: false;
             referencedRelation: "localities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "study_groups_site_id_fkey";
+            columns: ["site_id"];
+            isOneToOne: false;
+            referencedRelation: "training_sites";
             referencedColumns: ["id"];
           },
           {

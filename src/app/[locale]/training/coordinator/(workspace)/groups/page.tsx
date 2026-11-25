@@ -1,18 +1,25 @@
-import { Button, Flex, HStack, SimpleGrid, Stack } from "@chakra-ui/react";
+import { Button, Flex, HStack, Stack } from "@chakra-ui/react";
 import { getTranslations } from "next-intl/server";
 
 import { Notice } from "@/components/ui/notice";
 import { PageHeading } from "@/components/ui/page-heading";
+import { AddGroupButton } from "@/features/coordinator/AddGroupButton";
 import { groupBoard } from "@/features/coordinator/group-board";
+import { GroupsBoard } from "@/features/coordinator/GroupsBoard";
 import { nameTagsHref, sectionHref } from "@/features/coordinator/sections";
-import { StudyGroupCard } from "@/features/coordinator/StudyGroupCard";
 import { SuggestGroupsButton } from "@/features/coordinator/SuggestGroupsButton";
 import { requireLocale } from "@/i18n/locale";
 import { Link as LocaleLink } from "@/i18n/navigation";
 import { loadStudyGroups } from "@/lib/groups";
 
 import { requireActiveWorkspace } from "../workspace";
-import { moveToStudyGroup, suggestStudyGroups } from "./actions";
+import {
+  addEmptyStudyGroup,
+  changeStudyGroupLanguage,
+  moveToStudyGroup,
+  removeEmptyStudyGroup,
+  suggestStudyGroups,
+} from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -28,14 +35,9 @@ export default async function GroupsPage({ params }: Props) {
   const ws = await requireActiveWorkspace((await params).locale);
   if (!ws.ok) return ws.fallback;
   const { data, supabase } = ws.workspace;
-  const [t, tl] = await Promise.all([
-    getTranslations("coordinator.groups"),
-    getTranslations("common.languages"),
-  ]);
+  const t = await getTranslations("coordinator.groups");
 
   const board = groupBoard(data.registrations, await loadStudyGroups(supabase, data.training.id));
-  const label = (g: (typeof board.groups)[number]) =>
-    `${t("groupNumber", { number: g.number })} · ${tl(g.language)}`;
   const hasGroups = board.groups.length > 0;
 
   return (
@@ -50,6 +52,7 @@ export default async function GroupsPage({ params }: Props) {
           })}
         />
         <HStack gap="3" wrap="wrap">
+          <AddGroupButton add={addEmptyStudyGroup.bind(null, data.training.id)} />
           <SuggestGroupsButton
             hasGroups={hasGroups}
             suggest={suggestStudyGroups.bind(null, data.training.id)}
@@ -69,33 +72,15 @@ export default async function GroupsPage({ params }: Props) {
 
       <Notice tone="neutral">{hasGroups ? t("howSuggested") : t("noGroups")}</Notice>
 
-      <SimpleGrid minChildWidth="64" gap="4" alignItems="start">
-        {board.unassigned.length > 0 && hasGroups && (
-          <StudyGroupCard
-            title={t("unassigned")}
-            meta={null}
-            members={board.unassigned}
-            targets={board.groups.map((g) => ({ id: g.id, label: label(g) }))}
-            move={moveToStudyGroup}
-            checkSize={false}
-          />
-        )}
-        {board.groups.map((g) => (
-          <StudyGroupCard
-            key={g.id}
-            title={t("groupNumber", { number: g.number })}
-            meta={[tl(g.language), g.sites.join(", ") || g.localities.join(", ")]
-              .filter(Boolean)
-              .join(" · ")}
-            members={g.members}
-            targets={board.groups
-              .filter((other) => other.id !== g.id)
-              .map((other) => ({ id: other.id, label: label(other) }))}
-            move={moveToStudyGroup}
-            checkSize
-          />
-        ))}
-      </SimpleGrid>
+      {hasGroups && (
+        <GroupsBoard
+          groups={board.groups}
+          unassigned={board.unassigned}
+          move={moveToStudyGroup}
+          changeLanguage={changeStudyGroupLanguage.bind(null, data.training.id)}
+          removeEmpty={removeEmptyStudyGroup.bind(null, data.training.id)}
+        />
+      )}
     </Stack>
   );
 }

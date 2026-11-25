@@ -405,5 +405,38 @@ describe.skipIf(!DB_URL)("registration lifecycle postgres RPCs", () => {
         `select count(*) || '|' || min(actor_id::text) || '|' || min(actor_name) from registration_events where registration_id = '${regId}' and kind = 'cancelled';`,
       ]),
     ).toBe(`1|${COORD_USER_ID}|Coord One`);
+    // 9. replace_study_groups with site_id keeps Mannheim/Heidelberg isolated from Frankfurt in sync_registration_study_group.
+    const mhSiteId = "cccc2222-2222-4222-8222-222222222222";
+    const mhRegId = "88884444-4444-4444-8444-444444444444";
+    psql(testDbUrl, [
+      "-c",
+      `
+      insert into training_sites (id, training_id, name, sort_order)
+      values ('${mhSiteId}', '${TRAINING_ID}', 'Mannheim/Heidelberg', 2);
+      insert into registrations (id, training_id, locale, edit_token_hash, seat_type, first_name, last_name, email, group_language, outline_language, locality_id, site_id, confirmed_adult, accepted_rules, status)
+      values ('${mhRegId}', '${TRAINING_ID}', 'en', 'mh-1', 'full_time', 'Alice', 'Meyer', 'mh1@example.test', 'de', 'de', '${LOC_ID}', '${mhSiteId}', true, true, 'active');
+      `,
+    ]);
+    psqlAs(
+      testDbUrl,
+      "authenticated",
+      `select replace_study_groups('${TRAINING_ID}', $json$[
+        {"language": "de", "site_id": null, "members": ["${PEER_REG_1}"]},
+        {"language": "en", "site_id": "${mhSiteId}", "members": []}
+      ]$json$::jsonb);`,
+      COORD_USER_ID,
+    );
+    psqlAs(
+      testDbUrl,
+      "authenticated",
+      `select sync_registration_study_group('${mhRegId}', '${TRAINING_ID}', 'de');`,
+      COORD_USER_ID,
+    );
+    expect(
+      psql(testDbUrl, [
+        "-c",
+        `select coalesce(sg.site_id::text, 'null') || '|' || sg.language from study_group_members m join study_groups sg on sg.id = m.group_id where m.registration_id = '${mhRegId}';`,
+      ]),
+    ).toBe(`${mhSiteId}|en`);
   }, 30_000);
 });

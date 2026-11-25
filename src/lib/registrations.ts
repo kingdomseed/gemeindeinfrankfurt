@@ -261,6 +261,8 @@ export type RegistrationStore<TClient = CoordinatorClient> = {
     id: string;
     trainingId: string;
     language: Language;
+    siteId?: string | null | undefined;
+    siteName?: string | null | undefined;
   }) => Promise<void>;
   saveRegistration: (args: {
     client?: TClient;
@@ -498,6 +500,8 @@ export function createRegistrationLifecycle<TClient = CoordinatorClient>(
           id: registrationId,
           trainingId: training.id,
           language: input.group_language,
+          siteId: input.site_id,
+          siteName: training.sites.find((s) => s.id === input.site_id)?.name ?? null,
         })
         .catch(deps.onGroupPlaceError);
 
