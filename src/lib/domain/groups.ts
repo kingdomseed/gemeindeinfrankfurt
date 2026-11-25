@@ -8,10 +8,28 @@ export function groupSizeOk(size: number) {
   return size >= GROUP_MIN && size <= GROUP_MAX;
 }
 
-export type GroupPerson = { id: string; language: Language; locality: string | null };
-export type SuggestedGroup = { language: Language; memberIds: string[] };
+export type GroupPerson = {
+  id: string;
+  language: Language;
+  locality: string | null;
+  siteId?: string | null | undefined;
+  siteName?: string | null | undefined;
+};
+
+export type SuggestedGroup = {
+  language: Language;
+  memberIds: string[];
+  siteId: string | null;
+};
 
 const LANGUAGE_ORDER: readonly Language[] = ["de", "en", "ru"];
+const SEPARATE_SITE_LANGUAGE_ORDER: readonly Language[] = ["en", "de", "ru"];
+
+// Remote attendance sites such as Mannheim/Heidelberg always keep their own
+// study group rather than mixing with the main venue.
+export function isSeparateGroupSite(siteName: string | null | undefined): boolean {
+  return Boolean(siteName && /mannheim|heidelberg/i.test(siteName));
+}
 
 // How far a group of this size is from 8–10.
 function outOfRange(size: number) {
@@ -39,12 +57,63 @@ export function groupCount(n: number) {
   return best;
 }
 
-// Groups by study-group language, then locality: people from the same city
-// sit next to each other (the largest city first) and the line is cut into
-// evenly sized groups. People keep the order they came in within a city.
+function splitLine(
+  memberIds: readonly string[],
+  language: Language,
+  siteId: string | null,
+): SuggestedGroup[] {
+  const k = groupCount(memberIds.length);
+  const groups: SuggestedGroup[] = [];
+  let start = 0;
+  for (let i = 0; i < k; i++) {
+    const size = Math.floor(memberIds.length / k) + (i < memberIds.length % k ? 1 : 0);
+    groups.push({ language, memberIds: memberIds.slice(start, start + size), siteId });
+    start += size;
+  }
+  return groups;
+}
+
+function majorityLanguage(people: readonly GroupPerson[]): Language {
+  const counts: Record<Language, number> = { de: 0, en: 0, ru: 0 };
+  for (const p of people) counts[p.language] += 1;
+  let best: Language = "en";
+  let bestCount = -1;
+  for (const lang of SEPARATE_SITE_LANGUAGE_ORDER) {
+    if (counts[lang] > bestCount) {
+      best = lang;
+      bestCount = counts[lang];
+    }
+  }
+  return best;
+}
+
+// Groups by study-group language, then locality, keeping separate attendance
+// sites (Mannheim/Heidelberg) in their own groups regardless of language and
+// defaulting those to English unless another language is the clear majority.
 export function suggestGroups(people: readonly GroupPerson[]): SuggestedGroup[] {
-  return LANGUAGE_ORDER.flatMap((language) => {
-    const speakers = people.filter((p) => p.language === language);
+  const general: GroupPerson[] = [];
+  const bySite = new Map<
+    string,
+    { siteId: string | null; siteName: string; members: GroupPerson[] }
+  >();
+
+  for (const p of people) {
+    if (isSeparateGroupSite(p.siteName)) {
+      const key = p.siteId ?? p.siteName ?? "";
+      const bucket = bySite.get(key) ?? {
+        siteId: p.siteId ?? null,
+        siteName: p.siteName ?? "",
+        members: [],
+      };
+      bucket.members.push(p);
+      bySite.set(key, bucket);
+    } else {
+      general.push(p);
+    }
+  }
+
+  const mainGroups = LANGUAGE_ORDER.flatMap((language) => {
+    const speakers = general.filter((p) => p.language === language);
     const cityCount = new Map<string, number>();
     for (const p of speakers) {
       const city = p.locality ?? "";
@@ -59,16 +128,20 @@ export function suggestGroups(people: readonly GroupPerson[]): SuggestedGroup[] 
           a.index - b.index,
       )
       .map((x) => x.p.id);
-    const k = groupCount(lined.length);
-    const groups: SuggestedGroup[] = [];
-    let start = 0;
-    for (let i = 0; i < k; i++) {
-      const size = Math.floor(lined.length / k) + (i < lined.length % k ? 1 : 0);
-      groups.push({ language, memberIds: lined.slice(start, start + size) });
-      start += size;
-    }
-    return groups;
+    return splitLine(lined, language, null);
   });
+
+  const siteGroups = [...bySite.values()]
+    .toSorted((a, b) => a.siteName.localeCompare(b.siteName))
+    .flatMap((bucket) =>
+      splitLine(
+        bucket.members.map((m) => m.id),
+        majorityLanguage(bucket.members),
+        bucket.siteId,
+      ),
+    );
+
+  return [...mainGroups, ...siteGroups];
 }
 
 // Where someone who registers after the groups were made goes: the smallest
@@ -82,4 +155,36 @@ export function smallestGroup<T extends { language: Language; size: number }>(
     if (g.language === language && (best === null || g.size < best.size)) best = g;
   }
   return best;
+}
+
+// Picks the right group for a newly registered person while keeping separate
+// attendance sites (or any site with a dedicated group) isolated from general groups.
+export function pickStudyGroup<
+  T extends { id: string; language: Language; siteId: string | null; size: number },
+>(
+  groups: readonly T[],
+  person: { language: Language; siteId: string | null; siteName: string | null },
+): { group: T | null; createSiteId: string | null } {
+  const separate =
+    person.siteId !== null &&
+    (isSeparateGroupSite(person.siteName) || groups.some((g) => g.siteId === person.siteId));
+
+  if (separate) {
+    const matching = groups.filter((g) => g.siteId === person.siteId);
+    const sameLanguage = smallestGroup(matching, person.language);
+    if (sameLanguage) return { group: sameLanguage, createSiteId: person.siteId };
+    let smallest: T | null = null;
+    for (const g of matching) {
+      if (smallest === null || g.size < smallest.size) smallest = g;
+    }
+    return { group: smallest, createSiteId: person.siteId };
+  }
+
+  return {
+    group: smallestGroup(
+      groups.filter((g) => g.siteId === null),
+      person.language,
+    ),
+    createSiteId: null,
+  };
 }

@@ -1,14 +1,28 @@
 import { describe, expect, it } from "vitest";
 
-import { groupCount, groupSizeOk, smallestGroup, suggestGroups, type GroupPerson } from "./groups";
+import {
+  groupCount,
+  groupSizeOk,
+  isSeparateGroupSite,
+  pickStudyGroup,
+  smallestGroup,
+  suggestGroups,
+  type GroupPerson,
+} from "./groups";
 
 const people = (
   count: number,
   language: GroupPerson["language"],
   locality: string | null,
   prefix: string,
+  extra: Pick<GroupPerson, "siteId" | "siteName"> = {},
 ): GroupPerson[] =>
-  Array.from({ length: count }, (_, i) => ({ id: `${prefix}${i + 1}`, language, locality }));
+  Array.from({ length: count }, (_, i) => ({
+    id: `${prefix}${i + 1}`,
+    language,
+    locality,
+    ...extra,
+  }));
 
 describe("groupCount", () => {
   it("makes groups of 8 to 10 when the numbers allow it", () => {
@@ -26,6 +40,15 @@ describe("groupCount", () => {
   });
 });
 
+describe("isSeparateGroupSite", () => {
+  it("detects Mannheim and Heidelberg attendance sites", () => {
+    expect(isSeparateGroupSite("Mannheim/Heidelberg")).toBe(true);
+    expect(isSeparateGroupSite("Heidelberg")).toBe(true);
+    expect(isSeparateGroupSite("Frankfurt am Main")).toBe(false);
+    expect(isSeparateGroupSite(null)).toBe(false);
+  });
+});
+
 describe("suggestGroups", () => {
   it("groups by language first, in German, English, Russian order", () => {
     const groups = suggestGroups([
@@ -33,10 +56,10 @@ describe("suggestGroups", () => {
       ...people(9, "de", "Frankfurt", "d"),
       ...people(4, "en", "Mainz", "e"),
     ]);
-    expect(groups.map((g) => [g.language, g.memberIds.length])).toEqual([
-      ["de", 9],
-      ["en", 4],
-      ["ru", 3],
+    expect(groups.map((g) => [g.language, g.memberIds.length, g.siteId])).toEqual([
+      ["de", 9, null],
+      ["en", 4, null],
+      ["ru", 3, null],
     ]);
   });
 
@@ -56,6 +79,31 @@ describe("suggestGroups", () => {
   it("leaves out a language nobody chose", () => {
     expect(suggestGroups(people(8, "en", "Frankfurt", "e")).map((g) => g.language)).toEqual(["en"]);
   });
+
+  it("keeps Mannheim/Heidelberg in its own group and defaults ties to English", () => {
+    const mhSite = { siteId: "site-mh", siteName: "Mannheim/Heidelberg" };
+    const ffmSite = { siteId: "site-ffm", siteName: "Frankfurt am Main" };
+    const groups = suggestGroups([
+      ...people(2, "en", "Frankfurt am Main", "ffm", ffmSite),
+      ...people(1, "de", "Heidelberg", "mh-de", mhSite),
+      ...people(1, "en", "Mannheim", "mh-en", mhSite),
+    ]);
+    expect(groups).toEqual([
+      { language: "en", memberIds: ["ffm1", "ffm2"], siteId: null },
+      { language: "en", memberIds: ["mh-de1", "mh-en1"], siteId: "site-mh" },
+    ]);
+  });
+
+  it("uses another language for Mannheim/Heidelberg only when it is the clear majority", () => {
+    const mhSite = { siteId: "site-mh", siteName: "Mannheim/Heidelberg" };
+    const groups = suggestGroups([
+      ...people(2, "de", "Mannheim", "mh-de", mhSite),
+      ...people(1, "en", "Heidelberg", "mh-en", mhSite),
+    ]);
+    expect(groups).toEqual([
+      { language: "de", memberIds: ["mh-de1", "mh-de2", "mh-en1"], siteId: "site-mh" },
+    ]);
+  });
 });
 
 describe("smallestGroup", () => {
@@ -70,6 +118,33 @@ describe("smallestGroup", () => {
     expect(smallestGroup(groups, "de")?.id).toBe("g2");
     expect(smallestGroup(groups, "en")?.id).toBe("g3");
     expect(smallestGroup(groups, "ru")).toBeNull();
+  });
+});
+
+describe("pickStudyGroup", () => {
+  const groups = [
+    { id: "g-ffm-en", language: "en" as const, siteId: null, size: 1 },
+    { id: "g-mh", language: "en" as const, siteId: "site-mh", size: 4 },
+  ];
+
+  it("routes separate-site registrants strictly to their site group even when language differs", () => {
+    expect(
+      pickStudyGroup(groups, {
+        language: "de",
+        siteId: "site-mh",
+        siteName: "Mannheim/Heidelberg",
+      }),
+    ).toEqual({ group: groups[1], createSiteId: "site-mh" });
+  });
+
+  it("never places main-venue registrants into a site-pinned group", () => {
+    expect(
+      pickStudyGroup([{ id: "g-mh", language: "en" as const, siteId: "site-mh", size: 1 }], {
+        language: "en",
+        siteId: "site-ffm",
+        siteName: "Frankfurt am Main",
+      }),
+    ).toEqual({ group: null, createSiteId: null });
   });
 });
 

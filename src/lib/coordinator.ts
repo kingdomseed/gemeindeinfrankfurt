@@ -7,7 +7,7 @@ import { localizedText } from "@/lib/data";
 import { registrationEventKinds, type RegistrationEventKind } from "@/lib/domain/types";
 
 const REGISTRATION_COLUMNS =
-  "id, created_at, status, seat_type, first_name, last_name, partner_first_name, partner_last_name, email, other_locality, group_language, outline_language, second_outline_language, waiver, fee_paid, outline_paid, localities(name), training_sites(name), registration_sessions(session_id)";
+  "id, created_at, status, seat_type, first_name, last_name, partner_first_name, partner_last_name, email, other_locality, group_language, outline_language, second_outline_language, waiver, fee_paid, outline_paid, site_id, localities(name), training_sites(name), registration_sessions(session_id)";
 
 async function newestTraining(supabase: CoordinatorClient) {
   const { data, error } = await supabase
