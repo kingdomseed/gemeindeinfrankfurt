@@ -12,7 +12,6 @@ export function MainColumn({ children }: { children: ReactNode }) {
       id={mainContentId}
       tabIndex={-1}
       maxW="3xl"
-      px="4"
       pt={{ base: "8", md: "10" }}
       pb="16"
     >

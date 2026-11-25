@@ -19,7 +19,7 @@ export function PhotoBand(props: {
       bg={props.tinted ? "bg.subtle" : undefined}
       py={{ base: "14", md: "22" }}
     >
-      <Container maxW="6xl" px="4">
+      <Container maxW="6xl">
         <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: "6", md: "14" }} alignItems="center">
           <Box
             position="relative"

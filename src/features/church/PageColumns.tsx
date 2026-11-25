@@ -16,7 +16,7 @@ export function PageColumns(props: {
 }) {
   const { page, settings } = props;
   return (
-    <Container maxW="6xl" px="4" pt={{ base: "8", md: "14" }} pb="16">
+    <Container maxW="6xl" pt={{ base: "8", md: "14" }} pb="16">
       <Flex
         direction={{ base: "column", lg: "row" }}
         align="flex-start"
