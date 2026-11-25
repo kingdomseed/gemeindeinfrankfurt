@@ -578,7 +578,7 @@ export function createRegistrationLifecycle<TClient = CoordinatorClient>(
       client: TClient,
       registrationId: string,
       form: FormData,
-    ): Promise<ActionState> {
+    ): Promise<FormState> {
       const existing = await store.findForCoordinator(client, registrationId);
       if (!existing || existing.status === "cancelled") return { status: "error" };
 
@@ -746,7 +746,7 @@ export function coordinatorUpdateRegistration(
   supabase: CoordinatorClient,
   registrationId: string,
   form: FormData,
-): Promise<ActionState> {
+): Promise<FormState> {
   return lifecycle().coordinatorUpdateRegistration(supabase, registrationId, form);
 }
 

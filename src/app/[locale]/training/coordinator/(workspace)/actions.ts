@@ -12,10 +12,10 @@ import {
   parseExternalLinkUrl,
   spaceSections,
 } from "@/lib/domain/links";
-import { outlineOrdersFingerprint } from "@/lib/domain/list-sync";
 import { addTrainingLink, removeTrainingLink } from "@/lib/links";
 
 const id = z.uuid();
+const saveStatus = z.enum(["saved", "stale"]);
 const quantity = z.coerce.number().int().min(0).max(10_000);
 const order = z.object({
   training_id: z.uuid(),
@@ -25,35 +25,23 @@ const order = z.object({
   version: z.string().optional(),
 });
 
-// How many outlines were ordered from Lebensstrom, per language, in one save.
+// How many outlines were ordered from Lebensstrom, per language, in one atomic save.
 export async function saveOutlineOrder(_prev: FormState, form: FormData): Promise<FormState> {
   const supabase = await requireAuth();
   const parsed = order.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { status: "error" };
   const { training_id, version, ...counts } = parsed.data;
-  if (version !== undefined) {
-    const { data: current, error: readError } = await supabase
-      .from("outline_orders")
-      .select("language, quantity")
-      .eq("training_id", training_id);
-    if (readError) throw readError;
-    const map = { de: 0, en: 0, ru: 0 };
-    for (const row of current) map[row.language] = row.quantity;
-    if (outlineOrdersFingerprint(map) !== version) {
-      refresh();
-      return { status: "stale" };
-    }
-  }
-  const { error } = await supabase.from("outline_orders").upsert(
-    (["de", "en", "ru"] as const).map((language) => ({
-      training_id,
-      language,
-      quantity: counts[language],
-    })),
-  );
+  const { data, error } = await supabase.rpc("save_outline_orders", {
+    p_training: training_id,
+    p_de: counts.de,
+    p_en: counts.en,
+    p_ru: counts.ru,
+    ...(version !== undefined ? { p_expected_version: version } : {}),
+  });
   if (error) throw error;
+  const status = saveStatus.parse(data);
   refresh();
-  return { status: "saved" };
+  return { status };
 }
 
 const linkSchema = z.object({

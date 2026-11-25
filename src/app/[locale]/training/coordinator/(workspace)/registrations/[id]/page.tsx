@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { Notice } from "@/components/ui/notice";
 import { PageMessage } from "@/components/ui/page-message";
+import { CoordinatorRegistrationForm } from "@/features/coordinator/CoordinatorRegistrationForm";
 import { HistoryList } from "@/features/coordinator/HistoryList";
 import { toPaymentRecord } from "@/features/coordinator/payment-record";
 import { PaymentPanel } from "@/features/coordinator/PaymentPanel";
@@ -10,7 +11,6 @@ import { RegistrationDetailPage } from "@/features/coordinator/RegistrationDetai
 import { SendEditLink } from "@/features/coordinator/SendEditLink";
 import { CancelRegistration } from "@/features/registration/CancelRegistration";
 import { registrationDefaults, trainingFormProps } from "@/features/registration/form-props";
-import { RegistrationForm } from "@/features/registration/RegistrationForm";
 import { requireLocale } from "@/i18n/locale";
 import { redirect } from "@/i18n/navigation";
 import { getCoordinatorClient } from "@/lib/auth";
@@ -69,13 +69,14 @@ export default async function RegistrationDetailRoute({ params }: Props) {
         fees={feesForRegistration(reg, formProps.prices)}
         action={savePayment.bind(null, reg.id)}
       />
-      <RegistrationForm
-        {...formProps}
+      <CoordinatorRegistrationForm
+        sessions={formProps.sessions}
+        localities={formProps.localities}
+        sites={formProps.sites}
+        feeCents={formProps.prices.feeCents}
         defaults={registrationDefaults(reg)}
         version={reg.updated_at}
-        submitLabel={t("saveChanges")}
         action={saveRegistration.bind(null, reg.id)}
-        messages={{ saved: t("saved"), stale: t("stale"), error: t("error") }}
       />
       <SendEditLink action={sendEditLink.bind(null, reg.id)} />
       <CancelRegistration audience="coordinator" action={cancelRegistration.bind(null, reg.id)} />

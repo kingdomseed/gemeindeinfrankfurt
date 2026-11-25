@@ -96,7 +96,7 @@ export default async function ReportPage({ params }: Props) {
         notes: view.notes,
         firstDay: view.firstDay,
         lastDay: view.lastDay,
-        updatedAt: view.updatedAt,
+        updatedAt: view.detailsUpdatedAt,
         save: saveDetails.bind(null, trainingId),
       }}
       questions={questions.map((q) => ({

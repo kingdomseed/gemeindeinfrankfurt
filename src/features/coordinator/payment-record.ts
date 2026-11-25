@@ -4,7 +4,7 @@ import type { RegistrationDetail } from "@/lib/coordinator";
 export type PaymentRecord = Pick<
   RegistrationDetail["registration"],
   | "seat_type"
-  | "updated_at"
+  | "payment_updated_at"
   | "fee_paid"
   | "fee_paid_on"
   | "fee_transaction"
@@ -19,7 +19,7 @@ export type PaymentRecord = Pick<
 export function toPaymentRecord(reg: RegistrationDetail["registration"]): PaymentRecord {
   return {
     seat_type: reg.seat_type,
-    updated_at: reg.updated_at,
+    payment_updated_at: reg.payment_updated_at,
     fee_paid: reg.fee_paid,
     fee_paid_on: reg.fee_paid_on,
     fee_transaction: reg.fee_transaction,

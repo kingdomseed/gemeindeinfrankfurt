@@ -8,8 +8,8 @@ import type { FormState } from "@/features/coordinator/types";
 import { requireAuth } from "@/lib/auth";
 import { fromBerlinWallTime } from "@/lib/domain/berlin-time";
 import { parseEuroCents } from "@/lib/domain/fees";
-import { scheduleFingerprint } from "@/lib/domain/list-sync";
 import { isBerlinWeekday } from "@/lib/domain/sessions";
+import type { Json } from "@/lib/supabase/database.types";
 
 const id = z.uuid();
 const text = (max: number) => z.string().trim().min(1).max(max);
@@ -86,6 +86,22 @@ const intent = z.union([
 ]);
 const DAY_MS = 24 * 3600_000;
 
+const scheduleSaveStatus = z.enum(["saved", "stale"]);
+const scheduleVersionSchema = z.array(
+  z.tuple([z.uuid(), z.number().int(), z.number().int(), z.boolean(), z.boolean()]),
+);
+
+function parseScheduleVersion(rawVersion: FormDataEntryValue | null): Json | undefined | null {
+  if (typeof rawVersion !== "string") return undefined;
+  try {
+    const raw: unknown = JSON.parse(rawVersion);
+    const parsed = scheduleVersionSchema.safeParse(raw);
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
+
 // Saves every message's times, adds a message a day after the last one, or
 // removes the last message when nobody has chosen it.
 export async function saveSchedule(
@@ -102,7 +118,7 @@ export async function saveSchedule(
   const { data: sessions, error } = await supabase
     .from("sessions")
     .select(
-      "id, message_number, starts_at, ends_at, is_tested, is_online, registration_sessions(count), attendance(count)",
+      "id, message_number, starts_at, ends_at, registration_sessions(count), attendance(count)",
     )
     .eq("training_id", trainingId)
     .order("message_number");
@@ -137,11 +153,8 @@ export async function saveSchedule(
     return { status: "saved" };
   }
 
-  const version = form.get("version");
-  if (typeof version === "string" && scheduleFingerprint(sessions) !== version) {
-    refresh();
-    return { status: "stale" };
-  }
+  const expectedState = parseScheduleVersion(form.get("version"));
+  if (expectedState === null) return { status: "error" };
 
   const field = (name: string) => z.string().catch("").parse(form.get(name));
   const updates = [];
@@ -160,15 +173,15 @@ export async function saveSchedule(
       is_online: form.get(`online_${s.id}`) === "on",
     });
   }
-  const results = await Promise.all(
-    updates.map(({ id: sessionId, ...row }) =>
-      supabase.from("sessions").update(row).eq("id", sessionId),
-    ),
-  );
-  const failed = results.find((r) => r.error);
-  if (failed?.error) throw failed.error;
+  const { data: saveResult, error: saveError } = await supabase.rpc("save_schedule", {
+    p_training: trainingId,
+    p_sessions: updates,
+    ...(expectedState !== undefined ? { p_expected_state: expectedState } : {}),
+  });
+  if (saveError) throw saveError;
+  const status = scheduleSaveStatus.parse(saveResult);
   refresh();
-  return { status: "saved" };
+  return { status };
 }
 
 const localityIntent = z.union([z.literal("add"), z.templateLiteral(["remove:", z.uuid()])]);

@@ -302,10 +302,14 @@ describe.skipIf(!DB_URL)("registration lifecycle postgres RPCs", () => {
       ]),
     ).toBe("ru:4");
 
-    // 7. Payment save atomicity + stale rejection as authenticated coordinator.
-    const payTs = psql(testDbUrl, [
+    // 7. Payment save atomicity + stale rejection as authenticated coordinator (uses split payment_updated_at).
+    const beforePayRegTs = psql(testDbUrl, [
       "-c",
       `select updated_at from registrations where id = '${regId}';`,
+    ]);
+    const payTs = psql(testDbUrl, [
+      "-c",
+      `select payment_updated_at from registrations where id = '${regId}';`,
     ]);
     expect(
       psqlAs(
@@ -341,12 +345,16 @@ describe.skipIf(!DB_URL)("registration lifecycle postgres RPCs", () => {
         `select fee_paid || '|' || fee_transaction || '|' || waiver::text from registrations where id = '${regId}';`,
       ]),
     ).toBe("true|BANK-OK|hardship");
+    expect(
+      psql(testDbUrl, ["-c", `select updated_at from registrations where id = '${regId}';`]),
+    ).toBe(beforePayRegTs);
 
     // 7b. Waived seat (p_update_fee = false) preserves existing fee columns while updating outlines.
     const payTs2 = psql(testDbUrl, [
       "-c",
-      `select updated_at from registrations where id = '${regId}';`,
+      `select payment_updated_at from registrations where id = '${regId}';`,
     ]);
+    expect(payTs2).not.toBe(payTs);
     expect(
       psqlAs(
         testDbUrl,

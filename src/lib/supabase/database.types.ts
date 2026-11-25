@@ -320,6 +320,7 @@ export type Database = {
           partner_first_name: string | null;
           partner_last_name: string | null;
           payer_name: string;
+          payment_updated_at: string;
           phone: string;
           seat_type: Database["public"]["Enums"]["seat_type"];
           second_outline_language: Database["public"]["Enums"]["language_code"] | null;
@@ -356,6 +357,7 @@ export type Database = {
           partner_first_name?: string | null;
           partner_last_name?: string | null;
           payer_name?: string;
+          payment_updated_at?: string;
           phone?: string;
           seat_type: Database["public"]["Enums"]["seat_type"];
           second_outline_language?: Database["public"]["Enums"]["language_code"] | null;
@@ -391,6 +393,7 @@ export type Database = {
           partner_first_name?: string | null;
           partner_last_name?: string | null;
           payer_name?: string;
+          payment_updated_at?: string;
           phone?: string;
           seat_type?: Database["public"]["Enums"]["seat_type"];
           second_outline_language?: Database["public"]["Enums"]["language_code"] | null;
@@ -695,6 +698,7 @@ export type Database = {
       training_reports: {
         Row: {
           absences_limited: boolean | null;
+          details_updated_at: string | null;
           first_day: string | null;
           in_person: boolean | null;
           last_day: string | null;
@@ -708,6 +712,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           absences_limited?: boolean | null;
+          details_updated_at?: string | null;
           first_day?: string | null;
           in_person?: boolean | null;
           last_day?: string | null;
@@ -720,6 +725,7 @@ export type Database = {
         };
         Update: {
           absences_limited?: boolean | null;
+          details_updated_at?: string | null;
           first_day?: string | null;
           in_person?: boolean | null;
           last_day?: string | null;
@@ -930,6 +936,24 @@ export type Database = {
       purge_personal_data: { Args: { p_training: string }; Returns: undefined };
       replace_message_hymns: { Args: { p_hymns: Json; p_session: string }; Returns: undefined };
       replace_study_groups: { Args: { p_groups: Json; p_training: string }; Returns: undefined };
+      save_message_hymns: {
+        Args: { p_expected_state?: Json; p_hymns: Json; p_session: string };
+        Returns: string;
+      };
+      save_message_verses: {
+        Args: { p_expected_state?: Json; p_session: string; p_verses: Json };
+        Returns: string;
+      };
+      save_outline_orders: {
+        Args: {
+          p_de: number;
+          p_en: number;
+          p_expected_version?: string;
+          p_ru: number;
+          p_training: string;
+        };
+        Returns: string;
+      };
       save_registration: {
         Args: {
           p_accepted_rules: boolean;
@@ -972,6 +996,21 @@ export type Database = {
           p_waiver?: Database["public"]["Enums"]["fee_waiver"];
           p_waiver_reason: string;
         };
+        Returns: string;
+      };
+      save_report_details: {
+        Args: {
+          p_check_version?: boolean;
+          p_expected_details_updated_at?: string;
+          p_first_day?: string;
+          p_last_day?: string;
+          p_notes: string;
+          p_training: string;
+        };
+        Returns: string;
+      };
+      save_schedule: {
+        Args: { p_expected_state?: Json; p_sessions: Json; p_training: string };
         Returns: string;
       };
       serves_av: { Args: Record<PropertyKey, never>; Returns: boolean };

@@ -2,14 +2,22 @@
 -- Postgres scratch database (scripts/db-types.sh). Hosted Supabase already has
 -- them, so this file is never pushed there.
 
--- Roles belong to the whole server, so a second run finds them already there.
+-- Roles belong to the whole server, so parallel test runs can race on them.
 do $$
+declare
+  r text;
 begin
-  if not exists (select from pg_roles where rolname = 'anon') then
-    create role anon nologin;
-    create role authenticated nologin;
-    create role service_role nologin bypassrls;
-  end if;
+  foreach r in array array['anon', 'authenticated', 'service_role'] loop
+    begin
+      if r = 'service_role' then
+        execute 'create role service_role nologin bypassrls';
+      else
+        execute format('create role %I nologin', r);
+      end if;
+    exception when duplicate_object or unique_violation then
+      null;
+    end;
+  end loop;
 end
 $$;
 
