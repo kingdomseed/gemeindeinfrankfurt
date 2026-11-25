@@ -268,6 +268,14 @@ describe("email composition", () => {
       token: "tok-1",
       siteUrl: "https://gemeindeinfrankfurt.de",
     });
+    const htmlOnlyEdit = composeConfirmation({
+      locale: "en",
+      training: TRAINING,
+      registration: { ...fullTime, groupLanguage: "de" },
+      registrationId: "reg-1",
+      token: "tok-1",
+      siteUrl: "https://gemeindeinfrankfurt.de",
+    });
     const resent = composeConfirmation({
       locale: "en",
       training: TRAINING,
@@ -276,6 +284,9 @@ describe("email composition", () => {
       token: "tok-2",
       siteUrl: "https://gemeindeinfrankfurt.de",
     });
+    expect(htmlOnlyEdit.text).toBe(first.text);
+    expect(htmlOnlyEdit.html).not.toBe(first.html);
+    expect(htmlOnlyEdit.idempotencyKey).not.toBe(first.idempotencyKey);
     expect(first.idempotencyKey).not.toBe(resent.idempotencyKey);
 
     const anaheim = composeConfirmation({

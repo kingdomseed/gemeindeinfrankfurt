@@ -51,7 +51,12 @@ export function createEmailDelivery(transport: MailTransport) {
       if (invalid) throw new Error(`Invalid email: ${invalid}`);
       const idempotencyKey =
         message.idempotencyKey ??
-        deterministicIdempotencyKey("email", [message.to, message.subject, message.text]);
+        deterministicIdempotencyKey("email", [
+          message.to,
+          message.subject,
+          message.text,
+          message.html ?? "",
+        ]);
       const { error } = await transport.send({ ...message, idempotencyKey });
       if (error) throw new Error(`Email failed: ${error.message}`);
     },

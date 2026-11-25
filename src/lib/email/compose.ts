@@ -191,6 +191,7 @@ export function composeConfirmation(opts: {
       r.email,
       subject,
       text,
+      html,
     ]),
   };
 }
