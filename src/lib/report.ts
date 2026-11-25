@@ -146,6 +146,14 @@ export async function saveReportDetails(
   return reportSaveStatus.parse(data) === "saved";
 }
 
+async function removeReceiptBestEffort(store: ReceiptStore, path: string) {
+  try {
+    await store.remove(path);
+  } catch (err) {
+    console.warn("Failed to remove receipt object:", path, err);
+  }
+}
+
 export async function addReimbursement(
   supabase: CoordinatorClient,
   trainingId: string,
@@ -168,7 +176,7 @@ export async function addReimbursement(
     receipt_path: receiptPath,
   });
   if (error) {
-    if (receiptPath) await store.remove(receiptPath).catch(() => undefined);
+    if (receiptPath) await removeReceiptBestEffort(store, receiptPath);
     throw error;
   }
 }
@@ -189,10 +197,10 @@ export async function attachReceipt(
   const path = await store.upload(data.training_id, photo);
   const saved = await supabase.from("reimbursements").update({ receipt_path: path }).eq("id", id);
   if (saved.error) {
-    await store.remove(path).catch(() => undefined);
+    await removeReceiptBestEffort(store, path);
     throw saved.error;
   }
-  if (data.receipt_path) await store.remove(data.receipt_path);
+  if (data.receipt_path) await removeReceiptBestEffort(store, data.receipt_path);
 }
 
 export async function removeReimbursement(
@@ -207,7 +215,7 @@ export async function removeReimbursement(
     .select("receipt_path")
     .single();
   if (error) throw error;
-  if (data.receipt_path) await store.remove(data.receipt_path);
+  if (data.receipt_path) await removeReceiptBestEffort(store, data.receipt_path);
 }
 
 export type ReportView = ReportData & ReportProjection;

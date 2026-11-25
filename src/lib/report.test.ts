@@ -1,5 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import type { CoordinatorClient } from "@/lib/auth";
 import type { ReceiptStore } from "@/lib/receipt-store";
@@ -206,5 +206,38 @@ describe("loadReport and reimbursement receipt storage", () => {
     const data = await loadReport(client, TRAINING_ID, fake.store);
     expect(fake.signedCalls).toEqual([]);
     expect(data.reimbursements).toEqual([]);
+  });
+
+  it("treats post-commit receipt removal errors as best-effort", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const fake = fakeReceiptStore({ uploadedPath: `${TRAINING_ID}/next.png` });
+      const store: ReceiptStore = {
+        ...fake.store,
+        remove: () => Promise.reject(new Error("storage offline")),
+      };
+
+      const replaceClient = stubCoordinatorClient((req) =>
+        req.method === "GET"
+          ? Response.json({ training_id: TRAINING_ID, receipt_path: `${TRAINING_ID}/stale.jpg` })
+          : new Response(null, { status: 204 }),
+      );
+      await expect(
+        attachReceipt(
+          replaceClient,
+          "cost-1",
+          new File(["img"], "next.png", { type: "image/png" }),
+          store,
+        ),
+      ).resolves.toBeUndefined();
+
+      const deleteClient = stubCoordinatorClient(() =>
+        Response.json({ receipt_path: `${TRAINING_ID}/stale.jpg` }),
+      );
+      await expect(removeReimbursement(deleteClient, "cost-1", store)).resolves.toBeUndefined();
+      expect(warn).toHaveBeenCalledTimes(2);
+    } finally {
+      warn.mockRestore();
+    }
   });
 });

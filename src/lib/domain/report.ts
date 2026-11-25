@@ -115,6 +115,8 @@ export type ReportProjection = {
   due: Date | null;
 };
 
+const byTime = (a: string, b: string) => Date.parse(a) - Date.parse(b);
+
 // Pure projection for the Lebensstrom report and printed German questionnaire.
 export function buildReportView(input: {
   prices: FeePrices;
@@ -151,8 +153,8 @@ export function buildReportView(input: {
       ? { value: suggestions[q], suggested: true }
       : { value: own, suggested: false };
   };
-  const starts = sessions.map((s) => s.starts_at).toSorted();
-  const ends = sessions.map((s) => s.ends_at).toSorted();
+  const starts = sessions.map((s) => s.starts_at).toSorted(byTime);
+  const ends = sessions.map((s) => s.ends_at).toSorted(byTime);
   const firstStart = starts[0] ?? null;
   const lastEnd = ends.at(-1) ?? null;
   const dueAnchor = input.lastDay ?? lastEnd;
