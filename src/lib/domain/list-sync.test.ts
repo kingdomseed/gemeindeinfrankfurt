@@ -21,17 +21,15 @@ describe("fingerprints", () => {
   });
 
   it("changes scheduleFingerprint when is_online toggles", () => {
-    const base = [
-      {
-        id: "s1",
-        starts_at: "2027-01-12T18:00:00Z",
-        ends_at: "2027-01-12T20:00:00Z",
-        is_tested: false,
-        is_online: true,
-      },
-    ];
-    expect(scheduleFingerprint(base)).not.toBe(
-      scheduleFingerprint([{ ...base[0]!, is_online: false }]),
+    const onlineSession = {
+      id: "s1",
+      starts_at: "2027-01-12T18:00:00Z",
+      ends_at: "2027-01-12T20:00:00Z",
+      is_tested: false,
+      is_online: true,
+    };
+    expect(scheduleFingerprint([onlineSession])).not.toBe(
+      scheduleFingerprint([{ ...onlineSession, is_online: false }]),
     );
   });
 });
