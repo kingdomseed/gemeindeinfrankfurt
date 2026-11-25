@@ -20,8 +20,8 @@ export function FormField(props: {
           </Span>
         )}
       </Field.Label>
-      {props.help && <Field.HelperText mt="0">{props.help}</Field.HelperText>}
       {props.children}
+      {props.help && <Field.HelperText>{props.help}</Field.HelperText>}
     </Field.Root>
   );
 }

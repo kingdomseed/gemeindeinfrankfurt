@@ -484,7 +484,13 @@
       "av": "AV",
       "joinAv": "Zu AV hinzufügen",
       "leaveAv": "AV entfernen",
-      "avChanged": "AV geändert."
+      "avChanged": "AV geändert.",
+      "signedIn": "Angemeldet",
+      "actions": "Aktionen",
+      "makeAdmin": "Zum Admin machen",
+      "removeAdmin": "Admin entfernen",
+      "adminChanged": "Admin-Rechte geändert.",
+      "inviteAdmin": "Als Admin hinzufügen (kann Koordinatoren hinzufügen, entfernen und verwalten)"
     },
     "groups": {
       "title": "Studiengruppen",

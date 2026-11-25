@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, chakra, Input, SimpleGrid } from "@chakra-ui/react";
+import { Button, chakra, Input, SimpleGrid, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 
 import { FormField } from "@/components/ui/form-field";
@@ -96,6 +96,7 @@ export function TrainingDetailsForm(props: { setup: TrainingSetup; action: FormA
             <Input
               name="fee"
               inputMode="decimal"
+              fontVariantNumeric="tabular-nums"
               value={collab.draft.fee}
               onChange={(e) => collab.edit("fee", e.currentTarget.value)}
             />
@@ -104,6 +105,7 @@ export function TrainingDetailsForm(props: { setup: TrainingSetup; action: FormA
             <Input
               name="outline_price"
               inputMode="decimal"
+              fontVariantNumeric="tabular-nums"
               value={collab.draft.outline_price}
               onChange={(e) => collab.edit("outline_price", e.currentTarget.value)}
             />
@@ -124,14 +126,14 @@ export function TrainingDetailsForm(props: { setup: TrainingSetup; action: FormA
               onChange={(e) => collab.edit("payee_iban", e.currentTarget.value)}
             />
           </FormField>
-          <FormField label={t("reference")} required>
-            <Input
-              name="payment_reference"
-              value={collab.draft.payment_reference}
-              onChange={(e) => collab.edit("payment_reference", e.currentTarget.value)}
-            />
-          </FormField>
         </SimpleGrid>
+        <FormField label={t("reference")} required>
+          <Input
+            name="payment_reference"
+            value={collab.draft.payment_reference}
+            onChange={(e) => collab.edit("payment_reference", e.currentTarget.value)}
+          />
+        </FormField>
       </FormSection>
       <FormSection legend={t("placeAndOrder")}>
         <FormField label={t("venue")} required>
@@ -142,7 +144,7 @@ export function TrainingDetailsForm(props: { setup: TrainingSetup; action: FormA
           />
         </FormField>
         <SimpleGrid columns={{ base: 1, sm: 2 }} gap="4">
-          <FormField label={t("outlineDeadlineDate")} help={t("outlineDeadlineHelp")}>
+          <FormField label={t("outlineDeadlineDate")}>
             <Input
               name="deadline_date"
               type="date"
@@ -159,6 +161,9 @@ export function TrainingDetailsForm(props: { setup: TrainingSetup; action: FormA
             />
           </FormField>
         </SimpleGrid>
+        <Text fontSize="xs" color="fg.muted">
+          {t("outlineDeadlineHelp")}
+        </Text>
       </FormSection>
       <ConflictBanner {...collab.bannerProps} fieldLabels={fieldLabels} />
       <Button type="submit" alignSelf="flex-start" loading={collab.pending}>

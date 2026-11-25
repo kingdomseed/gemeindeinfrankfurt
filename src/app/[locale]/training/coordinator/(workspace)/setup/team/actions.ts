@@ -13,12 +13,14 @@ import {
   loadTeam,
   removeCoordinator,
   sendSignInLink,
+  setAdmin,
   setServesAv,
 } from "@/lib/team";
 
 const newMember = z.object({
   name: z.string().trim().min(1).max(100),
   email: z.email().trim().toLowerCase(),
+  is_admin: z.literal("true").optional(),
 });
 
 // Admins only: gives someone coordinator access and emails them a sign-in link.
@@ -27,7 +29,7 @@ export async function inviteCoordinator(_prev: FormState, form: FormData): Promi
   if (!(await isTeamAdmin(supabase))) return { status: "error" };
   const parsed = newMember.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { status: "error" };
-  await addCoordinator(parsed.data.name, parsed.data.email);
+  await addCoordinator(parsed.data.name, parsed.data.email, parsed.data.is_admin === "true");
   await sendSignInLink(parsed.data.email, requireLocale(await getLocale()));
   refresh();
   return { status: "saved" };
@@ -68,6 +70,22 @@ export async function changeAvService(_prev: FormState, form: FormData): Promise
   const parsed = avChange.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { status: "error" };
   await setServesAv(parsed.data.user_id, parsed.data.serves_av === "true");
+  refresh();
+  return { status: "saved" };
+}
+
+const adminChange = z.object({ user_id: z.uuid(), is_admin: z.enum(["true", "false"]) });
+
+// Admins only: promotes another coordinator to admin or removes their admin role.
+// Self-changes are rejected so an admin cannot remove their own access.
+export async function changeAdminRole(_prev: FormState, form: FormData): Promise<FormState> {
+  const supabase = await requireAuth();
+  if (!(await isTeamAdmin(supabase))) return { status: "error" };
+  const parsed = adminChange.safeParse(Object.fromEntries(form));
+  if (!parsed.success) return { status: "error" };
+  const { data: me } = await supabase.auth.getUser();
+  if (me.user?.id === parsed.data.user_id) return { status: "error" };
+  await setAdmin(parsed.data.user_id, parsed.data.is_admin === "true");
   refresh();
   return { status: "saved" };
 }

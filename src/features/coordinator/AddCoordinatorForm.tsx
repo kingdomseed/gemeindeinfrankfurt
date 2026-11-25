@@ -4,6 +4,7 @@ import { Button, chakra, Heading, Input, SimpleGrid, Text } from "@chakra-ui/rea
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
+import { CheckboxChoice } from "@/components/ui/choice";
 import { FormField } from "@/components/ui/form-field";
 import { Panel } from "@/components/ui/panel";
 
@@ -36,6 +37,9 @@ export function AddCoordinatorForm(props: { action: FormAction }) {
             <Input name="email" type="email" autoComplete="off" spellCheck={false} />
           </FormField>
         </SimpleGrid>
+        <CheckboxChoice name="is_admin" value="true">
+          {t("inviteAdmin")}
+        </CheckboxChoice>
         <Button type="submit" alignSelf="flex-start" loading={pending}>
           {t("invite")}
         </Button>

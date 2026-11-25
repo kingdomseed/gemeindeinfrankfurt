@@ -11,7 +11,13 @@ import { Link as LocaleLink } from "@/i18n/navigation";
 import { isTeamAdmin, loadTeam } from "@/lib/team";
 
 import { requireWorkspaceSession } from "../../workspace";
-import { changeAvService, inviteCoordinator, removeTeamMember, resendSignInLink } from "./actions";
+import {
+  changeAdminRole,
+  changeAvService,
+  inviteCoordinator,
+  removeTeamMember,
+  resendSignInLink,
+} from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +48,12 @@ export default async function TeamPage({ params }: Props) {
       <TeamList
         members={team}
         canManage={admin}
-        actions={{ resend: resendSignInLink, remove: removeTeamMember, av: changeAvService }}
+        actions={{
+          resend: resendSignInLink,
+          remove: removeTeamMember,
+          av: changeAvService,
+          admin: changeAdminRole,
+        }}
       />
       {admin ? (
         <AddCoordinatorForm action={inviteCoordinator} />
