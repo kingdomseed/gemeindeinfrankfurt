@@ -31,7 +31,10 @@ export function Receipt(props: {
   const locale = useLocale();
   const euro = (cents: number) => formatEuro(cents, locale);
   const { fees, summary } = props;
-  const total = fees.trainingCents + fees.outlineCents;
+  const hasTrainingFee = fees.trainingCents > 0;
+  const hasOutlineFee = fees.outlineCents > 0;
+  const hasPayment = hasTrainingFee || hasOutlineFee;
+  const hasBothPayments = hasTrainingFee && hasOutlineFee;
   const messages =
     summary.chosenSessions === null
       ? t("messagesAll", { total: props.sessionCount })
@@ -48,26 +51,27 @@ export function Receipt(props: {
         <Text>{t("receiptBody")}</Text>
       </Panel>
 
-      {total > 0 && (
+      {hasPayment && (
         <Panel aria-labelledby="transfer-heading">
           <Stack gap="1">
             <Heading as="h2" id="transfer-heading" size="lg">
-              {t("receiptPay", { total: euro(total) })}
+              {hasBothPayments ? t("receiptPaySeparate") : t("receiptPayOne")}
             </Heading>
             <Text fontSize="sm" color="fg.muted">
-              {t("payHint")}
+              {hasBothPayments ? t("paySeparateHint") : t("payHint")}
             </Text>
           </Stack>
           <TransferDetails payment={props.payment} />
-          <Box as="dl">
-            <PaymentLine label={t("trainingFee")}>{euro(fees.trainingCents)}</PaymentLine>
-            <PaymentLine label={t("outlines", { count: fees.outlineCount })}>
-              {euro(fees.outlineCents)}
-            </PaymentLine>
-            <PaymentLine label={t("total")} total>
-              {euro(total)}
-            </PaymentLine>
-          </Box>
+          <Stack as="dl" gap="2">
+            {hasTrainingFee && (
+              <PaymentLine label={t("trainingFee")}>{euro(fees.trainingCents)}</PaymentLine>
+            )}
+            {hasOutlineFee && (
+              <PaymentLine label={t("outlines", { count: fees.outlineCount })}>
+                {euro(fees.outlineCents)}
+              </PaymentLine>
+            )}
+          </Stack>
         </Panel>
       )}
 
@@ -111,7 +115,7 @@ export function Receipt(props: {
         </Heading>
         <List.Root as="ol" mt="3" ps="5" gap="2">
           {nextSteps
-            .filter((key) => key !== "nextPaid" || total > 0)
+            .filter((key) => key !== "nextPaid" || hasPayment)
             .map((key) => (
               <List.Item key={key}>{t(key)}</List.Item>
             ))}

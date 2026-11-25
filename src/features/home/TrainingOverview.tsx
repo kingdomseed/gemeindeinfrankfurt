@@ -25,12 +25,12 @@ export function TrainingOverview({ training }: { training: TrainingWithSessions 
     <Stack gap="10">
       <Stack gap="4" align="flex-start">
         <PageHeading title={training.title[locale]} />
-        <Text fontSize="lg" fontVariantNumeric="tabular-nums">
-          {t("fee", {
-            fee: formatEuro(training.fee_cents, locale),
-            outline: formatEuro(training.outline_price_cents, locale),
-          })}
-        </Text>
+        <Stack gap="1" fontSize="lg" fontVariantNumeric="tabular-nums">
+          <Text>{t("feeSeat", { fee: formatEuro(training.fee_cents, locale) })}</Text>
+          <Text>
+            {t("feeOutline", { outline: formatEuro(training.outline_price_cents, locale) })}
+          </Text>
+        </Stack>
         {cutoffs && canRegister(training.sessions) ? (
           <Flex wrap="wrap" align="center" columnGap="5" rowGap="3">
             <Button asChild px="6">

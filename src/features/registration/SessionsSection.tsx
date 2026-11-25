@@ -27,7 +27,7 @@ export function SessionsSection(props: {
           {t("sessionsRequired")}
         </Text>
       )}
-      <SimpleGrid columns={{ base: 1, sm: 2 }} columnGap="6">
+      <SimpleGrid columns={{ base: 1, md: 2 }} columnGap="6">
         {props.sessions.map((s) => (
           <CheckboxChoice
             key={s.id}

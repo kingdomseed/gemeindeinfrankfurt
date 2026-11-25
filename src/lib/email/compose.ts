@@ -98,6 +98,18 @@ export function composeConfirmation(opts: {
   const localityName =
     training.localities.find((l) => l.id === r.localityId)?.name ?? (r.otherLocality || null);
   const siteName = training.sites.find((s) => s.id === r.siteId)?.name ?? null;
+  const euro = (cents: number) => formatEuro(cents, locale);
+  const hasTrainingFee = fees.trainingCents > 0;
+  const hasOutlineFee = fees.outlineCents > 0;
+  const hasPayment = hasTrainingFee || hasOutlineFee;
+  const hasBothPayments = hasTrainingFee && hasOutlineFee;
+  const singleAmount = hasTrainingFee ? fees.trainingCents : fees.outlineCents;
+  const paymentLines = [
+    ...(hasTrainingFee ? [{ label: tr("trainingFee"), value: euro(fees.trainingCents) }] : []),
+    ...(hasOutlineFee
+      ? [{ label: tr("outlines", { count: fees.outlineCount }), value: euro(fees.outlineCents) }]
+      : []),
+  ];
   const calendarLink = calendarUrlFor(siteUrl, locale, token);
   const editLink = editUrl(siteUrl, locale, token);
   const text = [
@@ -107,11 +119,10 @@ export function composeConfirmation(opts: {
     ...(localityName ? [`${tr("summaryLocality")}: ${localityName}`] : []),
     ...(siteName ? [`${tr("summarySite")}: ${siteName}`] : []),
     // Anaheim attendees owe nothing, so they get no payment lines.
-    ...(fees.trainingCents + fees.outlineCents > 0
+    ...(hasPayment
       ? [
-          `${tr("trainingFee")}: ${formatEuro(fees.trainingCents, locale)}`,
-          `${tr("outlines", { count: fees.outlineCount })}: ${formatEuro(fees.outlineCents, locale)}`,
-          tr("payTo", {
+          ...paymentLines.map((l) => `${l.label}: ${l.value}`),
+          tr(hasBothPayments ? "paySeparateTo" : "payTo", {
             payee: training.payee_name,
             iban: training.payee_iban,
             reference: training.payment_reference,
@@ -124,8 +135,6 @@ export function composeConfirmation(opts: {
     t("editLink", { url: editLink }),
   ].join("\n");
 
-  const euro = (cents: number) => formatEuro(cents, locale);
-  const total = fees.trainingCents + fees.outlineCents;
   const sessionCount = training.sessions.length;
   const messages = picksSessions(r.seatType)
     ? tr("messagesChosen", { count: r.sessionIds.length, total: sessionCount })
@@ -153,24 +162,20 @@ export function composeConfirmation(opts: {
           ]
         : []),
     ],
-    transfer:
-      total > 0
-        ? {
-            title: t("transferTitle", { total: euro(total) }),
-            lines: [
-              { label: tr("trainingFee"), value: euro(fees.trainingCents) },
-              {
-                label: tr("outlines", { count: fees.outlineCount }),
-                value: euro(fees.outlineCents),
-              },
-            ],
-            account: [
-              { label: tr("payee"), value: training.payee_name },
-              { label: tr("iban"), value: training.payee_iban },
-              { label: tr("reference"), value: training.payment_reference },
-            ],
-          }
-        : null,
+    transfer: hasPayment
+      ? {
+          title: hasBothPayments
+            ? t("transferSeparateTitle")
+            : t("transferTitle", { total: euro(singleAmount) }),
+          ...(hasBothPayments ? { note: tr("paySeparateHint") } : {}),
+          lines: paymentLines,
+          account: [
+            { label: tr("payee"), value: training.payee_name },
+            { label: tr("iban"), value: training.payee_iban },
+            { label: tr("reference"), value: training.payment_reference },
+          ],
+        }
+      : null,
     calendar: { label: tc("yourMessages"), url: calendarLink },
     change: {
       intro: t("changeIntro"),
@@ -230,17 +235,21 @@ export function composePaymentReminder(training: TrainingWithSessions, r: Recipi
   const { t, tr } = translatorsFor(r.locale);
   const euro = (cents: number) => formatEuro(cents, r.locale);
   const title = training.title[r.locale];
+  const bothOpen = r.feeOpenCents > 0 && r.outlineOpenCents > 0;
+  const singleOpen = r.feeOpenCents > 0 ? r.feeOpenCents : r.outlineOpenCents;
   const text = [
     t("hello", { name: greetingName(r) }),
     "",
-    t("reminderIntro", { training: title, total: euro(r.openCents) }),
+    bothOpen
+      ? t("reminderIntroSeparate", { training: title })
+      : t("reminderIntro", { training: title, total: euro(singleOpen) }),
     "",
     ...(r.feeOpenCents > 0 ? [`${tr("trainingFee")}: ${euro(r.feeOpenCents)}`] : []),
     ...(r.outlineOpenCents > 0
       ? [`${tr("outlines", { count: r.outlineCount })}: ${euro(r.outlineOpenCents)}`]
       : []),
     "",
-    tr("payTo", {
+    tr(bothOpen ? "paySeparateTo" : "payTo", {
       payee: training.payee_name,
       iban: training.payee_iban,
       reference: training.payment_reference,

@@ -235,9 +235,30 @@ describe("email composition", () => {
       "https://gemeindeinfrankfurt.de/en/training/r/tok-1/calendar.ics",
     );
     expect(enMail.text).toContain(TRAINING.payee_iban);
+    expect(enMail.text).toContain("€70.00");
+    expect(enMail.text).toContain("€10.00");
+    expect(enMail.text).toContain("separately");
+    expect(enMail.text).not.toContain("80.00");
     expect(enMail.html).toContain("&lt;script&gt;alert(1)&lt;/script&gt; &amp; Ben");
     expect(enMail.html).not.toContain("<script>");
     expect(enMail.html).toContain("English + Russian");
+    expect(enMail.html).toContain("Please make two separate transfers");
+    expect(enMail.html).not.toContain("80.00");
+
+    const waivedWithOutline = composeConfirmation({
+      locale: "en",
+      training: TRAINING,
+      registration: { ...fullTime, secondOutlineLanguage: null, waived: true },
+      registrationId: "reg-waived",
+      token: "tok-waived",
+      siteUrl: "https://gemeindeinfrankfurt.de",
+    });
+    expect(waivedWithOutline.text).not.toContain("Training fee");
+    expect(waivedWithOutline.text).toContain("Outlines (1): €5.00");
+    expect(waivedWithOutline.text).not.toContain("separately");
+    expect(waivedWithOutline.html).not.toContain("Training fee");
+    expect(waivedWithOutline.html).toContain("Please transfer €5.00");
+    expect(waivedWithOutline.html).not.toContain("Please make two separate transfers");
 
     const deMail = composeConfirmation({
       locale: "de",
@@ -360,6 +381,8 @@ describe("email composition", () => {
     expect(both.text).toContain("Hello Sarah, David,");
     expect(both.text).toContain("Training fee");
     expect(both.text).toContain("Outlines (1)");
+    expect(both.text).toContain("separately");
+    expect(both.text).not.toContain("75.00");
 
     const feeOnly = composePaymentReminder(TRAINING, {
       ...baseRecipient,
@@ -368,8 +391,10 @@ describe("email composition", () => {
       outlineOpenCents: 0,
     });
     expect(feeOnly.text).toContain("Hello Sarah,");
+    expect(feeOnly.text).toContain("€70.00 is still open");
     expect(feeOnly.text).toContain("Training fee");
     expect(feeOnly.text).not.toContain("Outlines (");
+    expect(feeOnly.text).not.toContain("separately");
 
     const outlineOnly = composePaymentReminder(TRAINING, {
       ...baseRecipient,
@@ -377,8 +402,10 @@ describe("email composition", () => {
       openCents: 500,
       feeOpenCents: 0,
     });
+    expect(outlineOnly.text).toContain("€5.00 is still open");
     expect(outlineOnly.text).not.toContain("Training fee");
     expect(outlineOnly.text).toContain("Outlines (1)");
+    expect(outlineOnly.text).not.toContain("separately");
   });
 
   it("composes before-training emails with session filtering, English note fallback, and all 7 verbatim rules", () => {
@@ -399,6 +426,7 @@ describe("email composition", () => {
     const mail = composeBeforeTraining(TRAINING, partTimer, { en: "Join WhatsApp here." });
     expect(mail.text).toContain("Join WhatsApp here.");
     expect(mail.text).toContain("Botschaft 2");
+    expect(mail.text).toContain("19:00–21:00 Uhr");
     expect(mail.text).not.toContain("Botschaft 1");
     expect(mail.text).not.toContain("Botschaft 3");
     expect(mail.text).toContain(de.register.attendRules.seat);
@@ -415,6 +443,7 @@ describe("email composition", () => {
       { en: "English note" },
     );
     expect(full.text).toContain("Message 1");
+    expect(full.text).toContain("7:00 – 9:00 PM");
     expect(full.text).toContain("Message 2");
     expect(full.text).toContain("Message 3");
     expect(full.text).toContain(en.register.materialsRule);
