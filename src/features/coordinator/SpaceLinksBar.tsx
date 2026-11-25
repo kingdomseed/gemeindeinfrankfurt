@@ -35,22 +35,29 @@ export function SpaceLinksBar(props: {
 
   if (!section) return null;
   const visible = props.links.filter((l) => l.section === section);
+  const active = visible.length > 0 || open;
 
   return (
     <Box
       as="section"
       aria-label={t("title")}
-      bg="bg.subtle"
-      borderWidth="1px"
+      bg={active ? "bg.subtle" : "transparent"}
+      borderWidth={active ? "1px" : "0"}
       borderColor="border"
       rounded="lg"
-      px="4"
-      py="3"
-      mb="6"
+      px={active ? { base: "3", sm: "4" } : "0"}
+      py={active ? "2.5" : "0"}
+      mb={active ? "5" : "4"}
       _print={{ display: "none" }}
     >
-      <Flex justify="space-between" align="center" gap="3" wrap="wrap">
-        <Text fontSize="sm" fontWeight="medium" color="fg.muted">
+      <Flex justify="space-between" align="center" gap="3" flexWrap="nowrap">
+        <Text
+          fontSize={active ? "sm" : "xs"}
+          fontWeight={active ? "medium" : "normal"}
+          color="fg.muted"
+          minW="0"
+          truncate
+        >
           {t("title")}
         </Text>
         <Button
@@ -58,6 +65,10 @@ export function SpaceLinksBar(props: {
           size="xs"
           variant="outline"
           color="fg"
+          flexShrink={0}
+          minH="9"
+          touchAction="manipulation"
+          userSelect="none"
           onClick={() => setOpen((was) => !was)}
           aria-expanded={open}
         >
@@ -71,6 +82,7 @@ export function SpaceLinksBar(props: {
             <HStack
               key={link.id}
               gap="2"
+              maxW="full"
               bg="bg"
               borderWidth="1px"
               borderColor="border"
@@ -87,11 +99,13 @@ export function SpaceLinksBar(props: {
                 fontWeight="medium"
                 textDecoration="underline"
                 color="fg"
+                minW="0"
+                truncate
               >
                 {link.title}
               </Link>
               {link.addedBy && (
-                <Text as="span" fontSize="xs" color="fg.muted">
+                <Text as="span" fontSize="xs" color="fg.muted" flexShrink={0}>
                   · {link.addedBy}
                 </Text>
               )}

@@ -27,22 +27,32 @@ export function CoordinatorShell(props: {
     <>
       <Box borderBottomWidth="1px" borderColor="border" _print={{ display: "none" }}>
         <Container maxW="6xl">
-          <Flex wrap="wrap" align="center" justify="space-between" columnGap="4" rowGap="2" pt="3">
-            <Flex wrap="wrap" align="center" gap="3">
-              <Text fontSize="sm" color="fg.muted">
-                <Text as="span" fontWeight="semibold" color="fg">
-                  {t("title")}
-                </Text>
-                {props.trainingTitle && ` · ${props.trainingTitle}`}
+          <Flex align="center" justify="space-between" gap="3" pt={{ base: "2", md: "3" }} pb="1">
+            <Text fontSize="sm" color="fg.muted" minW="0" truncate>
+              <Text as="span" fontWeight="semibold" color="fg">
+                {t("title")}
               </Text>
-              <PresenceBar />
-            </Flex>
+              {props.trainingTitle && ` · ${props.trainingTitle}`}
+            </Text>
             <form action={props.signOut}>
-              <Button type="submit" variant="ghost" size="sm" color="fg">
+              <Button
+                type="submit"
+                variant="ghost"
+                size={{ base: "xs", md: "sm" }}
+                color="fg.muted"
+                _hover={{ color: "fg", bg: "bg.subtle" }}
+                px="2"
+                me="-2"
+                minH="10"
+                flexShrink={0}
+                touchAction="manipulation"
+                userSelect="none"
+              >
                 {t("signOut")}
               </Button>
             </form>
           </Flex>
+          <PresenceBar />
           <SiteNav
             label={t("nav.label")}
             items={coordinatorSections.map((s) => ({
@@ -58,7 +68,7 @@ export function CoordinatorShell(props: {
         id={mainContentId}
         tabIndex={-1}
         maxW="6xl"
-        pt="6"
+        pt={{ base: "4", md: "6" }}
         pb="16"
         _print={{ p: "0", maxW: "none" }}
       >
