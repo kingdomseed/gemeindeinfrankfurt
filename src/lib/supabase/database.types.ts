@@ -650,6 +650,45 @@ export type Database = {
           },
         ];
       };
+      training_links: {
+        Row: {
+          added_by: string;
+          created_at: string;
+          id: string;
+          section: string;
+          title: string;
+          training_id: string;
+          url: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          added_by?: string;
+          created_at?: string;
+          id?: string;
+          section: string;
+          title: string;
+          training_id: string;
+          url: string;
+        };
+        Update: {
+          added_by?: string;
+          created_at?: string;
+          id?: string;
+          section?: string;
+          title?: string;
+          training_id?: string;
+          url?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "training_links_training_id_fkey";
+            columns: ["training_id"];
+            isOneToOne: false;
+            referencedRelation: "trainings";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       training_reports: {
         Row: {
           absences_limited: boolean | null;

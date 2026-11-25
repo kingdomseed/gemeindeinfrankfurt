@@ -29,7 +29,7 @@ export type RegistrationDefaults = PersonDefaults & {
 // What the register and edit actions answer; the form maps status to text.
 // Only a new registration ends in "done", with the link to its own calendar.
 export type ActionState =
-  | { status: "idle" | "error" | "duplicate" | "closed" | "saved" }
+  | { status: "idle" | "error" | "duplicate" | "closed" | "saved" | "stale" }
   | { status: "done"; calendarUrl: string };
 
 export type ActionStatus = ActionState["status"];

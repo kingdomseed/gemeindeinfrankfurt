@@ -8,35 +8,67 @@ import { ColumnHeader } from "@/components/ui/column-header";
 import { FormSection } from "@/components/ui/form-section";
 import type { TrainingSetup } from "@/lib/coordinator";
 import { toBerlinWallTime } from "@/lib/domain/berlin-time";
+import { scheduleFingerprint } from "@/lib/domain/list-sync";
 
+import { ConflictBanner } from "./ConflictBanner";
 import { FormResult } from "./FormResult";
 import type { FormAction, FormState } from "./types";
+import { useCollaborativeForm } from "./useCollaborativeForm";
 
-// Each message's date, start and end in Frankfurt time, and whether it is
-// tested. The registration form shows the schedule in all three languages
-// from these times. One action takes the submit button's `intent`: save,
-// add a message, or remove one.
-export function ScheduleForm(props: { sessions: TrainingSetup["sessions"]; action: FormAction }) {
+type SessionRow = TrainingSetup["sessions"][number];
+
+function toScheduleDraft(sessions: readonly SessionRow[]): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const s of sessions) {
+    const start = toBerlinWallTime(new Date(s.starts_at));
+    const end = toBerlinWallTime(new Date(s.ends_at));
+    out[`date_${s.id}`] = start.date;
+    out[`start_${s.id}`] = start.time;
+    out[`end_${s.id}`] = end.time;
+    out[`tested_${s.id}`] = s.is_tested ? "on" : "";
+  }
+  return out;
+}
+
+function resultState(status: string, message: string | null): FormState {
+  if (status === "saved") return { status: "saved" };
+  if (status === "error") return { status: "error", ...(message ? { message } : {}) };
+  return { status: "idle" };
+}
+
+function ScheduleEditor(props: { sessions: readonly SessionRow[]; action: FormAction }) {
   const t = useTranslations("coordinator.setup");
-  const [state, formAction, pending] = useActionState<FormState, FormData>(props.action, {
-    status: "idle",
+  const [structState, structAction, structPending] = useActionState<FormState, FormData>(
+    props.action,
+    { status: "idle" },
+  );
+  const collab = useCollaborativeForm({
+    server: toScheduleDraft(props.sessions),
+    version: scheduleFingerprint(props.sessions),
+    action: props.action,
   });
-  // Only the last message can be removed. Its button belongs to this small
-  // form (through its `form` attribute), so Enter in a field always saves.
+
+  const fieldLabels: Record<string, string> = {};
+  for (const s of props.sessions) {
+    const prefix = `${t("message")} ${s.message_number}`;
+    fieldLabels[`date_${s.id}`] = `${prefix} · ${t("date")}`;
+    fieldLabels[`start_${s.id}`] = `${prefix} · ${t("start")}`;
+    fieldLabels[`end_${s.id}`] = `${prefix} · ${t("end")}`;
+    fieldLabels[`tested_${s.id}`] = `${prefix} · ${t("tested")}`;
+  }
+
   return (
     <>
+      <form id="add-session" action={structAction} hidden>
+        <input type="hidden" name="intent" value="add" />
+      </form>
       {props.sessions.slice(-1).map((s) => (
-        <form key={s.id} id={`remove-${s.id}`} action={formAction} hidden>
+        <form key={s.id} id={`remove-${s.id}`} action={structAction} hidden>
           <input type="hidden" name="intent" value={`remove:${s.id}`} />
         </form>
       ))}
-      <chakra.form
-        action={formAction}
-        key={props.sessions.map((s) => s.id + s.starts_at + s.ends_at + s.is_tested).join()}
-        display="flex"
-        flexDirection="column"
-        gap="4"
-      >
+      <chakra.form onSubmit={collab.submit} display="flex" flexDirection="column" gap="4">
+        <input type="hidden" name="intent" value="save" />
         <FormSection legend={t("schedule")}>
           <Text fontSize="sm" color="fg.muted">
             {t("scheduleHelp")}
@@ -58,9 +90,11 @@ export function ScheduleForm(props: { sessions: TrainingSetup["sessions"]; actio
               <Table.Body>
                 {props.sessions.map((s, i) => {
                   const last = i === props.sessions.length - 1;
-                  const start = toBerlinWallTime(new Date(s.starts_at));
-                  const end = toBerlinWallTime(new Date(s.ends_at));
                   const label = (field: string) => `${field}, ${t("message")} ${s.message_number}`;
+                  const dateKey = `date_${s.id}`;
+                  const startKey = `start_${s.id}`;
+                  const endKey = `end_${s.id}`;
+                  const testedKey = `tested_${s.id}`;
                   return (
                     <Table.Row key={s.id} bg="transparent">
                       <Table.Cell as="th" scope="row" fontWeight="normal">
@@ -69,8 +103,9 @@ export function ScheduleForm(props: { sessions: TrainingSetup["sessions"]; actio
                       <Table.Cell>
                         <Input
                           type="date"
-                          name={`date_${s.id}`}
-                          defaultValue={start.date}
+                          name={dateKey}
+                          value={collab.draft[dateKey] ?? ""}
+                          onChange={(e) => collab.edit(dateKey, e.currentTarget.value)}
                           aria-label={label(t("date"))}
                           w="44"
                         />
@@ -78,8 +113,9 @@ export function ScheduleForm(props: { sessions: TrainingSetup["sessions"]; actio
                       <Table.Cell>
                         <Input
                           type="time"
-                          name={`start_${s.id}`}
-                          defaultValue={start.time}
+                          name={startKey}
+                          value={collab.draft[startKey] ?? ""}
+                          onChange={(e) => collab.edit(startKey, e.currentTarget.value)}
                           aria-label={label(t("start"))}
                           w="28"
                         />
@@ -87,14 +123,21 @@ export function ScheduleForm(props: { sessions: TrainingSetup["sessions"]; actio
                       <Table.Cell>
                         <Input
                           type="time"
-                          name={`end_${s.id}`}
-                          defaultValue={end.time}
+                          name={endKey}
+                          value={collab.draft[endKey] ?? ""}
+                          onChange={(e) => collab.edit(endKey, e.currentTarget.value)}
                           aria-label={label(t("end"))}
                           w="28"
                         />
                       </Table.Cell>
                       <Table.Cell>
-                        <Checkbox.Root name={`tested_${s.id}`} defaultChecked={s.is_tested}>
+                        <Checkbox.Root
+                          name={testedKey}
+                          checked={collab.draft[testedKey] === "on"}
+                          onCheckedChange={(e) =>
+                            collab.edit(testedKey, e.checked === true ? "on" : "")
+                          }
+                        >
                           <Checkbox.HiddenInput />
                           <Checkbox.Control />
                           <Checkbox.Label srOnly>{label(t("tested"))}</Checkbox.Label>
@@ -108,7 +151,7 @@ export function ScheduleForm(props: { sessions: TrainingSetup["sessions"]; actio
                             variant="ghost"
                             size="sm"
                             color="fg"
-                            disabled={s.picked > 0}
+                            disabled={s.picked > 0 || structPending}
                             title={s.picked > 0 ? t("cannotRemove") : undefined}
                           >
                             {t("remove")}
@@ -122,16 +165,47 @@ export function ScheduleForm(props: { sessions: TrainingSetup["sessions"]; actio
             </Table.Root>
           </Table.ScrollArea>
         </FormSection>
+        <ConflictBanner
+          status={collab.state.status}
+          conflicts={collab.state.conflicts}
+          fieldLabels={fieldLabels}
+          serverValues={collab.state.server}
+          onUseServerField={collab.takeServerField}
+          onAcceptAllServer={collab.acceptAllServer}
+          onKeepLocal={collab.keepLocal}
+        />
         <HStack gap="3" wrap="wrap">
-          <Button type="submit" name="intent" value="save" loading={pending}>
+          <Button type="submit" loading={collab.pending}>
             {t("saveSchedule")}
           </Button>
-          <Button type="submit" name="intent" value="add" variant="outline" color="fg">
+          <Button
+            type="submit"
+            form="add-session"
+            variant="outline"
+            color="fg"
+            loading={structPending}
+          >
             {t("addMessage")}
           </Button>
         </HStack>
-        <FormResult state={state} saved={t("saved")} />
+        <FormResult
+          state={resultState(collab.state.status, collab.state.errorMessage)}
+          saved={t("saved")}
+        />
+        {structState.status !== "idle" && <FormResult state={structState} saved={t("saved")} />}
       </chakra.form>
     </>
+  );
+}
+
+// Each message's date, start and end in Frankfurt time, and whether it is
+// tested. Remounts only when sessions are added/removed; edits merge live.
+export function ScheduleForm(props: { sessions: TrainingSetup["sessions"]; action: FormAction }) {
+  return (
+    <ScheduleEditor
+      key={props.sessions.map((s) => s.id).join(",")}
+      sessions={props.sessions}
+      action={props.action}
+    />
   );
 }

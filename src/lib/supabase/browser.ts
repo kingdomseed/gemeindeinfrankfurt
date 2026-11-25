@@ -8,3 +8,7 @@ import { supabaseAnonKey, supabaseUrl } from "./env";
 export function createClient() {
   return createBrowserClient<Database>(supabaseUrl(), supabaseAnonKey());
 }
+
+export function isSubscribed(status: string): boolean {
+  return status === "SUBSCRIBED";
+}

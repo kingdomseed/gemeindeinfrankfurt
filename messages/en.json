@@ -832,6 +832,37 @@
       "overLimitNote": "{count, plural, one {# person was} other {# people were}} over the absence limit.",
       "costsLine": "{count, plural, one {# invoice} other {# invoices}}, {total} in all. Invoices attached.",
       "noCosts": "None."
+    },
+    "presence": {
+      "viewing": "Also here: {names}",
+      "editing": "Currently editing: {names}"
+    },
+    "links": {
+      "title": "Shared links for this space",
+      "attach": "Attach link",
+      "cancel": "Close",
+      "urlLabel": "Link (Google Doc, Sheet, Slides…)",
+      "urlPlaceholder": "https://docs.google.com/...",
+      "titleLabel": "Title",
+      "optional": "optional",
+      "add": "Add",
+      "remove": "Remove",
+      "invalidUrl": "Please enter a full link starting with https://.",
+      "kind": {
+        "google_doc": "Google Doc",
+        "google_sheet": "Google Sheet",
+        "google_slides": "Google Slides",
+        "google_drive": "Google Drive",
+        "link": "Link"
+      }
+    },
+    "sync": {
+      "merged": "Updated with another coordinator's changes. Your own edits are still here.",
+      "conflictTitle": "Another coordinator changed the same fields",
+      "conflictBody": "Your edits were kept so nothing is lost. Use their version or keep yours.",
+      "useTheirs": "Use their version",
+      "acceptAll": "Use all their changes",
+      "keepMine": "Keep mine"
     }
   },
   "privacy": {

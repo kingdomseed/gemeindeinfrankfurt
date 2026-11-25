@@ -168,11 +168,19 @@ export async function saveRegistration(
   const input = validateForTraining(parsed.data, training);
   if (!input) return { status: "error" };
 
-  const { error } = await supabase
-    .from("registrations")
-    .update(toRow(input))
-    .eq("id", registrationId);
-  if (error) throw error;
+  const version = form.get("version");
+  const query = supabase.from("registrations").update(toRow(input)).eq("id", registrationId);
+  if (typeof version === "string" && version.length > 0) {
+    const { data: updated, error } = await query.eq("updated_at", version).select("id");
+    if (error) throw error;
+    if (updated.length === 0) {
+      refresh();
+      return { status: "stale" };
+    }
+  } else {
+    const { error } = await query;
+    if (error) throw error;
+  }
   await replaceSessions(registrationId, input);
   await recordEvents(supabase, registrationId, ["edited"]);
   refresh();

@@ -7,6 +7,7 @@ import { z } from "zod";
 import type { FormState } from "@/features/coordinator/types";
 import { requireAuth } from "@/lib/auth";
 import { fromBerlinWallTime, parseEuroCents } from "@/lib/domain/berlin-time";
+import { scheduleFingerprint } from "@/lib/domain/list-sync";
 
 const id = z.uuid();
 const text = (max: number) => z.string().trim().min(1).max(max);
@@ -31,6 +32,7 @@ const details = z.object({
   venue: text(300),
   deadline_date: z.union([z.iso.date(), z.literal("")]),
   deadline_time: z.union([z.iso.time({ precision: -1 }), z.literal("")]),
+  version: z.string().optional(),
 });
 
 // The training's name, fee, payment details, venue and outline deadline.
@@ -49,20 +51,28 @@ export async function saveTrainingDetails(
       ? null
       : fromBerlinWallTime({ date: d.deadline_date, time: d.deadline_time || "16:00" });
   if (d.deadline_date !== "" && !deadline) return { status: "error" };
-  const { error } = await supabase
-    .from("trainings")
-    .update({
-      title: { de: d.title_de, en: d.title_en, ru: d.title_ru },
-      fee_cents: d.fee,
-      outline_price_cents: d.outline_price,
-      payee_name: d.payee_name,
-      payee_iban: d.payee_iban,
-      payment_reference: d.payment_reference,
-      venue: d.venue,
-      outline_order_deadline: deadline?.toISOString() ?? null,
-    })
-    .eq("id", trainingId);
-  if (error) throw error;
+  const row = {
+    title: { de: d.title_de, en: d.title_en, ru: d.title_ru },
+    fee_cents: d.fee,
+    outline_price_cents: d.outline_price,
+    payee_name: d.payee_name,
+    payee_iban: d.payee_iban,
+    payment_reference: d.payment_reference,
+    venue: d.venue,
+    outline_order_deadline: deadline?.toISOString() ?? null,
+  };
+  const query = supabase.from("trainings").update(row).eq("id", trainingId);
+  if (d.version !== undefined) {
+    const { data: updated, error } = await query.eq("updated_at", d.version).select("id");
+    if (error) throw error;
+    if (updated.length === 0) {
+      refresh();
+      return { status: "stale" };
+    }
+  } else {
+    const { error } = await query;
+    if (error) throw error;
+  }
   refresh();
   return { status: "saved" };
 }
@@ -90,7 +100,7 @@ export async function saveSchedule(
   const { data: sessions, error } = await supabase
     .from("sessions")
     .select(
-      "id, message_number, starts_at, ends_at, registration_sessions(count), attendance(count)",
+      "id, message_number, starts_at, ends_at, is_tested, registration_sessions(count), attendance(count)",
     )
     .eq("training_id", trainingId)
     .order("message_number");
@@ -122,6 +132,12 @@ export async function saveSchedule(
     if (deleteError) throw deleteError;
     refresh();
     return { status: "saved" };
+  }
+
+  const version = form.get("version");
+  if (typeof version === "string" && scheduleFingerprint(sessions) !== version) {
+    refresh();
+    return { status: "stale" };
   }
 
   const field = (name: string) => z.string().catch("").parse(form.get(name));
