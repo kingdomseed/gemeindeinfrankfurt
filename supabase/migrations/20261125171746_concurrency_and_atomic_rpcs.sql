@@ -12,11 +12,13 @@ begin
   if (
     new.fee_paid, new.fee_paid_on, new.fee_transaction,
     new.outline_paid, new.outline_paid_on, new.outline_transaction,
-    new.waiver, new.waiver_reason
+    new.waiver, new.waiver_reason,
+    new.status, new.seat_type, new.outline_language, new.second_outline_language
   ) is distinct from (
     old.fee_paid, old.fee_paid_on, old.fee_transaction,
     old.outline_paid, old.outline_paid_on, old.outline_transaction,
-    old.waiver, old.waiver_reason
+    old.waiver, old.waiver_reason,
+    old.status, old.seat_type, old.outline_language, old.second_outline_language
   ) then
     new.payment_updated_at = now();
   end if;
@@ -246,8 +248,22 @@ begin
     end if;
 
     insert into training_reports (training_id, notes, first_day, last_day, details_updated_at)
-    values (p_training, p_notes, p_first_day, p_last_day, now());
-    return 'saved';
+    values (p_training, p_notes, p_first_day, p_last_day, now())
+    on conflict (training_id) do nothing;
+
+    if found then
+      return 'saved';
+    end if;
+
+    select details_updated_at
+    into v_existing_ts
+    from training_reports
+    where training_id = p_training
+    for no key update;
+
+    if not found then
+      return 'stale';
+    end if;
   end if;
 
   if p_check_version and v_existing_ts is distinct from p_expected_details_updated_at then

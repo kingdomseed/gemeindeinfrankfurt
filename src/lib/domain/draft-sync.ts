@@ -13,6 +13,7 @@ export type DraftSyncState<T extends Record<string, string>> = {
   draft: T;
   baseVersion: string;
   serverVersion: string;
+  pendingFromVersion: string | null;
   conflicts: (keyof T)[];
   mergedFields: (keyof T)[];
   status: DraftSyncStatus;
@@ -48,6 +49,7 @@ export function initialDraftSync<T extends Record<string, string>>(
     draft: { ...server },
     baseVersion: version,
     serverVersion: version,
+    pendingFromVersion: null,
     conflicts: [],
     mergedFields: [],
     status: "clean",
@@ -159,6 +161,7 @@ export function draftSyncReducer<T extends Record<string, string>>(
         base: { ...state.server },
         draft: { ...state.server },
         baseVersion: state.serverVersion,
+        pendingFromVersion: null,
         conflicts: [],
         mergedFields: [],
         status: "clean",
@@ -170,6 +173,7 @@ export function draftSyncReducer<T extends Record<string, string>>(
         ...state,
         base: { ...state.server },
         baseVersion: state.serverVersion,
+        pendingFromVersion: null,
         conflicts: [],
         mergedFields: [],
         status: dirty ? "dirty" : "clean",
@@ -177,21 +181,46 @@ export function draftSyncReducer<T extends Record<string, string>>(
       };
     }
     case "save_start":
-      return { ...state, status: "saving", errorMessage: null };
+      return {
+        ...state,
+        pendingFromVersion: state.serverVersion,
+        status: "saving",
+        errorMessage: null,
+      };
     case "save_ok": {
-      const version = action.version ?? state.serverVersion;
       const draft = { ...action.saved };
       for (const field of keysOf(state.draft)) {
         if (state.draft[field] !== action.saved[field]) {
           draft[field] = state.draft[field];
         }
       }
+      if (
+        action.version === undefined &&
+        state.pendingFromVersion !== null &&
+        state.serverVersion !== state.pendingFromVersion
+      ) {
+        const seeded: DraftSyncState<T> = {
+          base: { ...action.saved },
+          server: { ...action.saved },
+          draft,
+          baseVersion: state.pendingFromVersion,
+          serverVersion: state.pendingFromVersion,
+          pendingFromVersion: null,
+          conflicts: [],
+          mergedFields: [],
+          status: "saved",
+          errorMessage: null,
+        };
+        return handleServerUpdated(seeded, state.server, state.serverVersion);
+      }
+      const version = action.version ?? state.serverVersion;
       return {
         base: { ...action.saved },
         server: { ...action.saved },
         draft,
         baseVersion: version,
         serverVersion: version,
+        pendingFromVersion: null,
         conflicts: [],
         mergedFields: [],
         status: sameValues(draft, action.saved) ? "saved" : "dirty",
@@ -199,9 +228,15 @@ export function draftSyncReducer<T extends Record<string, string>>(
       };
     }
     case "save_stale":
-      return { ...state, status: "conflict", mergedFields: [], errorMessage: null };
+      return {
+        ...state,
+        pendingFromVersion: null,
+        status: "conflict",
+        mergedFields: [],
+        errorMessage: null,
+      };
     case "save_error":
-      return { ...state, status: "error", errorMessage: action.message };
+      return { ...state, pendingFromVersion: null, status: "error", errorMessage: action.message };
     default:
       return action satisfies never;
   }

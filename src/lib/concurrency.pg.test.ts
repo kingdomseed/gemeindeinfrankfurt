@@ -158,6 +158,33 @@ describe.skipIf(!DB_URL)("concurrency split timestamps and atomic RPCs", () => {
     ]).split("|");
     expect(regTsAfterEdit).not.toBe(regTs0);
     expect(payTsAfterEdit).toBe(payTsAfterPay);
+
+    // 4. Adding a second outline changes the amount owed, so it bumps payment_updated_at and invalidates stale payment saves.
+    expect(
+      psqlAs(
+        testDbUrl,
+        "authenticated",
+        `select save_registration(
+          '${regId}', 'part_time', 'Test', 'User', 'tu@example.test', '', '', 'en', '', true, true,
+          false, array[]::uuid[], '${regTsAfterEdit}'::timestamptz, null,
+          null, null, '${LOC_ID}', '${SITE_ID}', 'en', 'ru'
+        );`,
+        COORD_USER_ID,
+      ),
+    ).toBe("saved");
+
+    expect(
+      psqlAs(
+        testDbUrl,
+        "authenticated",
+        `select save_registration_payment(
+          '${regId}', '${payTsAfterEdit}'::timestamptz,
+          true, true, 'TX-1', true, true, 'TX-2', '', array['outline_received'],
+          '2027-01-10'::date, '2027-01-11'::date, null
+        );`,
+        COORD_USER_ID,
+      ),
+    ).toBe("stale");
   });
 
   it("isolates training_reports details_updated_at from questionnaire saves and checks versions atomically", () => {
