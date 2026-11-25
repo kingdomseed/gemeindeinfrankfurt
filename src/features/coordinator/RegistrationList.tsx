@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { FormField } from "@/components/ui/form-field";
+import { displayLocality } from "@/lib/domain/locality";
 import { inListFilter, listFilters, type ListFilter } from "@/lib/domain/payments";
 
 import { displayName } from "./display";
@@ -25,10 +26,11 @@ export function RegistrationList(props: {
   const [filter, setFilter] = useState<ListFilter>(props.initialFilter);
   const needle = query.trim().toLowerCase();
   const inFilter = (f: ListFilter) => rows.filter((r) => inListFilter(r.registration, r.fees, f));
-  const shown = inFilter(filter).filter(
-    ({ registration: r }) =>
-      needle === "" || `${displayName(r)} ${r.email}`.toLowerCase().includes(needle),
-  );
+  const shown = inFilter(filter).filter(({ registration: r }) => {
+    if (needle === "") return true;
+    const place = `${displayLocality(r) ?? ""} ${r.training_sites?.name ?? ""}`;
+    return `${displayName(r)} ${r.email} ${place}`.toLowerCase().includes(needle);
+  });
   return (
     <Stack gap="4">
       <Box maxW="md">

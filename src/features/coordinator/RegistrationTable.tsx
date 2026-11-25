@@ -3,6 +3,7 @@ import { useLocale, useTranslations } from "next-intl";
 
 import { ColumnHeader } from "@/components/ui/column-header";
 import { formatEuro } from "@/lib/domain/fees";
+import { displayLocality } from "@/lib/domain/locality";
 import { openCents } from "@/lib/domain/payments";
 
 import { displayLanguages } from "./display";
@@ -22,6 +23,7 @@ export function RegistrationTable({ rows }: { rows: readonly RegistrationRow[] }
             <ColumnHeader>{t("name")}</ColumnHeader>
             <ColumnHeader>{t("seat")}</ColumnHeader>
             <ColumnHeader>{t("locality")}</ColumnHeader>
+            <ColumnHeader>{t("site")}</ColumnHeader>
             <ColumnHeader>{t("languages")}</ColumnHeader>
             <ColumnHeader align="end">{t("toPay")}</ColumnHeader>
             <ColumnHeader>{t("donation")}</ColumnHeader>
@@ -35,7 +37,8 @@ export function RegistrationTable({ rows }: { rows: readonly RegistrationRow[] }
                 <RegistrationName row={row} />
               </Table.Cell>
               <Table.Cell>{t(`seatShort.${row.registration.seat_type}`)}</Table.Cell>
-              <Table.Cell>{row.registration.localities?.name ?? ""}</Table.Cell>
+              <Table.Cell>{displayLocality(row.registration) ?? ""}</Table.Cell>
+              <Table.Cell>{row.registration.training_sites?.name ?? ""}</Table.Cell>
               <Table.Cell>{displayLanguages(row.registration)}</Table.Cell>
               <Table.Cell textAlign="end" fontVariantNumeric="tabular-nums">
                 {formatEuro(openCents(row.registration, row.fees), locale)}

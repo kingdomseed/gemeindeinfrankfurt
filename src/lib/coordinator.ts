@@ -9,7 +9,7 @@ import type { createClient } from "@/lib/supabase/server";
 type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 const REGISTRATION_COLUMNS =
-  "id, created_at, status, seat_type, first_name, last_name, partner_first_name, partner_last_name, email, group_language, outline_language, second_outline_language, waiver, fee_paid, outline_paid, localities(name), registration_sessions(session_id)";
+  "id, created_at, status, seat_type, first_name, last_name, partner_first_name, partner_last_name, email, other_locality, group_language, outline_language, second_outline_language, waiver, fee_paid, outline_paid, localities(name), training_sites(name), registration_sessions(session_id)";
 
 async function newestTraining(supabase: CoordinatorClient) {
   const { data, error } = await supabase
@@ -168,11 +168,13 @@ export async function loadTrainingSetup(supabase: CoordinatorClient, trainingId:
   const { data, error } = await supabase
     .from("trainings")
     .select(
-      "id, updated_at, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, outline_order_deadline, sessions(id, message_number, starts_at, ends_at, is_tested, registration_sessions(count)), localities(id, name, is_home, registrations(count))",
+      "id, updated_at, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, outline_order_deadline, sessions(id, message_number, starts_at, ends_at, is_tested, registration_sessions(count)), localities(id, name, is_home, registrations(count)), training_sites(id, name, sort_order, registrations(count))",
     )
     .eq("id", trainingId)
     .order("message_number", { referencedTable: "sessions" })
     .order("name", { referencedTable: "localities" })
+    .order("sort_order", { referencedTable: "training_sites" })
+    .order("name", { referencedTable: "training_sites" })
     .single();
   if (error) throw error;
   const count = z.array(z.object({ count: z.number() })).transform((c) => c[0]?.count ?? 0);
@@ -192,6 +194,11 @@ export async function loadTrainingSetup(supabase: CoordinatorClient, trainingId:
       name: l.name,
       is_home: l.is_home,
       used: count.parse(l.registrations),
+    })),
+    sites: data.training_sites.map((s) => ({
+      id: s.id,
+      name: s.name,
+      used: count.parse(s.registrations),
     })),
   };
 }

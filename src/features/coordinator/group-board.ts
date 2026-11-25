@@ -1,4 +1,5 @@
 import type { CoordinatorRegistration } from "@/lib/coordinator";
+import { displayLocality } from "@/lib/domain/locality";
 import type { Language } from "@/lib/domain/types";
 import type { StudyGroup } from "@/lib/groups";
 
@@ -12,14 +13,16 @@ export type GroupMember = {
   seat: CoordinatorRegistration["seat_type"];
   language: Language;
   locality: string | null;
+  site: string | null;
 };
 
 export type BoardGroup = {
   id: string;
   number: number;
   language: Language;
-  // Cities of its members, most members first.
+  // Cities and attendance sites of its members, most members first.
   localities: string[];
+  sites: string[];
   members: GroupMember[];
 };
 
@@ -33,18 +36,20 @@ function member(r: CoordinatorRegistration): GroupMember {
         : [`${r.first_name} ${r.last_name}`],
     seat: r.seat_type,
     language: r.group_language,
-    locality: r.localities?.name ?? null,
+    locality: displayLocality(r),
+    site: r.training_sites?.name ?? null,
   };
 }
 
-function citiesByCount(members: readonly GroupMember[]) {
+function valuesByCount(members: readonly GroupMember[], pick: (m: GroupMember) => string | null) {
   const count = new Map<string, number>();
   for (const m of members) {
-    if (m.locality) count.set(m.locality, (count.get(m.locality) ?? 0) + 1);
+    const v = pick(m);
+    if (v) count.set(v, (count.get(v) ?? 0) + 1);
   }
   return [...count.entries()]
     .toSorted((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .map(([city]) => city);
+    .map(([value]) => value);
 }
 
 // The study groups with their active members, and the active people in no
@@ -68,7 +73,8 @@ export function groupBoard(
       id: g.id,
       number: g.number,
       language: g.language,
-      localities: citiesByCount(members),
+      localities: valuesByCount(members, (m) => m.locality),
+      sites: valuesByCount(members, (m) => m.site),
       members,
     };
   });

@@ -7,11 +7,12 @@ import { FormField } from "./form-field";
 // defaultValue, onChange); the options are the children.
 export function SelectField(props: {
   label: string;
+  required?: boolean | undefined;
   children: ReactNode;
   field: Parameters<typeof NativeSelect.Field>[0];
 }) {
   return (
-    <FormField label={props.label}>
+    <FormField label={props.label} required={props.required}>
       <NativeSelect.Root>
         <NativeSelect.Field {...props.field}>{props.children}</NativeSelect.Field>
         <NativeSelect.Indicator />

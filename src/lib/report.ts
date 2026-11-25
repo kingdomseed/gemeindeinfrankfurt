@@ -5,6 +5,7 @@ import { absenceCounts, overLimit } from "@/lib/domain/attendance";
 import {
   absencesWithinLimit,
   absentAt,
+  reportedLocalities,
   reportNumbers,
   type ReportNumbers,
 } from "@/lib/domain/report";
@@ -57,7 +58,7 @@ export async function loadReport(
   supabase: CoordinatorClient,
   trainingId: string,
 ): Promise<ReportData> {
-  const [report, training, costs, tests] = await Promise.all([
+  const [report, home, regs, costs, tests] = await Promise.all([
     supabase
       .from("training_reports")
       .select(
@@ -66,10 +67,16 @@ export async function loadReport(
       .eq("training_id", trainingId)
       .maybeSingle(),
     supabase
-      .from("trainings")
-      .select("localities(name, is_home, registrations(count))")
-      .eq("id", trainingId)
-      .single(),
+      .from("localities")
+      .select("name")
+      .eq("training_id", trainingId)
+      .eq("is_home", true)
+      .maybeSingle(),
+    supabase
+      .from("registrations")
+      .select("status, other_locality, localities(name, is_home)")
+      .eq("training_id", trainingId)
+      .eq("status", "active"),
     supabase
       .from("reimbursements")
       .select("id, description, amount_cents, paid_by, paid_on, receipt_path")
@@ -81,7 +88,8 @@ export async function loadReport(
       .eq("sessions.training_id", trainingId),
   ]);
   if (report.error) throw report.error;
-  if (training.error) throw training.error;
+  if (home.error) throw home.error;
+  if (regs.error) throw regs.error;
   if (costs.error) throw costs.error;
   if (tests.error) throw tests.error;
 
@@ -107,10 +115,7 @@ export async function loadReport(
     notes: r?.notes ?? "",
     firstDay: r?.first_day ?? null,
     lastDay: r?.last_day ?? null,
-    localities: training.data.localities
-      .filter((l) => !l.is_home && (l.registrations[0]?.count ?? 0) > 0)
-      .map((l) => l.name)
-      .toSorted((a, b) => a.localeCompare(b)),
+    localities: reportedLocalities(regs.data, home.data?.name),
     testsPlanned: tests.count ?? 0,
     reimbursements: costs.data.map((c) => ({
       id: c.id,

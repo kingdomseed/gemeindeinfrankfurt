@@ -91,7 +91,9 @@ export default async function GroupsPage({ params }: Props) {
           <StudyGroupCard
             key={g.id}
             title={t("groupNumber", { number: g.number })}
-            meta={[tl(g.language), g.localities.join(", ")].filter(Boolean).join(" · ")}
+            meta={[tl(g.language), g.sites.join(", ") || g.localities.join(", ")]
+              .filter(Boolean)
+              .join(" · ")}
             members={g.members}
             targets={board.groups
               .filter((other) => other.id !== g.id)

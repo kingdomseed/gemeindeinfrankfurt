@@ -5,6 +5,7 @@ import {
   absencesWithinLimit,
   absentAt,
   parseEuroCents,
+  reportedLocalities,
   reportDue,
   reportNumbers,
   type ReportRegistration,
@@ -95,5 +96,35 @@ describe("parseEuroCents", () => {
     expect(parseEuroCents(" 320 € ")).toBe(32_000);
     expect(parseEuroCents("1.234,50")).toBeNull();
     expect(parseEuroCents("abc")).toBeNull();
+  });
+});
+
+describe("reportedLocalities", () => {
+  it("lists neighboring active localities and custom cities, excluding home and cancelled rows", () => {
+    const names = reportedLocalities(
+      [
+        {
+          status: "active",
+          other_locality: "",
+          localities: { name: "Frankfurt am Main", is_home: true },
+        },
+        {
+          status: "cancelled",
+          other_locality: "",
+          localities: { name: "Theley", is_home: false },
+        },
+        {
+          status: "active",
+          other_locality: "",
+          localities: { name: "Saarbrücken", is_home: false },
+        },
+        { status: "active", other_locality: "  Mainz ", localities: null },
+        { status: "active", other_locality: "mainz", localities: null },
+        { status: "active", other_locality: "frankfurt am main", localities: null },
+        { status: "active", other_locality: "", localities: null },
+      ],
+      "Frankfurt am Main",
+    );
+    expect(names).toEqual(["Mainz", "Saarbrücken"]);
   });
 });

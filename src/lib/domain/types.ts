@@ -19,3 +19,14 @@ export type Session = {
   starts_at: string;
   ends_at: string;
 };
+
+export type LocalityOption = {
+  id: string;
+  name: string;
+  is_home: boolean;
+};
+
+export type SiteOption = {
+  id: string;
+  name: string;
+};

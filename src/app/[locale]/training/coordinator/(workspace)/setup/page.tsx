@@ -8,11 +8,12 @@ import { LocalitiesForm } from "@/features/coordinator/LocalitiesForm";
 import { ScheduleForm } from "@/features/coordinator/ScheduleForm";
 import { teamHref } from "@/features/coordinator/sections";
 import { TrainingDetailsForm } from "@/features/coordinator/TrainingDetailsForm";
+import { TrainingSitesForm } from "@/features/coordinator/TrainingSitesForm";
 import { requireLocale } from "@/i18n/locale";
 import { Link as LocaleLink, redirect } from "@/i18n/navigation";
 import { loadCoordination, loadTrainingSetup } from "@/lib/coordinator";
 
-import { saveLocalities, saveSchedule, saveTrainingDetails } from "./actions";
+import { saveLocalities, saveSchedule, saveTrainingDetails, saveTrainingSites } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,7 @@ export default async function SetupPage({ params }: Props) {
       <TrainingDetailsForm setup={setup} action={saveTrainingDetails.bind(null, setup.id)} />
       <ScheduleForm sessions={setup.sessions} action={saveSchedule.bind(null, setup.id)} />
       <LocalitiesForm localities={setup.localities} action={saveLocalities.bind(null, setup.id)} />
+      <TrainingSitesForm sites={setup.sites} action={saveTrainingSites.bind(null, setup.id)} />
       <TitledSection title={t("coordinators")}>
         <Text color="fg.muted">{t("coordinatorsHelp")}</Text>
         <Button asChild variant="outline" color="fg" alignSelf="flex-start" mt="3">

@@ -7,7 +7,13 @@ import { getTrainingById } from "@/lib/data";
 import { canCancel, canChangeSeatOrSessions } from "@/lib/domain/cutoffs";
 import type { Language } from "@/lib/domain/types";
 import { sendCancellation, sendConfirmation } from "@/lib/email/send";
-import { findByToken, parseRegistrationForm, replaceSessions, toRow } from "@/lib/registrations";
+import {
+  findByToken,
+  parseRegistrationForm,
+  replaceSessions,
+  toRow,
+  validateForTraining,
+} from "@/lib/registrations";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // react-doctor-disable-next-line react-doctor/server-auth-actions -- registrants have no account; the edit token checked by findByToken is the credential.
@@ -33,9 +39,8 @@ export async function updateRegistration(
 
   const parsed = parseRegistrationForm(form);
   if (!parsed.success) return { status: "error" };
-  const input = parsed.data;
-  const allowed = new Set(training.sessions.map((s) => s.id));
-  if (!input.session_ids.every((id) => allowed.has(id))) return { status: "error" };
+  const input = validateForTraining(parsed.data, training);
+  if (!input) return { status: "error" };
 
   const { error } = await createAdminClient()
     .from("registrations")

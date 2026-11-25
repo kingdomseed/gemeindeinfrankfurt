@@ -312,6 +312,7 @@ export type Database = {
           last_name: string;
           locale: Database["public"]["Enums"]["language_code"];
           locality_id: string | null;
+          other_locality: string;
           outline_language: Database["public"]["Enums"]["language_code"] | null;
           outline_paid: boolean;
           outline_paid_on: string | null;
@@ -322,6 +323,7 @@ export type Database = {
           phone: string;
           seat_type: Database["public"]["Enums"]["seat_type"];
           second_outline_language: Database["public"]["Enums"]["language_code"] | null;
+          site_id: string | null;
           status: Database["public"]["Enums"]["registration_status"];
           training_id: string;
           updated_at: string;
@@ -346,6 +348,7 @@ export type Database = {
           last_name: string;
           locale: Database["public"]["Enums"]["language_code"];
           locality_id?: string | null;
+          other_locality?: string;
           outline_language?: Database["public"]["Enums"]["language_code"] | null;
           outline_paid?: boolean;
           outline_paid_on?: string | null;
@@ -356,6 +359,7 @@ export type Database = {
           phone?: string;
           seat_type: Database["public"]["Enums"]["seat_type"];
           second_outline_language?: Database["public"]["Enums"]["language_code"] | null;
+          site_id?: string | null;
           status?: Database["public"]["Enums"]["registration_status"];
           training_id: string;
           updated_at?: string;
@@ -379,6 +383,7 @@ export type Database = {
           last_name?: string;
           locale?: Database["public"]["Enums"]["language_code"];
           locality_id?: string | null;
+          other_locality?: string;
           outline_language?: Database["public"]["Enums"]["language_code"] | null;
           outline_paid?: boolean;
           outline_paid_on?: string | null;
@@ -389,6 +394,7 @@ export type Database = {
           phone?: string;
           seat_type?: Database["public"]["Enums"]["seat_type"];
           second_outline_language?: Database["public"]["Enums"]["language_code"] | null;
+          site_id?: string | null;
           status?: Database["public"]["Enums"]["registration_status"];
           training_id?: string;
           updated_at?: string;
@@ -401,6 +407,13 @@ export type Database = {
             columns: ["locality_id"];
             isOneToOne: false;
             referencedRelation: "localities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "registrations_site_id_fkey";
+            columns: ["site_id"];
+            isOneToOne: false;
+            referencedRelation: "training_sites";
             referencedColumns: ["id"];
           },
           {
@@ -680,6 +693,36 @@ export type Database = {
             foreignKeyName: "training_reports_training_id_fkey";
             columns: ["training_id"];
             isOneToOne: true;
+            referencedRelation: "trainings";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      training_sites: {
+        Row: {
+          id: string;
+          name: string;
+          sort_order: number;
+          training_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          id?: string;
+          name: string;
+          sort_order?: number;
+          training_id: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          sort_order?: number;
+          training_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "training_sites_training_id_fkey";
+            columns: ["training_id"];
+            isOneToOne: false;
             referencedRelation: "trainings";
             referencedColumns: ["id"];
           },

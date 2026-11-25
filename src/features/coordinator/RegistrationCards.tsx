@@ -2,12 +2,20 @@ import { HStack, List, Text } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { formatEuro } from "@/lib/domain/fees";
+import { displayLocality } from "@/lib/domain/locality";
 import { openCents } from "@/lib/domain/payments";
 
 import { displayLanguages } from "./display";
 import { PaymentTag } from "./PaymentTag";
 import { RegistrationName } from "./RegistrationName";
 import type { RegistrationRow } from "./types";
+
+function placeLabel(r: RegistrationRow["registration"]) {
+  const locality = displayLocality(r);
+  const site = r.training_sites?.name ?? null;
+  if (locality && site && locality !== site) return `${locality} → ${site}`;
+  return locality ?? site;
+}
 
 // Phones: one card per registration.
 export function RegistrationCards({ rows }: { rows: readonly RegistrationRow[] }) {
@@ -26,7 +34,7 @@ export function RegistrationCards({ rows }: { rows: readonly RegistrationRow[] }
           <Text fontSize="sm" color="fg.muted">
             {[
               t(`seatShort.${row.registration.seat_type}`),
-              row.registration.localities?.name,
+              placeLabel(row.registration),
               displayLanguages(row.registration),
             ]
               .filter(Boolean)

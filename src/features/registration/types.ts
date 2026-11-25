@@ -17,6 +17,9 @@ export type PersonDefaults = {
 export type RegistrationDefaults = PersonDefaults & {
   seat_type: SeatType;
   session_ids: string[];
+  locality_id: string | null;
+  other_locality: string;
+  site_id: string | null;
   group_language: Language;
   outline_language: Language | null;
   second_outline_language: Language | null;
@@ -39,6 +42,8 @@ export type CancelState = { status: "idle" | "error" | "cancelled" | "locked" };
 export type SubmittedSummary = {
   name: string;
   email: string;
+  locality: string | null;
+  site: string | null;
   seatType: SeatType;
   chosenSessions: number | null;
   groupLanguage: Language;

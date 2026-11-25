@@ -31,8 +31,16 @@ from (
 
 insert into localities (training_id, name, is_home) values
   ('00000000-0000-4000-8000-000000000001', 'Frankfurt am Main', true),
+  ('00000000-0000-4000-8000-000000000001', 'Darmstadt', false),
+  ('00000000-0000-4000-8000-000000000001', 'Heidelberg', false),
+  ('00000000-0000-4000-8000-000000000001', 'Kaiserslautern', false),
   ('00000000-0000-4000-8000-000000000001', 'Mannheim', false),
-  ('00000000-0000-4000-8000-000000000001', 'Heidelberg', false);
+  ('00000000-0000-4000-8000-000000000001', 'Saarbrücken', false),
+  ('00000000-0000-4000-8000-000000000001', 'Theley', false);
+
+insert into training_sites (training_id, name, sort_order) values
+  ('00000000-0000-4000-8000-000000000001', 'Frankfurt am Main', 1),
+  ('00000000-0000-4000-8000-000000000001', 'Mannheim/Heidelberg', 2);
 
 insert into services (training_id, name, sort_order) values
   ('00000000-0000-4000-8000-000000000001', 'Technik', 1),

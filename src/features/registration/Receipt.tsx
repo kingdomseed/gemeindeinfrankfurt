@@ -87,6 +87,10 @@ export function Receipt(props: {
           rowGap="2"
         >
           <DetailItem label={t("summaryName")}>{summary.name}</DetailItem>
+          {summary.locality && (
+            <DetailItem label={t("summaryLocality")}>{summary.locality}</DetailItem>
+          )}
+          {summary.site && <DetailItem label={t("summarySite")}>{summary.site}</DetailItem>}
           <DetailItem label={t("summarySeat")}>
             {t(`seat.${summary.seatType}`)}, {messages}
           </DetailItem>
