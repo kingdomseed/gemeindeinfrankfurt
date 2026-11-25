@@ -896,15 +896,93 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      cancel_registration: { Args: { p_id: string }; Returns: string };
       copy_training: {
         Args: { p_shift: string; p_slug: string; p_source: string; p_title: Json };
+        Returns: string;
+      };
+      create_registration: {
+        Args: {
+          p_accepted_rules: boolean;
+          p_comments: string;
+          p_confirmed_adult: boolean;
+          p_edit_token_hash: string;
+          p_email: string;
+          p_first_name: string;
+          p_group_language: Database["public"]["Enums"]["language_code"];
+          p_last_name: string;
+          p_locale: Database["public"]["Enums"]["language_code"];
+          p_locality_id?: string;
+          p_other_locality: string;
+          p_outline_language?: Database["public"]["Enums"]["language_code"];
+          p_partner_first_name?: string;
+          p_partner_last_name?: string;
+          p_phone: string;
+          p_seat_type: Database["public"]["Enums"]["seat_type"];
+          p_second_outline_language?: Database["public"]["Enums"]["language_code"];
+          p_session_ids: string[];
+          p_site_id?: string;
+          p_training_id: string;
+        };
         Returns: string;
       };
       is_coordinator: { Args: Record<PropertyKey, never>; Returns: boolean };
       purge_personal_data: { Args: { p_training: string }; Returns: undefined };
       replace_message_hymns: { Args: { p_hymns: Json; p_session: string }; Returns: undefined };
       replace_study_groups: { Args: { p_groups: Json; p_training: string }; Returns: undefined };
+      save_registration: {
+        Args: {
+          p_accepted_rules: boolean;
+          p_comments: string;
+          p_confirmed_adult: boolean;
+          p_email: string;
+          p_expected_updated_at?: string;
+          p_first_name: string;
+          p_group_language: Database["public"]["Enums"]["language_code"];
+          p_id: string;
+          p_last_name: string;
+          p_locale?: Database["public"]["Enums"]["language_code"];
+          p_locality_id?: string;
+          p_other_locality: string;
+          p_outline_language?: Database["public"]["Enums"]["language_code"];
+          p_partner_first_name?: string;
+          p_partner_last_name?: string;
+          p_phone: string;
+          p_replace_sessions: boolean;
+          p_seat_type: Database["public"]["Enums"]["seat_type"];
+          p_second_outline_language?: Database["public"]["Enums"]["language_code"];
+          p_session_ids: string[];
+          p_site_id?: string;
+        };
+        Returns: string;
+      };
+      save_registration_payment: {
+        Args: {
+          p_events: string[];
+          p_expected_updated_at: string;
+          p_fee_paid: boolean;
+          p_fee_paid_on?: string;
+          p_fee_transaction: string;
+          p_id: string;
+          p_outline_paid: boolean;
+          p_outline_paid_on?: string;
+          p_outline_transaction: string;
+          p_update_fee: boolean;
+          p_update_outline: boolean;
+          p_waiver?: Database["public"]["Enums"]["fee_waiver"];
+          p_waiver_reason: string;
+        };
+        Returns: string;
+      };
       serves_av: { Args: Record<PropertyKey, never>; Returns: boolean };
+      sync_registration_study_group: {
+        Args: {
+          p_language: Database["public"]["Enums"]["language_code"];
+          p_registration: string;
+          p_training: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       attendance_mark: "present" | "absent" | "excused" | "not_registered";

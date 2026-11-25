@@ -200,6 +200,7 @@
     "notFound": "This link is not valid",
     "save": "Save changes",
     "saved": "Saved. We have sent you an updated confirmation.",
+    "stale": "Not saved. This registration was changed in the meantime. Reload the page to see the latest details, or submit again to apply your changes.",
     "cancel": "Cancel registration",
     "cancelConfirm": "Do you really want to cancel this registration?",
     "cancelled": "This registration is cancelled.",

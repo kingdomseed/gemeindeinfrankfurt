@@ -13,6 +13,23 @@ export function isLanguage(value: unknown): value is Language {
   return languages.some((l) => l === value);
 }
 
+export type FeeWaiver = "anaheim" | "ukraine_not_employed" | "hardship";
+export type AssignableFeeWaiver = "hardship" | "anaheim";
+
+export const registrationEventKinds = [
+  "fee_received",
+  "fee_unmarked",
+  "outline_received",
+  "outline_unmarked",
+  "waiver_set",
+  "waiver_removed",
+  "payment_edited",
+  "edited",
+  "cancelled",
+  "link_sent",
+] as const;
+export type RegistrationEventKind = (typeof registrationEventKinds)[number];
+
 export type Session = {
   id: string;
   message_number: number;

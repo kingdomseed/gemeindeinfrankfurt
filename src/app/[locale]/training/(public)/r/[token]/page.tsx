@@ -76,9 +76,10 @@ export default async function EditPage({ params }: PageProps<"/[locale]/training
         {...formProps}
         seatLocked={seatLocked}
         defaults={registrationDefaults(reg)}
+        version={reg.updated_at}
         submitLabel={t("save")}
         action={updateRegistration.bind(null, token, locale)}
-        messages={{ saved: t("saved"), error: tr("error") }}
+        messages={{ saved: t("saved"), stale: t("stale"), error: tr("error") }}
       />
       {!seatLocked && (
         <CancelRegistration
