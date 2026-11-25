@@ -170,7 +170,7 @@ begin
   into v_existing
   from registrations
   where id = p_id
-  for update;
+  for no key update;
 
   if not found or v_existing.status <> 'active' then
     return 'not_found';
@@ -236,7 +236,7 @@ begin
   into v_status
   from registrations
   where id = p_id
-  for update;
+  for no key update;
 
   if not found or v_status <> 'active' then
     return 'not_found';
@@ -283,7 +283,7 @@ begin
   into v_existing
   from registrations
   where id = p_id
-  for update;
+  for no key update;
 
   if not found or v_existing.status <> 'active' or v_existing.seat_type = 'anaheim' then
     return 'not_found';
