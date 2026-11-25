@@ -13,6 +13,8 @@ export type DraftSyncState<T extends Record<string, string>> = {
   draft: T;
   baseVersion: string;
   serverVersion: string;
+  pendingFromVersion: string | null;
+  coupledGroups: readonly (readonly (keyof T)[])[];
   conflicts: (keyof T)[];
   mergedFields: (keyof T)[];
   status: DraftSyncStatus;
@@ -26,7 +28,7 @@ export type DraftSyncAction<T extends Record<string, string>> =
   | { type: "accept_all_server" }
   | { type: "keep_local" }
   | { type: "save_start" }
-  | { type: "save_ok"; saved: T; version: string }
+  | { type: "save_ok"; saved: T; version?: string }
   | { type: "save_stale" }
   | { type: "save_error"; message: string | null };
 
@@ -41,6 +43,7 @@ function sameValues<T extends Record<string, string>>(a: T, b: T): boolean {
 export function initialDraftSync<T extends Record<string, string>>(
   server: T,
   version: string,
+  coupledGroups: readonly (readonly (keyof T)[])[] = [],
 ): DraftSyncState<T> {
   return {
     base: { ...server },
@@ -48,6 +51,8 @@ export function initialDraftSync<T extends Record<string, string>>(
     draft: { ...server },
     baseVersion: version,
     serverVersion: version,
+    pendingFromVersion: null,
+    coupledGroups,
     conflicts: [],
     mergedFields: [],
     status: "clean",
@@ -87,8 +92,24 @@ function handleServerUpdated<T extends Record<string, string>>(
   const draft = { ...state.draft };
   const conflictSet = new Set(state.conflicts);
   const mergedFields: (keyof T)[] = [];
+  const coupledBlocked = new Set<keyof T>();
+
+  for (const group of state.coupledGroups) {
+    const anyLocal = group.some((k) => state.draft[k] !== state.base[k]);
+    const anyRemote = group.some((k) => next[k] !== state.server[k]);
+    const anyDiff = group.some((k) => state.draft[k] !== next[k]);
+    if (anyLocal && anyRemote && anyDiff) {
+      for (const k of group) {
+        if (state.draft[k] !== next[k]) {
+          coupledBlocked.add(k);
+          conflictSet.add(k);
+        }
+      }
+    }
+  }
 
   for (const k of keysOf(state.server)) {
+    if (coupledBlocked.has(k)) continue;
     const serverChanged = next[k] !== state.server[k];
     const locallyEdited = state.draft[k] !== state.base[k];
     if (!locallyEdited) {
@@ -143,9 +164,15 @@ export function draftSyncReducer<T extends Record<string, string>>(
       return handleServerUpdated(state, action.next, action.version);
     case "use_server_field": {
       const { field } = action;
-      const draft = { ...state.draft, [field]: state.server[field] };
-      const base = { ...state.base, [field]: state.server[field] };
-      const conflicts = state.conflicts.filter((f) => f !== field);
+      const group = state.coupledGroups.find((g) => g.includes(field)) ?? [field];
+      const draft = { ...state.draft };
+      const base = { ...state.base };
+      const resolved = new Set(group);
+      for (const k of group) {
+        draft[k] = state.server[k];
+        base[k] = state.server[k];
+      }
+      const conflicts = state.conflicts.filter((f) => !resolved.has(f));
       const baseVersion = conflicts.length === 0 ? state.serverVersion : state.baseVersion;
       const dirty = !sameValues(draft, state.server);
       let status: DraftSyncStatus = "clean";
@@ -159,6 +186,7 @@ export function draftSyncReducer<T extends Record<string, string>>(
         base: { ...state.server },
         draft: { ...state.server },
         baseVersion: state.serverVersion,
+        pendingFromVersion: null,
         conflicts: [],
         mergedFields: [],
         status: "clean",
@@ -170,6 +198,7 @@ export function draftSyncReducer<T extends Record<string, string>>(
         ...state,
         base: { ...state.server },
         baseVersion: state.serverVersion,
+        pendingFromVersion: null,
         conflicts: [],
         mergedFields: [],
         status: dirty ? "dirty" : "clean",
@@ -177,23 +206,64 @@ export function draftSyncReducer<T extends Record<string, string>>(
       };
     }
     case "save_start":
-      return { ...state, status: "saving", errorMessage: null };
-    case "save_ok":
+      return {
+        ...state,
+        pendingFromVersion: state.serverVersion,
+        status: "saving",
+        errorMessage: null,
+      };
+    case "save_ok": {
+      const draft = { ...action.saved };
+      for (const field of keysOf(state.draft)) {
+        if (state.draft[field] !== action.saved[field]) {
+          draft[field] = state.draft[field];
+        }
+      }
+      if (
+        action.version === undefined &&
+        state.pendingFromVersion !== null &&
+        state.serverVersion !== state.pendingFromVersion
+      ) {
+        const seeded: DraftSyncState<T> = {
+          base: { ...action.saved },
+          server: { ...action.saved },
+          draft,
+          baseVersion: state.pendingFromVersion,
+          serverVersion: state.pendingFromVersion,
+          pendingFromVersion: null,
+          coupledGroups: state.coupledGroups,
+          conflicts: [],
+          mergedFields: [],
+          status: "saved",
+          errorMessage: null,
+        };
+        return handleServerUpdated(seeded, state.server, state.serverVersion);
+      }
+      const version = action.version ?? state.serverVersion;
       return {
         base: { ...action.saved },
         server: { ...action.saved },
-        draft: { ...action.saved },
-        baseVersion: action.version,
-        serverVersion: action.version,
+        draft,
+        baseVersion: version,
+        serverVersion: version,
+        pendingFromVersion: null,
+        coupledGroups: state.coupledGroups,
         conflicts: [],
         mergedFields: [],
-        status: "saved",
+        status: sameValues(draft, action.saved) ? "saved" : "dirty",
         errorMessage: null,
       };
+    }
     case "save_stale":
-      return { ...state, status: "conflict", mergedFields: [], errorMessage: null };
+      return {
+        ...state,
+        pendingFromVersion: null,
+        status: "conflict",
+        mergedFields: [],
+        errorMessage: null,
+      };
     case "save_error":
-      return { ...state, status: "error", errorMessage: action.message };
+      return { ...state, pendingFromVersion: null, status: "error", errorMessage: action.message };
     default:
       return action satisfies never;
   }

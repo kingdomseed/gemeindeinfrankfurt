@@ -1,4 +1,6 @@
 import "server-only";
+import { z } from "zod";
+
 import { loadAttendance, markKey } from "@/lib/attendance";
 import type { CoordinatorClient } from "@/lib/auth";
 import type { CoordinatorDashboard } from "@/lib/coordinator";
@@ -46,7 +48,7 @@ export type ReportData = {
   notes: string;
   firstDay: string | null;
   lastDay: string | null;
-  updatedAt: string;
+  detailsUpdatedAt: string;
   // Other localities that registered through this church.
   localities: string[];
   testsPlanned: number;
@@ -61,7 +63,7 @@ export async function loadReport(
     supabase
       .from("training_reports")
       .select(
-        "tested, absences_limited, name_tags, seats_assigned, in_person, first_day, last_day, notes, updated_at",
+        "tested, absences_limited, name_tags, seats_assigned, in_person, first_day, last_day, notes, details_updated_at",
       )
       .eq("training_id", trainingId)
       .maybeSingle(),
@@ -114,7 +116,7 @@ export async function loadReport(
     notes: r?.notes ?? "",
     firstDay: r?.first_day ?? null,
     lastDay: r?.last_day ?? null,
-    updatedAt: r?.updated_at ?? "",
+    detailsUpdatedAt: r?.details_updated_at ?? "",
     localities: reportedLocalities(regs.data, home.data?.name),
     testsPlanned: tests.count ?? 0,
     reimbursements: costs.data.map((c) => ({
@@ -140,40 +142,24 @@ export async function saveAnswer(
   if (error) throw error;
 }
 
+const reportSaveStatus = z.enum(["saved", "stale"]);
+
 export async function saveReportDetails(
   supabase: CoordinatorClient,
   trainingId: string,
   details: { notes: string; firstDay: string | null; lastDay: string | null },
   expectedUpdatedAt?: string,
 ): Promise<boolean> {
-  const row = {
-    notes: details.notes,
-    first_day: details.firstDay,
-    last_day: details.lastDay,
-  };
-  if (expectedUpdatedAt === undefined) {
-    const { error } = await supabase
-      .from("training_reports")
-      .upsert({ training_id: trainingId, ...row });
-    if (error) throw error;
-    return true;
-  }
-  if (expectedUpdatedAt === "") {
-    const { error } = await supabase
-      .from("training_reports")
-      .insert({ training_id: trainingId, ...row });
-    if (error?.code === "23505") return false;
-    if (error) throw error;
-    return true;
-  }
-  const { data, error } = await supabase
-    .from("training_reports")
-    .update(row)
-    .eq("training_id", trainingId)
-    .eq("updated_at", expectedUpdatedAt)
-    .select("training_id");
+  const { data, error } = await supabase.rpc("save_report_details", {
+    p_training: trainingId,
+    p_notes: details.notes,
+    p_check_version: expectedUpdatedAt !== undefined,
+    ...(details.firstDay !== null ? { p_first_day: details.firstDay } : {}),
+    ...(details.lastDay !== null ? { p_last_day: details.lastDay } : {}),
+    ...(expectedUpdatedAt ? { p_expected_details_updated_at: expectedUpdatedAt } : {}),
+  });
   if (error) throw error;
-  return data.length > 0;
+  return reportSaveStatus.parse(data) === "saved";
 }
 
 const EXTENSIONS: Readonly<Record<string, string>> = { "image/png": "png", "image/webp": "webp" };

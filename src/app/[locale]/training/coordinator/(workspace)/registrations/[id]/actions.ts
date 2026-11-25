@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
-import type { ActionState, CancelState } from "@/features/registration/types";
+import type { CancelState } from "@/features/registration/types";
 import { currentCoordinatorName, requireAuth } from "@/lib/auth";
 import {
   coordinatorCancelRegistration,
@@ -35,9 +35,9 @@ export async function savePayment(
 // registrant is not emailed.
 export async function saveRegistration(
   rawId: string,
-  _prev: { status: string },
+  _prev: FormState,
   form: FormData,
-): Promise<ActionState> {
+): Promise<FormState> {
   const supabase = await requireAuth();
   const registrationId = id.parse(rawId);
   const result = await coordinatorUpdateRegistration(supabase, registrationId, form);

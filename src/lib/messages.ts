@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import type { CoordinatorClient } from "@/lib/auth";
 import type { Hymn, Verse } from "@/lib/domain/messages";
+import type { Json } from "@/lib/supabase/database.types";
 
 // message_verses.body: the verses in reading order, each with its text per language.
 const verseBody = z
@@ -30,6 +31,28 @@ export type MessageContent = {
   verses: Verse[];
 };
 
+const saveStatus = z.enum(["saved", "stale"]);
+const hymnVersionSchema = z.array(
+  z.object({ en: z.string(), de: z.string().nullable(), ru: z.string().nullable() }),
+);
+const verseVersionSchema = z.array(
+  z.object({ ref: z.string(), de: z.string(), en: z.string(), ru: z.string() }),
+);
+
+function parseExpectedState<T extends Json>(
+  version: string | undefined,
+  schema: z.ZodType<T>,
+): { ok: true; value: T | undefined } | { ok: false } {
+  if (version === undefined) return { ok: true, value: undefined };
+  try {
+    const raw: unknown = JSON.parse(version);
+    const parsed = schema.safeParse(raw);
+    return parsed.success ? { ok: true, value: parsed.data } : { ok: false };
+  } catch {
+    return { ok: false };
+  }
+}
+
 // Every message of a training with its hymns and verses, in order.
 export async function loadMessages(
   supabase: CoordinatorClient,
@@ -53,27 +76,38 @@ export async function loadMessages(
   }));
 }
 
-// Replaces a message's hymns with these, in this order, all at once.
+// Replaces a message's hymns atomically with optional optimistic concurrency check.
 export async function saveHymns(
   supabase: CoordinatorClient,
   sessionId: string,
   hymns: readonly Hymn[],
-) {
-  const { error } = await supabase.rpc("replace_message_hymns", {
+  expectedVersion?: string,
+): Promise<"saved" | "stale" | "error"> {
+  const parsedVersion = parseExpectedState(expectedVersion, hymnVersionSchema);
+  if (!parsedVersion.ok) return "error";
+  const { data, error } = await supabase.rpc("save_message_hymns", {
     p_session: sessionId,
     p_hymns: hymns.map((h) => ({ en: h.en, de: h.de, ru: h.ru })),
+    ...(parsedVersion.value !== undefined ? { p_expected_state: parsedVersion.value } : {}),
   });
   if (error) throw error;
+  return saveStatus.parse(data);
 }
 
-// Replaces a message's verses with these, in reading order.
+// Replaces a message's verses atomically with optional optimistic concurrency check.
 export async function saveVerses(
   supabase: CoordinatorClient,
   sessionId: string,
   verses: readonly Verse[],
-) {
-  const { error } = await supabase
-    .from("message_verses")
-    .upsert({ session_id: sessionId, body: { verses: verses.map((v) => ({ ...v })) } });
+  expectedVersion?: string,
+): Promise<"saved" | "stale" | "error"> {
+  const parsedVersion = parseExpectedState(expectedVersion, verseVersionSchema);
+  if (!parsedVersion.ok) return "error";
+  const { data, error } = await supabase.rpc("save_message_verses", {
+    p_session: sessionId,
+    p_verses: verses.map((v) => ({ ...v })),
+    ...(parsedVersion.value !== undefined ? { p_expected_state: parsedVersion.value } : {}),
+  });
   if (error) throw error;
+  return saveStatus.parse(data);
 }

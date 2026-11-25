@@ -50,7 +50,11 @@ export function PaymentPanel(props: {
   const locale = useLocale();
   const { registration: r, fees } = props;
   const server = toPaymentDraft(r);
-  const collab = useCollaborativeForm({ server, version: r.updated_at, action: props.action });
+  const collab = useCollaborativeForm({
+    server,
+    version: r.payment_updated_at,
+    action: props.action,
+  });
   const euro = (cents: number) => formatEuro(cents, locale);
 
   if (r.seat_type === "anaheim") {
