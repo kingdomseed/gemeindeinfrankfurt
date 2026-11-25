@@ -39,17 +39,11 @@ export function SignInForm() {
     );
   }
   return (
-    <chakra.form
-      action={onSubmit}
-      display="flex"
-      flexDirection="column"
-      alignItems="flex-start"
-      gap="4"
-    >
+    <chakra.form action={onSubmit} display="flex" flexDirection="column" gap="4">
       <FormField label={t("emailLabel")} required>
         <Input name="email" type="email" autoComplete="email" spellCheck={false} />
       </FormField>
-      <Button type="submit" px="6" loading={pending}>
+      <Button type="submit" width="full" loading={pending}>
         {t("sendLink")}
       </Button>
     </chakra.form>
