@@ -2,42 +2,16 @@
 
 import { Button, chakra, Grid, HStack, Input, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
-import {
-  useEffect,
-  useId,
-  useReducer,
-  useRef,
-  useState,
-  useTransition,
-  type SyntheticEvent,
-} from "react";
 
-import type { DraftSyncStatus } from "@/lib/domain/draft-sync";
-import { hymnsFingerprint, initialListSync, listSyncReducer } from "@/lib/domain/list-sync";
+import { hymnsFingerprint } from "@/lib/domain/list-sync";
 import type { Hymn } from "@/lib/domain/messages";
 
 import { ConflictBanner } from "./ConflictBanner";
 import { FormResult } from "./FormResult";
-import { useCoordinatorLive } from "./LiveWorkspace";
-import type { FormAction, FormState } from "./types";
+import type { FormAction } from "./types";
+import { useCollaborativeList } from "./useCollaborativeList";
 
-type Row = Hymn & { key: number };
-
-function toBannerStatus(s: string): DraftSyncStatus {
-  if (s === "remote_updated") return "remote_merged";
-  if (s === "conflict") return "conflict";
-  return "clean";
-}
-
-function toFormResult(status: string, message: string | null): FormState {
-  if (status === "saved") return { status: "saved" };
-  if (status === "error") return { status: "error", ...(message ? { message } : {}) };
-  return { status: "idle" };
-}
-
-function keyedRows(list: readonly Hymn[]): Row[] {
-  return list.map((h, i) => ({ ...h, key: i }));
-}
+const emptyHymn = (): Hymn => ({ en: "", de: "", ru: "" });
 
 // Hymn numbers for one message, quick to type when they arrive late. A box
 // left empty means the hymn does not exist in that language.
@@ -48,69 +22,19 @@ export function HymnsForm(props: {
 }) {
   const t = useTranslations("coordinator.messages");
   const tl = useTranslations("common.languages");
-  const formId = useId();
-  const { setEditing } = useCoordinatorLive();
-  const nextKey = useRef(10_000);
-
-  const serverVersion = hymnsFingerprint(props.initialHymns);
-  const [state, dispatch] = useReducer(listSyncReducer<Row>, undefined, () =>
-    initialListSync(keyedRows(props.initialHymns), serverVersion),
-  );
-  const [seenVersion, setSeenVersion] = useState(serverVersion);
-  const [pending, startTransition] = useTransition();
-
-  if (seenVersion !== serverVersion) {
-    setSeenVersion(serverVersion);
-    dispatch({
-      type: "server_updated",
-      items: keyedRows(props.initialHymns),
-      version: serverVersion,
-    });
-  }
-
-  const dirty = state.status === "dirty" || state.status === "conflict" || state.status === "error";
-  useEffect(() => {
-    setEditing(formId, dirty);
-    return () => setEditing(formId, false);
-  }, [formId, dirty, setEditing]);
-
-  const add = () => {
-    const key = nextKey.current;
-    nextKey.current += 1;
-    dispatch({ type: "edit", items: [...state.items, { key, en: "", de: "", ru: "" }] });
-  };
+  const list = useCollaborativeList({
+    initial: props.initialHymns,
+    fingerprint: hymnsFingerprint,
+    createEmpty: emptyHymn,
+    action: props.action,
+  });
 
   const change = (key: number, field: "en" | "de" | "ru", value: string) =>
-    dispatch({
-      type: "edit",
-      items: state.items.map((r) => (r.key === key ? { ...r, [field]: value } : r)),
-    });
-
-  const remove = (key: number) =>
-    dispatch({ type: "edit", items: state.items.filter((r) => r.key !== key) });
-
-  function onSubmit(e: SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    form.set("version", state.baseVersion);
-    const snapshot = [...state.items];
-    const nextFp = hymnsFingerprint(snapshot);
-    dispatch({ type: "save_start" });
-    startTransition(async () => {
-      const res = await props.action({ status: "idle" }, form);
-      if (res.status === "saved") {
-        dispatch({ type: "save_ok", items: snapshot, version: nextFp });
-      } else if (res.status === "stale") {
-        dispatch({ type: "save_stale" });
-      } else {
-        dispatch({ type: "save_error", message: res.message ?? null });
-      }
-    });
-  }
+    list.update(key, (row) => ({ ...row, [field]: value }));
 
   const columns = { base: "2rem repeat(3, minmax(0, 1fr)) auto" };
   return (
-    <chakra.form onSubmit={onSubmit} display="flex" flexDirection="column" gap="3">
+    <chakra.form onSubmit={list.submit} display="flex" flexDirection="column" gap="3">
       <Grid templateColumns={columns} gap="2" alignItems="center" fontSize="sm" color="fg.muted">
         <Text>{t("order")}</Text>
         <Text>{tl("en")}</Text>
@@ -118,7 +42,7 @@ export function HymnsForm(props: {
         <Text>{tl("ru")}</Text>
         <span />
       </Grid>
-      {state.items.map((row, i) => (
+      {list.items.map((row, i) => (
         <Grid key={row.key} templateColumns={columns} gap="2" alignItems="center">
           <Text fontVariantNumeric="tabular-nums">{i + 1}</Text>
           <Input
@@ -150,28 +74,23 @@ export function HymnsForm(props: {
             variant="ghost"
             size="sm"
             color="fg"
-            onClick={() => remove(row.key)}
+            onClick={() => list.remove(row.key)}
             aria-label={t("removeHymn", { number: i + 1 })}
           >
             {t("remove")}
           </Button>
         </Grid>
       ))}
-      <ConflictBanner
-        status={toBannerStatus(state.status)}
-        conflicts={[]}
-        onAcceptAllServer={() => dispatch({ type: "accept_server" })}
-        onKeepLocal={() => dispatch({ type: "keep_local" })}
-      />
+      <ConflictBanner {...list.bannerProps} />
       <HStack gap="3" wrap="wrap">
-        <Button variant="outline" color="fg" onClick={add}>
+        <Button variant="outline" color="fg" onClick={list.add}>
           {t("addHymn")}
         </Button>
-        <Button type="submit" loading={pending}>
+        <Button type="submit" loading={list.pending}>
           {t("saveHymns")}
         </Button>
       </HStack>
-      <FormResult state={toFormResult(state.status, state.errorMessage)} saved={t("saved")} />
+      <FormResult state={list.result} saved={t("saved")} />
     </chakra.form>
   );
 }

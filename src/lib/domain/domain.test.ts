@@ -4,7 +4,7 @@ import { earliestOpenEndDate, groupByMonth } from "./announcements";
 import { canCancel, canRegister, computeCutoffs, endOfBerlinDay } from "./cutoffs";
 import { importedAnnouncement, importedEvent } from "./event-import";
 import { eventWhen, startOfBerlinToday } from "./events";
-import { computeFees } from "./fees";
+import { computeFees, parseEuroCents } from "./fees";
 import { buildCalendar } from "./ics";
 import { openStreetMapUrl } from "./maps";
 import { countOutlines } from "./outlines";
@@ -65,6 +65,25 @@ describe("computeFees", () => {
       outlineCount: 0,
       waived: true,
     });
+  });
+});
+
+describe("parseEuroCents", () => {
+  it("reads euros with a comma, a point, or a euro sign", () => {
+    expect(parseEuroCents("70")).toBe(7000);
+    expect(parseEuroCents("70,00")).toBe(7000);
+    expect(parseEuroCents("€ 5.5")).toBe(550);
+    expect(parseEuroCents("19,90")).toBe(1990);
+    expect(parseEuroCents("19.9")).toBe(1990);
+    expect(parseEuroCents(" 320 € ")).toBe(32_000);
+  });
+
+  it("rejects anything else", () => {
+    expect(parseEuroCents("")).toBeNull();
+    expect(parseEuroCents("-5")).toBeNull();
+    expect(parseEuroCents("1.000,00")).toBeNull();
+    expect(parseEuroCents("1.234,50")).toBeNull();
+    expect(parseEuroCents("abc")).toBeNull();
   });
 });
 

@@ -5,13 +5,13 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
-import { requireAuth } from "@/lib/auth";
+import { loadCurrentCoordinator, requireAuth } from "@/lib/auth";
 import { getTrainingById } from "@/lib/data";
 import { inAudience, isAudience, type EmailTexts } from "@/lib/domain/emails";
 import { languages, type Language } from "@/lib/domain/types";
 import { beforeTraining, coordinatorMessage, paymentReminder } from "@/lib/email/bulk";
 import { sendBatch, type OutgoingEmail } from "@/lib/email/send";
-import { loadRecipients, recordSend, signedInCoordinator, type EmailKind } from "@/lib/emails";
+import { loadRecipients, recordSend, type EmailKind } from "@/lib/emails";
 
 const id = z.uuid();
 const subject = z.string().trim().max(200);
@@ -109,8 +109,8 @@ export async function sendMessage(
 
   const { supabase, training, recipients } = await setUp(rawTrainingId);
   if (form.get("intent") === "test") {
-    const me = await signedInCoordinator(supabase);
-    if (!me.email) return { status: "error" };
+    const me = await loadCurrentCoordinator(supabase);
+    if (!me?.email) return { status: "error" };
     const to = me.email;
     const written = languages.filter((l): l is Language => texts[l] !== undefined);
     const emails = (await Promise.all(written.map((l) => coordinatorMessage(texts, to, l)))).filter(

@@ -7,16 +7,10 @@ import { FormField } from "@/components/ui/form-field";
 
 import { ConflictBanner } from "./ConflictBanner";
 import { FormResult } from "./FormResult";
-import type { FormAction, FormState } from "./types";
+import type { FormAction } from "./types";
 import { useCollaborativeForm } from "./useCollaborativeForm";
 
 type Details = { notes: string; first_day: string; last_day: string };
-
-function resultState(status: string, message: string | null): FormState {
-  if (status === "saved") return { status: "saved" };
-  if (status === "error") return { status: "error", ...(message ? { message } : {}) };
-  return { status: "idle" };
-}
 
 // The notes for Lebensstrom, and the actual first and last day when they
 // differ from the schedule. Uses 3-way draft sync for non-overlapping edits
@@ -70,15 +64,7 @@ export function ReportDetailsForm(props: {
           onChange={(e) => collab.edit("notes", e.currentTarget.value)}
         />
       </FormField>
-      <ConflictBanner
-        status={collab.state.status}
-        conflicts={collab.state.conflicts}
-        fieldLabels={fieldLabels}
-        serverValues={collab.state.server}
-        onUseServerField={collab.takeServerField}
-        onAcceptAllServer={collab.acceptAllServer}
-        onKeepLocal={collab.keepLocal}
-      />
+      <ConflictBanner {...collab.bannerProps} fieldLabels={fieldLabels} />
       <Button
         type="submit"
         variant="outline"
@@ -88,10 +74,7 @@ export function ReportDetailsForm(props: {
       >
         {t("saveDetails")}
       </Button>
-      <FormResult
-        state={resultState(collab.state.status, collab.state.errorMessage)}
-        saved={t("saved")}
-      />
+      <FormResult state={collab.result} saved={t("saved")} />
     </chakra.form>
   );
 }

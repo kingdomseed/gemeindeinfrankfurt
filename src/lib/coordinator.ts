@@ -2,11 +2,8 @@ import "server-only";
 import { cache } from "react";
 import { z } from "zod";
 
-import { getCoordinatorClient } from "@/lib/auth";
+import { currentCoordinatorName, getCoordinatorClient, type CoordinatorClient } from "@/lib/auth";
 import { localizedText } from "@/lib/data";
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 const REGISTRATION_COLUMNS =
   "id, created_at, status, seat_type, first_name, last_name, partner_first_name, partner_last_name, email, other_locality, group_language, outline_language, second_outline_language, waiver, fee_paid, outline_paid, localities(name), training_sites(name), registration_sessions(session_id)";
@@ -54,34 +51,6 @@ export type CoordinatorDashboard = NonNullable<
   Awaited<ReturnType<typeof loadCoordinatorDashboard>>
 >;
 export type CoordinatorRegistration = CoordinatorDashboard["registrations"][number];
-
-export type CurrentCoordinator = {
-  userId: string;
-  displayName: string;
-  isAdmin: boolean;
-  servesAv: boolean;
-};
-
-// The signed-in coordinator's identity and role flags, for Presence and role UI.
-export async function loadCurrentCoordinator(
-  supabase: CoordinatorClient,
-): Promise<CurrentCoordinator | null> {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return null;
-  const { data, error } = await supabase
-    .from("coordinators")
-    .select("user_id, display_name, is_admin, serves_av")
-    .eq("user_id", auth.user.id)
-    .maybeSingle();
-  if (error) throw error;
-  if (!data) return null;
-  return {
-    userId: data.user_id,
-    displayName: data.display_name,
-    isAdmin: data.is_admin,
-    servesAv: data.serves_av,
-  };
-}
 
 // The signed-in coordinator's view of the newest training, once per request,
 // with the moment it was read so every countdown on the page agrees.
@@ -143,17 +112,12 @@ export async function recordEvents(
   kinds: readonly EventKind[],
 ) {
   if (kinds.length === 0) return;
-  const { data: auth } = await supabase.auth.getUser();
-  const { data: me } = await supabase
-    .from("coordinators")
-    .select("display_name")
-    .eq("user_id", auth.user?.id ?? "")
-    .maybeSingle();
+  const actorName = await currentCoordinatorName(supabase);
   const { error } = await supabase.from("registration_events").insert(
     kinds.map((kind) => ({
       registration_id: registrationId,
       kind,
-      actor_name: me?.display_name ?? "",
+      actor_name: actorName,
     })),
   );
   if (error) throw error;

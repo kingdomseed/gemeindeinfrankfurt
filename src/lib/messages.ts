@@ -1,10 +1,8 @@
 import "server-only";
 import { z } from "zod";
 
+import type { CoordinatorClient } from "@/lib/auth";
 import type { Hymn, Verse } from "@/lib/domain/messages";
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 // message_verses.body: the verses in reading order, each with its text per language.
 const verseBody = z
@@ -19,6 +17,10 @@ const verseBody = z
       .catch([]),
   })
   .catch({ verses: [] });
+
+export function parseStoredVerses(body: unknown): Verse[] {
+  return verseBody.parse(body).verses;
+}
 
 export type MessageContent = {
   sessionId: string;
@@ -47,7 +49,7 @@ export async function loadMessages(
     messageNumber: s.message_number,
     startsAt: s.starts_at,
     hymns: s.message_hymns.map((h) => ({ en: h.number_en, de: h.number_de, ru: h.number_ru })),
-    verses: verseBody.parse(s.message_verses?.body).verses,
+    verses: parseStoredVerses(s.message_verses?.body),
   }));
 }
 

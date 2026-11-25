@@ -19,9 +19,8 @@ export function CancelRegistration(props: {
   const [state, formAction, pending] = useActionState<CancelState>(props.action, {
     status: "idle",
   });
-  const [asking, setAsking] = useState(false);
   // After "Keep my registration", focus goes back to the button that asked.
-  const [answered, setAnswered] = useState(false);
+  const [step, setStep] = useState<"idle" | "confirming" | "kept">("idle");
   const { labels, messages } = useCancelText(props.audience);
   const message = messages[state.status];
   if (message) {
@@ -44,7 +43,7 @@ export function CancelRegistration(props: {
         {labels.cancel}
       </Heading>
       <Text>{labels.intro}</Text>
-      {asking ? (
+      {step === "confirming" ? (
         <chakra.form action={formAction} display="flex" flexDirection="column" gap="3">
           <Text ref={focusOnMount} tabIndex={-1} outline="none" fontWeight="semibold">
             {labels.confirm}
@@ -60,26 +59,18 @@ export function CancelRegistration(props: {
             >
               {labels.yes}
             </Button>
-            <Button
-              variant="outline"
-              px="6"
-              disabled={pending}
-              onClick={() => {
-                setAsking(false);
-                setAnswered(true);
-              }}
-            >
+            <Button variant="outline" px="6" disabled={pending} onClick={() => setStep("kept")}>
               {labels.keep}
             </Button>
           </Flex>
         </chakra.form>
       ) : (
         <Button
-          ref={answered ? focusOnMount : undefined}
+          ref={step === "kept" ? focusOnMount : undefined}
           variant="outline"
           color="fg.error"
           px="6"
-          onClick={() => setAsking(true)}
+          onClick={() => setStep("confirming")}
         >
           {labels.cancel}
         </Button>

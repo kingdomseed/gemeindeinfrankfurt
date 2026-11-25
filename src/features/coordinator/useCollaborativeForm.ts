@@ -2,10 +2,25 @@
 
 import { useEffect, useId, useReducer, useState, useTransition, type SyntheticEvent } from "react";
 
-import { draftSyncReducer, initialDraftSync, isDraftDirty } from "@/lib/domain/draft-sync";
+import {
+  draftSyncReducer,
+  initialDraftSync,
+  isDraftDirty,
+  type DraftSyncStatus,
+} from "@/lib/domain/draft-sync";
+import type { ListSyncStatus } from "@/lib/domain/list-sync";
 
 import { useCoordinatorLive } from "./LiveWorkspace";
 import type { FormAction, FormState } from "./types";
+
+export function toFormResult(
+  status: DraftSyncStatus | ListSyncStatus,
+  message: string | null,
+): FormState {
+  if (status === "saved") return { status: "saved" };
+  if (status === "error") return { status: "error", ...(message ? { message } : {}) };
+  return { status: "idle" };
+}
 
 function sameRecord<T extends Record<string, string>>(a: T, b: T): boolean {
   return Object.keys(a).every((k) => a[k] === b[k]);
@@ -74,14 +89,19 @@ export function useCollaborativeForm<T extends Record<string, string>>(opts: {
   }
 
   return {
-    state,
     draft: state.draft,
     pending,
     dirty,
     edit,
     submit,
-    takeServerField,
-    acceptAllServer: () => dispatch({ type: "accept_all_server" }),
-    keepLocal: () => dispatch({ type: "keep_local" }),
+    result: toFormResult(state.status, state.errorMessage),
+    bannerProps: {
+      status: state.status,
+      conflicts: state.conflicts,
+      serverValues: state.server,
+      onUseServerField: takeServerField,
+      onAcceptAllServer: () => dispatch({ type: "accept_all_server" }),
+      onKeepLocal: () => dispatch({ type: "keep_local" }),
+    },
   };
 }

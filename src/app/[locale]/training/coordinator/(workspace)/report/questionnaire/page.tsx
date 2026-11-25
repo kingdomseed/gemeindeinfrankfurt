@@ -1,13 +1,12 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
-import { PageMessage } from "@/components/ui/page-message";
 import { Questionnaire } from "@/features/coordinator/Questionnaire";
 import { sectionHref } from "@/features/coordinator/sections";
 import { requireLocale } from "@/i18n/locale";
-import { redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
 import { formatEuro } from "@/lib/domain/fees";
 import { loadReportView } from "@/lib/report";
+
+import { requireActiveWorkspace } from "../../workspace";
 
 export const dynamic = "force-dynamic";
 
@@ -34,20 +33,14 @@ const date = (iso: string | null) => (iso ? germanDate.format(new Date(iso)) : "
 const calendar = (d: string | null) => (d ? date(`${d}T12:00:00Z`) : null);
 
 export default async function QuestionnairePage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
-  const [t, q, th] = await Promise.all([
+  const ws = await requireActiveWorkspace((await params).locale);
+  if (!ws.ok) return ws.fallback;
+  const { data, supabase } = ws.workspace;
+  const [t, q, view] = await Promise.all([
     getTranslations("coordinator.report"),
     getTranslations({ locale: FORM_LOCALE, namespace: "coordinator.questionnaire" }),
-    getTranslations("home"),
+    loadReportView(supabase, data),
   ]);
-  const { data, supabase } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
-  const view = await loadReportView(supabase, data);
   const n = view.numbers;
   const euro = (cents: number) => formatEuro(cents, FORM_LOCALE);
   const yesNo = (value: boolean) => (value ? q("yes") : q("no"));

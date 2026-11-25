@@ -4,7 +4,6 @@ import type { Mark } from "./attendance";
 import {
   absencesWithinLimit,
   absentAt,
-  parseEuroCents,
   reportedLocalities,
   reportDue,
   reportNumbers,
@@ -86,16 +85,6 @@ describe("reportDue", () => {
     expect(reportDue(new Date("2027-01-24T20:00:00Z")).toISOString()).toBe(
       "2027-01-31T20:00:00.000Z",
     );
-  });
-});
-
-describe("parseEuroCents", () => {
-  it("reads euros with a comma or a point", () => {
-    expect(parseEuroCents("19,90")).toBe(1990);
-    expect(parseEuroCents("19.9")).toBe(1990);
-    expect(parseEuroCents(" 320 € ")).toBe(32_000);
-    expect(parseEuroCents("1.234,50")).toBeNull();
-    expect(parseEuroCents("abc")).toBeNull();
   });
 });
 

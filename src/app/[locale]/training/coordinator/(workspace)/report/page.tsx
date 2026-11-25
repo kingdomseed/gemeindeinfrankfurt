@@ -1,16 +1,14 @@
-import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
-import { PageMessage } from "@/components/ui/page-message";
 import { ReportWorkspace } from "@/features/coordinator/ReportWorkspace";
 import { sectionHref } from "@/features/coordinator/sections";
 import { requireLocale } from "@/i18n/locale";
-import { redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
 import { formatEuro } from "@/lib/domain/fees";
 import { reportDue } from "@/lib/domain/report";
 import { berlinDay } from "@/lib/domain/sessions";
 import { loadReportView, type ReportQuestion } from "@/lib/report";
 
+import { requireActiveWorkspace } from "../workspace";
 import { addCost, addPhoto, answerQuestion, removeCost, saveDetails } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -32,19 +30,14 @@ const questions: readonly ReportQuestion[] = [
 ];
 
 export default async function ReportPage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
+  const ws = await requireActiveWorkspace((await params).locale);
+  if (!ws.ok) return ws.fallback;
+  const { locale, data, supabase, now } = ws.workspace;
   const [t, th, format] = await Promise.all([
     getTranslations("coordinator.report"),
     getTranslations("home"),
     getFormatter(),
   ]);
-  const { data, supabase, now } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
   const trainingId = data.training.id;
   const view = await loadReportView(supabase, data);
   const euro = (cents: number) => formatEuro(cents, locale);

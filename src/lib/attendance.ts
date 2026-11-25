@@ -1,10 +1,8 @@
 import "server-only";
 import { z } from "zod";
 
+import type { CoordinatorClient } from "@/lib/auth";
 import type { Mark } from "@/lib/domain/attendance";
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 // "registrationId:sessionId" for one box of the attendance table.
 export function markKey(registrationId: string, sessionId: string) {

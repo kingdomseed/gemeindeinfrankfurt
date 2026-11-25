@@ -1,5 +1,5 @@
 import { Link, Stack } from "@chakra-ui/react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { Notice } from "@/components/ui/notice";
 import { PageHeading } from "@/components/ui/page-heading";
@@ -7,10 +7,10 @@ import { AddCoordinatorForm } from "@/features/coordinator/AddCoordinatorForm";
 import { sectionHref } from "@/features/coordinator/sections";
 import { TeamList } from "@/features/coordinator/TeamList";
 import { requireLocale } from "@/i18n/locale";
-import { Link as LocaleLink, redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
+import { Link as LocaleLink } from "@/i18n/navigation";
 import { isTeamAdmin, loadTeam } from "@/lib/team";
 
+import { requireWorkspaceSession } from "../../workspace";
 import { changeAvService, inviteCoordinator, removeTeamMember, resendSignInLink } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -24,16 +24,11 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function TeamPage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
+  const { supabase } = await requireWorkspaceSession((await params).locale);
   const [t, team, admin] = await Promise.all([
     getTranslations("coordinator.team"),
-    loadTeam(coordination.supabase),
-    isTeamAdmin(coordination.supabase),
+    loadTeam(supabase),
+    isTeamAdmin(supabase),
   ]);
 
   return (

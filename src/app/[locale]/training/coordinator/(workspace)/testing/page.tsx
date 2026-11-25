@@ -1,17 +1,15 @@
 import { Box, Flex, List, Stack, Text } from "@chakra-ui/react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { PageHeading } from "@/components/ui/page-heading";
-import { PageMessage } from "@/components/ui/page-message";
 import { PrintButton } from "@/components/ui/print-button";
 import { TestSlotSelect } from "@/features/coordinator/TestSlotSelect";
 import { requireLocale } from "@/i18n/locale";
-import { redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
 import { berlinDayTime } from "@/lib/domain/sessions";
 import { loadStudyGroups } from "@/lib/groups";
 import { loadTestSchedule } from "@/lib/testing";
 
+import { requireActiveWorkspace } from "../workspace";
 import { saveTestSlot } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -25,20 +23,15 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function TestingPage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
+  const ws = await requireActiveWorkspace((await params).locale);
+  if (!ws.ok) return ws.fallback;
+  const { locale, data, supabase } = ws.workspace;
   const [t, tg, th, tl] = await Promise.all([
     getTranslations("coordinator.testing"),
     getTranslations("coordinator.groups"),
     getTranslations("home"),
     getTranslations("common.languages"),
   ]);
-  const { data, supabase } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
 
   const [schedule, groups] = await Promise.all([
     loadTestSchedule(supabase, data.training.id),

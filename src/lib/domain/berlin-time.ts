@@ -43,10 +43,3 @@ export function fromBerlinWallTime(wall: BerlinWallTime): Date | null {
   const back = toBerlinWallTime(result);
   return back.date === wall.date && back.time === wall.time ? result : null;
 }
-
-// "70", "70,00", "70.5" or "€ 70" as cents. Null when it is not an amount.
-export function parseEuroCents(input: string): number | null {
-  const cleaned = input.replace(/[€\s]/g, "").replace(",", ".");
-  if (!/^\d{1,6}(\.\d{1,2})?$/.test(cleaned)) return null;
-  return Math.round(Number(cleaned) * 100);
-}

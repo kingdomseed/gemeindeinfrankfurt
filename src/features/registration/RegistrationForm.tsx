@@ -2,13 +2,13 @@
 
 import { chakra } from "@chakra-ui/react";
 import { useLocale } from "next-intl";
-import { useActionState, useState, useTransition, type SyntheticEvent } from "react";
+import { useReducer, useTransition, type SyntheticEvent } from "react";
 
-import { computeFees, type FeeBreakdown } from "@/lib/domain/fees";
+import { computeFees } from "@/lib/domain/fees";
+import { initialRegistrationForm, registrationFormReducer } from "@/lib/domain/registration-form";
 import {
   isLanguage,
   picksSessions,
-  type Language,
   type LocalityOption,
   type SeatType,
   type SiteOption,
@@ -46,60 +46,32 @@ type Props = {
   messages: Partial<Record<ActionStatus, string>>;
 };
 
-function initialLocality(d: RegistrationDefaults | undefined) {
-  if (d?.locality_id) return d.locality_id;
-  return d?.other_locality ? "other" : "";
-}
+// The registration form on both the register and the edit page. It owns the
+// form state machine and shares it with the sections through RegistrationFormContext.
+export function RegistrationForm(props: Props) {
+  const locale = useLocale();
+  const d = props.defaults;
 
-function initialSiteId(d: RegistrationDefaults | undefined, sites: readonly SiteOption[]) {
-  if (d?.site_id) return d.site_id;
-  return sites.length === 1 ? (sites[0]?.id ?? "") : "";
-}
+  const [state, dispatch] = useReducer(registrationFormReducer<SubmittedSummary>, undefined, () =>
+    initialRegistrationForm<SubmittedSummary>({
+      defaults: d,
+      locale,
+      siteIds: props.sites.map((s) => s.id),
+    }),
+  );
+  const [transitionPending, startTransition] = useTransition();
 
-function formFees(
-  seatType: SeatType,
-  outline: Language,
-  second: Language | "",
-  prices: { feeCents: number; outlinePriceCents: number },
-) {
+  const { seatType, outline, second } = state.fields;
   const anaheim = seatType === "anaheim";
-  return computeFees(
+  const fees = computeFees(
     {
       seatType,
       outlineLanguage: anaheim ? null : outline,
       secondOutlineLanguage: anaheim ? null : second || null,
     },
-    prices,
+    props.prices,
   );
-}
-
-// The registration form on both the register and the edit page. It owns the
-// form state and shares it with the sections through RegistrationFormContext.
-export function RegistrationForm(props: Props) {
-  const locale = useLocale();
-  const d = props.defaults;
-
-  const [state, formAction, pending] = useActionState<ActionState, FormData>(props.action, {
-    status: "idle",
-  });
-  const [, startTransition] = useTransition();
-  const [seatType, setSeatType] = useState<SeatType>(d?.seat_type ?? "full_time");
-  const [outline, setOutline] = useState<Language>(d?.outline_language ?? locale);
-  const [second, setSecond] = useState<Language | "">(d?.second_outline_language ?? "");
-  const [locality, setLocality] = useState(() => initialLocality(d));
-  const [otherLocality, setOtherLocality] = useState(d?.other_locality ?? "");
-  const [siteId, setSiteId] = useState(() => initialSiteId(d, props.sites));
-  const [sessionsMissing, setSessionsMissing] = useState(false);
-  const [formKey, setFormKey] = useState(0);
-  // The form as it was sent. Fields stay editable while the request runs, so
-  // the receipt must not use live state.
-  const [submitted, setSubmitted] = useState<{ fees: FeeBreakdown; summary: SubmittedSummary }>();
-  // The result whose receipt was closed with "Register another person". A new
-  // submission yields a new state object, so its receipt shows again only once
-  // that submission has actually succeeded.
-  const [dismissedResult, setDismissedResult] = useState<ActionState | null>(null);
-
-  const fees = formFees(seatType, outline, second, props.prices);
+  const pending = state.view.phase === "submitting" || transitionPending;
 
   // Submitting through a transition (instead of <form action>) keeps what the
   // person typed when the server answers with an error: React would otherwise
@@ -112,60 +84,53 @@ export function RegistrationForm(props: Props) {
     const missingSessions =
       !props.seatLocked && seatType === "part_time" && form.getAll("session_ids").length === 0;
     if (missingSessions) {
-      setSessionsMissing(true);
+      dispatch({ type: "sessions_missing" });
       e.currentTarget.querySelector<HTMLInputElement>('input[name="session_ids"]')?.focus();
       return;
     }
-    setSessionsMissing(false);
-    setSubmitted({
-      fees,
-      summary: summarize(form, seatType, props.localities, props.sites),
+    dispatch({
+      type: "submit_start",
+      receipt: {
+        fees,
+        summary: summarize(form, seatType, props.localities, props.sites),
+      },
     });
-    startTransition(() => formAction(form));
+    startTransition(async () => {
+      try {
+        const result = await props.action({ status: "idle" }, form);
+        dispatch({ type: "submit_result", result });
+      } catch {
+        dispatch({ type: "submit_result", result: { status: "error" } });
+      }
+    });
   }
 
-  function changeOutline(next: Language) {
-    setOutline(next);
-    // Keep the second outline clear once the primary language matches it, so
-    // the receipt and form stay in sync and never charge for two outlines.
-    if (next === second) setSecond("");
-  }
-
-  function changeLocality(next: string) {
-    setLocality(next);
-    if (next !== "other") setOtherLocality("");
-  }
-
-  function registerAnother() {
-    setDismissedResult(state);
-    // Seat type, languages, locality and site often carry over within a family, so they stay.
-    setFormKey((k) => k + 1);
-  }
-
-  if (state.status === "done" && state !== dismissedResult && submitted) {
+  if (state.view.phase === "receipt") {
     return (
       <Receipt
-        fees={submitted.fees}
-        summary={submitted.summary}
+        fees={state.view.receipt.fees}
+        summary={state.view.receipt.summary}
         sessionCount={props.sessions.length}
         payment={props.payment}
-        calendarUrl={state.calendarUrl}
-        onRegisterAnother={registerAnother}
+        calendarUrl={state.view.calendarUrl}
+        onRegisterAnother={() => dispatch({ type: "register_another" })}
       />
     );
   }
 
+  const sessionsMissing = state.view.phase === "editing" && state.view.sessionsMissing;
+
   return (
     <RegistrationFormContext
       value={{
-        state: { seatType, outline, second, locality, otherLocality, siteId },
+        state: state.fields,
         actions: {
-          setSeatType,
-          setOutline: changeOutline,
-          setSecond,
-          setLocality: changeLocality,
-          setOtherLocality,
-          setSiteId,
+          setSeatType: (next) => dispatch({ type: "set_seat_type", seatType: next }),
+          setOutline: (next) => dispatch({ type: "set_outline", outline: next }),
+          setSecond: (next) => dispatch({ type: "set_second", second: next }),
+          setLocality: (next) => dispatch({ type: "set_locality", locality: next }),
+          setOtherLocality: (next) => dispatch({ type: "set_other_locality", otherLocality: next }),
+          setSiteId: (next) => dispatch({ type: "set_site_id", siteId: next }),
         },
         meta: {
           defaults: d,
@@ -176,23 +141,29 @@ export function RegistrationForm(props: Props) {
         },
       }}
     >
-      <chakra.form key={formKey} onSubmit={onSubmit} display="flex" flexDirection="column" gap="10">
+      <chakra.form
+        key={state.formKey}
+        onSubmit={onSubmit}
+        display="flex"
+        flexDirection="column"
+        gap="10"
+      >
         {props.version && <input type="hidden" name="version" value={props.version} />}
         <SeatSection />
         {picksSessions(seatType) && (
           <SessionsSection
             sessions={props.sessions}
             missing={sessionsMissing}
-            onPick={() => setSessionsMissing(false)}
+            onPick={() => dispatch({ type: "clear_sessions_missing" })}
           />
         )}
         <AboutYouSection />
         <LanguagesSection />
         <ConfirmSection />
         <SubmitArea
-          status={state.status}
+          status={state.actionStatus}
           // Hidden while sending, so each answer mounts afresh and takes focus.
-          message={pending ? undefined : props.messages[state.status]}
+          message={pending ? undefined : props.messages[state.actionStatus]}
           pending={pending}
           label={props.submitLabel}
         />

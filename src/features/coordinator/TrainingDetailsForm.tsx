@@ -10,7 +10,7 @@ import { toBerlinWallTime } from "@/lib/domain/berlin-time";
 
 import { ConflictBanner } from "./ConflictBanner";
 import { FormResult } from "./FormResult";
-import type { FormAction, FormState } from "./types";
+import type { FormAction } from "./types";
 import { useCollaborativeForm } from "./useCollaborativeForm";
 
 const euroInput = (cents: number) => (cents / 100).toFixed(2);
@@ -46,12 +46,6 @@ function toDetailsDraft(s: TrainingSetup): DetailsDraft {
     deadline_date: deadline?.date ?? "",
     deadline_time: deadline?.time ?? "16:00",
   };
-}
-
-function resultState(status: string, message: string | null): FormState {
-  if (status === "saved") return { status: "saved" };
-  if (status === "error") return { status: "error", ...(message ? { message } : {}) };
-  return { status: "idle" };
 }
 
 // The training's name, money and payment details, and the outline deadline.
@@ -166,22 +160,11 @@ export function TrainingDetailsForm(props: { setup: TrainingSetup; action: FormA
           </FormField>
         </SimpleGrid>
       </FormSection>
-      <ConflictBanner
-        status={collab.state.status}
-        conflicts={collab.state.conflicts}
-        fieldLabels={fieldLabels}
-        serverValues={collab.state.server}
-        onUseServerField={collab.takeServerField}
-        onAcceptAllServer={collab.acceptAllServer}
-        onKeepLocal={collab.keepLocal}
-      />
+      <ConflictBanner {...collab.bannerProps} fieldLabels={fieldLabels} />
       <Button type="submit" alignSelf="flex-start" loading={collab.pending}>
         {t("saveDetails")}
       </Button>
-      <FormResult
-        state={resultState(collab.state.status, collab.state.errorMessage)}
-        saved={t("saved")}
-      />
+      <FormResult state={collab.result} saved={t("saved")} />
     </chakra.form>
   );
 }

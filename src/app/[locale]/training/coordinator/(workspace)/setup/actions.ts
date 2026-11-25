@@ -6,7 +6,8 @@ import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
 import { requireAuth } from "@/lib/auth";
-import { fromBerlinWallTime, parseEuroCents } from "@/lib/domain/berlin-time";
+import { fromBerlinWallTime } from "@/lib/domain/berlin-time";
+import { parseEuroCents } from "@/lib/domain/fees";
 import { scheduleFingerprint } from "@/lib/domain/list-sync";
 
 const id = z.uuid();

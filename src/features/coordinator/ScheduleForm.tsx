@@ -30,12 +30,6 @@ function toScheduleDraft(sessions: readonly SessionRow[]): Record<string, string
   return out;
 }
 
-function resultState(status: string, message: string | null): FormState {
-  if (status === "saved") return { status: "saved" };
-  if (status === "error") return { status: "error", ...(message ? { message } : {}) };
-  return { status: "idle" };
-}
-
 function ScheduleEditor(props: { sessions: readonly SessionRow[]; action: FormAction }) {
   const t = useTranslations("coordinator.setup");
   const [structState, structAction, structPending] = useActionState<FormState, FormData>(
@@ -165,15 +159,7 @@ function ScheduleEditor(props: { sessions: readonly SessionRow[]; action: FormAc
             </Table.Root>
           </Table.ScrollArea>
         </FormSection>
-        <ConflictBanner
-          status={collab.state.status}
-          conflicts={collab.state.conflicts}
-          fieldLabels={fieldLabels}
-          serverValues={collab.state.server}
-          onUseServerField={collab.takeServerField}
-          onAcceptAllServer={collab.acceptAllServer}
-          onKeepLocal={collab.keepLocal}
-        />
+        <ConflictBanner {...collab.bannerProps} fieldLabels={fieldLabels} />
         <HStack gap="3" wrap="wrap">
           <Button type="submit" loading={collab.pending}>
             {t("saveSchedule")}
@@ -188,10 +174,7 @@ function ScheduleEditor(props: { sessions: readonly SessionRow[]; action: FormAc
             {t("addMessage")}
           </Button>
         </HStack>
-        <FormResult
-          state={resultState(collab.state.status, collab.state.errorMessage)}
-          saved={t("saved")}
-        />
+        <FormResult state={collab.result} saved={t("saved")} />
         {structState.status !== "idle" && <FormResult state={structState} saved={t("saved")} />}
       </chakra.form>
     </>

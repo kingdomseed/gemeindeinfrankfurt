@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { fromBerlinWallTime, parseEuroCents, toBerlinWallTime } from "./berlin-time";
+import { fromBerlinWallTime, toBerlinWallTime } from "./berlin-time";
 import {
   daysUntil,
   paymentCounts,
@@ -121,19 +121,5 @@ describe("Berlin wall time", () => {
     expect(fromBerlinWallTime({ date: "2027-13-01", time: "10:00" })).toBeNull();
     expect(fromBerlinWallTime({ date: "2027-01-12", time: "7pm" })).toBeNull();
     expect(fromBerlinWallTime({ date: "2027-03-28", time: "02:30" })).toBeNull();
-  });
-});
-
-describe("parseEuroCents", () => {
-  it("accepts German and English decimal marks and a euro sign", () => {
-    expect(parseEuroCents("70")).toBe(7000);
-    expect(parseEuroCents("70,00")).toBe(7000);
-    expect(parseEuroCents("€ 5.5")).toBe(550);
-  });
-
-  it("rejects anything else", () => {
-    expect(parseEuroCents("")).toBeNull();
-    expect(parseEuroCents("-5")).toBeNull();
-    expect(parseEuroCents("1.000,00")).toBeNull();
   });
 });

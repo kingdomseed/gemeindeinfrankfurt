@@ -1,20 +1,18 @@
 import { List, Stack } from "@chakra-ui/react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { FactBox } from "@/components/ui/fact-box";
 import { PageHeading } from "@/components/ui/page-heading";
-import { PageMessage } from "@/components/ui/page-message";
 import { TitledSection } from "@/components/ui/titled-section";
 import { OutlineOrders } from "@/features/coordinator/OutlineOrders";
 import { summarize } from "@/features/coordinator/summary";
 import { requireLocale } from "@/i18n/locale";
-import { redirect } from "@/i18n/navigation";
-import { loadCoordination } from "@/lib/coordinator";
 import { daysUntil } from "@/lib/domain/coordination";
 import { formatEuro } from "@/lib/domain/fees";
 import { berlinDayTime } from "@/lib/domain/sessions";
 
 import { saveOutlineOrder } from "../actions";
+import { requireActiveWorkspace } from "../workspace";
 
 export const dynamic = "force-dynamic";
 
@@ -27,15 +25,10 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function OutlinesPage({ params }: Props) {
-  const locale = requireLocale((await params).locale);
-  setRequestLocale(locale);
-  const coordination = await loadCoordination();
-  if (coordination === "signed-out") {
-    return redirect({ href: "/training/coordinator/login", locale });
-  }
+  const ws = await requireActiveWorkspace((await params).locale);
+  if (!ws.ok) return ws.fallback;
+  const { locale, data, now } = ws.workspace;
   const [t, th] = await Promise.all([getTranslations("coordinator"), getTranslations("home")]);
-  const { data, now } = coordination;
-  if (!data) return <PageMessage title={th("noTraining")} />;
 
   const { training } = data;
   const due = training.outline_order_deadline ? new Date(training.outline_order_deadline) : null;

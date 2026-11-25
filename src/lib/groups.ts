@@ -1,9 +1,7 @@
 import "server-only";
+import type { CoordinatorClient } from "@/lib/auth";
 import { smallestGroup, type SuggestedGroup } from "@/lib/domain/groups";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 export type StudyGroup = {
   id: string;

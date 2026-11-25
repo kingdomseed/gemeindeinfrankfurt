@@ -4,12 +4,12 @@ import { Button, chakra, Heading, HStack, Input, Stack, Table } from "@chakra-ui
 import { useTranslations } from "next-intl";
 
 import { ColumnHeader } from "@/components/ui/column-header";
-import { Notice } from "@/components/ui/notice";
 import { outlineOrdersFingerprint } from "@/lib/domain/list-sync";
 import type { OutlineStock } from "@/lib/domain/payments";
 import type { Language } from "@/lib/domain/types";
 
 import { ConflictBanner } from "./ConflictBanner";
+import { FormResult } from "./FormResult";
 import { OutlineExtraTag } from "./OutlineExtraTag";
 import type { FormAction } from "./types";
 import { useCollaborativeForm } from "./useCollaborativeForm";
@@ -124,30 +124,13 @@ export function OutlineOrders(props: {
             </Table.Footer>
           </Table.Root>
         </Table.ScrollArea>
-        <ConflictBanner
-          status={collab.state.status}
-          conflicts={collab.state.conflicts}
-          fieldLabels={fieldLabels}
-          serverValues={collab.state.server}
-          onUseServerField={collab.takeServerField}
-          onAcceptAllServer={collab.acceptAllServer}
-          onKeepLocal={collab.keepLocal}
-        />
+        <ConflictBanner {...collab.bannerProps} fieldLabels={fieldLabels} />
         <HStack gap="3" wrap="wrap">
           <Button type="submit" loading={collab.pending}>
             {t("saveOrder")}
           </Button>
         </HStack>
-        {collab.state.status === "saved" && (
-          <Notice tone="success" announce="status">
-            {t("orderSaved")}
-          </Notice>
-        )}
-        {collab.state.status === "error" && (
-          <Notice tone="error" announce="alert">
-            {collab.state.errorMessage ?? t("error")}
-          </Notice>
-        )}
+        <FormResult state={collab.result} saved={t("orderSaved")} />
       </chakra.form>
     </Stack>
   );

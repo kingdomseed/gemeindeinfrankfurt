@@ -1,10 +1,8 @@
 import "server-only";
 import { z } from "zod";
 
+import { currentCoordinatorName, type CoordinatorClient } from "@/lib/auth";
 import { spaceSections, type SectionKey } from "@/lib/domain/links";
-import type { createClient } from "@/lib/supabase/server";
-
-type CoordinatorClient = Awaited<ReturnType<typeof createClient>>;
 
 const section = z.enum(spaceSections);
 
@@ -50,18 +48,13 @@ export async function addTrainingLink(
   trainingId: string,
   input: { section: SectionKey; title: string; url: string },
 ) {
-  const { data: auth } = await supabase.auth.getUser();
-  const { data: me } = await supabase
-    .from("coordinators")
-    .select("display_name")
-    .eq("user_id", auth.user?.id ?? "")
-    .maybeSingle();
+  const addedBy = await currentCoordinatorName(supabase);
   const { error } = await supabase.from("training_links").insert({
     training_id: trainingId,
     section: input.section,
     title: input.title,
     url: input.url,
-    added_by: me?.display_name ?? "",
+    added_by: addedBy,
   });
   if (error) throw error;
 }

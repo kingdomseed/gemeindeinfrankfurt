@@ -6,7 +6,7 @@ import { z } from "zod";
 import type { FormState } from "@/features/coordinator/types";
 import { requireAuth } from "@/lib/auth";
 import { hymnsFingerprint, versesFingerprint } from "@/lib/domain/list-sync";
-import { saveHymns, saveVerses } from "@/lib/messages";
+import { parseStoredVerses, saveHymns, saveVerses } from "@/lib/messages";
 
 const id = z.uuid();
 const number = z.string().trim().max(20);
@@ -55,18 +55,6 @@ export async function saveMessageHymns(
 }
 
 const text = z.string().trim().max(4000);
-const storedVersesSchema = z
-  .object({
-    verses: z
-      .array(
-        z.object({
-          ref: z.string(),
-          text: z.object({ de: z.string(), en: z.string(), ru: z.string() }).partial(),
-        }),
-      )
-      .catch([]),
-  })
-  .catch({ verses: [] });
 
 // Saves a message's verses in reading order, with their text per language.
 export async function saveMessageVerses(
@@ -84,7 +72,7 @@ export async function saveMessageVerses(
       .eq("session_id", sessionId)
       .maybeSingle();
     if (readError) throw readError;
-    const fp = versesFingerprint(storedVersesSchema.parse(current?.body).verses);
+    const fp = versesFingerprint(parseStoredVerses(current?.body));
     if (fp !== version) {
       refresh();
       return { status: "stale" };

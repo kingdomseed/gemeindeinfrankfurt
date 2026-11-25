@@ -2,13 +2,15 @@
 
 import { Box, Button, HStack, List, Stack, Text } from "@chakra-ui/react";
 import { useFormatter, useTranslations } from "next-intl";
-import { useActionState } from "react";
+import { useState, useTransition, type SyntheticEvent } from "react";
 
 import { StatusTag } from "@/components/ui/status-tag";
 import type { TeamMember } from "@/lib/team";
 
 import { FormResult } from "./FormResult";
 import type { FormAction, FormState } from "./types";
+
+type ActionKind = "resend" | "remove" | "av";
 
 // Everyone who can sign in, with a fresh sign-in link for each and, for
 // admins, a way to put someone in AV or take their access away.
@@ -19,10 +21,24 @@ export function TeamList(props: {
 }) {
   const t = useTranslations("coordinator.team");
   const format = useFormatter();
-  const idle: FormState = { status: "idle" };
-  const [sent, resend, sending] = useActionState(props.actions.resend, idle);
-  const [removed, remove, removing] = useActionState(props.actions.remove, idle);
-  const [avChanged, changeAv, changingAv] = useActionState(props.actions.av, idle);
+  const [feedback, setFeedback] = useState<{ kind: ActionKind; state: FormState } | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  const savedLabel: Record<ActionKind, string> = {
+    resend: t("linkSent"),
+    remove: t("removed"),
+    av: t("avChanged"),
+  };
+
+  function run(kind: ActionKind, e: SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    startTransition(async () => {
+      const next = await props.actions[kind]({ status: "idle" }, form);
+      setFeedback({ kind, state: next });
+    });
+  }
+
   return (
     <Stack as="section" aria-labelledby="team-heading" gap="3">
       <Text as="h2" id="team-heading" fontSize="xl" fontWeight="semibold">
@@ -67,14 +83,14 @@ export function TeamList(props: {
               )}
             </HStack>
             <HStack gap="1">
-              <form action={resend}>
+              <form onSubmit={(e) => run("resend", e)}>
                 <input type="hidden" name="user_id" value={m.userId} />
-                <Button type="submit" size="xs" variant="ghost" color="fg" disabled={sending}>
+                <Button type="submit" size="xs" variant="ghost" color="fg" disabled={pending}>
                   {t("sendLink")}
                 </Button>
               </form>
               {props.canManage && (
-                <form action={changeAv}>
+                <form onSubmit={(e) => run("av", e)}>
                   <input type="hidden" name="user_id" value={m.userId} />
                   <input type="hidden" name="serves_av" value={String(!m.servesAv)} />
                   <Button
@@ -82,7 +98,7 @@ export function TeamList(props: {
                     size="xs"
                     variant="ghost"
                     color="fg"
-                    disabled={changingAv}
+                    disabled={pending}
                     aria-label={`${m.servesAv ? t("leaveAv") : t("joinAv")}: ${m.name}`}
                   >
                     {m.servesAv ? t("leaveAv") : t("joinAv")}
@@ -90,14 +106,14 @@ export function TeamList(props: {
                 </form>
               )}
               {props.canManage && !m.isYou && (
-                <form action={remove}>
+                <form onSubmit={(e) => run("remove", e)}>
                   <input type="hidden" name="user_id" value={m.userId} />
                   <Button
                     type="submit"
                     size="xs"
                     variant="ghost"
                     color="fg.error"
-                    disabled={removing}
+                    disabled={pending}
                     aria-label={`${t("remove")}: ${m.name}`}
                   >
                     {t("remove")}
@@ -108,9 +124,7 @@ export function TeamList(props: {
           </List.Item>
         ))}
       </List.Root>
-      <FormResult state={sent} saved={t("linkSent")} />
-      <FormResult state={removed} saved={t("removed")} />
-      <FormResult state={avChanged} saved={t("avChanged")} />
+      {feedback && <FormResult state={feedback.state} saved={savedLabel[feedback.kind]} />}
     </Stack>
   );
 }
