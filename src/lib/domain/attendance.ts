@@ -38,6 +38,8 @@ export function overLimit(counts: { unexcused: number; excused: number }) {
   return counts.unexcused > 0 || counts.excused > MAX_EXCUSED;
 }
 
+export type KeyMatch = { matched: true; mark: Mark | null } | { matched: false };
+
 // What a click on a box in the overview does: empty, present, absent,
 // excused, empty. A message someone did not have to come to can only be
 // marked present.
@@ -47,6 +49,24 @@ export function nextMark(current: Mark | null, required: boolean): Mark | null {
   if (current === "present") return "absent";
   if (current === "absent") return "excused";
   return null;
+}
+
+// Maps a keyboard press on a focused attendance cell to the exact mark (using
+// the active language's short keys) or null on Backspace / Delete.
+export function markFromKey(
+  key: string,
+  required: boolean,
+  shortKeys: { present: string; absent: string; excused: string },
+): KeyMatch {
+  if (key === "Backspace" || key === "Delete") return { matched: true, mark: null };
+  if (key.length !== 1) return { matched: false };
+  const lower = key.toLocaleLowerCase();
+  if (lower === shortKeys.present.toLocaleLowerCase()) return { matched: true, mark: "present" };
+  if (required) {
+    if (lower === shortKeys.absent.toLocaleLowerCase()) return { matched: true, mark: "absent" };
+    if (lower === shortKeys.excused.toLocaleLowerCase()) return { matched: true, mark: "excused" };
+  }
+  return { matched: false };
 }
 
 // The message to take attendance for: the first one that has not ended yet,

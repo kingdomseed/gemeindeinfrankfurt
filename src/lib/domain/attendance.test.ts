@@ -4,6 +4,7 @@ import {
   absenceCounts,
   currentSession,
   isRequired,
+  markFromKey,
   nextMark,
   overLimit,
   type Mark,
@@ -58,6 +59,33 @@ describe("nextMark", () => {
   it("only marks present for a message someone did not have to come to", () => {
     expect(nextMark(null, false)).toBe("present");
     expect(nextMark("present", false)).toBeNull();
+  });
+});
+
+describe("markFromKey", () => {
+  const en = { present: "P", absent: "A", excused: "E" };
+  const de = { present: "A", absent: "F", excused: "E" };
+  const ru = { present: "П", absent: "О", excused: "У" };
+
+  it("maps localized short keys case-insensitively and clears with Delete or Backspace", () => {
+    expect(markFromKey("p", true, en)).toEqual({ matched: true, mark: "present" });
+    expect(markFromKey("A", true, en)).toEqual({ matched: true, mark: "absent" });
+    expect(markFromKey("e", true, en)).toEqual({ matched: true, mark: "excused" });
+    expect(markFromKey("a", true, de)).toEqual({ matched: true, mark: "present" });
+    expect(markFromKey("F", true, de)).toEqual({ matched: true, mark: "absent" });
+    expect(markFromKey("п", true, ru)).toEqual({ matched: true, mark: "present" });
+    expect(markFromKey("О", true, ru)).toEqual({ matched: true, mark: "absent" });
+    expect(markFromKey("у", true, ru)).toEqual({ matched: true, mark: "excused" });
+    expect(markFromKey("Backspace", true, en)).toEqual({ matched: true, mark: null });
+    expect(markFromKey("Delete", false, en)).toEqual({ matched: true, mark: null });
+  });
+
+  it("ignores absent and excused keys on optional sessions and unrelated keys", () => {
+    expect(markFromKey("p", false, en)).toEqual({ matched: true, mark: "present" });
+    expect(markFromKey("a", false, en)).toEqual({ matched: false });
+    expect(markFromKey("e", false, en)).toEqual({ matched: false });
+    expect(markFromKey("x", true, en)).toEqual({ matched: false });
+    expect(markFromKey("Enter", true, en)).toEqual({ matched: false });
   });
 });
 
