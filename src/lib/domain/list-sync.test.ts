@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { hymnsFingerprint, initialListSync, listSyncReducer, versesFingerprint } from "./list-sync";
+import {
+  hymnsFingerprint,
+  initialListSync,
+  listSyncReducer,
+  scheduleFingerprint,
+  versesFingerprint,
+} from "./list-sync";
 import type { Hymn, Verse } from "./messages";
 
 describe("fingerprints", () => {
@@ -12,6 +18,19 @@ describe("fingerprints", () => {
     const va: Verse[] = [{ ref: " Rom. 8:1 ", text: { en: "There is now", de: "" } }];
     const vb: Verse[] = [{ ref: "Rom. 8:1", text: { en: "There is now" } }];
     expect(versesFingerprint(va)).toBe(versesFingerprint(vb));
+  });
+
+  it("changes scheduleFingerprint when is_online toggles", () => {
+    const onlineSession = {
+      id: "s1",
+      starts_at: "2027-01-12T18:00:00Z",
+      ends_at: "2027-01-12T20:00:00Z",
+      is_tested: false,
+      is_online: true,
+    };
+    expect(scheduleFingerprint([onlineSession])).not.toBe(
+      scheduleFingerprint([{ ...onlineSession, is_online: false }]),
+    );
   });
 });
 

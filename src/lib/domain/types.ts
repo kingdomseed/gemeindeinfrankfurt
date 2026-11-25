@@ -20,6 +20,10 @@ export type Session = {
   ends_at: string;
 };
 
+export type TrainingSession = Session & {
+  is_online: boolean;
+};
+
 export type LocalityOption = {
   id: string;
   name: string;

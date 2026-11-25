@@ -47,18 +47,21 @@ const TRAINING: TrainingWithSessions = {
       message_number: 1,
       starts_at: "2027-01-12T18:00:00.000Z",
       ends_at: "2027-01-12T20:00:00.000Z",
+      is_online: true,
     },
     {
       id: "aaaa2222-2222-4222-8222-222222222222",
       message_number: 2,
       starts_at: "2027-01-15T18:00:00.000Z",
       ends_at: "2027-01-15T20:00:00.000Z",
+      is_online: true,
     },
     {
       id: "aaaa3333-3333-4333-8333-333333333333",
       message_number: 3,
       starts_at: "2027-01-16T08:30:00.000Z",
       ends_at: "2027-01-16T10:30:00.000Z",
+      is_online: false,
     },
   ],
   localities: [

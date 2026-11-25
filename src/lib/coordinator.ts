@@ -160,7 +160,7 @@ export async function loadTrainingSetup(supabase: CoordinatorClient, trainingId:
   const { data, error } = await supabase
     .from("trainings")
     .select(
-      "id, updated_at, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, outline_order_deadline, sessions(id, message_number, starts_at, ends_at, is_tested, registration_sessions(count)), localities(id, name, is_home, registrations(count)), training_sites(id, name, sort_order, registrations(count))",
+      "id, updated_at, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, outline_order_deadline, sessions(id, message_number, starts_at, ends_at, is_tested, is_online, registration_sessions(count)), localities(id, name, is_home, registrations(count)), training_sites(id, name, sort_order, registrations(count))",
     )
     .eq("id", trainingId)
     .order("message_number", { referencedTable: "sessions" })
@@ -179,6 +179,7 @@ export async function loadTrainingSetup(supabase: CoordinatorClient, trainingId:
       starts_at: s.starts_at,
       ends_at: s.ends_at,
       is_tested: s.is_tested,
+      is_online: s.is_online,
       picked: count.parse(s.registration_sessions),
     })),
     localities: data.localities.map((l) => ({

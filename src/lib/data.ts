@@ -3,7 +3,7 @@ import type { QueryData } from "@supabase/supabase-js";
 import { z } from "zod";
 
 import { sortLocalities } from "@/lib/domain/locality";
-import type { Language, LocalityOption, Session, SiteOption } from "@/lib/domain/types";
+import type { Language, LocalityOption, SiteOption, TrainingSession } from "@/lib/domain/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type Training = {
@@ -20,13 +20,13 @@ export type Training = {
 };
 
 export type TrainingWithSessions = Training & {
-  sessions: Session[];
+  sessions: TrainingSession[];
   localities: LocalityOption[];
   sites: SiteOption[];
 };
 
 const TRAINING_COLUMNS =
-  "id, slug, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, rules, sessions(id, message_number, starts_at, ends_at), localities(id, name, is_home), training_sites(id, name, sort_order)";
+  "id, slug, title, fee_cents, outline_price_cents, payee_name, payee_iban, payment_reference, venue, rules, sessions(id, message_number, starts_at, ends_at, is_online), localities(id, name, is_home), training_sites(id, name, sort_order)";
 
 const trainingQuery = () => createAdminClient().from("trainings").select(TRAINING_COLUMNS);
 type TrainingRow = QueryData<ReturnType<typeof trainingQuery>>[number];

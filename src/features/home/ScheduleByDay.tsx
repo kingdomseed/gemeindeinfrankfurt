@@ -2,13 +2,14 @@ import { Box, Flex, Heading, List, Span, Stack, Text } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { scheduleDays } from "@/lib/domain/sessions";
-import type { Session } from "@/lib/domain/types";
+import type { TrainingSession } from "@/lib/domain/types";
 
 // The schedule as one short list per day, in Frankfurt time.
-export function ScheduleByDay({ sessions }: { sessions: Session[] }) {
+export function ScheduleByDay({ sessions }: { sessions: readonly TrainingSession[] }) {
   const t = useTranslations("home");
   const tc = useTranslations("common");
   const locale = useLocale();
+  const hasMixedFormat = sessions.some((s) => s.is_online) && sessions.some((s) => !s.is_online);
   return (
     <Box as="section" aria-labelledby="schedule-heading">
       <Flex wrap="wrap" align="baseline" justify="space-between" columnGap="4">
@@ -42,7 +43,11 @@ export function ScheduleByDay({ sessions }: { sessions: Session[] }) {
                   borderBottomWidth="1px"
                 >
                   <span>{t("message", { number: s.number })}</span>
-                  <Span color="fg.muted">{s.time}</Span>
+                  <Span color="fg.muted">
+                    {hasMixedFormat && s.isOnline !== undefined
+                      ? `${s.time} · ${s.isOnline ? t("sessionOnline") : t("sessionInPerson")}`
+                      : s.time}
+                  </Span>
                 </List.Item>
               ))}
             </List.Root>

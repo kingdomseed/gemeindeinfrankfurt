@@ -91,7 +91,13 @@
     "changeSeat": "Platzart und Botschaften, oder stornieren",
     "changeDetails": "Name, Kontaktdaten, Sprachen und Bemerkungen",
     "anyTime": "Jederzeit während des Trainings",
-    "lordsDay": "Tag des Herrn"
+    "lordsDay": "Tag des Herrn",
+    "formatTitle": "Ablauf",
+    "formatOnlineBody": "Die Botschaften werden gemeinsam online angesehen. Die Zoom-Links werden vor Beginn des Trainings in der privaten WhatsApp-Gruppe verschickt.",
+    "formatInPersonBody": "Alle nehmen vor Ort teil, in {sites}. Du wählst deinen Teilnahmeort im Anmeldeformular.",
+    "formatInPersonBodyNoSites": "Alle nehmen vor Ort teil.",
+    "sessionOnline": "Online",
+    "sessionInPerson": "Vor Ort"
   },
   "register": {
     "title": "Anmeldeformular für das Video-Training",
@@ -428,6 +434,7 @@
       "date": "Datum",
       "start": "Beginn",
       "end": "Ende",
+      "online": "Online",
       "tested": "Geprüft",
       "actions": "Aktionen",
       "remove": "Entfernen",

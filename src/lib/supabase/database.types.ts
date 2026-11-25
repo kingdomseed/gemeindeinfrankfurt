@@ -507,6 +507,7 @@ export type Database = {
         Row: {
           ends_at: string;
           id: string;
+          is_online: boolean;
           is_tested: boolean;
           message_number: number;
           starts_at: string;
@@ -516,6 +517,7 @@ export type Database = {
         Insert: {
           ends_at: string;
           id?: string;
+          is_online?: boolean;
           is_tested?: boolean;
           message_number: number;
           starts_at: string;
@@ -524,6 +526,7 @@ export type Database = {
         Update: {
           ends_at?: string;
           id?: string;
+          is_online?: boolean;
           is_tested?: boolean;
           message_number?: number;
           starts_at?: string;
