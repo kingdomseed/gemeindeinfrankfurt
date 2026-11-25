@@ -1,203 +1,90 @@
 import "server-only";
-import { createHash } from "node:crypto";
-
-import { getTranslations } from "next-intl/server";
-import { Resend } from "resend";
-
-import { localePath } from "@/i18n/routing";
-import { calendarUrl } from "@/lib/calendar";
 import type { Training, TrainingWithSessions } from "@/lib/data";
-import { computeFees, formatEuro } from "@/lib/domain/fees";
-import { trainingDates } from "@/lib/domain/sessions";
-import { picksSessions, type Language } from "@/lib/domain/types";
+import type { Language } from "@/lib/domain/types";
 import type { RegistrationInput } from "@/lib/registrations";
 
-import { confirmationHtml } from "./confirmation-html";
+import { composeCancellation, composeConfirmation, type ConfirmationRegistration } from "./compose";
+import { createEmailDelivery, createResendTransport, type MailMessage } from "./transport";
 
-function client() {
-  const key = process.env.RESEND_API_KEY;
-  return key ? new Resend(key) : null;
-}
+export type { MailMessage as OutgoingEmail } from "./transport";
 
-async function send(to: string, subject: string, text: string, html?: string) {
-  const resend = client();
-  if (!resend) {
-    // Local development without an email provider.
-    console.warn(`[email skipped: RESEND_API_KEY not set] ${subject}`);
-    return;
-  }
+function deliveryFromEnv() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
   const from = process.env.EMAIL_FROM;
   if (!from) throw new Error("Missing environment variable EMAIL_FROM");
-  const replyTo = process.env.EMAIL_REPLY_TO;
-  const { error } = await resend.emails.send({
-    from,
-    ...(replyTo ? { replyTo } : {}),
-    to,
-    subject,
-    text,
-    ...(html ? { html } : {}),
-  });
-  if (error) throw new Error(`Email failed: ${error.message}`);
+  return createEmailDelivery(
+    createResendTransport({
+      apiKey,
+      from,
+      replyTo: process.env.EMAIL_REPLY_TO,
+    }),
+  );
 }
 
-export type OutgoingEmail = { to: string; subject: string; text: string };
+export function confirmationFromInput(
+  input: RegistrationInput,
+  waived: boolean,
+): ConfirmationRegistration {
+  return {
+    firstName: input.first_name,
+    email: input.email,
+    seatType: input.seat_type,
+    localityId: input.locality_id,
+    otherLocality: input.other_locality,
+    siteId: input.site_id,
+    groupLanguage: input.group_language,
+    outlineLanguage: input.outline_language,
+    secondOutlineLanguage: input.second_outline_language,
+    sessionIds: input.session_ids,
+    waived,
+  };
+}
 
-// Sends many emails in as few requests as the provider allows (100 each).
-// Each request carries a key made from its emails, so sending the same
-// emails again within a day (a retry after a failure) does not send them
-// twice. Returns how many went out, and the error that stopped the rest.
 export async function sendBatch(
-  emails: readonly OutgoingEmail[],
+  emails: readonly MailMessage[],
+  batchPrefix = "batch",
 ): Promise<{ sent: number; error: Error | null }> {
-  const resend = client();
-  if (!resend) {
+  const delivery = deliveryFromEnv();
+  if (!delivery) {
+    // Local development without an email provider.
     console.warn(`[email skipped: RESEND_API_KEY not set] ${emails.length} emails`);
     return { sent: 0, error: null };
   }
-  const from = process.env.EMAIL_FROM;
-  if (!from) throw new Error("Missing environment variable EMAIL_FROM");
-  const replyTo = process.env.EMAIL_REPLY_TO;
-  let sent = 0;
-  for (let i = 0; i < emails.length; i += 100) {
-    const chunk = emails.slice(i, i + 100);
-    const idempotencyKey = createHash("sha256").update(JSON.stringify(chunk)).digest("hex");
-    // oxlint-disable-next-line no-await-in-loop, react-doctor/async-await-in-loop -- one request at a time stays under the provider's rate limit
-    const { error } = await resend.batch.send(
-      chunk.map((e) => ({ from, ...(replyTo ? { replyTo } : {}), ...e })),
-      { idempotencyKey },
-    );
-    if (error) return { sent, error: new Error(error.message) };
-    sent += chunk.length;
-  }
-  return { sent, error: null };
-}
-
-export function editUrl(locale: Language, token: string) {
-  return `${process.env.NEXT_PUBLIC_SITE_URL}${localePath(locale, `/training/r/${token}`)}`;
+  return delivery.sendBatch(emails, batchPrefix);
 }
 
 export async function sendConfirmation(opts: {
   locale: Language;
   training: TrainingWithSessions;
-  registration: RegistrationInput;
+  registration: ConfirmationRegistration;
+  registrationId: string;
   token: string;
-  // A coordinator's waiver on the saved registration.
-  waived: boolean;
-}) {
-  const { locale, training, registration: r, token, waived } = opts;
-  const [t, tr, tc, tl, th] = await Promise.all([
-    getTranslations({ locale, namespace: "email" }),
-    getTranslations({ locale, namespace: "register" }),
-    getTranslations({ locale, namespace: "calendar" }),
-    getTranslations({ locale, namespace: "common.languages" }),
-    getTranslations({ locale, namespace: "home" }),
-  ]);
-  const fees = computeFees(
-    {
-      seatType: r.seat_type,
-      hardshipWaiver: waived,
-      outlineLanguage: r.outline_language,
-      secondOutlineLanguage: r.second_outline_language,
-    },
-    { feeCents: training.fee_cents, outlinePriceCents: training.outline_price_cents },
-  );
-  const title = training.title[locale];
-  const localityName =
-    training.localities.find((l) => l.id === r.locality_id)?.name ?? (r.other_locality || null);
-  const siteName = training.sites.find((s) => s.id === r.site_id)?.name ?? null;
-  const body = [
-    t("confirmationIntro", { name: r.first_name }),
-    "",
-    `${title}: ${tr(`seat.${r.seat_type}`)}`,
-    ...(localityName ? [`${tr("summaryLocality")}: ${localityName}`] : []),
-    ...(siteName ? [`${tr("summarySite")}: ${siteName}`] : []),
-    // Anaheim attendees owe nothing, so they get no payment lines.
-    ...(fees.trainingCents + fees.outlineCents > 0
-      ? [
-          `${tr("trainingFee")}: ${formatEuro(fees.trainingCents, locale)}`,
-          `${tr("outlines", { count: fees.outlineCount })}: ${formatEuro(fees.outlineCents, locale)}`,
-          tr("payTo", {
-            payee: training.payee_name,
-            iban: training.payee_iban,
-            reference: training.payment_reference,
-          }),
-        ]
-      : []),
-    "",
-    tc("emailLine", { url: calendarUrl(locale, token) }),
-    "",
-    t("editLink", { url: editUrl(locale, token) }),
-  ].join("\n");
-  const euro = (cents: number) => formatEuro(cents, locale);
-  const total = fees.trainingCents + fees.outlineCents;
-  const sessionCount = training.sessions.length;
-  const messages = picksSessions(r.seat_type)
-    ? tr("messagesChosen", { count: r.session_ids.length, total: sessionCount })
-    : tr("messagesAll", { total: sessionCount });
-  const dates = trainingDates(training.sessions, locale, th("lordsDay"));
-  const html = confirmationHtml({
-    lang: locale,
-    brand: title,
-    heading: t("confirmationIntro", { name: r.first_name }),
-    intro: dates ? `${title} · ${dates}` : title,
-    details: [
-      ...(localityName ? [{ label: tr("summaryLocality"), value: localityName }] : []),
-      ...(siteName ? [{ label: tr("summarySite"), value: siteName }] : []),
-      { label: tr("summarySeat"), value: `${tr(`seat.${r.seat_type}`)}, ${messages}` },
-      { label: tr("summaryGroup"), value: tl(r.group_language) },
-      ...(r.outline_language
-        ? [
-            {
-              label: tr("summaryOutline"),
-              value: [r.outline_language, r.second_outline_language]
-                .filter((l) => l !== null)
-                .map((l) => tl(l))
-                .join(" + "),
-            },
-          ]
-        : []),
-    ],
-    transfer:
-      total > 0
-        ? {
-            title: t("transferTitle", { total: euro(total) }),
-            lines: [
-              { label: tr("trainingFee"), value: euro(fees.trainingCents) },
-              {
-                label: tr("outlines", { count: fees.outlineCount }),
-                value: euro(fees.outlineCents),
-              },
-            ],
-            account: [
-              { label: tr("payee"), value: training.payee_name },
-              { label: tr("iban"), value: training.payee_iban },
-              { label: tr("reference"), value: training.payment_reference },
-            ],
-          }
-        : null,
-    calendar: { label: tc("yourMessages"), url: calendarUrl(locale, token) },
-    change: {
-      intro: t("changeIntro"),
-      label: t("changeButton"),
-      url: editUrl(locale, token),
-      note: t("linkPrivate"),
-    },
-    footer: t("footer"),
+}): Promise<void> {
+  const message = composeConfirmation({
+    ...opts,
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "",
   });
-  await send(r.email, t("confirmationSubject", { training: title }), body, html);
+  const delivery = deliveryFromEnv();
+  if (!delivery) {
+    console.warn(`[email skipped: RESEND_API_KEY not set] ${message.subject}`);
+    return;
+  }
+  await delivery.sendOne(message);
 }
 
 export async function sendCancellation(opts: {
   locale: Language;
   training: Training;
+  registrationId: string;
   email: string;
   firstName: string;
-}) {
-  const t = await getTranslations({ locale: opts.locale, namespace: "email" });
-  const title = opts.training.title[opts.locale];
-  await send(
-    opts.email,
-    t("cancellationSubject", { training: title }),
-    t("cancellationBody", { name: opts.firstName }),
-  );
+}): Promise<void> {
+  const message = composeCancellation(opts);
+  const delivery = deliveryFromEnv();
+  if (!delivery) {
+    console.warn(`[email skipped: RESEND_API_KEY not set] ${message.subject}`);
+    return;
+  }
+  await delivery.sendOne(message);
 }
