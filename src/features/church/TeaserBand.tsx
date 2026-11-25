@@ -6,6 +6,7 @@ import { fromCapitals } from "@/lib/domain/rich-text";
 
 import { Eyebrow } from "./Eyebrow";
 import { PhotoBand } from "./PhotoBand";
+import { homeBelief, homeVisitors } from "./photos";
 import { ReadMoreLink } from "./ReadMoreLink";
 import { SectionHeading } from "./SectionHeading";
 
@@ -20,10 +21,11 @@ export function TeaserBand(props: { teaser: PageTeaser; index: number }) {
   const tinted = props.index % 2 === 0;
   return (
     <PhotoBand
-      photo={first ? "/home-belief.jpg" : "/home-visitors.jpg"}
+      photo={first ? homeBelief : homeVisitors}
       tinted={tinted}
       photoEnd={props.index % 2 === 1}
       labelledBy={headingId}
+      loading={props.index === 0 ? "eager" : "lazy"}
     >
       <Eyebrow>{teaser.title}</Eyebrow>
       {first ? (

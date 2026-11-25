@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { openStreetMapUrl } from "@/lib/domain/maps";
 
 import { PhotoBand } from "./PhotoBand";
+import { homePlace } from "./photos";
 import { SectionHeading } from "./SectionHeading";
 
 // Where the church meets, under the home page's own heading for it, beside a
@@ -11,7 +12,7 @@ import { SectionHeading } from "./SectionHeading";
 export function PlaceBand(props: { heading: string; address: string; tinted: boolean }) {
   const t = useTranslations("site");
   return (
-    <PhotoBand photo="/home-place.jpg" tinted={props.tinted} photoEnd={false} labelledBy="place">
+    <PhotoBand photo={homePlace} tinted={props.tinted} photoEnd={false} labelledBy="place">
       <SectionHeading id="place">{props.heading || t("meetingPlace")}</SectionHeading>
       <Text as="address" fontStyle="normal" fontSize="xl" whiteSpace="pre-line">
         {props.address}

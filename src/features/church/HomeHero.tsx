@@ -1,20 +1,22 @@
 import { Box, Container, Heading, Image, Link, Text } from "@chakra-ui/react";
 import { useLocale, useTranslations } from "next-intl";
-import NextImage from "next/image";
+import NextImage, { type StaticImageData } from "next/image";
 
 import { Link as LocaleLink } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+
+import { heroBibleDe, heroBibleEn, heroBibleRu } from "./photos";
 
 type Credit = { author: string; licence: string; source: string; licenceUrl: string };
 
 // An open Bible in each site's language. German: Hanna Theresia Pitter,
 // Unsplash License; English: Leon Brooks, public domain. Only the Russian
 // photo's licence asks for a credit.
-const photos: Record<Locale, { src: string; credit: Credit | null }> = {
-  de: { src: "/hero-bible-de.jpg", credit: null },
-  en: { src: "/hero-bible.jpg", credit: null },
+const photos: Record<Locale, { src: StaticImageData; credit: Credit | null }> = {
+  de: { src: heroBibleDe, credit: null },
+  en: { src: heroBibleEn, credit: null },
   ru: {
-    src: "/hero-bible-ru.jpg",
+    src: heroBibleRu,
     credit: {
       author: "Dmitry Makeev",
       licence: "CC BY-SA 4.0",
@@ -36,7 +38,15 @@ export function HomeHero(props: {
   return (
     <Box position="relative" overflow="hidden" bg="gray.900" color="white">
       <Image asChild position="absolute" inset="0" w="full" h="full" objectFit="cover">
-        <NextImage src={photo.src} alt="" fill sizes="100vw" fetchPriority="high" loading="eager" />
+        <NextImage
+          src={photo.src}
+          alt=""
+          fill
+          sizes="100vw"
+          fetchPriority="high"
+          loading="eager"
+          placeholder="blur"
+        />
       </Image>
       <Box
         position="absolute"
