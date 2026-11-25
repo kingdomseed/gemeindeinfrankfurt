@@ -9,7 +9,13 @@ import { loadCurrentCoordinator, requireAuth } from "@/lib/auth";
 import { getTrainingById } from "@/lib/data";
 import { inAudience, isAudience, type EmailTexts } from "@/lib/domain/emails";
 import { languages, type Language } from "@/lib/domain/types";
-import { beforeTraining, coordinatorMessage, paymentReminder } from "@/lib/email/bulk";
+import {
+  canonicalBeforeTrainingSubject,
+  canonicalReminderSubject,
+  composeBeforeTraining,
+  composeCoordinatorMessage,
+  composePaymentReminder,
+} from "@/lib/email/compose";
 import { sendBatch, type OutgoingEmail } from "@/lib/email/send";
 import { loadRecipients, recordSend, type EmailKind } from "@/lib/emails";
 
@@ -33,7 +39,7 @@ async function deliver(
 ): Promise<FormState> {
   const t = await getTranslations("coordinator.emails");
   if (send.emails.length === 0) return { status: "error", message: t("nobody") };
-  const { sent, error } = await sendBatch(send.emails);
+  const { sent, error } = await sendBatch(send.emails, send.kind);
   if (error) {
     // Nothing is logged yet: pressing send again resends only what is missing
     // (the batches are idempotent), and that send logs the whole delivery once.
@@ -51,13 +57,13 @@ async function deliver(
 // Reminds everyone who still owes money what is open and where to pay.
 export async function sendPaymentReminder(rawTrainingId: string): Promise<FormState> {
   const { supabase, training, recipients } = await setUp(rawTrainingId);
-  const emails = await Promise.all(
-    recipients.filter((r) => r.openCents > 0).map((r) => paymentReminder(training, r)),
-  );
+  const emails = recipients
+    .filter((r) => r.openCents > 0)
+    .map((r) => composePaymentReminder(training, r));
   return deliver(supabase, {
     trainingId: training.id,
     kind: "payment_reminder",
-    subject: emails[0]?.subject ?? "",
+    subject: canonicalReminderSubject(training),
     emails,
   });
 }
@@ -78,11 +84,11 @@ export async function sendBeforeTraining(
 ): Promise<FormState> {
   const { supabase, training, recipients } = await setUp(rawTrainingId);
   const written = notes(form);
-  const emails = await Promise.all(recipients.map((r) => beforeTraining(training, r, written)));
+  const emails = recipients.map((r) => composeBeforeTraining(training, r, written));
   return deliver(supabase, {
     trainingId: training.id,
     kind: "before_training",
-    subject: emails[0]?.subject ?? "",
+    subject: canonicalBeforeTrainingSubject(training),
     emails,
   });
 }
@@ -113,23 +119,20 @@ export async function sendMessage(
     if (!me?.email) return { status: "error" };
     const to = me.email;
     const written = languages.filter((l): l is Language => texts[l] !== undefined);
-    const emails = (await Promise.all(written.map((l) => coordinatorMessage(texts, to, l)))).filter(
-      (e) => e !== null,
-    );
-    const { error } = await sendBatch(emails);
+    const emails = written
+      .map((l) => composeCoordinatorMessage(texts, to, l))
+      .filter((e) => e !== null);
+    const { error } = await sendBatch(emails, `test-${crypto.randomUUID()}`);
     if (error) {
       console.error("Test email failed", error);
       return { status: "error", message: t("sendFailed", { sent: 0, total: emails.length }) };
     }
     return { status: "saved", message: t("testSent", { email: to }) };
   }
-  const emails = (
-    await Promise.all(
-      recipients
-        .filter((r) => inAudience(r, audience.data))
-        .map((r) => coordinatorMessage(texts, r.email, r.locale)),
-    )
-  ).filter((e) => e !== null);
+  const emails = recipients
+    .filter((r) => inAudience(r, audience.data))
+    .map((r) => composeCoordinatorMessage(texts, r.email, r.locale))
+    .filter((e) => e !== null);
   return deliver(supabase, {
     trainingId: training.id,
     kind: "message",

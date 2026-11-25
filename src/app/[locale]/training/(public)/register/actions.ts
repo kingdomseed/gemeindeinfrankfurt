@@ -8,7 +8,7 @@ import { getPublishedTraining } from "@/lib/data";
 import { canRegister } from "@/lib/domain/cutoffs";
 import { newEditToken } from "@/lib/domain/token";
 import type { Language } from "@/lib/domain/types";
-import { sendConfirmation } from "@/lib/email/send";
+import { confirmationFromInput, sendConfirmation } from "@/lib/email/send";
 import { placeInStudyGroup } from "@/lib/groups";
 import {
   hasPossibleDuplicate,
@@ -57,6 +57,12 @@ export async function register(
     console.error("Could not place the registration in a study group", placeError);
   });
 
-  await sendConfirmation({ locale, training, registration: input, token, waived: false });
+  await sendConfirmation({
+    locale,
+    training,
+    registration: confirmationFromInput(input, false),
+    registrationId: data.id,
+    token,
+  });
   return { status: "done", calendarUrl: calendarUrl(locale, token) };
 }
