@@ -41,7 +41,10 @@ export async function saveMessageHymns(
   return { status };
 }
 
-const text = z.string().trim().max(4000);
+const text = z
+  .string()
+  .transform((s) => s.replace(/\r\n?/g, "\n").trim())
+  .pipe(z.string().max(4000));
 
 // Saves a message's verses in reading order, with their text per language.
 export async function saveMessageVerses(

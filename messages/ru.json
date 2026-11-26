@@ -677,6 +677,7 @@
       "previous": "Назад",
       "next": "Далее",
       "fullScreen": "Во весь экран",
+      "rules": "Правила",
       "ruleMeta": "Правила тренинга · {number} из {total}",
       "hymnMeta": "Гимн · {number} из {total}",
       "verseMeta": "Стихи · {number} из {total}",

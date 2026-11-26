@@ -35,13 +35,15 @@ export function hymnsFingerprint(hymns: readonly Hymn[]): string {
   );
 }
 
+const normalizeLineEndings = (s: string | undefined) => (s ?? "").replace(/\r\n?/g, "\n").trim();
+
 export function versesFingerprint(verses: readonly Verse[]): string {
   return JSON.stringify(
     verses.map((v) => ({
       ref: v.ref.trim(),
-      de: v.text.de?.trim() || "",
-      en: v.text.en?.trim() || "",
-      ru: v.text.ru?.trim() || "",
+      de: normalizeLineEndings(v.text.de),
+      en: normalizeLineEndings(v.text.en),
+      ru: normalizeLineEndings(v.text.ru),
     })),
   );
 }
