@@ -63,4 +63,7 @@ export const tokens = defineTokens({
     body: { value: '"Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif' },
     heading: { value: '"Source Serif 4 Variable", Georgia, "Times New Roman", serif' },
   },
+  easings: {
+    "ui-out": { value: "cubic-bezier(0.23, 1, 0.32, 1)" },
+  },
 });

@@ -15,7 +15,23 @@ const lg = { lg: {} };
 
 export const recipes = {
   button: defineRecipe({
-    variants: { variant: { outline: strong }, size: lg },
+    base: {
+      transition:
+        "transform 120ms {easings.ui-out}, background-color 150ms ease, border-color 150ms ease, color 150ms ease",
+      _active: { transform: "scale(0.97)" },
+      _disabled: { _active: { transform: "none" } },
+      _motionReduce: {
+        transition: "background-color 150ms ease, border-color 150ms ease, color 150ms ease",
+        _active: { transform: "none" },
+      },
+    },
+    variants: {
+      variant: {
+        outline: strong,
+        plain: { _active: { transform: "none" } },
+      },
+      size: lg,
+    },
     defaultVariants: { size: "lg" },
   }),
   input: defineRecipe({

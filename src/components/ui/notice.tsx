@@ -22,6 +22,7 @@ export function Notice(props: {
       as={props.announce === "status" ? "output" : "p"}
       role={props.announce === "alert" ? "alert" : undefined}
       tone={props.tone}
+      animated={Boolean(props.announce)}
       {...(props.focus && { ref: focusOnMount, tabIndex: -1 })}
     >
       {props.children}
