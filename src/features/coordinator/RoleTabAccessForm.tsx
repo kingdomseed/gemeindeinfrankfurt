@@ -46,8 +46,14 @@ export function RoleTabAccessForm(props: { permissions: RoleTabPermissions; acti
             size="sm"
             variant="line"
             css={{
-              "& th, & td": { px: "1.5" },
-              "@media (min-width: 30em)": { "& th, & td": { px: "3" } },
+              "& th, & td": { px: "1" },
+              "& th:first-of-type, & td:first-of-type": { ps: "0" },
+              "& th:last-of-type, & td:last-of-type": { pe: "0" },
+              "@media (min-width: 30em)": {
+                "& th, & td": { px: "3" },
+                "& th:first-of-type, & td:first-of-type": { ps: "3" },
+                "& th:last-of-type, & td:last-of-type": { pe: "3" },
+              },
             }}
           >
             <Table.Header>
