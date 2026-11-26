@@ -5,14 +5,20 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
-import { getCoordinatorClient, requireAuth } from "@/lib/auth";
+import {
+  getCoordinatorClient,
+  loadAccessContext,
+  requireAuth,
+  requireSectionAuth,
+} from "@/lib/auth";
 import {
   defaultLinkTitle,
   detectLinkKind,
   parseExternalLinkUrl,
   spaceSections,
 } from "@/lib/domain/links";
-import { addTrainingLink, removeTrainingLink } from "@/lib/links";
+import { canAccessSection } from "@/lib/domain/roles";
+import { addTrainingLink, loadTrainingLinkSection, removeTrainingLink } from "@/lib/links";
 
 const id = z.uuid();
 const saveStatus = z.enum(["saved", "stale"]);
@@ -27,7 +33,7 @@ const order = z.object({
 
 // How many outlines were ordered from Lebensstrom, per language, in one atomic save.
 export async function saveOutlineOrder(_prev: FormState, form: FormData): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("outlines");
   const parsed = order.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { status: "error" };
   const { training_id, version, ...counts } = parsed.data;
@@ -56,7 +62,6 @@ export async function addSpaceLink(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
   const trainingId = id.parse(rawTrainingId);
   const parsed = linkSchema.safeParse({
     section: form.get("section"),
@@ -64,6 +69,7 @@ export async function addSpaceLink(
     title: form.get("title") ?? "",
   });
   if (!parsed.success) return { status: "error" };
+  const supabase = await requireSectionAuth(parsed.data.section);
   const url = parseExternalLinkUrl(parsed.data.url);
   if (!url) {
     const t = await getTranslations("coordinator.links");
@@ -78,6 +84,16 @@ export async function addSpaceLink(
 export async function removeSpaceLink(form: FormData) {
   const supabase = await requireAuth();
   const linkId = id.parse(form.get("id"));
+  const section = await loadTrainingLinkSection(supabase, linkId);
+  if (section) {
+    const access = await loadAccessContext(supabase);
+    if (
+      !access.currentUser ||
+      !canAccessSection(access.currentUser.role, access.permissions, section)
+    ) {
+      throw new Error("Forbidden");
+    }
+  }
   await removeTrainingLink(supabase, linkId);
   refresh();
 }

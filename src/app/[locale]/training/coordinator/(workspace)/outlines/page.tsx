@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function OutlinesPage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "outlines");
   if (!ws.ok) return ws.fallback;
   const { locale, data, now } = ws.workspace;
   const [t, th] = await Promise.all([getTranslations("coordinator"), getTranslations("home")]);

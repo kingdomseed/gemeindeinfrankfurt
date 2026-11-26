@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function GroupsPage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "groups");
   if (!ws.ok) return ws.fallback;
   const { data, supabase } = ws.workspace;
   const t = await getTranslations("coordinator.groups");

@@ -6,30 +6,33 @@ import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
 import { requireLocale } from "@/i18n/locale";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireSectionAuth } from "@/lib/auth";
+import { spaceSections } from "@/lib/domain/links";
+import { coordinatorRoles } from "@/lib/domain/roles";
 import {
   addCoordinator,
   isTeamAdmin,
   loadTeam,
   removeCoordinator,
+  saveRoleTabPermissions,
   sendSignInLink,
-  setAdmin,
+  setRole,
   setServesAv,
 } from "@/lib/team";
 
 const newMember = z.object({
   name: z.string().trim().min(1).max(100),
   email: z.email().trim().toLowerCase(),
-  is_admin: z.literal("true").optional(),
+  role: z.enum(coordinatorRoles).default("coordinator"),
 });
 
-// Admins only: gives someone coordinator access and emails them a sign-in link.
+// Admins only: gives someone team access with the selected role and emails them a sign-in link.
 export async function inviteCoordinator(_prev: FormState, form: FormData): Promise<FormState> {
   const supabase = await requireAuth();
   if (!(await isTeamAdmin(supabase))) return { status: "error" };
   const parsed = newMember.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { status: "error" };
-  await addCoordinator(parsed.data.name, parsed.data.email, parsed.data.is_admin === "true");
+  await addCoordinator(parsed.data.name, parsed.data.email, parsed.data.role);
   await sendSignInLink(parsed.data.email, requireLocale(await getLocale()));
   refresh();
   return { status: "saved" };
@@ -37,9 +40,9 @@ export async function inviteCoordinator(_prev: FormState, form: FormData): Promi
 
 const member = z.object({ user_id: z.uuid() });
 
-// Sends a coordinator a fresh sign-in link, for example when the first one expired.
+// Sends a team member a fresh sign-in link, for example when the first one expired.
 export async function resendSignInLink(_prev: FormState, form: FormData): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("setup");
   const parsed = member.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { status: "error" };
   const target = (await loadTeam(supabase)).find((m) => m.userId === parsed.data.user_id);
@@ -48,7 +51,7 @@ export async function resendSignInLink(_prev: FormState, form: FormData): Promis
   return { status: "saved" };
 }
 
-// Admins only: takes away someone else's coordinator access.
+// Admins only: takes away someone else's team access.
 export async function removeTeamMember(_prev: FormState, form: FormData): Promise<FormState> {
   const supabase = await requireAuth();
   if (!(await isTeamAdmin(supabase))) return { status: "error" };
@@ -74,18 +77,39 @@ export async function changeAvService(_prev: FormState, form: FormData): Promise
   return { status: "saved" };
 }
 
-const adminChange = z.object({ user_id: z.uuid(), is_admin: z.enum(["true", "false"]) });
+const roleChange = z.object({ user_id: z.uuid(), role: z.enum(coordinatorRoles) });
 
-// Admins only: promotes another coordinator to admin or removes their admin role.
+// Admins only: changes another member's role (admin, coordinator, or helper).
 // Self-changes are rejected so an admin cannot remove their own access.
-export async function changeAdminRole(_prev: FormState, form: FormData): Promise<FormState> {
+export async function changeMemberRole(_prev: FormState, form: FormData): Promise<FormState> {
   const supabase = await requireAuth();
   if (!(await isTeamAdmin(supabase))) return { status: "error" };
-  const parsed = adminChange.safeParse(Object.fromEntries(form));
+  const parsed = roleChange.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { status: "error" };
   const { data: me } = await supabase.auth.getUser();
   if (me.user?.id === parsed.data.user_id) return { status: "error" };
-  await setAdmin(parsed.data.user_id, parsed.data.is_admin === "true");
+  await setRole(parsed.data.user_id, parsed.data.role);
+  refresh();
+  return { status: "saved" };
+}
+
+const tabListSchema = z.array(z.enum(spaceSections));
+
+// Admins only: updates which workspace tabs coordinators and helpers see.
+export async function saveTabPermissions(_prev: FormState, form: FormData): Promise<FormState> {
+  const supabase = await requireAuth();
+  if (!(await isTeamAdmin(supabase))) return { status: "error" };
+  const parsed = z
+    .object({
+      coordinator: tabListSchema,
+      helper: tabListSchema,
+    })
+    .safeParse({
+      coordinator: form.getAll("coordinator"),
+      helper: form.getAll("helper"),
+    });
+  if (!parsed.success) return { status: "error" };
+  await saveRoleTabPermissions(parsed.data);
   refresh();
   return { status: "saved" };
 }

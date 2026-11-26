@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props) {
 
 // Opens the message that is on now or next.
 export default async function MessagesPage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "messages");
   if (!ws.ok) return ws.fallback;
   const { locale, data, now } = ws.workspace;
   const session = currentSession(data.training.sessions, now);

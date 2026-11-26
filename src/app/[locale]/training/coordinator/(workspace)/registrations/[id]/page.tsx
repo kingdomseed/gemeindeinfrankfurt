@@ -1,4 +1,4 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
 import { Notice } from "@/components/ui/notice";
@@ -12,12 +12,11 @@ import { SendEditLink } from "@/features/coordinator/SendEditLink";
 import { CancelRegistration } from "@/features/registration/CancelRegistration";
 import { registrationDefaults, trainingFormProps } from "@/features/registration/form-props";
 import { requireLocale } from "@/i18n/locale";
-import { redirect } from "@/i18n/navigation";
-import { getCoordinatorClient } from "@/lib/auth";
 import { loadRegistrationDetail } from "@/lib/coordinator";
 import { getTrainingById } from "@/lib/data";
 import { feesForRegistration } from "@/lib/domain/payments";
 
+import { requireSectionSession } from "../../workspace";
 import { cancelRegistration, savePayment, saveRegistration, sendEditLink } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -32,10 +31,9 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function RegistrationDetailRoute({ params }: Props) {
   const { locale: raw, id: rawId } = await params;
-  const locale = requireLocale(raw);
-  setRequestLocale(locale);
-  const supabase = await getCoordinatorClient();
-  if (!supabase) return redirect({ href: "/training/coordinator/login", locale });
+  const res = await requireSectionSession(raw, "registrations");
+  if (!res.ok) return res.fallback;
+  const { locale, supabase } = res.session;
 
   const id = z.uuid().safeParse(rawId);
   const [t, th, detail] = await Promise.all([

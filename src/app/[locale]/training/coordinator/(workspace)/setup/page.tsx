@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function SetupPage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "setup");
   if (!ws.ok) return ws.fallback;
   const { data, supabase } = ws.workspace;
   const [t, setup] = await Promise.all([

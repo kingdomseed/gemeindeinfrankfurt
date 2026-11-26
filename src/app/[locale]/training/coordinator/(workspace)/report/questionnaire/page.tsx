@@ -33,7 +33,7 @@ const date = (iso: string | null) => (iso ? germanDate.format(new Date(iso)) : "
 const calendar = (d: string | null) => (d ? germanDate.format(calendarDayNoon(d)) : null);
 
 export default async function QuestionnairePage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "report");
   if (!ws.ok) return ws.fallback;
   const { data, supabase } = ws.workspace;
   const [t, q, view] = await Promise.all([

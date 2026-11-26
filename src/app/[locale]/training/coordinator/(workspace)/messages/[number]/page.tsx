@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props) {
 // One message's hymns and verses, beside the list of all messages.
 export default async function MessagePage({ params }: Props) {
   const { locale: raw, number: rawNumber } = await params;
-  const ws = await requireActiveWorkspace(raw);
+  const ws = await requireActiveWorkspace(raw, "messages");
   const number = messageNumber.safeParse(rawNumber);
   if (!number.success) notFound();
   if (!ws.ok) return ws.fallback;

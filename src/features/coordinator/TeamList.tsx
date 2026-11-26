@@ -1,48 +1,36 @@
 "use client";
 
-import { Box, Button, chakra, Checkbox, HStack, List, Stack, Table, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  chakra,
+  Checkbox,
+  HStack,
+  List,
+  NativeSelect,
+  Stack,
+  Table,
+  Text,
+} from "@chakra-ui/react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useState, useTransition, type SyntheticEvent } from "react";
 
 import { ColumnHeader } from "@/components/ui/column-header";
 import { StatusTag } from "@/components/ui/status-tag";
+import { coordinatorRoles } from "@/lib/domain/roles";
 import type { TeamMember } from "@/lib/team";
 
 import { FormResult } from "./FormResult";
 import type { FormAction, FormState } from "./types";
 
-type ActionKind = "resend" | "remove" | "av" | "admin";
-
-function RoleCheckbox(props: {
-  checked: boolean;
-  disabled: boolean;
-  label: string;
-  ariaLabel: string;
-  srOnly?: boolean;
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <Checkbox.Root
-      checked={props.checked}
-      disabled={props.disabled}
-      onCheckedChange={(e) => props.onChange(e.checked === true)}
-      cursor={props.disabled ? "not-allowed" : "pointer"}
-    >
-      <Checkbox.HiddenInput aria-label={props.ariaLabel} />
-      <Checkbox.Control />
-      <Checkbox.Label srOnly={props.srOnly} fontWeight="normal">
-        {props.label}
-      </Checkbox.Label>
-    </Checkbox.Root>
-  );
-}
+type ActionKind = "resend" | "remove" | "av" | "role";
 
 // Everyone who can sign in, aligned in a table on wider screens and stacked cards
-// on phones. Admins can grant or revoke Admin and AV roles and remove members.
+// on phones. Admins can change roles (Admin, Coordinator, Helper), AV service, and remove members.
 export function TeamList(props: {
   members: readonly TeamMember[];
   canManage: boolean;
-  actions: { resend: FormAction; remove: FormAction; av: FormAction; admin: FormAction };
+  actions: { resend: FormAction; remove: FormAction; av: FormAction; role: FormAction };
 }) {
   const t = useTranslations("coordinator.team");
   const format = useFormatter();
@@ -53,7 +41,7 @@ export function TeamList(props: {
     resend: t("linkSent"),
     remove: t("removed"),
     av: t("avChanged"),
-    admin: t("adminChanged"),
+    role: t("roleChanged"),
   };
 
   function run(kind: ActionKind, e: SyntheticEvent<HTMLFormElement>) {
@@ -65,15 +53,10 @@ export function TeamList(props: {
     });
   }
 
-  function toggleRole(
-    kind: "admin" | "av",
-    userId: string,
-    field: "is_admin" | "serves_av",
-    nextValue: boolean,
-  ) {
+  function submitField(kind: "role" | "av", userId: string, field: string, nextValue: string) {
     const form = new FormData();
     form.set("user_id", userId);
-    form.set(field, String(nextValue));
+    form.set(field, nextValue);
     startTransition(async () => {
       const next = await props.actions[kind]({ status: "idle" }, form);
       setFeedback({ kind, state: next });
@@ -89,27 +72,38 @@ export function TeamList(props: {
     );
   }
 
-  function adminControl(m: TeamMember, showLabel: boolean) {
+  function roleControl(m: TeamMember, showLabel: boolean) {
     if (!props.canManage) {
-      if (m.isAdmin) return <StatusTag tone="brand">{t("admin")}</StatusTag>;
-      return showLabel ? null : (
-        <Text as="span" color="fg.muted">
-          —
-        </Text>
+      return (
+        <StatusTag tone={m.role === "admin" ? "brand" : "neutral"}>
+          {t(`roles.${m.role}`)}
+        </StatusTag>
       );
     }
-    const actionLabel = m.isAdmin
-      ? `${t("removeAdmin")}: ${m.name}`
-      : `${t("makeAdmin")}: ${m.name}`;
+    const select = (
+      <NativeSelect.Root size="sm" width="auto" disabled={pending || m.isYou}>
+        <NativeSelect.Field
+          aria-label={`${t("changeRole")}: ${m.name}`}
+          value={m.role}
+          onChange={(e) => submitField("role", m.userId, "role", e.currentTarget.value)}
+        >
+          {coordinatorRoles.map((role) => (
+            <option key={role} value={role}>
+              {t(`roles.${role}`)}
+            </option>
+          ))}
+        </NativeSelect.Field>
+        <NativeSelect.Indicator />
+      </NativeSelect.Root>
+    );
+    if (!showLabel) return select;
     return (
-      <RoleCheckbox
-        checked={m.isAdmin}
-        disabled={pending || m.isYou}
-        label={showLabel ? t("admin") : actionLabel}
-        ariaLabel={actionLabel}
-        srOnly={!showLabel}
-        onChange={(checked) => toggleRole("admin", m.userId, "is_admin", checked)}
-      />
+      <HStack gap="2">
+        <Text fontSize="sm" color="fg.muted">
+          {t("role")}
+        </Text>
+        {select}
+      </HStack>
     );
   }
 
@@ -124,14 +118,20 @@ export function TeamList(props: {
     }
     const actionLabel = m.servesAv ? `${t("leaveAv")}: ${m.name}` : `${t("joinAv")}: ${m.name}`;
     return (
-      <RoleCheckbox
+      <Checkbox.Root
         checked={m.servesAv}
         disabled={pending}
-        label={showLabel ? t("av") : actionLabel}
-        ariaLabel={actionLabel}
-        srOnly={!showLabel}
-        onChange={(checked) => toggleRole("av", m.userId, "serves_av", checked)}
-      />
+        onCheckedChange={(e) =>
+          submitField("av", m.userId, "serves_av", String(e.checked === true))
+        }
+        cursor={pending ? "not-allowed" : "pointer"}
+      >
+        <Checkbox.HiddenInput aria-label={actionLabel} />
+        <Checkbox.Control />
+        <Checkbox.Label srOnly={!showLabel} fontWeight="normal">
+          {showLabel ? t("av") : actionLabel}
+        </Checkbox.Label>
+      </Checkbox.Root>
     );
   }
 
@@ -174,7 +174,7 @@ export function TeamList(props: {
             <Table.Row bg="transparent">
               <ColumnHeader>{t("name")}</ColumnHeader>
               <ColumnHeader>{t("signedIn")}</ColumnHeader>
-              <ColumnHeader>{t("admin")}</ColumnHeader>
+              <ColumnHeader>{t("role")}</ColumnHeader>
               <ColumnHeader>{t("av")}</ColumnHeader>
               <ColumnHeader>
                 <chakra.span srOnly>{t("actions")}</chakra.span>
@@ -198,7 +198,7 @@ export function TeamList(props: {
                   </Text>
                 </Table.Cell>
                 <Table.Cell whiteSpace="nowrap">{signedInLabel(m.lastSignInAt)}</Table.Cell>
-                <Table.Cell>{adminControl(m, false)}</Table.Cell>
+                <Table.Cell>{roleControl(m, false)}</Table.Cell>
                 <Table.Cell>{avControl(m, false)}</Table.Cell>
                 <Table.Cell>{rowActions(m)}</Table.Cell>
               </Table.Row>
@@ -241,7 +241,7 @@ export function TeamList(props: {
               )}
             </Box>
             <HStack gap="4" wrap="wrap">
-              {adminControl(m, true)}
+              {roleControl(m, true)}
               {avControl(m, true)}
             </HStack>
             {rowActions(m)}

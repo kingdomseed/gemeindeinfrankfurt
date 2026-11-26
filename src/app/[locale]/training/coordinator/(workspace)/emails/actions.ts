@@ -5,7 +5,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
-import { loadCurrentCoordinator, requireAuth } from "@/lib/auth";
+import { loadCurrentCoordinator, requireSectionAuth } from "@/lib/auth";
 import { getTrainingById } from "@/lib/data";
 import { inAudience, isAudience, type EmailTexts } from "@/lib/domain/emails";
 import { languages, type Language } from "@/lib/domain/types";
@@ -24,7 +24,7 @@ const subject = z.string().trim().max(200);
 const body = z.string().trim().max(10_000);
 
 async function setUp(rawTrainingId: string) {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("emails");
   const training = await getTrainingById(id.parse(rawTrainingId));
   const recipients = await loadRecipients(supabase, training.id, {
     feeCents: training.fee_cents,
@@ -34,7 +34,7 @@ async function setUp(rawTrainingId: string) {
 }
 
 async function deliver(
-  supabase: Awaited<ReturnType<typeof requireAuth>>,
+  supabase: Awaited<ReturnType<typeof requireSectionAuth>>,
   send: { trainingId: string; kind: EmailKind; subject: string; emails: OutgoingEmail[] },
 ): Promise<FormState> {
   const t = await getTranslations("coordinator.emails");

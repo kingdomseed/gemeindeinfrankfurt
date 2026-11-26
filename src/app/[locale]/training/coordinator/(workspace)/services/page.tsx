@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function ServicesPage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "services");
   if (!ws.ok) return ws.fallback;
   const { locale, data, supabase } = ws.workspace;
   const t = await getTranslations("coordinator.services");

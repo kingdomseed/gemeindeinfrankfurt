@@ -4,14 +4,14 @@ import { Button, chakra, Heading, Input, SimpleGrid, Text } from "@chakra-ui/rea
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
-import { CheckboxChoice } from "@/components/ui/choice";
 import { FormField } from "@/components/ui/form-field";
 import { Panel } from "@/components/ui/panel";
+import { SelectField } from "@/components/ui/select-field";
 
 import { FormResult } from "./FormResult";
 import type { FormAction, FormState } from "./types";
 
-// Admins add a coordinator by name and email; they get a sign-in link, no password.
+// Admins add a team member by name, email, and role; they get a sign-in link, no password.
 export function AddCoordinatorForm(props: { action: FormAction }) {
   const t = useTranslations("coordinator.team");
   const [state, formAction, pending] = useActionState<FormState, FormData>(props.action, {
@@ -37,9 +37,14 @@ export function AddCoordinatorForm(props: { action: FormAction }) {
             <Input name="email" type="email" autoComplete="off" spellCheck={false} />
           </FormField>
         </SimpleGrid>
-        <CheckboxChoice name="is_admin" value="true">
-          {t("inviteAdmin")}
-        </CheckboxChoice>
+        <SelectField label={t("role")} field={{ name: "role", defaultValue: "coordinator" }}>
+          <option value="coordinator">{t("roles.coordinator")}</option>
+          <option value="helper">{t("roles.helper")}</option>
+          <option value="admin">{t("roles.admin")}</option>
+        </SelectField>
+        <Text fontSize="sm" color="fg.muted">
+          {t("roleHelp")}
+        </Text>
         <Button type="submit" alignSelf="flex-start" loading={pending}>
           {t("invite")}
         </Button>

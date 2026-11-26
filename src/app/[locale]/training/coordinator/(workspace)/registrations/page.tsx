@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function RegistrationsPage({ params, searchParams }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "registrations");
   if (!ws.ok) return ws.fallback;
   const t = await getTranslations("coordinator");
   const { data } = ws.workspace;
