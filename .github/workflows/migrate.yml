@@ -40,5 +40,5 @@ jobs:
             echo "::warning::SUPABASE_DB_URL is not set for the production environment, so no migrations were applied."
             exit 0
           fi
-          npx --yes supabase@3.0.0 db push --remote="$SUPABASE_DB_URL" --dry-run
-          npx --yes supabase@3.0.0 db push --remote="$SUPABASE_DB_URL" --yes
+          npx --yes supabase@3.0.0 db push --remote="$SUPABASE_DB_URL" --include-all --dry-run
+          npx --yes supabase@3.0.0 db push --remote="$SUPABASE_DB_URL" --include-all --yes
