@@ -8,14 +8,17 @@ export type Slide = { meta: string; title: string; body: string; lang: string };
 export type SlideSection = { label: string; startIndex: number };
 
 // The slides for the room's screen: rules, hymns and verses, one at a time,
-// on a dark background. Arrow keys and the space bar move between them.
+// defaulting to light mode with an optional dark-mode toggle. Arrow keys and
+// the space bar move between them.
 export function SlideShow(props: {
   slides: readonly Slide[];
   footer: string;
   sections?: readonly SlideSection[];
 }) {
   const t = useTranslations("coordinator.screen");
+  const tc = useTranslations("common");
   const [index, setIndex] = useState(0);
+  const [dark, setDark] = useState(false);
   const stage = useRef<HTMLDivElement>(null);
   const count = props.slides.length;
   // A live update can remove slides; the screen then stays on the last one.
@@ -44,10 +47,12 @@ export function SlideShow(props: {
   return (
     <Box
       ref={stage}
-      className="dark"
+      className={dark ? "dark" : "light"}
       colorPalette="brand"
       bg="bg"
       color="fg"
+      borderWidth={dark ? "0" : "1px"}
+      borderColor="border"
       aspectRatio={{ md: "16 / 9" }}
       minH={{ base: "24rem", md: "auto" }}
       maxH={{ base: "75dvh", md: "none" }}
@@ -62,6 +67,7 @@ export function SlideShow(props: {
       css={{
         "&:fullscreen": {
           rounded: "0",
+          borderWidth: "0",
           aspectRatio: "auto",
           height: "100dvh",
           maxHeight: "none",
@@ -150,15 +156,17 @@ export function SlideShow(props: {
         wrap="wrap"
         flexShrink={0}
         borderTopWidth="1px"
+        borderColor="border"
         pt="3"
       >
         <Text fontSize="sm" color="fg.muted">
           {props.footer}
           {count > 0 && ` · ${current + 1} / ${count}`}
         </Text>
-        <HStack gap="2">
+        <HStack gap="1" wrap="wrap">
           <Button
             variant="ghost"
+            size={{ base: "sm", md: "md" }}
             color="fg.muted"
             _hover={{ color: "fg", bg: "bg.muted" }}
             disabled={current === 0}
@@ -168,6 +176,7 @@ export function SlideShow(props: {
           </Button>
           <Button
             variant="ghost"
+            size={{ base: "sm", md: "md" }}
             color="fg.muted"
             _hover={{ color: "fg", bg: "bg.muted" }}
             disabled={current >= count - 1}
@@ -177,6 +186,16 @@ export function SlideShow(props: {
           </Button>
           <Button
             variant="ghost"
+            size={{ base: "sm", md: "md" }}
+            color="fg.muted"
+            _hover={{ color: "fg", bg: "bg.muted" }}
+            onClick={() => setDark((d) => !d)}
+          >
+            {dark ? tc("lightMode") : tc("darkMode")}
+          </Button>
+          <Button
+            variant="ghost"
+            size={{ base: "sm", md: "md" }}
             color="fg.muted"
             _hover={{ color: "fg", bg: "bg.muted" }}
             onClick={() => {
