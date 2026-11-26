@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Flex, Heading, HStack, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, HStack, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
@@ -33,8 +33,10 @@ function SlideColumns(props: { columns: readonly SlideColumn[] }) {
   const longest = Math.max(...props.columns.map((c) => c.text.length), 0);
   const colFontSize = columnBodyFontSize(longest);
   return (
-    <SimpleGrid
-      columns={{ base: 1, md: 3 }}
+    <Box
+      display={{ base: "flex", md: "grid" }}
+      flexDirection={{ base: "column" }}
+      gridTemplateColumns={{ md: "repeat(3, minmax(0, 1fr))" }}
       gap={{ base: "4", md: "6" }}
       flex="1"
       minH="0"
@@ -48,7 +50,8 @@ function SlideColumns(props: { columns: readonly SlideColumn[] }) {
           key={col.lang}
           direction="column"
           gap="1.5"
-          minH="0"
+          flexShrink={{ base: 0, md: 1 }}
+          minH={{ base: "auto", md: "0" }}
           lang={col.lang}
           borderStartWidth={{ md: i > 0 ? "1px" : "0" }}
           borderTopWidth={{ base: i > 0 ? "1px" : "0", md: "0" }}
@@ -72,17 +75,17 @@ function SlideColumns(props: { columns: readonly SlideColumn[] }) {
             color={col.missing ? "fg.subtle" : "fg"}
             fontStyle={col.missing ? "italic" : "normal"}
             whiteSpace="pre-line"
-            overflowY={{ md: "auto" }}
+            overflowY={{ base: "visible", md: "auto" }}
             scrollbarWidth="thin"
             css={{ scrollbarColor: "{colors.border.emphasized} transparent" }}
-            minH="0"
+            minH={{ base: "auto", md: "0" }}
             pe={{ md: "2" }}
           >
             {col.text}
           </Text>
         </Flex>
       ))}
-    </SimpleGrid>
+    </Box>
   );
 }
 

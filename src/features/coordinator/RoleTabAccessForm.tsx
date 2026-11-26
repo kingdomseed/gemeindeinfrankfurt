@@ -42,7 +42,14 @@ export function RoleTabAccessForm(props: { permissions: RoleTabPermissions; acti
         gap="4"
       >
         <Table.ScrollArea>
-          <Table.Root size="sm" variant="line">
+          <Table.Root
+            size="sm"
+            variant="line"
+            css={{
+              "& th, & td": { px: "1.5" },
+              "@media (min-width: 30em)": { "& th, & td": { px: "3" } },
+            }}
+          >
             <Table.Header>
               <Table.Row bg="transparent">
                 <ColumnHeader>{t("tabColumn")}</ColumnHeader>
