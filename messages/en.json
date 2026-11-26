@@ -677,6 +677,7 @@
       "previous": "Previous",
       "next": "Next",
       "fullScreen": "Full screen",
+      "rules": "Rules",
       "ruleMeta": "Training rules · {number} of {total}",
       "hymnMeta": "Hymn · {number} of {total}",
       "verseMeta": "Verses · {number} of {total}",

@@ -81,6 +81,13 @@ export default async function ScreenPage({ params }: Props) {
     body: v.text[locale]?.trim() || t("verseMissing", { language: tl(locale) }),
     lang: locale,
   }));
+  const sections = [
+    { label: t("rules"), startIndex: 0 },
+    ...(hymns.length > 0 ? [{ label: tm("hymns"), startIndex: rules.length }] : []),
+    ...(verses.length > 0
+      ? [{ label: tm("verses"), startIndex: rules.length + hymns.length }]
+      : []),
+  ];
 
   return (
     <Stack gap="4">
@@ -91,6 +98,7 @@ export default async function ScreenPage({ params }: Props) {
       </Link>
       <SlideShow
         slides={[...rules, ...hymns, ...verses]}
+        sections={sections}
         footer={t("footer", {
           number: message.messageNumber,
           day: berlinDay(new Date(message.startsAt), locale, th("lordsDay")),
