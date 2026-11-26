@@ -5,7 +5,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
-import { requireAuth } from "@/lib/auth";
+import { requireSectionAuth } from "@/lib/auth";
 import { fromBerlinWallTime } from "@/lib/domain/berlin-time";
 import { parseEuroCents } from "@/lib/domain/fees";
 import { isBerlinWeekday } from "@/lib/domain/sessions";
@@ -43,7 +43,7 @@ export async function saveTrainingDetails(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("setup");
   const trainingId = id.parse(rawTrainingId);
   const parsed = details.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { status: "error" };
@@ -109,7 +109,7 @@ export async function saveSchedule(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("setup");
   const trainingId = id.parse(rawTrainingId);
   const action = intent.safeParse(form.get("intent"));
   if (!action.success) return { status: "error" };
@@ -192,7 +192,7 @@ export async function saveLocalities(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("setup");
   const trainingId = id.parse(rawTrainingId);
   const action = localityIntent.safeParse(form.get("intent"));
   if (!action.success) return { status: "error" };
@@ -232,7 +232,7 @@ export async function saveTrainingSites(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("setup");
   const trainingId = id.parse(rawTrainingId);
   const action = localityIntent.safeParse(form.get("intent"));
   if (!action.success) return { status: "error" };

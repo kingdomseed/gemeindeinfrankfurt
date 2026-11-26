@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props) {
 // Taking attendance during one message, made for a phone.
 export default async function TakeAttendancePage({ params, searchParams }: Props) {
   const { locale: raw, number: rawNumber } = await params;
-  const ws = await requireActiveWorkspace(raw);
+  const ws = await requireActiveWorkspace(raw, "attendance");
   const number = messageNumber.safeParse(rawNumber);
   if (!number.success) notFound();
   if (!ws.ok) return ws.fallback;

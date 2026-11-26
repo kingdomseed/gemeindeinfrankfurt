@@ -53,6 +53,7 @@ const GLOBAL_TABLES = [
   "message_hymns",
   "message_verses",
   "coordinators",
+  "role_permissions",
   "webcast_logins",
 ] as const;
 

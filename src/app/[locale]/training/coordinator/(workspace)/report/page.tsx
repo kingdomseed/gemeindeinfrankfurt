@@ -31,7 +31,7 @@ const questions: readonly ReportQuestion[] = [
 ];
 
 export default async function ReportPage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "report");
   if (!ws.ok) return ws.fallback;
   const { locale, data, supabase, now } = ws.workspace;
   const [t, th, format] = await Promise.all([

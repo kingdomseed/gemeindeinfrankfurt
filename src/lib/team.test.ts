@@ -33,7 +33,7 @@ vi.mock("@/lib/supabase/admin", () => ({
   }),
 }));
 
-import { addCoordinator, setAdmin } from "./team";
+import { addCoordinator, saveRoleTabPermissions, setRole } from "./team";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -42,41 +42,56 @@ beforeEach(() => {
 });
 
 describe("team management", () => {
-  it("adds a regular coordinator without overwriting existing admin status", async () => {
+  it("adds a coordinator or helper with the chosen role", async () => {
     state.createUser.mockResolvedValue({
       data: { user: { id: "user-1" } },
       error: null,
     });
 
-    await addCoordinator("Regular Coord", "coord@example.test");
+    await addCoordinator("Helper One", "helper@example.test", "helper");
 
     expect(state.upsert).toHaveBeenCalledWith(
-      { user_id: "user-1", display_name: "Regular Coord" },
+      { user_id: "user-1", display_name: "Helper One", role: "helper", is_admin: false },
       { onConflict: "user_id" },
     );
   });
 
-  it("grants admin on invite when isAdmin is true, including for an existing auth user", async () => {
+  it("grants admin on invite when role is admin, including for an existing auth user", async () => {
     state.createUser.mockResolvedValue({ data: { user: null }, error: new Error("exists") });
     state.listUsers.mockResolvedValue({
       data: { users: [{ id: "user-2", email: "Admin@Example.Test" }] },
       error: null,
     });
 
-    await addCoordinator("Admin Coord", "admin@example.test", true);
+    await addCoordinator("Admin Coord", "admin@example.test", "admin");
 
     expect(state.upsert).toHaveBeenCalledWith(
-      { user_id: "user-2", display_name: "Admin Coord", is_admin: true },
+      { user_id: "user-2", display_name: "Admin Coord", role: "admin", is_admin: true },
       { onConflict: "user_id" },
     );
   });
 
-  it("updates is_admin via setAdmin", async () => {
-    await setAdmin("user-3", true);
-    expect(state.update).toHaveBeenCalledWith({ is_admin: true });
+  it("updates role and is_admin in lockstep via setRole", async () => {
+    await setRole("user-3", "admin");
+    expect(state.update).toHaveBeenCalledWith({ role: "admin", is_admin: true });
     expect(state.eq).toHaveBeenCalledWith("user_id", "user-3");
 
-    await setAdmin("user-3", false);
-    expect(state.update).toHaveBeenLastCalledWith({ is_admin: false });
+    await setRole("user-3", "helper");
+    expect(state.update).toHaveBeenLastCalledWith({ role: "helper", is_admin: false });
+  });
+
+  it("normalizes and saves per-role tab permissions", async () => {
+    await saveRoleTabPermissions({
+      coordinator: ["setup", "overview", "setup"],
+      helper: ["messages"],
+    });
+
+    expect(state.upsert).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({ role: "coordinator", tabs: ["overview", "setup"] }),
+        expect.objectContaining({ role: "helper", tabs: ["messages"] }),
+      ],
+      { onConflict: "role" },
+    );
   });
 });

@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
 import type { CancelState } from "@/features/registration/types";
-import { currentCoordinatorName, requireAuth } from "@/lib/auth";
+import { currentCoordinatorName, requireSectionAuth } from "@/lib/auth";
 import {
   coordinatorCancelRegistration,
   coordinatorSavePayment,
@@ -24,7 +24,7 @@ export async function savePayment(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("registrations");
   const registrationId = id.parse(rawId);
   const result = await coordinatorSavePayment(supabase, registrationId, form);
   if (result.status === "saved" || result.status === "stale") refresh();
@@ -38,7 +38,7 @@ export async function saveRegistration(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("registrations");
   const registrationId = id.parse(rawId);
   const result = await coordinatorUpdateRegistration(supabase, registrationId, form);
   if (result.status === "saved" || result.status === "stale") refresh();
@@ -47,7 +47,7 @@ export async function saveRegistration(
 
 // Cancels on the registrant's behalf and tells them by email.
 export async function cancelRegistration(rawId: string): Promise<CancelState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("registrations");
   const registrationId = id.parse(rawId);
   const result = await coordinatorCancelRegistration(supabase, registrationId);
   if (result.status === "cancelled") refresh();
@@ -57,7 +57,7 @@ export async function cancelRegistration(rawId: string): Promise<CancelState> {
 // Gives the registration a new edit link and emails it, in the language the
 // person registered in. The old link stops working.
 export async function sendEditLink(rawId: string): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("registrations");
   const registrationId = id.parse(rawId);
   const actorName = await currentCoordinatorName(supabase);
   const result = await coordinatorSendEditLink(supabase, actorName, registrationId);

@@ -59,6 +59,20 @@ export async function addTrainingLink(
   if (error) throw error;
 }
 
+export async function loadTrainingLinkSection(
+  supabase: CoordinatorClient,
+  id: string,
+): Promise<SectionKey | null> {
+  const { data, error } = await supabase
+    .from("training_links")
+    .select("section")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  const parsed = section.safeParse(data?.section);
+  return parsed.success ? parsed.data : null;
+}
+
 export async function removeTrainingLink(supabase: CoordinatorClient, id: string) {
   const { error } = await supabase.from("training_links").delete().eq("id", id);
   if (error) throw error;

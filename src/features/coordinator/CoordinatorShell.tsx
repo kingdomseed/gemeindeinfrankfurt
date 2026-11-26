@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { mainContentId } from "@/components/ui/skip-link";
 import { SiteNav } from "@/features/shell/SiteNav";
+import type { SectionKey } from "@/lib/domain/links";
 import type { SpaceLink } from "@/lib/links";
 
 import { PresenceBar } from "./PresenceBar";
@@ -16,6 +17,7 @@ import type { FormAction } from "./types";
 // page itself, such as name tags.
 export function CoordinatorShell(props: {
   trainingTitle: string | null;
+  allowedSections: readonly SectionKey[];
   links: readonly SpaceLink[];
   addLink: FormAction | null;
   removeLink: (form: FormData) => Promise<void>;
@@ -23,6 +25,8 @@ export function CoordinatorShell(props: {
   children: ReactNode;
 }) {
   const t = useTranslations("coordinator");
+  const allowed = new Set(props.allowedSections);
+  const visibleSections = coordinatorSections.filter((s) => allowed.has(s.key));
   return (
     <>
       <Box borderBottomWidth="1px" borderColor="border" _print={{ display: "none" }}>
@@ -53,14 +57,16 @@ export function CoordinatorShell(props: {
             </form>
           </Flex>
           <PresenceBar />
-          <SiteNav
-            label={t("nav.label")}
-            items={coordinatorSections.map((s) => ({
-              href: s.href,
-              label: t(`nav.${s.key}`),
-              exact: s.key === "overview",
-            }))}
-          />
+          {visibleSections.length > 0 && (
+            <SiteNav
+              label={t("nav.label")}
+              items={visibleSections.map((s) => ({
+                href: s.href,
+                label: t(`nav.${s.key}`),
+                exact: s.key === "overview",
+              }))}
+            />
+          )}
         </Container>
       </Box>
       <Container

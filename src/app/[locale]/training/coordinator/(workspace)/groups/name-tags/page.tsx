@@ -26,7 +26,7 @@ const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompar
 
 // One tag per seat, both names on a shared seat, in group order.
 export default async function NameTagsPage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "groups");
   if (!ws.ok) return ws.fallback;
   const { data, supabase } = ws.workspace;
   const [t, tg, tc] = await Promise.all([

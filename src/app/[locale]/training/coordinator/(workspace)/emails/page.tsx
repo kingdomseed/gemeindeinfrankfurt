@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function EmailsPage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "emails");
   if (!ws.ok) return ws.fallback;
   const { locale, data, supabase, now } = ws.workspace;
   const [t, tg, th, tl, format] = await Promise.all([

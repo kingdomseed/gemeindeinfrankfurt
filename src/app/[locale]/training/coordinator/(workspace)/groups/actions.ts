@@ -3,7 +3,7 @@
 import { refresh } from "next/cache";
 import { z } from "zod";
 
-import { requireAuth } from "@/lib/auth";
+import { requireSectionAuth } from "@/lib/auth";
 import { loadCoordinatorDashboard } from "@/lib/coordinator";
 import { suggestGroups } from "@/lib/domain/groups";
 import { displayLocality } from "@/lib/domain/locality";
@@ -19,7 +19,7 @@ const id = z.uuid();
 const languageSchema = z.enum(["de", "en", "ru"]);
 
 async function requireTraining(rawTrainingId: string) {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("groups");
   const trainingId = id.parse(rawTrainingId);
   const data = await loadCoordinatorDashboard(supabase);
   if (data?.training.id !== trainingId) throw new Error("Not the current training");
@@ -80,7 +80,7 @@ export async function removeEmptyStudyGroup(
 
 // Puts one person in another group.
 export async function moveToStudyGroup(rawRegistrationId: string, rawGroupId: string) {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("groups");
   await moveToGroup(supabase, id.parse(rawRegistrationId), id.parse(rawGroupId));
   refresh();
 }

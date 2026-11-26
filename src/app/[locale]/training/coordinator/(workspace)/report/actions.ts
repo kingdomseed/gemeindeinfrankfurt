@@ -5,7 +5,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
-import { requireAuth } from "@/lib/auth";
+import { requireSectionAuth } from "@/lib/auth";
 import { parseEuroCents } from "@/lib/domain/fees";
 import {
   addReimbursement,
@@ -36,7 +36,7 @@ export async function answerQuestion(
   rawQuestion: ReportQuestion,
   answer: boolean,
 ) {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("report");
   await saveAnswer(
     supabase,
     id.parse(rawTrainingId),
@@ -53,7 +53,7 @@ export async function saveDetails(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("report");
   const details = z
     .object({ notes: z.string().trim().max(4000), firstDay: day, lastDay: day })
     .safeParse({
@@ -79,7 +79,7 @@ export async function addCost(
   form: FormData,
 ): Promise<FormState> {
   const t = await getTranslations("coordinator.report");
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("report");
   const amount = form.get("amount");
   const amountCents = typeof amount === "string" ? parseEuroCents(amount) : null;
   if (amountCents === null) return { status: "error", message: t("amountInvalid") };
@@ -108,7 +108,7 @@ export async function addPhoto(
   form: FormData,
 ): Promise<FormState> {
   const t = await getTranslations("coordinator.report");
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("report");
   const file = photo.safeParse(photoOf(form));
   if (!file.success || !file.data) return { status: "error", message: t("photoInvalid") };
   await attachReceipt(supabase, id.parse(rawId), file.data);
@@ -117,7 +117,7 @@ export async function addPhoto(
 }
 
 export async function removeCost(form: FormData) {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("report");
   await removeReimbursement(supabase, id.parse(form.get("id")));
   refresh();
 }

@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
-import { requireAuth } from "@/lib/auth";
+import { requireSectionAuth } from "@/lib/auth";
 import { saveHymns, saveVerses } from "@/lib/messages";
 
 const id = z.uuid();
@@ -18,7 +18,7 @@ export async function saveMessageHymns(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("messages");
   const sessionId = id.parse(rawSessionId);
   const en = all(form, "en");
   const de = all(form, "de");
@@ -52,7 +52,7 @@ export async function saveMessageVerses(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("messages");
   const sessionId = id.parse(rawSessionId);
   const refs = all(form, "ref");
   const [de, en, ru] = (["text_de", "text_en", "text_ru"] as const).map((n) => all(form, n));

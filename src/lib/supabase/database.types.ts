@@ -51,6 +51,7 @@ export type Database = {
           created_at: string;
           display_name: string;
           is_admin: boolean;
+          role: string;
           serves_av: boolean;
           user_id: string;
         };
@@ -59,6 +60,7 @@ export type Database = {
           created_at?: string;
           display_name: string;
           is_admin?: boolean;
+          role?: string;
           serves_av?: boolean;
           user_id: string;
         };
@@ -66,6 +68,7 @@ export type Database = {
           created_at?: string;
           display_name?: string;
           is_admin?: boolean;
+          role?: string;
           serves_av?: boolean;
           user_id?: string;
         };
@@ -469,6 +472,25 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      role_permissions: {
+        Row: {
+          role: string;
+          tabs: string[];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          role: string;
+          tabs: string[];
+          updated_at?: string;
+        };
+        Update: {
+          role?: string;
+          tabs?: string[];
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       services: {
         Row: {

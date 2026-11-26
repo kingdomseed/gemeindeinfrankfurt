@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function TestingPage({ params }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "testing");
   if (!ws.ok) return ws.fallback;
   const { locale, data, supabase } = ws.workspace;
   const [t, tg, th, tl] = await Promise.all([

@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 
 import type { FormState } from "@/features/coordinator/types";
-import { requireAuth } from "@/lib/auth";
+import { requireSectionAuth } from "@/lib/auth";
 import { revealWebcastPassword, saveWebcastLogin } from "@/lib/services";
 
 const id = z.uuid();
@@ -13,7 +13,7 @@ const lead = z.object({ id: z.uuid(), lead: z.string().trim().max(200) });
 
 // Saves who leads a service.
 export async function setServiceLead(form: FormData) {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("services");
   const parsed = lead.parse(Object.fromEntries(form));
   const { error } = await supabase
     .from("services")
@@ -27,7 +27,7 @@ const newService = z.object({ name: z.string().trim().min(1).max(100) });
 
 // Adds a service at the end of the list.
 export async function addService(rawTrainingId: string, form: FormData) {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("services");
   const trainingId = id.parse(rawTrainingId);
   const parsed = newService.parse(Object.fromEntries(form));
   const { data: last } = await supabase
@@ -48,7 +48,7 @@ export async function addService(rawTrainingId: string, form: FormData) {
 
 // Removes a service.
 export async function removeService(form: FormData) {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("services");
   const serviceId = id.parse(form.get("id"));
   const { error } = await supabase.from("services").delete().eq("id", serviceId);
   if (error) throw error;
@@ -57,7 +57,7 @@ export async function removeService(form: FormData) {
 
 // The webcast password, for a coordinator serving in AV. Logged each time.
 export async function showWebcastPassword(rawTrainingId: string) {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("services");
   return revealWebcastPassword(supabase, id.parse(rawTrainingId));
 }
 
@@ -73,7 +73,7 @@ export async function updateWebcastLogin(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const supabase = await requireAuth();
+  const supabase = await requireSectionAuth("services");
   const { data: av } = await supabase.rpc("serves_av");
   if (av !== true) return { status: "error" };
   const parsed = login.safeParse(Object.fromEntries(form));

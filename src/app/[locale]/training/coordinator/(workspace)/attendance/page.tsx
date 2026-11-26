@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function AttendanceOverviewPage({ params, searchParams }: Props) {
-  const ws = await requireActiveWorkspace((await params).locale);
+  const ws = await requireActiveWorkspace((await params).locale, "attendance");
   if (!ws.ok) return ws.fallback;
   const { data, supabase, now } = ws.workspace;
   const [t, tc] = await Promise.all([
