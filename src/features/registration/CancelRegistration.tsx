@@ -44,7 +44,20 @@ export function CancelRegistration(props: {
       </Heading>
       <Text>{labels.intro}</Text>
       {step === "confirming" ? (
-        <chakra.form action={formAction} display="flex" flexDirection="column" gap="3">
+        <chakra.form
+          action={formAction}
+          display="flex"
+          flexDirection="column"
+          gap="3"
+          css={{
+            transition: "opacity 200ms {easings.ui-out}, transform 200ms {easings.ui-out}",
+            "@starting-style": { opacity: 0, transform: "translateY(4px)" },
+            "@media (prefers-reduced-motion: reduce)": {
+              transition: "opacity 150ms ease",
+              "@starting-style": { opacity: 0, transform: "none" },
+            },
+          }}
+        >
           <Text ref={focusOnMount} tabIndex={-1} outline="none" fontWeight="semibold">
             {labels.confirm}
           </Text>

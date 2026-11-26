@@ -58,7 +58,7 @@ export function MembersMenu(props: {
         {props.label}
         <Icon
           boxSize="3"
-          transition="transform 0.15s"
+          transition="transform 180ms {easings.ui-out}"
           transform={open ? "rotate(180deg)" : undefined}
           _motionReduce={{ transition: "none" }}
         >
@@ -67,59 +67,91 @@ export function MembersMenu(props: {
           </svg>
         </Icon>
       </Button>
-      <Box
-        as="ul"
-        id={listId}
-        hidden={!open}
-        listStyleType="none"
-        position={{ md: "absolute" }}
-        insetStart={{ md: "50%" }}
-        top={{ md: "100%" }}
-        transform={{ md: "translateX(-50%)" }}
-        zIndex="dropdown"
-        minW={{ md: "56" }}
-        mt={{ base: "0", md: "1.5" }}
-        mb={{ base: "1", md: "0" }}
-        ms={{ base: "3", md: "0" }}
-        ps={{ base: "2", md: "1.5" }}
-        pe={{ md: "1.5" }}
-        py={{ md: "1.5" }}
-        bg="bg.panel"
-        borderStartWidth="1px"
-        borderWidth={{ md: "1px" }}
-        rounded={{ md: "l3" }}
-        shadow={{ md: "md" }}
-      >
-        {props.items.map((item) => {
-          const active = isCurrent(pathname, item.href);
-          return (
-            <li key={item.href}>
-              <Link
-                asChild
-                display="flex"
-                minH="11"
-                px="3"
-                rounded="l2"
-                color="fg"
-                fontWeight={active ? "semibold" : "normal"}
-                textDecoration="none"
-                _hover={{ bg: "bg.subtle" }}
-              >
-                <LocaleLink
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  onClick={() => {
-                    setOpen(false);
-                    props.onNavigate();
+      {open && (
+        <Box
+          as="ul"
+          id={listId}
+          listStyleType="none"
+          position={{ md: "absolute" }}
+          insetStart={{ md: "50%" }}
+          top={{ md: "100%" }}
+          transform={{ md: "translateX(-50%)" }}
+          transformOrigin={{ base: "top center", md: "top center" }}
+          zIndex="dropdown"
+          minW={{ md: "56" }}
+          mt={{ base: "0", md: "1.5" }}
+          mb={{ base: "1", md: "0" }}
+          ms={{ base: "3", md: "0" }}
+          ps={{ base: "2", md: "1.5" }}
+          pe={{ md: "1.5" }}
+          py={{ md: "1.5" }}
+          bg="bg.panel"
+          borderStartWidth="1px"
+          borderWidth={{ md: "1px" }}
+          rounded={{ md: "l3" }}
+          shadow={{ md: "md" }}
+          css={{
+            transition: "opacity 180ms {easings.ui-out}, transform 180ms {easings.ui-out}",
+            "@starting-style": {
+              opacity: 0,
+              transform: "translateY(-4px)",
+            },
+            "@media (min-width: 48em)": {
+              "@starting-style": {
+                opacity: 0,
+                transform: "translateX(-50%) scale(0.96) translateY(-4px)",
+              },
+            },
+            "@media (prefers-reduced-motion: reduce)": {
+              transition: "opacity 150ms ease",
+              "@starting-style": {
+                opacity: 0,
+                transform: "none",
+              },
+              "@media (min-width: 48em)": {
+                "@starting-style": {
+                  opacity: 0,
+                  transform: "translateX(-50%)",
+                },
+              },
+            },
+          }}
+        >
+          {props.items.map((item) => {
+            const active = isCurrent(pathname, item.href);
+            return (
+              <li key={item.href}>
+                <Link
+                  asChild
+                  display="flex"
+                  minH="11"
+                  px="3"
+                  rounded="l2"
+                  color="fg"
+                  fontWeight={active ? "semibold" : "normal"}
+                  textDecoration="none"
+                  css={{
+                    "@media (hover: hover) and (pointer: fine)": {
+                      "&:hover": { bg: "bg.subtle" },
+                    },
                   }}
                 >
-                  {item.label}
-                </LocaleLink>
-              </Link>
-            </li>
-          );
-        })}
-      </Box>
+                  <LocaleLink
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    onClick={() => {
+                      setOpen(false);
+                      props.onNavigate();
+                    }}
+                  >
+                    {item.label}
+                  </LocaleLink>
+                </Link>
+              </li>
+            );
+          })}
+        </Box>
+      )}
     </Box>
   );
 }

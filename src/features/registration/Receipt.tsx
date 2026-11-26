@@ -41,7 +41,21 @@ export function Receipt(props: {
       : t("messagesChosen", { count: summary.chosenSessions, total: props.sessionCount });
   return (
     <Stack gap="10" align="stretch">
-      <Panel ref={focusOnMount} tabIndex={-1} tone="success" outline="none" gap="2">
+      <Panel
+        ref={focusOnMount}
+        tabIndex={-1}
+        tone="success"
+        outline="none"
+        gap="2"
+        css={{
+          transition: "opacity 240ms {easings.ui-out}, transform 240ms {easings.ui-out}",
+          "@starting-style": { opacity: 0, transform: "scale(0.97) translateY(6px)" },
+          "@media (prefers-reduced-motion: reduce)": {
+            transition: "opacity 180ms ease",
+            "@starting-style": { opacity: 0, transform: "none" },
+          },
+        }}
+      >
         <Text fontSize="lg" fontWeight="medium">
           {t("receiptThanks")}
         </Text>

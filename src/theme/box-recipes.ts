@@ -44,8 +44,18 @@ export const noticeRecipe = defineRecipe({
       warning: { bg: "bg.warning", color: "fg.warning" },
       error: { bg: "bg.error", color: "fg.error" },
     },
+    animated: {
+      true: {
+        transition: "opacity 180ms {easings.ui-out}, transform 180ms {easings.ui-out}",
+        "@starting-style": { opacity: 0, transform: "translateY(3px)" },
+        "@media (prefers-reduced-motion: reduce)": {
+          transition: "opacity 150ms ease",
+          "@starting-style": { opacity: 0, transform: "none" },
+        },
+      },
+    },
   },
-  defaultVariants: { tone: "neutral" },
+  defaultVariants: { tone: "neutral", animated: false },
 });
 
 // A word on a tint, such as "Received" next to a payment line.
