@@ -798,6 +798,7 @@ export type Database = {
           payee_name: string;
           payment_reference: string;
           rules: NonNullable<Json>;
+          screen_token: string;
           slug: string;
           title: NonNullable<Json>;
           updated_at: string;
@@ -815,6 +816,7 @@ export type Database = {
           payee_name?: string;
           payment_reference?: string;
           rules?: NonNullable<Json>;
+          screen_token?: string;
           slug: string;
           title: NonNullable<Json>;
           updated_at?: string;
@@ -831,6 +833,7 @@ export type Database = {
           payee_name?: string;
           payment_reference?: string;
           rules?: NonNullable<Json>;
+          screen_token?: string;
           slug?: string;
           title?: NonNullable<Json>;
           updated_at?: string;

@@ -1,16 +1,17 @@
-import { Link, Stack } from "@chakra-ui/react";
+import { Flex, Link, Stack } from "@chakra-ui/react";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
+import { CopyButton } from "@/components/ui/copy-button";
 import { messageHref } from "@/features/coordinator/sections";
-import { SlideShow, type Slide } from "@/features/coordinator/SlideShow";
+import { buildMessageSlides } from "@/features/coordinator/slides";
+import { SlideShow } from "@/features/coordinator/SlideShow";
 import { requireLocale } from "@/i18n/locale";
 import { Link as LocaleLink } from "@/i18n/navigation";
-import { hymnNumber } from "@/lib/domain/messages";
 import { berlinDay } from "@/lib/domain/sessions";
-import { languages } from "@/lib/domain/types";
 import { loadMessages } from "@/lib/messages";
+import { siteUrl } from "@/lib/site";
 
 import { requireActiveWorkspace } from "../../../workspace";
 
@@ -20,25 +21,14 @@ type Props = PageProps<"/[locale]/training/coordinator/messages/[number]/screen"
 
 const messageNumber = z.coerce.number().int().positive();
 
-// The training rules as the registration form words them, word for word.
-const ruleKeys = [
-  "attendRules.seat",
-  "attendRules.nameTag",
-  "attendRules.absences",
-  "attendRules.testing",
-  "attendRules.leaving",
-  "materialsRule",
-  "copiesRule",
-] as const;
-
 export async function generateMetadata({ params }: Props) {
   const { locale: raw, number } = await params;
   const t = await getTranslations({ locale: requireLocale(raw), namespace: "coordinator.screen" });
   return { title: t("titleFor", { number: messageNumber.catch(0).parse(number) }) };
 }
 
-// The slides for one message on the room's screen, in the page's language:
-// the training rules, then the hymns, then the verses.
+// The slides for one message on the room's screen: rules and hymns in `locale`,
+// and all three languages (DE / EN / RU) together on every verse slide.
 export default async function ScreenPage({ params }: Props) {
   const { locale: raw, number: rawNumber } = await params;
   const ws = await requireActiveWorkspace(raw);
@@ -57,47 +47,44 @@ export default async function ScreenPage({ params }: Props) {
   const message = messages.find((m) => m.messageNumber === number.data);
   if (!message) notFound();
 
-  const rules = ruleKeys.map((key, i): Slide => ({
-    meta: t("ruleMeta", { number: i + 1, total: ruleKeys.length }),
-    title: tr(key),
-    body: "",
-    lang: locale,
-  }));
-  const hymns = message.hymns.map((h, i): Slide => {
-    const own = hymnNumber(h, locale);
-    return {
-      meta: t("hymnMeta", { number: i + 1, total: message.hymns.length }),
-      title: own ? t("hymn", { number: own }) : t("hymnIn", { number: h.en, language: tl("en") }),
-      body: languages
-        .filter((l) => l !== locale && (own || l !== "en"))
-        .map((l) => `${tl(l)} ${hymnNumber(h, l) ?? tm("notIn", { language: tl(l) })}`)
-        .join("\n"),
-      lang: locale,
-    };
+  const { slides, sections } = buildMessageSlides({
+    locale,
+    hymns: message.hymns,
+    verses: message.verses,
+    labels: {
+      rulesSection: t("rules"),
+      hymnsSection: tm("hymns"),
+      versesSection: tm("verses"),
+      ruleMeta: (index, total) => t("ruleMeta", { number: index, total }),
+      hymnMeta: (index, total) => t("hymnMeta", { number: index, total }),
+      verseMeta: (index, total) => t("verseMeta", { number: index, total }),
+      ruleText: (key) => tr(key),
+      hymnTitle: (n) => t("hymn", { number: n }),
+      hymnInTitle: (n, language) => t("hymnIn", { number: n, language }),
+      notIn: (language) => tm("notIn", { language }),
+      verseMissing: (language) => t("verseMissing", { language }),
+      languageNames: { de: tl("de"), en: tl("en"), ru: tl("ru") },
+    },
   });
-  const verses = message.verses.map((v, i): Slide => ({
-    meta: t("verseMeta", { number: i + 1, total: message.verses.length }),
-    title: v.ref,
-    body: v.text[locale]?.trim() || t("verseMissing", { language: tl(locale) }),
-    lang: locale,
-  }));
-  const sections = [
-    { label: t("rules"), startIndex: 0 },
-    ...(hymns.length > 0 ? [{ label: tm("hymns"), startIndex: rules.length }] : []),
-    ...(verses.length > 0
-      ? [{ label: tm("verses"), startIndex: rules.length + hymns.length }]
-      : []),
-  ];
+
+  const shareUrl = `${siteUrl()}/${locale}/training/screen/${data.training.screen_token}/${message.messageNumber}`;
 
   return (
     <Stack gap="4">
-      <Link asChild fontSize="sm" color="fg" textDecoration="underline" alignSelf="flex-start">
-        <LocaleLink href={messageHref(message.messageNumber)}>
-          {t("back", { number: message.messageNumber })}
-        </LocaleLink>
-      </Link>
+      <Flex justify="space-between" align="center" gap="3" wrap="wrap">
+        <Link asChild fontSize="sm" color="fg" textDecoration="underline">
+          <LocaleLink href={messageHref(message.messageNumber)}>
+            {t("back", { number: message.messageNumber })}
+          </LocaleLink>
+        </Link>
+        <CopyButton
+          value={shareUrl}
+          label={tm("copyShareLink")}
+          copiedLabel={tm("shareLinkCopied")}
+        />
+      </Flex>
       <SlideShow
-        slides={[...rules, ...hymns, ...verses]}
+        slides={slides}
         sections={sections}
         footer={t("footer", {
           number: message.messageNumber,

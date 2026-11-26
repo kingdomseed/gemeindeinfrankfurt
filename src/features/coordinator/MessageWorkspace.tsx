@@ -1,6 +1,7 @@
-import { Box, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, HStack, Stack, Text } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
 
+import { CopyButton } from "@/components/ui/copy-button";
 import { PageHeading } from "@/components/ui/page-heading";
 import { Link as LocaleLink } from "@/i18n/navigation";
 import type { Hymn, Verse } from "@/lib/domain/messages";
@@ -20,6 +21,7 @@ import { VersesForm } from "./VersesForm";
 export function MessageWorkspace(props: {
   messages: readonly MessageListItem[];
   message: { sessionId: string; number: number; when: string; hymns: Hymn[]; verses: Verse[] };
+  shareUrl: string;
   actions: { saveHymns: FormAction; saveVerses: FormAction };
 }) {
   const t = useTranslations("coordinator.messages");
@@ -29,9 +31,16 @@ export function MessageWorkspace(props: {
     <Stack gap="8">
       <Flex justify="space-between" align="flex-end" gap="4" wrap="wrap">
         <PageHeading title={t("title")} subtitle={t("lead")} />
-        <Button asChild>
-          <LocaleLink href={screen}>{t("openOnScreen")}</LocaleLink>
-        </Button>
+        <HStack gap="3" wrap="wrap" align="center">
+          <CopyButton
+            value={props.shareUrl}
+            label={t("copyShareLink")}
+            copiedLabel={t("shareLinkCopied")}
+          />
+          <Button asChild>
+            <LocaleLink href={screen}>{t("openOnScreen")}</LocaleLink>
+          </Button>
+        </HStack>
       </Flex>
       <Flex wrap="wrap" gap="8" align="flex-start">
         <Box as="nav" aria-label={t("listLabel")} flex="1 1 13.75rem" maxW={{ md: "17.5rem" }}>
