@@ -652,6 +652,8 @@
       "titleFor": "Весть {number}: гимны и стихи",
       "lead": "Гимны и стихи для каждой вести, готовые для экрана.",
       "openOnScreen": "Открыть на экране",
+      "copyShareLink": "Копировать ссылку",
+      "shareLinkCopied": "Ссылка скопирована",
       "listLabel": "Вести",
       "message": "Весть {number}",
       "ready": "Готово",
@@ -690,13 +692,18 @@
       "previous": "Назад",
       "next": "Далее",
       "fullScreen": "Во весь экран",
+      "rules": "Правила",
       "ruleMeta": "Правила тренинга · {number} из {total}",
       "hymnMeta": "Гимн · {number} из {total}",
       "verseMeta": "Стихи · {number} из {total}",
       "hymn": "Гимн {number}",
       "hymnIn": "Гимн {number} ({language})",
       "verseMissing": "Текст этого стиха ({language}) ещё не введён.",
-      "footer": "Весть {number} · {day} · Экран: {language}"
+      "footer": "Весть {number} · {day} · Экран: {language}",
+      "live": "В эфире",
+      "selectMessage": "Выбрать весть",
+      "invalidLink": "Эта ссылка на экран недействительна",
+      "invalidLinkBody": "Попросите у координатора актуальную ссылку на экран."
     },
     "emails": {
       "title": "Письма",

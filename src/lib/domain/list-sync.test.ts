@@ -18,6 +18,10 @@ describe("fingerprints", () => {
     const va: Verse[] = [{ ref: " Rom. 8:1 ", text: { en: "There is now", de: "" } }];
     const vb: Verse[] = [{ ref: "Rom. 8:1", text: { en: "There is now" } }];
     expect(versesFingerprint(va)).toBe(versesFingerprint(vb));
+
+    const lf: Verse[] = [{ ref: "Eph. 3:16", text: { en: "Line one\nLine two" } }];
+    const crlf: Verse[] = [{ ref: "Eph. 3:16", text: { en: "Line one\r\nLine two" } }];
+    expect(versesFingerprint(lf)).toBe(versesFingerprint(crlf));
   });
 
   it("changes scheduleFingerprint when is_online toggles", () => {

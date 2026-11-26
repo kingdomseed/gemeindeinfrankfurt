@@ -13,7 +13,7 @@ async function newestTraining(supabase: CoordinatorClient) {
   const { data, error } = await supabase
     .from("trainings")
     .select(
-      "id, title, fee_cents, outline_price_cents, outline_order_deadline, sessions(id, message_number, starts_at, ends_at)",
+      "id, title, fee_cents, outline_price_cents, outline_order_deadline, screen_token, sessions(id, message_number, starts_at, ends_at)",
     )
     .order("created_at", { ascending: false })
     .limit(1)
