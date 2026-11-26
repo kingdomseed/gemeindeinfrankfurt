@@ -8,6 +8,7 @@ import { messageReadiness } from "@/lib/domain/messages";
 import { berlinDay, berlinDayTime } from "@/lib/domain/sessions";
 import { loadStudyGroups } from "@/lib/groups";
 import { loadMessages } from "@/lib/messages";
+import { siteUrl } from "@/lib/site";
 import { loadTestSchedule } from "@/lib/testing";
 
 import { requireActiveWorkspace } from "../../workspace";
@@ -63,6 +64,7 @@ export default async function MessagePage({ params }: Props) {
         hymns: message.hymns,
         verses: message.verses,
       }}
+      shareUrl={`${siteUrl()}/${locale}/training/screen/${data.training.screen_token}/${message.messageNumber}`}
       actions={{
         saveHymns: saveMessageHymns.bind(null, message.sessionId),
         saveVerses: saveMessageVerses.bind(null, message.sessionId),

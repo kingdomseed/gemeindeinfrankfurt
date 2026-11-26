@@ -639,6 +639,8 @@
       "titleFor": "Message {number}: hymns and verses",
       "lead": "Hymns and verses for each message, ready for the screen.",
       "openOnScreen": "Open on screen",
+      "copyShareLink": "Copy live link",
+      "shareLinkCopied": "Live link copied",
       "listLabel": "Messages",
       "message": "Message {number}",
       "ready": "Ready",
@@ -684,7 +686,11 @@
       "hymn": "Hymn {number}",
       "hymnIn": "Hymn {number} ({language})",
       "verseMissing": "The {language} text of this verse has not been entered yet.",
-      "footer": "Message {number} · {day} · Screen: {language}"
+      "footer": "Message {number} · {day} · Screen: {language}",
+      "live": "Live",
+      "selectMessage": "Choose message",
+      "invalidLink": "This screen link is not valid",
+      "invalidLinkBody": "Ask a coordinator for the current screen link."
     },
     "emails": {
       "title": "Emails",

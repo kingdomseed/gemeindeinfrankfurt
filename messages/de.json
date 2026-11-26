@@ -639,6 +639,8 @@
       "titleFor": "Botschaft {number}: Lieder und Verse",
       "lead": "Lieder und Verse für jede Botschaft, bereit für die Leinwand.",
       "openOnScreen": "Auf der Leinwand öffnen",
+      "copyShareLink": "Live-Link kopieren",
+      "shareLinkCopied": "Live-Link kopiert",
       "listLabel": "Botschaften",
       "message": "Botschaft {number}",
       "ready": "Bereit",
@@ -684,7 +686,11 @@
       "hymn": "Lied {number}",
       "hymnIn": "Lied {number} ({language})",
       "verseMissing": "Der Text dieses Verses auf {language} ist noch nicht eingetragen.",
-      "footer": "Botschaft {number} · {day} · Leinwand: {language}"
+      "footer": "Botschaft {number} · {day} · Leinwand: {language}",
+      "live": "Live",
+      "selectMessage": "Botschaft wählen",
+      "invalidLink": "Dieser Leinwand-Link ist ungültig",
+      "invalidLinkBody": "Bitte einen Koordinator um den aktuellen Leinwand-Link."
     },
     "emails": {
       "title": "E-Mails",
